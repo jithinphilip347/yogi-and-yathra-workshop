@@ -1,0 +1,145 @@
+@font-face {
+  font-family: myFont1;
+  src: url(../fonts/Poppins/Poppins-Regular.ttf);
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 130px;
+}
+
+:root {
+  --primaryColor:#368767;
+  --secondaryColor:#f79b16;
+  --textColor:#949fa4;
+}
+
+body {
+  background: #fff;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.048);
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(117, 117, 117);
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primaryColor);
+}
+
+.container {
+  width: calc(100% - 200px);
+  margin: 0 auto;
+}
+@media (max-width: 1800px) {
+  .container {
+    width: calc(100% - 100px);
+  }
+}
+@media (max-width: 1024px) {
+  .container {
+    width: calc(100% - 60px);
+  }
+}
+@media (max-width: 480px) {
+  .container {
+    width: calc(100% - 32px);
+  }
+}
+
+a,
+article,
+button,
+div,
+span,
+i,
+b,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+input,
+ul,
+li,
+select,
+label,
+textarea {
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: myFont1;
+}
+
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+  font-family: myFont1;
+}
+
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::-webkit-datetime-edit-year-field:not([aria-valuenow]),
+::-webkit-datetime-edit-month-field:not([aria-valuenow]),
+::-webkit-datetime-edit-day-field:not([aria-valuenow]) {
+  color: transparent;
+}
+
+video::-internal-media-controls-overlay-cast-button {
+  display: none;
+}
+
+textarea {
+  resize: none;
+  font-family: myFont1;
+}
+
+::-moz-selection {
+  color: white;
+  background: #1d1d1d;
+}
+
+::selection {
+  color: white;
+  background: #1d1d1d;
+}
+
+p {
+  font-family: myFont1;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.shimmer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 105;
+  background: rgba(0, 0, 0, 0.486);
+  display: none;
+}/*# sourceMappingURL=main.css.map */
