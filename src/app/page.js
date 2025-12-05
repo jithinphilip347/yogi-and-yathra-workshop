@@ -1,9 +1,14 @@
+import HomeBanner from "@/components/home/HomeBanner";
+import HomeCourse from "@/components/home/HomeCourse";
+import HomeLiveCourse from "@/components/home/HomeLiveCourse";
 
 
 export default function Home() {
   return (
     <>
-    <h1>Jithin</h1>
+    <HomeBanner />
+    <HomeLiveCourse />
+    {/* <HomeCourse /> */}
     </>
   );
 }

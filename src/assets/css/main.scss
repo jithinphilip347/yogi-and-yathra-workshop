@@ -1,7 +1,13 @@
 @font-face {
     font-family: myFont1;
-    src: url(../fonts/Poppins/Poppins-Regular.ttf);
+    src: url(../fonts/OpenSans/OpenSans-Regular.ttf);
 }
+
+@font-face {
+    font-family: myFont2;
+    src: url(../fonts/SocialGothicFont/Social-Gothic-Bold.otf);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -15,9 +21,9 @@ html{
 
 // color
 :root {
-    --primaryColor:#368767;
-    --secondaryColor:#f79b16;
-    --textColor:#949fa4;
+    --primaryColor:#874429;
+    --secondaryColor:#f2b907;
+    --textColor:#333;
    
 }
 
@@ -125,7 +131,6 @@ main {
     width: 100%;
 }
 
-// shimmer
 .shimmer {
     position: fixed;
     top: 0;
@@ -135,4 +140,10 @@ main {
     z-index: 105;
     background: rgba(0, 0, 0, 0.486);
     display: none;
+}
+
+
+:is(.swiper-button-prev, .swiper-button-next) svg{
+    width: 20px!important;
+    height: 20px!important;
 }
