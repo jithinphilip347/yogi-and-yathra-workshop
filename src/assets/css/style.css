@@ -403,7 +403,7 @@
 
 #HomeLiveCourse {
   width: 100%;
-  padding: 50px 0;
+  padding: 0;
   background: #d27d5c;
   color: #fff;
   position: relative;
@@ -411,6 +411,7 @@
 #HomeLiveCourse .LiveCourseContent {
   text-align: left;
   width: 100%;
+  padding-top: 40px;
 }
 #HomeLiveCourse .LiveCourseContent h2 {
   font-size: 48px;
@@ -629,4 +630,545 @@
     padding: 10px 16px;
     font-size: 14px;
   }
+}
+
+#HomeCourse {
+  width: 100%;
+  padding: 100px 0;
+  position: relative;
+}
+#HomeCourse .HomeCourseMain {
+  width: 100%;
+  position: relative;
+}
+#HomeCourse .HomeCourseMain .swiper-btn {
+  width: 45px;
+  height: 45px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 45%;
+  z-index: 10;
+  cursor: pointer;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+}
+#HomeCourse .HomeCourseMain .swiper-btn svg {
+  font-size: 18px;
+  color: #111;
+}
+#HomeCourse .HomeCourseMain .swiper-btn:hover {
+  background: #111;
+}
+#HomeCourse .HomeCourseMain .swiper-btn:hover svg {
+  color: #fff;
+}
+#HomeCourse .HomeCourseMain .prev-btn {
+  left: -20px;
+}
+#HomeCourse .HomeCourseMain .next-btn {
+  right: -20px;
+}
+
+#HomePopular {
+  width: 100%;
+  padding: 100px 0;
+  position: relative;
+}
+#HomePopular .PopularHead {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+#HomePopular .PopularHead h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #000;
+  font-family: myFont1;
+}
+#HomePopular .PopularHead .viewAllBtn {
+  background: transparent;
+  border: none;
+  color: var(--primaryColor);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#HomePopular .PopularHead .viewAllBtn:hover {
+  text-decoration: underline;
+}
+#HomePopular .PopularFilters {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+#HomePopular .PopularFilters .filterBtn {
+  padding: 6px 15px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  color: #555;
+  white-space: nowrap;
+  font-family: myFont1;
+}
+#HomePopular .PopularFilters .filterBtn:hover, #HomePopular .PopularFilters .filterBtn.active {
+  background: var(--primaryColor);
+  color: #fff;
+  border-color: var(--primaryColor);
+}
+#HomePopular .HomePopularMain {
+  width: 100%;
+  position: relative;
+}
+#HomePopular .HomePopularMain .swiper-btn {
+  width: 45px;
+  height: 45px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 45%;
+  z-index: 10;
+  cursor: pointer;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+}
+#HomePopular .HomePopularMain .swiper-btn svg {
+  font-size: 18px;
+  color: var(--primaryColor);
+}
+#HomePopular .HomePopularMain .swiper-btn:hover {
+  background: var(--primaryColor);
+}
+#HomePopular .HomePopularMain .swiper-btn:hover svg {
+  color: #fff;
+}
+#HomePopular .HomePopularMain .prev-btn {
+  left: -20px;
+}
+#HomePopular .HomePopularMain .next-btn {
+  right: -20px;
+}
+
+#HomeTrending {
+  width: 100%;
+  padding: 100px 0;
+  position: relative;
+}
+#HomeTrending .HomeTrendingHead {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+#HomeTrending .HomeTrendingHead h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #000;
+  font-family: myFont1;
+}
+#HomeTrending .HomeTrendingHead .viewAllBtn {
+  background: transparent;
+  border: none;
+  color: var(--primaryColor);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#HomeTrending .HomeTrendingHead .viewAllBtn:hover {
+  text-decoration: underline;
+}
+#HomeTrending .HomeTrendingMain {
+  width: 100%;
+  position: relative;
+}
+#HomeTrending .HomeTrendingMain .swiper-btn {
+  width: 45px;
+  height: 45px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 45%;
+  z-index: 10;
+  cursor: pointer;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+}
+#HomeTrending .HomeTrendingMain .swiper-btn svg {
+  font-size: 18px;
+  color: var(--primaryColor);
+}
+#HomeTrending .HomeTrendingMain .swiper-btn:hover {
+  background: var(--primaryColor);
+}
+#HomeTrending .HomeTrendingMain .swiper-btn:hover svg {
+  color: #fff;
+}
+#HomeTrending .HomeTrendingMain .prev-btn {
+  left: -20px;
+}
+#HomeTrending .HomeTrendingMain .next-btn {
+  right: -20px;
+}
+
+#HomeLiveClass {
+  width: 100%;
+  padding: 100px 0;
+  position: relative;
+}
+#HomeLiveClass .HomeLiveClassHead {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+#HomeLiveClass .HomeLiveClassHead h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #000;
+  font-family: myFont1;
+}
+#HomeLiveClass .HomeLiveClassHead .viewAllBtn {
+  background: transparent;
+  border: none;
+  color: var(--primaryColor);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#HomeLiveClass .HomeLiveClassHead .viewAllBtn:hover {
+  text-decoration: underline;
+}
+#HomeLiveClass .HomeLiveClassMain {
+  width: 100%;
+  position: relative;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper-btn {
+  width: 45px;
+  height: 45px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 45%;
+  z-index: 10;
+  cursor: pointer;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper-btn svg {
+  font-size: 18px;
+  color: var(--primaryColor);
+}
+#HomeLiveClass .HomeLiveClassMain .swiper-btn:hover {
+  background: var(--primaryColor);
+}
+#HomeLiveClass .HomeLiveClassMain .swiper-btn:hover svg {
+  color: #fff;
+}
+#HomeLiveClass .HomeLiveClassMain .prev-btn {
+  left: -20px;
+}
+#HomeLiveClass .HomeLiveClassMain .next-btn {
+  right: -20px;
+}
+
+#HomeNew {
+  width: 100%;
+  padding: 100px 0;
+  position: relative;
+}
+#HomeNew .HomeNewHead {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+#HomeNew .HomeNewHead h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #000;
+  font-family: myFont1;
+}
+#HomeNew .HomeNewHead .viewAllBtn {
+  background: transparent;
+  border: none;
+  color: var(--primaryColor);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#HomeNew .HomeNewHead .viewAllBtn:hover {
+  text-decoration: underline;
+}
+#HomeNew .HomeNewMain {
+  width: 100%;
+  position: relative;
+}
+#HomeNew .HomeNewMain .swiper-btn {
+  width: 45px;
+  height: 45px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 45%;
+  z-index: 10;
+  cursor: pointer;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+}
+#HomeNew .HomeNewMain .swiper-btn svg {
+  font-size: 18px;
+  color: var(--primaryColor);
+}
+#HomeNew .HomeNewMain .swiper-btn:hover {
+  background: var(--primaryColor);
+}
+#HomeNew .HomeNewMain .swiper-btn:hover svg {
+  color: #fff;
+}
+#HomeNew .HomeNewMain .prev-btn {
+  left: -20px;
+}
+#HomeNew .HomeNewMain .next-btn {
+  right: -20px;
+}
+
+#HomeTopRated {
+  width: 100%;
+  padding: 100px 0;
+  position: relative;
+}
+#HomeTopRated .HomeTopRatedHead {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+#HomeTopRated .HomeTopRatedHead h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #000;
+  font-family: myFont1;
+}
+#HomeTopRated .HomeTopRatedHead .viewAllBtn {
+  background: transparent;
+  border: none;
+  color: var(--primaryColor);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#HomeTopRated .HomeTopRatedHead .viewAllBtn:hover {
+  text-decoration: underline;
+}
+#HomeTopRated .HomeTopRatedMain {
+  width: 100%;
+  position: relative;
+}
+#HomeTopRated .HomeTopRatedMain .swiper-btn {
+  width: 45px;
+  height: 45px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 45%;
+  z-index: 10;
+  cursor: pointer;
+  box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
+  transition: 0.3s ease;
+}
+#HomeTopRated .HomeTopRatedMain .swiper-btn svg {
+  font-size: 18px;
+  color: var(--primaryColor);
+}
+#HomeTopRated .HomeTopRatedMain .swiper-btn:hover {
+  background: var(--primaryColor);
+}
+#HomeTopRated .HomeTopRatedMain .swiper-btn:hover svg {
+  color: #fff;
+}
+#HomeTopRated .HomeTopRatedMain .prev-btn {
+  left: -20px;
+}
+#HomeTopRated .HomeTopRatedMain .next-btn {
+  right: -20px;
+}
+
+#Footer {
+  width: 100%;
+  background: var(--primaryColor);
+  padding: 20px 0;
+}
+#Footer .FooterMain {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 40px;
+  margin-bottom: 15px;
+}
+#Footer .footerColumn {
+  display: flex;
+  flex-direction: column;
+}
+#Footer .footerColumn h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  font-family: myFont1;
+  color: #fff;
+}
+#Footer .footerColumn .footerLogo {
+  width: 100px;
+}
+#Footer .footerColumn .footerLogo img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+#Footer .footerColumn .footerTag {
+  font-size: 13px;
+  margin: 6px 0 15px;
+  font-family: myFont1;
+  color: #fff;
+}
+#Footer .footerColumn ul {
+  list-style: none;
+  padding: 0;
+}
+#Footer .footerColumn ul li {
+  margin: 8px 0;
+}
+#Footer .footerColumn ul li a {
+  color: #000;
+  font-size: 14px;
+  text-decoration: none;
+  transition: 0.3s;
+  font-family: myFont1;
+  color: #fff;
+}
+#Footer .footerColumn ul li a:hover {
+  text-decoration: underline;
+}
+#Footer .subscribeBox {
+  display: flex;
+  gap: 6px;
+}
+#Footer .subscribeBox input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  outline: none;
+}
+#Footer .subscribeBox button {
+  padding: 8px 14px;
+  background: #fff;
+  color: var(--primaryColor);
+  font-size: 14px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+#Footer .subscribeBox button:hover {
+  opacity: 0.8;
+}
+#Footer .contactRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  margin: 6px 0;
+  font-family: myFont1;
+  color: #fff;
+}
+#Footer .contactRow svg {
+  font-size: 16px;
+  font-family: myFont1;
+  color: #fff;
+}
+#Footer .footerSocial {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+#Footer .footerSocial a {
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  color: var(--primaryColor);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+#Footer .footerSocial a:hover {
+  opacity: 0.7;
+}
+#Footer .footerBottom {
+  width: 100%;
+  border-top: 1px solid #999;
+}
+#Footer .footerBottom .footerBottomMain {
+  margin-top: 20px;
+  padding: 15px 0;
+  display: flex;
+  justify-content: space-between;
+}
+#Footer .footerBottom .footerBottomMain .footerBottomBox p {
+  font-size: 13px;
+  font-family: myFont1;
+  color: #fff;
+}
+#Footer .footerBottom .footerBottomMain .footerBottomLinks {
+  display: flex;
+  gap: 15px;
+}
+#Footer .footerBottom .footerBottomMain .footerBottomLinks a {
+  font-size: 13px;
+  text-decoration: none;
+  font-family: myFont1;
+  color: #fff;
+}
+#Footer .footerBottom .footerBottomMain .footerBottomLinks a:hover {
+  text-decoration: underline;
 }/*# sourceMappingURL=style.css.map */
