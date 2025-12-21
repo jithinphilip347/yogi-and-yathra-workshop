@@ -1,13 +1,3 @@
-// import React from 'react'
-
-// const HomeNew = () => {
-//   return (
-//     <div>HomeNew</div>
-//   )
-// }
-
-// export default HomeNew
-
 "use client";
 import React, { useEffect, useState } from "react";
 import CourseCard from "../coursebox/CourseCard";
@@ -28,9 +18,24 @@ import User5 from "../../assets/images/instructor-5.jpg";
 import User6 from "../../assets/images/instructor-6.jpg";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
+import { FiUsers } from "react-icons/fi";
+import { AiFillStar } from "react-icons/ai";
+import { FiClock, FiBookOpen } from "react-icons/fi";
+import { FaHeart } from "react-icons/fa";
+
 const courses = [
   {
     image: CourseImg1,
+    wishlistIcon: <FaHeart />,
+    lessonsIcon: <FiBookOpen />,
+    clockIcon: <FiClock />,
+    priceIcon: "₹",
+    oldPriceIcon: "₹",
+    lessonsLabel: "Lessons",
+    ratingIcon: <AiFillStar />,
+    userIcon: <FiUsers />,
+    buttonText: "View Details",
+    instructorLabel: "Instructor",
     title: "Mindful Meditation for Beginners",
     lessons: "25",
     duration: "20 hrs",
@@ -43,6 +48,17 @@ const courses = [
   },
   {
     image: CourseImg2,
+    wishlistIcon: <FaHeart />,
+    lessonsIcon: <FiBookOpen />,
+    clockIcon: <FiClock />,
+    priceIcon: "₹",
+    oldPriceIcon: "₹",
+    lessonsLabel: "Lessons",
+    ratingIcon: <AiFillStar />,
+    userIcon: <FiUsers />,
+    buttonText: "View Details",
+        instructorLabel: "Instructor",
+
     title: "Full-Body Yoga Masterclass",
     lessons: "35",
     duration: "45 hrs",
@@ -55,6 +71,17 @@ const courses = [
   },
   {
     image: CourseImg3,
+    wishlistIcon: <FaHeart />,
+    lessonsIcon: <FiBookOpen />,
+    clockIcon: <FiClock />,
+    priceIcon: "₹",
+    oldPriceIcon: "₹",
+    lessonsLabel: "Lessons",
+    ratingIcon: <AiFillStar />,
+    userIcon: <FiUsers />,
+    buttonText: "View Details",
+        instructorLabel: "Instructor",
+
     title: "Breathwork Healingy",
     lessons: "18",
     duration: "16 hrs",
@@ -67,6 +94,17 @@ const courses = [
   },
   {
     image: CourseImg4,
+    wishlistIcon: <FaHeart />,
+    lessonsIcon: <FiBookOpen />,
+    clockIcon: <FiClock />,
+    priceIcon: "₹",
+    oldPriceIcon: "₹",
+    lessonsLabel: "Lessons",
+    ratingIcon: <AiFillStar />,
+    userIcon: <FiUsers />,
+    buttonText: "View Details",
+        instructorLabel: "Instructor",
+
     title: "Spiritual Wellness & Inner Peace",
     lessons: "20",
     duration: "25 hrs",
@@ -79,6 +117,17 @@ const courses = [
   },
   {
     image: CourseImg5,
+    wishlistIcon: <FaHeart />,
+    lessonsIcon: <FiBookOpen />,
+    clockIcon: <FiClock />,
+    priceIcon: "₹",
+    oldPriceIcon: "₹",
+    lessonsLabel: "Lessons",
+    ratingIcon: <AiFillStar />,
+    userIcon: <FiUsers />,
+    buttonText: "View Details",
+        instructorLabel: "Instructor",
+
     title: "Yoga for Stress Relief & Sleep",
     lessons: "15",
     duration: "12 hrs",
@@ -91,6 +140,17 @@ const courses = [
   },
   {
     image: CourseImg6,
+    wishlistIcon: <FaHeart />,
+    lessonsIcon: <FiBookOpen />,
+    clockIcon: <FiClock />,
+    priceIcon: "₹",
+    oldPriceIcon: "₹",
+    lessonsLabel: "Lessons",
+    ratingIcon: <AiFillStar />,
+    userIcon: <FiUsers />,
+    buttonText: "View Details",
+        instructorLabel: "Instructor",
+
     title: "Advanced Meditation with Mantras",
     lessons: "30",
     duration: "32 hrs",

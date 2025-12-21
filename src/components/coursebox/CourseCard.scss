@@ -41,15 +41,37 @@
     }
   }
 }
+.CourseTitleBoxMain{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .CourseTitleBox{
+    .courseTitle {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 12px;
+      color: var(--textColor);
+      line-height: 1.3;
+      font-family: myFont1;
+    }
+  }
+  .CourseLive{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    svg{
+      color: red;
+    }
+    p{
+      font-size: 14px;
+      font-family: myFont1;
+      font-weight: 500;
 
-.courseTitle {
-  font-size: 16px;
-  font-weight: 600;
-  margin-top: 12px;
-  color: var(--textColor);
-  line-height: 1.3;
-  font-family: myFont1;
+    }
+  }
 }
+
 
 .courseMeta {
   margin: 8px 0;
@@ -73,6 +95,28 @@
   }
 }
 
+
+.courseLiveDate {
+  margin: 8px 0;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  color: #555;
+  font-size: 13px;
+  font-family: myFont1;
+  font-weight: 600;
+  span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+
+    svg {
+      font-size: 15px;
+      color: var(--primaryColor);
+    }
+  }
+}
 .Priceratebox {
   margin-top: 5px;
   display: flex;

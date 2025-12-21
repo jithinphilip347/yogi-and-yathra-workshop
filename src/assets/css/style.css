@@ -38,7 +38,6 @@
 #Nav .NavMain .NavLinks ul li a:hover,
 #Nav .NavMain .NavLinks ul li a.active {
   color: var(--primaryColor);
-  background: rgba(0, 0, 0, 0.06);
 }
 #Nav .NavMain .NavRightBox {
   display: flex;
@@ -239,13 +238,14 @@
 #HomeBanner .HomeBannerLeft .HomeBannerTopBox .HomeBannerSubTitle p {
   font-size: 14px;
   color: #fff;
-  font-weight: 700;
+  font-weight: 500;
 }
 #HomeBanner .HomeBannerLeft .HomeBannerTopBox .HomeBannerMainTitle h2 {
   font-size: 38px;
   font-weight: 800;
   line-height: 1.2;
   color: #fff;
+  font-family: myFont2;
 }
 @media (max-width: 480px) {
   #HomeBanner .HomeBannerLeft .HomeBannerTopBox .HomeBannerMainTitle h2 {
@@ -403,31 +403,38 @@
 
 #HomeLiveCourse {
   width: 100%;
+  padding-top: 100px;
+}
+#HomeLiveCourse .HomeLiveCourseMain {
+  width: 100%;
   padding: 0;
   background: #d27d5c;
   color: #fff;
   position: relative;
 }
-#HomeLiveCourse .LiveCourseContent {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent {
   text-align: left;
   width: 100%;
   padding-top: 40px;
 }
-#HomeLiveCourse .LiveCourseContent h2 {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent h2 {
   font-size: 48px;
-  font-weight: 800;
   line-height: 1.2;
+  font-family: myFont2;
 }
-#HomeLiveCourse .LiveCourseContent h2 span {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent h2 span {
   color: var(--primaryColor);
+  font-size: 48px;
+  line-height: 1.2;
+  font-family: myFont2;
 }
-#HomeLiveCourse .LiveCourseContent p {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent p {
   margin: 15px 0 25px;
   max-width: 600px;
   font-size: 15px;
   color: #fff;
 }
-#HomeLiveCourse .LiveCourseContent .scrollDown {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent .scrollDown {
   font-size: 14px;
   color: #fff;
   text-decoration: none;
@@ -437,24 +444,24 @@
   opacity: 0.8;
   transition: 0.3s;
 }
-#HomeLiveCourse .LiveCourseContent .scrollDown:hover {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent .scrollDown:hover {
   opacity: 1;
   transform: translateY(2px);
 }
-#HomeLiveCourse .LiveCourseMainBox {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox {
   width: 100%;
   position: relative;
   margin-top: 30px;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseSwiper {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseSwiper {
   width: 100%;
 }
-#HomeLiveCourse .LiveCourseMainBox .swiper-slide {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-slide {
   display: flex;
   transition: transform 0.6s ease-out;
 }
-#HomeLiveCourse .LiveCourseMainBox .swiper-button-prev,
-#HomeLiveCourse .LiveCourseMainBox .swiper-button-next {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-prev,
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-next {
   width: 28px !important;
   height: 28px !important;
   border-radius: 50%;
@@ -467,23 +474,23 @@
   color: #fff;
   transition: background 0.25s ease, transform 0.25s ease;
 }
-#HomeLiveCourse .LiveCourseMainBox .swiper-button-prev::after,
-#HomeLiveCourse .LiveCourseMainBox .swiper-button-next::after {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-prev::after,
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-next::after {
   font-size: 12px !important;
   font-weight: 700;
 }
-#HomeLiveCourse .LiveCourseMainBox .swiper-button-prev:hover,
-#HomeLiveCourse .LiveCourseMainBox .swiper-button-next:hover {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-prev:hover,
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-next:hover {
   background: rgba(0, 0, 0, 0.7);
   transform: scale(1.08);
 }
-#HomeLiveCourse .LiveCourseMainBox .swiper-button-prev {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-prev {
   left: 12px !important;
 }
-#HomeLiveCourse .LiveCourseMainBox .swiper-button-next {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-next {
   right: 12px !important;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox {
   width: 100%;
   height: 480px;
   position: relative;
@@ -491,7 +498,7 @@
   border-radius: 15px;
   cursor: pointer;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .MainImage {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .MainImage {
   width: 100%;
   height: 100%;
   -o-object-fit: cover;
@@ -499,15 +506,15 @@
   transform: scale(1.03);
   transition: transform 0.8s ease-out;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox:hover .MainImage {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox:hover .MainImage {
   transform: scale(1.08);
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .Overlay {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .Overlay {
   position: absolute;
   inset: 0;
   background: rgba(0, 0, 0, 0.35);
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimingBox {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox {
   position: absolute;
   top: 0;
   left: 0;
@@ -517,7 +524,7 @@
   border-bottom-right-radius: 15px;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimeTitle {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimeTitle {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -525,12 +532,12 @@
   text-transform: uppercase;
   margin-bottom: 10px;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid {
   display: flex;
   align-items: flex-end;
   gap: 16px;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem {
   text-align: center;
   min-width: 52px;
   display: flex;
@@ -538,7 +545,7 @@
   align-items: center;
   gap: 6px;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard {
   width: 52px;
   height: 70px;
   background: linear-gradient(to bottom, #ffffff, #f3f3f3);
@@ -550,7 +557,7 @@
   justify-content: center;
   overflow: hidden;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard::before {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard::before {
   content: "";
   position: absolute;
   left: 0;
@@ -559,14 +566,14 @@
   height: 1px;
   background: #dadada;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard .TimerNumber {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard .TimerNumber {
   font-size: 30px;
   font-weight: 800;
   font-family: myFont2;
   color: #000;
   line-height: 1;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem p {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem p {
   font-size: 20px;
   font-weight: 600;
   color: #000;
@@ -575,7 +582,7 @@
   margin: 0;
   font-family: myFont2;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .BookBtn {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .BookBtn {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -594,10 +601,10 @@
   box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.25);
   transition: background 0.3s, transform 0.3s;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .BookBtn .arrowAnim {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .BookBtn .arrowAnim {
   animation: arrowMove 1.4s infinite ease-in-out;
 }
-#HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .BookBtn:hover {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .BookBtn:hover {
   background: #ededed;
   transform: translateY(-2px);
 }
@@ -610,25 +617,6 @@
   }
   100% {
     transform: translateY(0);
-  }
-}
-@media (max-width: 768px) {
-  #HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox {
-    height: 360px;
-  }
-  #HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimingBox {
-    padding: 12px 16px;
-  }
-  #HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimerGrid .TimerItem .TimerCard {
-    width: 46px;
-    height: 62px;
-  }
-  #HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .TimerGrid .TimerItem .TimerCard .TimerNumber {
-    font-size: 26px;
-  }
-  #HomeLiveCourse .LiveCourseMainBox .LiveCourseImgBox .BookBtn {
-    padding: 10px 16px;
-    font-size: 14px;
   }
 }
 
@@ -686,10 +674,9 @@
   margin-bottom: 15px;
 }
 #HomePopular .PopularHead h2 {
-  font-size: 26px;
-  font-weight: 700;
+  font-size: 28px;
   color: #000;
-  font-family: myFont1;
+  font-family: myFont2;
 }
 #HomePopular .PopularHead .viewAllBtn {
   background: transparent;
@@ -832,8 +819,9 @@
 
 #HomeLiveClass {
   width: 100%;
-  padding: 100px 0;
+  padding: 50px 0;
   position: relative;
+  background: var(--primaryColor);
 }
 #HomeLiveClass .HomeLiveClassHead {
   width: 100%;
@@ -845,13 +833,13 @@
 #HomeLiveClass .HomeLiveClassHead h2 {
   font-size: 26px;
   font-weight: 700;
-  color: #000;
+  color: #fff;
   font-family: myFont1;
 }
 #HomeLiveClass .HomeLiveClassHead .viewAllBtn {
   background: transparent;
   border: none;
-  color: var(--primaryColor);
+  color: #fff;
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -864,6 +852,91 @@
 #HomeLiveClass .HomeLiveClassMain {
   width: 100%;
   position: relative;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide {
+  display: flex;
+  justify-content: center;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard {
+  max-width: 100% !important;
+  aspect-ratio: 4/3;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseTitle {
+  color: #000;
+  margin-top: 12px;
+  font-family: myFont1;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .CourseLive {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .CourseLive svg {
+  color: red;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .CourseLive p {
+  font-size: 16px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #000;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseLiveDate {
+  margin: 8px 0;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  color: #000;
+  font-size: 13px;
+  font-family: myFont1;
+  font-weight: 600;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseLiveDate span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseLiveDate span svg {
+  font-size: 15px;
+  color: #000;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorImg {
+  width: 28px !important;
+  height: 28px !important;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorImg img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorDetails {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorDetails .TutorLabel {
+  font-size: 12px;
+  color: #000;
+  font-family: myFont1;
+  font-weight: 600;
+}
+#HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorDetails .TutorName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #000;
+  font-family: myFont1;
 }
 #HomeLiveClass .HomeLiveClassMain .swiper-btn {
   width: 45px;
@@ -1029,6 +1102,107 @@
 }
 #HomeTopRated .HomeTopRatedMain .next-btn {
   right: -20px;
+}
+
+#HomeTestimonial {
+  width: 100%;
+  padding: 100px 0;
+}
+#HomeTestimonial .TestimonialHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 40px;
+}
+#HomeTestimonial .TestimonialHead .SectionEyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 8px;
+  font-family: myFont1;
+}
+#HomeTestimonial .TestimonialHead h2 {
+  font-size: 36px;
+  font-weight: 700;
+  color: #000;
+  font-family: myFont1;
+}
+#HomeTestimonial .TestimonialHead h2 span {
+  color: var(--primaryColor);
+}
+#HomeTestimonial .ArrowGroup {
+  display: flex;
+  gap: 12px;
+}
+#HomeTestimonial .ArrowGroup .ArrowBtn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--primaryColor);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+#HomeTestimonial .ArrowGroup .ArrowBtn svg {
+  color: #fff;
+  font-size: 18px;
+}
+#HomeTestimonial .ArrowGroup .ArrowBtn:hover {
+  background: var(--primaryColor);
+}
+#HomeTestimonial .TestimonialCard {
+  background: #f2f6fc;
+  border-radius: 26px;
+  padding: 32px;
+  min-height: 360px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 15px;
+  transition: 0.3s ease;
+}
+#HomeTestimonial .ProfileImg {
+  width: 52px;
+  height: 52px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 50%;
+}
+#HomeTestimonial .QuoteIcon {
+  font-size: 34px;
+  color: var(--primaryColor);
+}
+#HomeTestimonial .QuoteText {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #000;
+  font-family: myFont1;
+  margin: 0;
+  min-height: 90px;
+}
+#HomeTestimonial .ReviewerInfo {
+  border-left: 3px solid var(--primaryColor);
+  padding-left: 14px;
+  margin-top: auto;
+}
+#HomeTestimonial .ReviewerInfo .ReviewerName {
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
+}
+#HomeTestimonial .ReviewerInfo .ReviewerRole {
+  font-size: 12px;
+  color: #555;
+  margin-top: 2px;
+}
+#HomeTestimonial .ReviewerInfo .ReviewerLocation {
+  font-size: 12px;
+  color: #999;
+  margin-top: 2px;
 }
 
 #Footer {

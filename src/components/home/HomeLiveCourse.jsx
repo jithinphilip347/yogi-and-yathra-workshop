@@ -114,7 +114,9 @@ const HomeLiveCourse = () => {
 
   return (
     <section id="HomeLiveCourse">
+      <div className="HomeLiveCourseMain">
       <div className="container">
+        
         <div className="LiveCourseContent fadeAnim">
           <h2 key={activeSlide}>{events[activeSlide].heading}</h2>
           <p key={activeSlide + "-p"}>{events[activeSlide].description}</p>
@@ -142,6 +144,7 @@ const HomeLiveCourse = () => {
               </SwiperSlide>
             ))}
           </Swiper>
+        </div>
         </div>
       </div>
     </section>
