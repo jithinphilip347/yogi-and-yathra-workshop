@@ -2,6 +2,7 @@ import Nav from '@/components/nav/Nav';
 import '../assets/css/main.css'
 import '../assets/css/style.css'
 import Footer from '@/components/footer/Footer';
+import SubNav from '@/components/nav/SubNav';
 
 export const metadata = {
   title: "Create Next App",
@@ -13,6 +14,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body >
         <Nav />
+        <SubNav />
         {children}
         <Footer />
       </body>

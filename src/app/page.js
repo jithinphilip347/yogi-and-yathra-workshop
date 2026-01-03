@@ -4,6 +4,7 @@ import HomeLiveClass from "@/components/home/HomeLiveClass";
 import HomeLiveCourse from "@/components/home/HomeLiveCourse";
 import HomeNew from "@/components/home/HomeNew";
 import HomePopular from "@/components/home/HomePopular";
+import HomeTeacher from "@/components/home/HomeTeacher";
 import HomeTestimonial from "@/components/home/HomeTestimonial";
 import HomeTopRated from "@/components/home/HomeTopRated";
 import HomeTrending from "@/components/home/HomeTrending";
@@ -21,6 +22,7 @@ export default function Home() {
     <HomeNew />
     <HomeTopRated />
     <HomeTestimonial />
+    <HomeTeacher />
     </>
   );
 }

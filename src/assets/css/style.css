@@ -13,31 +13,139 @@
   align-items: center;
   justify-content: space-between;
 }
-#Nav .NavMain .NavLogo {
+#Nav .NavMain .LogoBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#Nav .NavMain .LogoBox .ToogleMenuBox {
+  display: none;
+}
+@media (max-width: 1024px) {
+  #Nav .NavMain .LogoBox .ToogleMenuBox {
+    display: block;
+  }
+}
+#Nav .NavMain .LogoBox .ToogleMenuBox svg {
+  color: var(--primaryColor);
+}
+#Nav .NavMain .LogoBox .NavLogo {
   width: 100px;
 }
-#Nav .NavMain .NavLogo .logoImg {
+#Nav .NavMain .LogoBox .NavLogo .logoImg {
   width: 100%;
   height: 100%;
   -o-object-fit: contain;
      object-fit: contain;
 }
-#Nav .NavMain .NavLinks ul {
+#Nav .NavMain .NavSearchContainer {
+  position: relative;
+  width: 45%;
+}
+@media (max-width: 768px) {
+  #Nav .NavMain .NavSearchContainer {
+    display: none;
+  }
+}
+#Nav .NavMain .NavSearchContainer .SearchWrapper {
   display: flex;
-  list-style: none;
-}
-#Nav .NavMain .NavLinks ul li a {
-  font-size: 16px;
-  font-weight: 500;
-  text-decoration: none;
-  color: #000;
-  padding: 6px 12px;
+  align-items: center;
+  background: #fff;
+  padding: 12px 15px;
+  border-radius: 50px;
+  border: 1px solid #ddd;
   transition: 0.3s;
-  font-family: myFont1;
 }
-#Nav .NavMain .NavLinks ul li a:hover,
-#Nav .NavMain .NavLinks ul li a.active {
+#Nav .NavMain .NavSearchContainer .SearchWrapper .SearchIcon {
   color: var(--primaryColor);
+  font-size: 20px;
+  margin-right: 10px;
+}
+#Nav .NavMain .NavSearchContainer .SearchWrapper input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  background: transparent;
+}
+#Nav .NavMain .NavSearchContainer .SearchWrapper.focused {
+  border-color: var(--primaryColor);
+  box-shadow: 0 0 5px rgba(var(--primaryColorRGB), 0.2);
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: #fff;
+  margin-top: 10px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 15px 0;
+  z-index: 10000;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .SuggestionSection {
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .SuggestionSection .SuggestItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: 0.2s;
+  color: #555;
+  font-size: 14px;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .SuggestionSection .SuggestItem:hover {
+  background: #f9f9f9;
+  color: var(--primaryColor);
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection {
+  padding: 15px 20px 0;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection h4 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #888;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseImg {
+  width: 60px;
+  height: 45px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseImg img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails h5 {
+  font-size: 14px;
+  color: #000;
+  margin-bottom: 4px;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .CourseMeta {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: #777;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .CourseMeta span {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .CourseMeta .star {
+  color: #ffb400;
 }
 #Nav .NavMain .NavRightBox {
   display: flex;
@@ -59,8 +167,58 @@
 #Nav .NavMain .NavRightBox .searchCartWishlistBox .NavIcon:hover {
   color: var(--primaryColor);
 }
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .CartIcon {
+  font-size: 22px;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  transition: 0.3s;
+}
+@media (max-width: 1024px) {
+  #Nav .NavMain .NavRightBox .searchCartWishlistBox .CartIcon {
+    display: none;
+  }
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .CartIcon:hover {
+  color: var(--primaryColor);
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .WishlistIcon {
+  font-size: 22px;
+  color: #000;
+  cursor: pointer;
+  display: flex;
+  transition: 0.3s;
+}
+@media (max-width: 1024px) {
+  #Nav .NavMain .NavRightBox .searchCartWishlistBox .WishlistIcon {
+    display: none;
+  }
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .WishlistIcon:hover {
+  color: var(--primaryColor);
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .SearchIcon {
+  font-size: 22px;
+  color: #000;
+  cursor: pointer;
+  display: none;
+  transition: 0.3s;
+}
+@media (max-width: 768px) {
+  #Nav .NavMain .NavRightBox .searchCartWishlistBox .SearchIcon {
+    display: block;
+  }
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .SearchIcon:hover {
+  color: var(--primaryColor);
+}
 #Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationIcon {
   position: relative;
+}
+@media (max-width: 1024px) {
+  #Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationIcon {
+    display: none;
+  }
 }
 #Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationIcon .notifBadge {
   position: absolute;
@@ -191,10 +349,328 @@
 #Nav .NavMain .NavRightBox .UserProfileBox .UserDropdown .borderBottom {
   border-bottom: 1px solid #eee;
 }
+#Nav .NavMain .NavRightBox .AuthBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#Nav .NavMain .NavRightBox .AuthBox .LoginBox {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border: 1px solid var(--primaryColor);
+  cursor: pointer;
+  background: #fff;
+}
+#Nav .NavMain .NavRightBox .AuthBox .LoginBox .authLink {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+#Nav .NavMain .NavRightBox .AuthBox .LoginBox .authLink svg {
+  color: var(--primaryColor);
+  transition: 0.3s;
+}
+#Nav .NavMain .NavRightBox .AuthBox .LoginBox .authLink button {
+  background: none;
+  outline: none;
+  border: none;
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--primaryColor);
+  transition: 0.3s;
+}
+#Nav .NavMain .NavRightBox .AuthBox .LoginBox:hover {
+  background: var(--primaryColor);
+}
+#Nav .NavMain .NavRightBox .AuthBox .LoginBox:hover .authLink svg,
+#Nav .NavMain .NavRightBox .AuthBox .LoginBox:hover .authLink button {
+  color: #fff;
+}
+#Nav .NavMain .NavRightBox .AuthBox .SignBox {
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border: 1px solid var(--primaryColor);
+  cursor: pointer;
+  background: var(--primaryColor);
+}
+@media (max-width: 1024px) {
+  #Nav .NavMain .NavRightBox .AuthBox .SignBox {
+    display: none;
+  }
+}
+#Nav .NavMain .NavRightBox .AuthBox .SignBox .authLink {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+#Nav .NavMain .NavRightBox .AuthBox .SignBox .authLink svg {
+  color: #fff;
+  transition: 0.3s;
+}
+#Nav .NavMain .NavRightBox .AuthBox .SignBox .authLink button {
+  background: none;
+  outline: none;
+  border: none;
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  cursor: pointer;
+  color: #fff;
+  transition: 0.3s;
+}
+#Nav .NavMain .NavRightBox .AuthBox .SignBox:hover {
+  background: #fff;
+  color: var(--primaryColor);
+}
+#Nav .NavMain .NavRightBox .AuthBox .SignBox:hover svg {
+  color: var(--primaryColor);
+}
+#Nav .NavMain .NavRightBox .AuthBox .SignBox:hover button {
+  color: var(--primaryColor);
+}
+
+#SubNav {
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: fixed;
+  top: 80px;
+  z-index: 100;
+}
+#SubNav .SubNavMain .SubNavLinks .mainUl {
+  align-items: center;
+  gap: 35px;
+  padding: 10px 0;
+  list-style: none;
+  display: flex;
+  height: 40px;
+}
+#SubNav .SubNavMain .SubNavLinks .mainUl li a {
+  text-decoration: none;
+  color: #333;
+  font-size: 15px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: 0.3s ease;
+}
+#SubNav .SubNavMain .SubNavLinks .mainUl li a:hover, #SubNav .SubNavMain .SubNavLinks .mainUl li a.active {
+  color: var(--primaryColor);
+}
+#SubNav .SubNavMain .SubNavLinks .mainUl li a svg {
+  font-size: 18px;
+  transition: 0.3s;
+}
+#SubNav .SubNavMain .SubNavLinks .mainUl li a svg.rotate {
+  transform: rotate(180deg);
+}
+#SubNav .CategoryStrip {
+  width: 100%;
+  background: #fcfcfc;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+  animation: slideDown 0.3s ease-out;
+}
+#SubNav .CategoryStrip .categoryUl {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  gap: 25px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+#SubNav .CategoryStrip .categoryUl::-webkit-scrollbar {
+  display: none;
+}
+#SubNav .CategoryStrip .categoryUl li a {
+  text-decoration: none;
+  color: #666;
+  font-size: 14px;
+  font-weight: 400;
+  transition: 0.2s;
+}
+#SubNav .CategoryStrip .categoryUl li a:hover {
+  color: var(--primaryColor);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.SideNavOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.4s;
+}
+.SideNavOverlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+#Sidnav {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100vh;
+  background: #fff;
+  z-index: 10001;
+  transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow-y: auto;
+}
+#Sidnav.open {
+  left: 0;
+}
+#Sidnav .UserProfileBox {
+  cursor: pointer;
+  align-items: center;
+  gap: 15px;
+  display: flex;
+  position: relative;
+  margin-bottom: 20px;
+}
+#Sidnav .UserProfileBox .ProfileImageBox {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+#Sidnav .UserProfileBox .ProfileImageBox .UserImage {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#Sidnav .UserProfileBox .UserNameDropIconBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#Sidnav .UserProfileBox .UserNameDropIconBox .UserNameBox {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.1;
+  flex-direction: column;
+}
+#Sidnav .UserProfileBox .UserNameDropIconBox .UserNameBox .UserWelcome {
+  font-size: 14px;
+  color: #666;
+  font-family: myFont1;
+}
+#Sidnav .UserProfileBox .UserNameDropIconBox .UserNameBox .UserName {
+  font-size: 16px;
+  color: #000;
+  font-weight: 600;
+  font-family: myFont1;
+}
+#Sidnav .SideNavHeader {
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 10px;
+  display: flex;
+}
+#Sidnav .SideNavHeader h3 {
+  font-size: 20px;
+  color: var(--primaryColor);
+}
+#Sidnav .SideNavHeader .CloseIcon {
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--primaryColor);
+}
+#Sidnav .SideNavLinks ul {
+  list-style: none;
+}
+#Sidnav .SideNavLinks ul li {
+  margin-bottom: 15px;
+}
+#Sidnav .SideNavLinks ul li a,
+#Sidnav .SideNavLinks ul li .SideNavLinkItem {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#Sidnav .SideNavLinks ul li a:hover,
+#Sidnav .SideNavLinks ul li .SideNavLinkItem:hover {
+  color: var(--primaryColor);
+}
+#Sidnav .SideNavLinks ul li svg {
+  font-size: 20px;
+  color: var(--primaryColor);
+}
+#Sidnav .SideNavLinks ul li .SideNavLinkItem {
+  justify-content: space-between;
+}
+#Sidnav .SideNavLinks ul li .SideNavLinkItem svg {
+  transition: 0.3s;
+  font-size: 20px;
+  color: var(--primaryColor);
+}
+#Sidnav .SideNavLinks ul li .SideNavLinkItem svg.rotate {
+  transform: rotate(180deg);
+}
+#Sidnav .SideNavLinks ul li .SideSubMenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: 0.4s ease-in-out;
+  padding-left: 15px;
+  margin-top: 0;
+}
+#Sidnav .SideNavLinks ul li .SideSubMenu.show {
+  max-height: 500px;
+  margin-top: 10px;
+}
+#Sidnav .SideNavLinks ul li .SideSubMenu li {
+  margin-bottom: 10px;
+}
+#Sidnav .SideNavLinks ul li .SideSubMenu li a {
+  font-size: 15px;
+  color: #666;
+  font-weight: 500;
+  font-family: myFont1;
+}
+#Sidnav .Divider {
+  height: 1px;
+  background: #eee;
+  margin: 20px 0;
+}
 
 #HomeBanner {
   width: 100%;
-  padding: 25px 0;
+  padding-top: 60px;
   background: transparent;
 }
 #HomeBanner .HomeBannerMain {
@@ -386,6 +862,11 @@
   justify-content: center;
   height: 100%;
   overflow: hidden;
+}
+@media (max-width: 992px) {
+  #HomeBanner .HomeBannerRight {
+    width: 100%;
+  }
 }
 #HomeBanner .HomeBannerRight .ImageWrapper {
   width: 100%;
@@ -1203,6 +1684,136 @@
   font-size: 12px;
   color: #999;
   margin-top: 2px;
+}
+
+#HomeTeacher {
+  width: 100%;
+  padding: 100px 0;
+  background-color: #fff;
+}
+#HomeTeacher .HomeTeacherHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 50px;
+}
+#HomeTeacher .HomeTeacherHeader .badge {
+  border: 1px solid #e0e0e0;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+#HomeTeacher .HomeTeacherHeader h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  margin-top: 20px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #111;
+}
+#HomeTeacher .HomeTeacherHeader .nav-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+#HomeTeacher .HomeTeacherHeader .nav-buttons .nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--primaryColor);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.3s ease;
+}
+#HomeTeacher .HomeTeacherHeader .nav-buttons .nav-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.05);
+}
+#HomeTeacher .HomeTeacherMain .card {
+  height: 480px;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+}
+#HomeTeacher .HomeTeacherMain .blue-card {
+  background-color: var(--primaryColor);
+  color: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+#HomeTeacher .HomeTeacherMain .blue-card h3 {
+  font-size: 24px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+#HomeTeacher .HomeTeacherMain .blue-card .role {
+  font-size: 16px;
+  opacity: 0.8;
+  margin-bottom: 30px;
+}
+#HomeTeacher .HomeTeacherMain .blue-card .desc {
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: 0.8;
+}
+#HomeTeacher .HomeTeacherMain .blue-card .social-links {
+  margin-top: auto;
+  display: flex;
+  gap: 20px;
+  font-size: 20px;
+}
+#HomeTeacher .HomeTeacherMain .blue-card .social-links svg {
+  cursor: pointer;
+  transition: 0.3s;
+}
+#HomeTeacher .HomeTeacherMain .blue-card .social-links svg:hover {
+  opacity: 0.7;
+}
+#HomeTeacher .HomeTeacherMain .image-card {
+  position: relative;
+  background-color: #f0f0f0;
+}
+#HomeTeacher .HomeTeacherMain .image-card .img-placeholder {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+#HomeTeacher .HomeTeacherMain .image-card .img-placeholder img {
+  width: 100% !important;
+  height: 100% !important;
+  -o-object-fit: cover;
+     object-fit: cover;
+  display: block;
+}
+#HomeTeacher .HomeTeacherMain .image-card .card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 40px 20px 30px;
+  text-align: center;
+  color: white;
+  z-index: 2;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+}
+#HomeTeacher .HomeTeacherMain .image-card .card-info h4 {
+  font-size: 20px;
+  margin: 0;
+  font-weight: 600;
+}
+#HomeTeacher .HomeTeacherMain .image-card .card-info p {
+  font-size: 14px;
+  margin-top: 5px;
+  opacity: 0.9;
 }
 
 #Footer {
