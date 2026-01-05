@@ -1,22 +1,36 @@
 .courseCard {
   width: 100%;
-  max-width: 290px;
-  background:#f2f6fc;
+  // max-width: 290px;
+  background: #f2f6fc;
   border-radius: 16px;
   padding: 10px;
   overflow: hidden;
   cursor: pointer;
   transition: 0.3s ease;
   border: 1px solid #f2f6fc;
-
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+       padding: 5px;
+      border-radius: 15px;
+  }
+  @media (max-width: 480px) {
+        padding: 5px;
+        border-radius: 15px;
+  }
 }
 .courseImgWrapper {
   width: 100%;
- aspect-ratio: 4 / 5; 
+  aspect-ratio: 4 / 5;
   border-radius: 12px;
   overflow: hidden;
   position: relative;
-
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+  }
+  @media (max-width: 480px) {
+  }
   .courseImage {
     width: 100%;
     height: 100%;
@@ -34,19 +48,46 @@
     cursor: pointer;
     display: flex;
     align-items: center;
-    
+    @media (max-width: 1024px) {
+    }
+    @media (max-width: 768px) {
+        padding: 5px;
+        top: 5px;
+        right: 5px;
+
+    }
+    @media (max-width: 480px) {
+            padding: 5px;
+        top: 5px;
+        right: 5px;
+    }
+
     svg {
       color: var(--primaryColor);
       font-size: 15px;
+      @media (max-width: 1024px) {
+      }
+      @media (max-width: 768px) {
+        font-size: 12px;
+      }
+      @media (max-width: 480px) {
+        font-size: 12px;
+      }
     }
   }
 }
-.CourseTitleBoxMain{
+.CourseTitleBoxMain {
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  .CourseTitleBox{
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+  }
+  @media (max-width: 480px) {
+  }
+  .CourseTitleBox {
     .courseTitle {
       font-size: 16px;
       font-weight: 600;
@@ -54,24 +95,44 @@
       color: var(--textColor);
       line-height: 1.3;
       font-family: myFont1;
+      @media (max-width: 1024px) {
+      }
+      @media (max-width: 768px) {
+            margin-top: 10px;
+            font-size: 13px;
+      }
+      @media (max-width: 480px) {
+            margin-top: 10px;
+            font-size: 12px;
+      }
     }
   }
-  .CourseLive{
+  .CourseLive {
     display: flex;
     align-items: center;
     gap: 5px;
-    svg{
+    @media (max-width: 1024px) {
+    }
+    @media (max-width: 768px) {
+    }
+    @media (max-width: 480px) {
+    }
+    svg {
       color: red;
     }
-    p{
+    p {
       font-size: 14px;
       font-family: myFont1;
       font-weight: 500;
-
+      @media (max-width: 1024px) {
+      }
+      @media (max-width: 768px) {
+      }
+      @media (max-width: 480px) {
+      }
     }
   }
 }
-
 
 .courseMeta {
   margin: 8px 0;
@@ -82,19 +143,42 @@
   font-size: 13px;
   font-family: myFont1;
   font-weight: 600;
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+    gap: 10px;
+    margin: 7px 0;
+    font-size: 10px;
+
+  }
+  @media (max-width: 480px) {
+      gap: 10px;
+    margin: 7px 0;
+    font-size: 10px;
+  }
   span {
     display: flex;
     align-items: center;
     gap: 5px;
-
+    @media (max-width: 1024px) {
+    }
+    @media (max-width: 768px) {
+    }
+    @media (max-width: 480px) {
+    }
 
     svg {
       font-size: 15px;
       color: var(--primaryColor);
+      @media (max-width: 1024px) {
+      }
+      @media (max-width: 768px) {
+      }
+      @media (max-width: 480px) {
+      }
     }
   }
 }
-
 
 .courseLiveDate {
   margin: 8px 0;
@@ -105,15 +189,32 @@
   font-size: 13px;
   font-family: myFont1;
   font-weight: 600;
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+  }
+  @media (max-width: 480px) {
+  }
   span {
     display: flex;
     align-items: center;
     gap: 5px;
-
+    @media (max-width: 1024px) {
+    }
+    @media (max-width: 768px) {
+    }
+    @media (max-width: 480px) {
+    }
 
     svg {
       font-size: 15px;
       color: var(--primaryColor);
+      @media (max-width: 1024px) {
+      }
+      @media (max-width: 768px) {
+      }
+      @media (max-width: 480px) {
+      }
     }
   }
 }
@@ -122,17 +223,38 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+  }
+  @media (max-width: 480px) {
+  }
   .priceBox {
     display: flex;
     align-items: center;
     gap: 8px;
-
+    @media (max-width: 1024px) {
+    }
+    @media (max-width: 768px) {
+       gap: 5px;
+    }
+    @media (max-width: 480px) {
+      gap: 5px;
+    }
     h4 {
       font-size: 18px;
       font-weight: 700;
       color: var(--primaryColor);
       font-family: myFont1;
+      @media (max-width: 1024px) {
+      }
+      @media (max-width: 768px) {
+            font-size: 15px;
+      }
+      @media (max-width: 480px) {
+            font-size: 14px;
+
+      }
     }
 
     .old {
@@ -140,6 +262,14 @@
       text-decoration: line-through;
       color: #888;
       font-family: myFont1;
+      @media (max-width: 1024px) {
+      }
+      @media (max-width: 768px) {
+         font-size: 12px;
+      }
+      @media (max-width: 480px) {
+         font-size: 12px;
+      }
     }
   }
 
@@ -148,13 +278,32 @@
     gap: 10px;
     font-size: 13px;
     color: var(--textColor);
+    @media (max-width: 1024px) {
+    }
+    @media (max-width: 768px) {
+      gap: 6px;
+      font-size: 10px;
 
-    .RateBox, .RateUsers {
+    }
+    @media (max-width: 480px) {
+       gap: 6px;
+       font-size: 10px;
+
+    }
+
+    .RateBox,
+    .RateUsers {
       display: flex;
       align-items: center;
       gap: 4px;
       font-family: myFont1;
       font-weight: 600;
+      @media (max-width: 1024px) {
+      }
+      @media (max-width: 768px) {
+      }
+      @media (max-width: 480px) {
+      }
       svg {
         color: #e9b10f;
       }
@@ -172,23 +321,35 @@
   justify-content: space-between;
   margin-top: 14px;
   gap: 5px;
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+  }
+  @media (max-width: 480px) {
+  }
 }
 
 .TutorBox {
   display: flex;
   align-items: center;
   gap: 8px;
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+  }
+  @media (max-width: 480px) {
+  }
 }
 
-.TutorImg{
-width: 20px !important;
+.TutorImg {
+  width: 20px !important;
   height: 20px !important;
- img {
-width: 100%;
-height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 }
 
 .TutorDetails {
@@ -201,6 +362,14 @@ height: 100%;
     color: #888;
     font-family: myFont1;
     font-weight: 600;
+    @media (max-width: 1024px) {
+    }
+    @media (max-width: 768px) {
+      font-size: 8px;
+
+    }
+    @media (max-width: 480px) {
+    }
   }
 
   .TutorName {
@@ -208,6 +377,13 @@ height: 100%;
     font-weight: 600;
     color: var(--textColor);
     font-family: myFont1;
+    @media (max-width: 1024px) {
+    }
+    @media (max-width: 768px) {
+      font-size: 10px;
+    }
+    @media (max-width: 480px) {
+    }
   }
 }
 .viewBtn {
@@ -223,6 +399,16 @@ height: 100%;
   align-items: center;
   justify-content: center;
   font-family: myFont1;
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+    border-radius: 5px;
+    padding: 5px 10px;
+    font-size: 12px;
+
+  }
+  @media (max-width: 480px) {
+  }
 
   &:hover {
     background: var(--primaryColor);
@@ -235,6 +421,12 @@ height: 100%;
   border-top-color: #ffffff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
+  @media (max-width: 1024px) {
+  }
+  @media (max-width: 768px) {
+  }
+  @media (max-width: 480px) {
+  }
 }
 
 @keyframes spin {

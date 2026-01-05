@@ -25,6 +25,7 @@ import { usePathname } from "next/navigation";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { RiLoginCircleLine, RiUserLine } from "react-icons/ri";
 import { IoPeopleOutline, IoCartOutline } from "react-icons/io5";
+import NavSearchOverlay from "./NavSearchOverlay";
 
 const Nav = () => {
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -36,7 +37,7 @@ const Nav = () => {
   const searchRef = useRef(null);
   const path = usePathname();
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
-
+const [isSearchOpen, setIsSearchOpen] = useState(false);
   // Outside Click Close
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -141,9 +142,9 @@ const Nav = () => {
 
           <div className="NavRightBox">
             <div className="searchCartWishlistBox">
-              <div className="SearchIcon">
-                <BiSearch />
-              </div>
+              <div className="SearchIconTrigger" onClick={() => setIsSearchOpen(true)}>
+                  <BiSearch />
+                </div>
 
               <Link href="/cart" className="CartIcon">
                 <IoCartOutline />
@@ -230,6 +231,14 @@ const Nav = () => {
         </div>
       </div>
     </nav>
+
+    <NavSearchOverlay
+        isOpen={isSearchOpen} 
+        onClose={() => setIsSearchOpen(false)} 
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
+
     <Sidnav isOpen={isSideNavOpen} onClose={() => setIsSideNavOpen(false)} />
     </>
   );

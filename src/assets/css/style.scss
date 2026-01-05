@@ -27,6 +27,9 @@
             }
             .NavLogo {
                 width: 100px;
+                @media (max-width: 768px) {
+                    width: 75px;
+                }
                 .logoImg {
                     width: 100%;
                     height: 100%;
@@ -480,6 +483,9 @@
     position: fixed;
     top: 80px;
     z-index: 100;
+    @media (max-width: 1024px) {
+        display: none;
+    }
     .SubNavMain {
         .SubNavLinks {
             .mainUl {
@@ -601,56 +607,55 @@
         left: 0;
     }
     .UserProfileBox {
-    cursor: pointer;
-    align-items: center;
-    gap: 15px;
-    display: flex;
-    position: relative;
-    margin-bottom: 20px;
-
-    .ProfileImageBox {
-        width: 55px;
-        height: 55px;
-        border-radius: 50%;
-        overflow: hidden;
-
-        .UserImage {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-    }
-    .UserNameDropIconBox {
-        display: flex;
+        cursor: pointer;
         align-items: center;
-        gap: 10px;
-        .UserNameBox {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            line-height: 1.1;
-            flex-direction: column;
-            .UserWelcome {
-                font-size: 14px;
-                color: #666;
-                font-family: myFont1;
-            }
+        gap: 15px;
+        display: flex;
+        position: relative;
+        margin-bottom: 20px;
 
-            .UserName {
-                font-size: 16px;
-                color: #000;
-                font-weight: 600;
-                font-family: myFont1;
+        .ProfileImageBox {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            overflow: hidden;
+
+            .UserImage {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
             }
         }
-    
-    }
+        .UserNameDropIconBox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            .UserNameBox {
+                display: flex;
+                align-items: flex-start;
+                gap: 8px;
+                line-height: 1.1;
+                flex-direction: column;
+                .UserWelcome {
+                    font-size: 14px;
+                    color: #666;
+                    font-family: myFont1;
+                }
+
+                .UserName {
+                    font-size: 16px;
+                    color: #000;
+                    font-weight: 600;
+                    font-family: myFont1;
+                }
+            }
+        }
     }
     .SideNavHeader {
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 10px;
-    display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 10px;
+        display: flex;
         h3 {
             font-size: 20px;
             color: var(--primaryColor);
@@ -659,7 +664,6 @@
             font-size: 24px;
             cursor: pointer;
             color: var(--primaryColor);
-
         }
     }
 
@@ -738,6 +742,15 @@
     // padding: 25px 0;
     padding-top: 60px;
     background: transparent;
+    @media (max-width: 1024px) {
+        padding-top: 40px;
+    }
+    @media (max-width: 768px) {
+        padding-top: 30px;
+    }
+    @media (max-width: 480px) {
+        padding-top: 20px;
+    }
     .HomeBannerMain {
         width: 100%;
         background: #ffffff;
@@ -748,7 +761,7 @@
         @media (max-width: 992px) {
             flex-direction: column-reverse;
             text-align: center;
-            padding: 30px 20px;
+            // padding: 30px 20px;
         }
     }
     .HomeBannerLeft {
@@ -789,6 +802,7 @@
 
                     @media (max-width: 480px) {
                         font-size: 30px;
+                        text-align: start;
                     }
                 }
             }
@@ -797,6 +811,9 @@
                     color: #fff;
                     font-size: 15px;
                     margin-bottom: 10px;
+                    @media (max-width: 480px) {
+                        text-align: start;
+                    }
                 }
             }
             .HomeBannerBtn {
@@ -824,6 +841,9 @@
             gap: 20px;
             // flex: 1;
             background: transparent;
+            @media (max-width: 480px) {
+                flex-direction: column;
+            }
             .HomeBannerBottomLeft {
                 width: 49%;
                 display: flex;
@@ -834,6 +854,9 @@
                 border-radius: 20px;
                 padding: 10px 18px;
                 height: 110px;
+                @media (max-width: 480px) {
+                    width: 100%;
+                }
                 .StatItem {
                     text-align: center;
 
@@ -860,6 +883,9 @@
                 flex-direction: column;
                 height: 110px;
                 justify-content: center;
+                @media (max-width: 480px) {
+                    width: 100%;
+                }
                 .StarRatingBox {
                     display: flex;
                     align-items: center;
@@ -961,6 +987,15 @@
 #HomeLiveCourse {
     width: 100%;
     padding-top: 100px;
+    @media (max-width: 1024px) {
+        padding-top: 60px;
+    }
+    @media (max-width: 768px) {
+        padding-top: 40px;
+    }
+    @media (max-width: 480px) {
+        padding-top: 30px;
+    }
     .HomeLiveCourseMain {
         width: 100%;
         padding: 0;
@@ -976,11 +1011,17 @@
                 // font-weight: 800;
                 line-height: 1.2;
                 font-family: myFont2;
+                @media (max-width: 480px) {
+                    font-size: 28px;
+                }
                 span {
                     color: var(--primaryColor);
                     font-size: 48px;
                     line-height: 1.2;
                     font-family: myFont2;
+                    @media (max-width: 480px) {
+                        font-size: 28px;
+                    }
                 }
             }
 
@@ -1012,7 +1053,7 @@
             width: 100%;
             position: relative;
             margin-top: 30px;
-
+            padding-bottom: 40px;
             .LiveCourseSwiper {
                 width: 100%;
             }
@@ -1089,7 +1130,10 @@
                     text-align: center;
                     border-bottom-right-radius: 15px;
                     box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
-
+                    @media (max-width: 480px) {
+                        right: 0;
+                        border-bottom-right-radius: 0px;
+                    }
                     .TimeTitle {
                         font-size: 11px;
                         font-weight: 700;
@@ -1103,7 +1147,9 @@
                         display: flex;
                         align-items: flex-end;
                         gap: 16px;
-
+                        @media (max-width: 480px) {
+                            justify-content: space-between;
+                        }
                         .TimerItem {
                             text-align: center;
                             min-width: 52px;
@@ -1123,7 +1169,9 @@
                                 align-items: center;
                                 justify-content: center;
                                 overflow: hidden;
-
+                                @media (max-width: 480px) {
+                                    height: 40px;
+                                }
                                 &::before {
                                     content: "";
                                     position: absolute;
@@ -1140,6 +1188,9 @@
                                     font-family: myFont2;
                                     color: #000;
                                     line-height: 1;
+                                    @media (max-width: 480px) {
+                                        font-size: 18px;
+                                    }
                                 }
                             }
 
@@ -1151,6 +1202,9 @@
                                 letter-spacing: 0.06em;
                                 margin: 0;
                                 font-family: myFont2;
+                                @media (max-width: 480px) {
+                                    font-size: 16px;
+                                }
                             }
                         }
                     }
@@ -1208,7 +1262,15 @@
     width: 100%;
     padding: 100px 0;
     position: relative;
-
+    @media (max-width: 1024px) {
+        padding: 60px 0px;
+    }
+    @media (max-width: 768px) {
+        padding: 40px 0px;
+    }
+    @media (max-width: 480px) {
+        padding: 30px 0px;
+    }
     .HomeCourseMain {
         width: 100%;
         position: relative;
@@ -1257,6 +1319,15 @@
     width: 100%;
     padding: 100px 0;
     position: relative;
+    @media (max-width: 1024px) {
+        padding: 60px 0px;
+    }
+    @media (max-width: 768px) {
+        padding: 40px 0px;
+    }
+    @media (max-width: 480px) {
+        padding: 30px 0px;
+    }
     .PopularHead {
         width: 100%;
         display: flex;
@@ -1269,6 +1340,12 @@
             // font-weight: 700;
             color: #000;
             font-family: myFont2;
+            @media (max-width: 768px) {
+                font-size: 26px;
+            }
+            @media (max-width: 480px) {
+                font-size: 20px;
+            }
         }
 
         .viewAllBtn {
@@ -1280,7 +1357,9 @@
             cursor: pointer;
             transition: 0.3s;
             font-family: myFont1;
-
+            @media (max-width: 480px) {
+                font-size: 14px;
+            }
             &:hover {
                 text-decoration: underline;
             }
@@ -1293,6 +1372,9 @@
         margin-bottom: 25px;
         overflow-x: auto;
         padding-bottom: 6px;
+        @media (max-width: 480px) {
+            margin-bottom: 15px;
+        }
 
         .filterBtn {
             padding: 6px 15px;
@@ -1304,6 +1386,9 @@
             color: #555;
             white-space: nowrap;
             font-family: myFont1;
+            @media (max-width: 480px) {
+                padding: 4px 15px;
+            }
 
             &:hover,
             &.active {
@@ -1331,7 +1416,10 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-
+            @media(max-width:768px){
+                 width: 35px;
+                 height: 35px;
+            }
             svg {
                 font-size: 18px;
                 color: var(--primaryColor);
@@ -1348,10 +1436,16 @@
 
         .prev-btn {
             left: -20px;
+            @media (max-width: 480px) {
+                left: -12px;
+            }
         }
 
         .next-btn {
             right: -20px;
+            @media (max-width: 480px) {
+                right: -12px;
+            }
         }
     }
 }
@@ -1361,6 +1455,15 @@
     width: 100%;
     padding: 100px 0;
     position: relative;
+    @media (max-width: 1024px) {
+        padding: 60px 0px;
+    }
+    @media (max-width: 768px) {
+        padding: 40px 0px;
+    }
+    @media (max-width: 480px) {
+        padding: 30px 0px;
+    }
     .HomeTrendingHead {
         width: 100%;
         display: flex;
@@ -1369,10 +1472,16 @@
         margin-bottom: 15px;
 
         h2 {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
             color: #000;
             font-family: myFont1;
+            @media (max-width: 768px) {
+                font-size: 26px;
+            }
+            @media (max-width: 480px) {
+                font-size: 20px;
+            }
         }
 
         .viewAllBtn {
@@ -1384,7 +1493,9 @@
             cursor: pointer;
             transition: 0.3s;
             font-family: myFont1;
-
+            @media (max-width: 480px) {
+                font-size: 14px;
+            }
             &:hover {
                 text-decoration: underline;
             }
@@ -1409,7 +1520,10 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-
+            @media(max-width:768px){
+                 width: 35px;
+                 height: 35px;
+            }
             svg {
                 font-size: 18px;
                 color: var(--primaryColor);
@@ -1426,10 +1540,16 @@
 
         .prev-btn {
             left: -20px;
+            @media (max-width: 480px) {
+                left: -12px;
+            }
         }
 
         .next-btn {
             right: -20px;
+            @media (max-width: 480px) {
+                right: -12px;
+            }
         }
     }
 }
@@ -1440,6 +1560,12 @@
     padding: 50px 0;
     position: relative;
     background: var(--primaryColor);
+    @media (max-width: 768px) {
+        padding: 40px 0px;
+    }
+    @media (max-width: 480px) {
+        padding: 30px 0px;
+    }
     .HomeLiveClassHead {
         width: 100%;
         display: flex;
@@ -1448,10 +1574,16 @@
         margin-bottom: 15px;
 
         h2 {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
             color: #fff;
             font-family: myFont1;
+            @media (max-width: 768px) {
+                font-size: 26px;
+            }
+            @media (max-width: 480px) {
+                font-size: 20px;
+            }
         }
 
         .viewAllBtn {
@@ -1463,6 +1595,9 @@
             cursor: pointer;
             transition: 0.3s;
             font-family: myFont1;
+            @media (max-width: 480px) {
+                font-size: 14px;
+            }
 
             &:hover {
                 text-decoration: underline;
@@ -1484,18 +1619,31 @@
                     display: flex;
                     flex-direction: column;
                     background: #fff;
+                       @media (max-width: 768px) {
+                        aspect-ratio: 4 / 5;
+                    }
+                    @media (max-width: 480px) {
+                        aspect-ratio: 4 / 5;
+                    }
                     .courseTitle {
                         color: #000;
-                        margin-top: 12px;
+                        margin-top: 10px;
                         font-family: myFont1;
                         font-size: 28px;
                         font-weight: 700;
                         line-height: 1.3;
+                        @media (max-width: 768px) {
+                            font-size: 18px;
+                        }
+                        @media (max-width: 480px) {
+                            font-size: 16px;
+                        }
                     }
                     .CourseLive {
                         display: flex;
                         align-items: center;
                         gap: 5px;
+                        margin-top: 10px;
                         svg {
                             color: red;
                         }
@@ -1504,6 +1652,9 @@
                             font-family: myFont1;
                             font-weight: 500;
                             color: #000;
+                        @media (max-width: 768px) {
+                            font-size: 12px;
+                        }
                         }
                     }
                     .courseLiveDate {
@@ -1515,6 +1666,9 @@
                         font-size: 13px;
                         font-family: myFont1;
                         font-weight: 600;
+                         @media (max-width: 768px) {
+                            font-size: 10px;
+                        }
                         span {
                             display: flex;
                             align-items: center;
@@ -1522,7 +1676,11 @@
 
                             svg {
                                 font-size: 15px;
-                                color: #000;
+                                color: var(--primaryColor); 
+                            @media (max-width: 768px) {
+                            font-size: 10px;
+                        }
+
                             }
                         }
                     }
@@ -1533,8 +1691,12 @@
                     }
 
                     .TutorImg {
-                        width: 28px !important;
-                        height: 28px !important;
+                        width: 28px ;
+                        height: 28px;
+                        @media (max-width: 768px) {
+                            width: 20px;
+                            height: 20px;
+                        }
                         img {
                             width: 100%;
                             height: 100%;
@@ -1553,6 +1715,9 @@
                             color: #000;
                             font-family: myFont1;
                             font-weight: 600;
+                            @media (max-width: 768px) {
+                            font-size: 10px;
+                        }
                         }
 
                         .TutorName {
@@ -1560,6 +1725,9 @@
                             font-weight: 600;
                             color: #000;
                             font-family: myFont1;
+                         @media (max-width: 768px) {
+                            font-size: 12px;
+                        }
                         }
                     }
                 }
@@ -1579,7 +1747,10 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-
+            @media(max-width:768px){
+                 width: 35px;
+                 height: 35px;
+            }
             svg {
                 font-size: 18px;
                 color: var(--primaryColor);
@@ -1596,10 +1767,16 @@
 
         .prev-btn {
             left: -20px;
+            @media (max-width: 480px) {
+                left: -12px;
+            }
         }
 
         .next-btn {
             right: -20px;
+            @media (max-width: 480px) {
+                right: -12px;
+            }
         }
     }
 }
@@ -1609,6 +1786,15 @@
     width: 100%;
     padding: 100px 0;
     position: relative;
+    @media (max-width: 1024px) {
+        padding: 60px 0px;
+    }
+    @media (max-width: 768px) {
+        padding: 40px 0px;
+    }
+    @media (max-width: 480px) {
+        padding: 30px 0px;
+    }
     .HomeNewHead {
         width: 100%;
         display: flex;
@@ -1617,10 +1803,16 @@
         margin-bottom: 15px;
 
         h2 {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
             color: #000;
             font-family: myFont1;
+            @media (max-width: 768px) {
+                font-size: 24px;
+            }
+            @media (max-width: 480px) {
+                font-size: 20px;
+            }
         }
 
         .viewAllBtn {
@@ -1632,7 +1824,9 @@
             cursor: pointer;
             transition: 0.3s;
             font-family: myFont1;
-
+            @media (max-width: 480px) {
+                font-size: 14px;
+            }
             &:hover {
                 text-decoration: underline;
             }
@@ -1657,7 +1851,10 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-
+            @media(max-width:768px){
+                 width: 35px;
+                 height: 35px;
+            }
             svg {
                 font-size: 18px;
                 color: var(--primaryColor);
@@ -1674,10 +1871,16 @@
 
         .prev-btn {
             left: -20px;
+            @media (max-width: 480px) {
+                left: -12px;
+            }
         }
 
         .next-btn {
             right: -20px;
+            @media (max-width: 480px) {
+                right: -12px;
+            }
         }
     }
 }
@@ -1687,6 +1890,15 @@
     width: 100%;
     padding: 100px 0;
     position: relative;
+    @media (max-width: 1024px) {
+        padding: 60px 0px;
+    }
+    @media (max-width: 768px) {
+        padding: 40px 0px;
+    }
+    @media (max-width: 480px) {
+        padding: 30px 0px;
+    }
     .HomeTopRatedHead {
         width: 100%;
         display: flex;
@@ -1695,10 +1907,16 @@
         margin-bottom: 15px;
 
         h2 {
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
             color: #000;
             font-family: myFont1;
+            @media (max-width: 768px) {
+                font-size: 24px;
+            }
+            @media (max-width: 480px) {
+                font-size: 20px;
+            }
         }
 
         .viewAllBtn {
@@ -1710,7 +1928,9 @@
             cursor: pointer;
             transition: 0.3s;
             font-family: myFont1;
-
+            @media (max-width: 480px) {
+                font-size: 14px;
+            }
             &:hover {
                 text-decoration: underline;
             }
@@ -1735,7 +1955,10 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-
+            @media(max-width:768px){
+                 width: 35px;
+                 height: 35px;
+            }
             svg {
                 font-size: 18px;
                 color: var(--primaryColor);
@@ -1752,10 +1975,16 @@
 
         .prev-btn {
             left: -20px;
+            @media (max-width: 480px) {
+                left: -12px;
+            }
         }
 
         .next-btn {
             right: -20px;
+            @media (max-width: 480px) {
+                right: -12px;
+            }
         }
     }
 }
@@ -1764,27 +1993,46 @@
 #HomeTestimonial {
     width: 100%;
     padding: 100px 0;
-
+    @media (max-width: 1024px) {
+        padding: 60px 0px;
+    }
+    @media (max-width: 768px) {
+        padding: 40px 0px;
+    }
+    @media (max-width: 480px) {
+        padding: 30px 0px;
+    }
     .TestimonialHead {
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
         margin-bottom: 40px;
-
-        .SectionEyebrow {
+        @media (max-width: 480px) {
+            margin-bottom: 20px;
+        }
+        .badge {
+            border: 1px solid #e0e0e0;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 12px;
+            letter-spacing: 1px;
+            font-weight: 500;
             text-transform: uppercase;
-            letter-spacing: 0.16em;
-            font-size: 11px;
-            color: #9ca3af;
-            margin-bottom: 8px;
-            font-family: myFont1;
         }
 
         h2 {
-            font-size: 36px;
+            font-size: 28px;
             font-weight: 700;
             color: #000;
             font-family: myFont1;
+            margin-top: 20px;
+            @media (max-width: 768px) {
+                font-size: 24px;
+            }
+            @media (max-width: 480px) {
+                font-size: 20px;
+                margin-top: 10px;
+            }
 
             span {
                 color: var(--primaryColor);
@@ -1797,8 +2045,8 @@
         gap: 12px;
 
         .ArrowBtn {
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: var(--primaryColor);
             border: none;
@@ -1807,7 +2055,10 @@
             justify-content: center;
             cursor: pointer;
             transition: 0.25s ease;
-
+            @media(max-width:768px){
+                 width: 35px;
+                 height: 35px;
+            }
             svg {
                 color: #fff;
                 font-size: 18px;
@@ -1829,6 +2080,9 @@
         justify-content: flex-start;
         gap: 15px;
         transition: 0.3s ease;
+        @media (max-width: 480px) {
+            padding: 20px;
+        }
     }
 
     .ProfileImg {
@@ -1882,12 +2136,23 @@
     width: 100%;
     padding: 100px 0;
     background-color: #fff;
+    @media (max-width: 1024px) {
+        padding: 60px 0px;
+    }
+    @media (max-width: 768px) {
+        padding: 40px 0px;
+    }
+    @media (max-width: 480px) {
+        padding: 30px 0px;
+    }
     .HomeTeacherHeader {
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
         margin-bottom: 50px;
-
+        @media (max-width: 480px) {
+            margin-bottom: 20px;
+        }
         .badge {
             border: 1px solid #e0e0e0;
             padding: 6px 16px;
@@ -1904,6 +2169,13 @@
             font-weight: 600;
             line-height: 1.2;
             color: #111;
+            @media (max-width: 768px) {
+                font-size: 24px;
+            }
+            @media (max-width: 480px) {
+                font-size: 20px;
+                margin-top: 10px;
+            }
         }
 
         .nav-buttons {
@@ -1912,8 +2184,8 @@
             margin-bottom: 10px;
 
             .nav-btn {
-                width: 48px;
-                height: 48px;
+                width: 40px;
+                height: 40px;
                 border-radius: 50%;
                 border: none;
                 background-color: var(--primaryColor);
@@ -1924,7 +2196,10 @@
                 cursor: pointer;
                 font-size: 18px;
                 transition: all 0.3s ease;
-
+                @media(max-width:768px){
+                 width: 35px;
+                 height: 35px;
+                 }
                 &:hover {
                     opacity: 0.9;
                     transform: scale(1.05);
@@ -1935,10 +2210,16 @@
 
     .HomeTeacherMain {
         .card {
-            height: 480px; // Card height adjusted
+            height: 480px;
             border-radius: 24px;
             overflow: hidden;
             position: relative;
+            @media (max-width: 768px) {
+                height: 370px;
+            }
+            @media (max-width: 480px) {
+                height: 320px;
+            }
         }
 
         .blue-card {
@@ -2028,163 +2309,343 @@
 #Footer {
     width: 100%;
     background: var(--primaryColor);
-    padding: 20px 0;
-
-    .FooterMain {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 40px;
-        margin-bottom: 15px;
-    }
-
-    .footerColumn {
+    padding: 60px 0;
+    color: #fff;
+    font-family: "myFont1", sans-serif;
+    .footerTopSection {
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 50px;
+        flex-wrap: wrap;
+        gap: 30px;
 
-        h4 {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            font-family: myFont1;
-            color: #fff;
-        }
-
-        .footerLogo {
-            width: 100px;
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
+        .footerSlogan {
+            flex: 1;
+            min-width: 300px;
+            h2 {
+                font-size: 32px;
+                font-weight: 500;
+                line-height: 1.2;
+                max-width: 400px;
+                @media(max-width:768px){
+                    font-size: 24px;
+                }
             }
         }
 
-        .footerTag {
-            font-size: 13px;
-            margin: 6px 0 15px;
-            font-family: myFont1;
-            color: #fff;
+        .footerNewsletter {
+            p {
+                font-size: 16px;
+                margin-bottom: 10px;
+                font-weight: 600;
+            }
+            .subscribeBox {
+                display: flex;
+                align-items: center;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.5);
+                border-radius: 50px;
+                padding: 5px 5px 5px 20px;
+                min-width: 350px;
+
+                input {
+                    background: transparent;
+                    border: none;
+                    outline: none;
+                    color: #fff;
+                    flex: 1;
+                    font-size: 14px;
+                    &::placeholder {
+                        color: rgba(255, 255, 255, 0.7);
+                    }
+                }
+
+                button {
+                    background: #f2f6fc;
+                    color: #000;
+                    border: none;
+                    padding: 10px 25px;
+                    border-radius: 50px;
+                    cursor: pointer;
+                    transition: 0.3s;
+                    &:hover {
+                        background: #f2f6fc;
+                    }
+                }
+            }
+        }
+    }
+
+    // Main Columns
+    .FooterMain {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+        padding-bottom: 40px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .footerColumn {
+        h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         ul {
             list-style: none;
             padding: 0;
-
             li {
-                margin: 8px 0;
-
+                margin-bottom: 12px;
                 a {
-                    color: #000;
-                    font-size: 14px;
-                    text-decoration: none;
-                    transition: 0.3s;
-                    font-family: myFont1;
                     color: #fff;
-
+                    text-decoration: none;
+                    font-size: 15px;
+                    opacity: 0.9;
                     &:hover {
+                        opacity: 1;
                         text-decoration: underline;
                     }
                 }
             }
         }
-    }
 
-    .subscribeBox {
-        display: flex;
-        gap: 6px;
-
-        input {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #aaa;
-            border-radius: 4px;
-            outline: none;
-        }
-
-        button {
-            padding: 8px 14px;
-            background: #fff;
-            color: var(--primaryColor);
-            font-size: 14px;
-            border-radius: 4px;
-            border: none;
-            cursor: pointer;
-
-            &:hover {
-                opacity: 0.8;
-            }
-        }
-    }
-
-    .contactRow {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        margin: 6px 0;
-        font-family: myFont1;
-        color: #fff;
-        svg {
-            font-size: 16px;
-            font-family: myFont1;
-            color: #fff;
-        }
-    }
-
-    .footerSocial {
-        display: flex;
-        gap: 10px;
-        margin-top: 10px;
-
-        a {
-            width: 30px;
-            height: 30px;
-            background: #fff;
-            color: var(--primaryColor);
-            border-radius: 50%;
+        .contactRow {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            text-decoration: none;
-            transition: 0.3s;
+            gap: 12px;
+            margin-bottom: 15px;
+            font-size: 15px;
+            svg {
+                color: #fff;
+                font-size: 18px;
+            }
+        }
 
-            &:hover {
-                opacity: 0.7;
+        .footerSocial {
+            display: flex;
+            gap: 15px;
+            a {
+                color: #fff;
+                font-size: 20px;
+                transition: 0.3s;
+                &:hover {
+                    transform: translateY(-3px);
+                }
             }
         }
     }
 
+    // Bottom Section
     .footerBottom {
-        width: 100%;
-        border-top: 1px solid #999;
+        padding-top: 20px;
         .footerBottomMain {
-            margin-top: 20px;
-            padding: 15px 0;
             display: flex;
             justify-content: space-between;
-            .footerBottomBox {
-                p {
-                    font-size: 13px;
-                    font-family: myFont1;
-                    color: #fff;
-                }
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+
+            p,
+            a {
+                font-size: 13px;
+                color: rgba(255, 255, 255, 0.7);
+                text-decoration: none;
             }
+
             .footerBottomLinks {
                 display: flex;
-                gap: 15px;
-
-                a {
-                    font-size: 13px;
-                    // color: #111;
-                    text-decoration: none;
-                    font-family: myFont1;
+                gap: 20px;
+                a:hover {
                     color: #fff;
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
                 }
             }
         }
     }
+
+    // Responsive Styles
+    @media (max-width: 992px) {
+        .FooterMain {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+        padding: 40px 0 20px;
+        .footerTopSection {
+            flex-direction: column;
+            .footerSlogan h2 {
+                font-size: 24px;
+            }
+            .footerNewsletter .subscribeBox {
+                min-width: 100%;
+            }
+        }
+        .FooterMain {
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+        .footerBottomMain {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+}
+
+//NavSearchOverlay
+.NavSearchOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #fff;
+  z-index: 10000;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease-in-out;
+
+  .SearchHeader {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    border-bottom: 1px solid #eee;
+    gap: 20px;
+
+    .SearchInputWrapper {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: 15px;
+
+      .mainSearchIcon {
+        font-size: 24px;
+        color: #555;
+      }
+
+      input {
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 18px;
+        font-family: myFont1;
+        color: #333;
+
+        &::placeholder {
+          color: #999;
+        }
+      }
+    }
+
+    .CloseBtn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .SearchContent {
+    // max-width: 800px;
+    // margin: 0 auto;
+    // padding: 20px;
+
+    .SuggestionSection {
+      margin-bottom: 20px;
+
+      .SuggestItem {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px 0;
+        cursor: pointer;
+        transition: 0.2s;
+        border-bottom: 1px solid #f9f9f9;
+
+        svg {
+          font-size: 18px;
+          color: #777;
+        }
+
+        p {
+          font-size: 16px;
+          color: #222;
+          font-weight: 500;
+        }
+
+        &:hover {
+          background: #fbfbfb;
+          padding-left: 10px;
+        }
+      }
+    }
+
+    .RecommendedSection {
+      .CourseList {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        .SearchCourseBox {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          padding: 10px;
+          border-radius: 8px;
+          transition: 0.3s;
+          cursor: pointer;
+
+          &:hover {
+            background: #f5f5f5;
+          }
+
+          .CourseImg {
+            width: 45px;
+            height: 45px;
+            flex-shrink: 0;
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+              border-radius: 4px;
+            }
+          }
+
+          .CourseDetails {
+            h5 {
+              font-size: 15px;
+              font-weight: 600;
+              color: #111;
+              margin-bottom: 2px;
+              line-height: 1.3;
+            }
+            .instructor {
+              font-size: 13px;
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (max-width: 768px) {
+  .NavSearchOverlay {
+    .SearchHeader {
+      padding: 10px 15px;
+      .SearchInputWrapper input {
+        font-size: 16px;
+      }
+    }
+  }
 }

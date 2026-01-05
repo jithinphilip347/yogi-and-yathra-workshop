@@ -2,88 +2,83 @@
 import React from "react";
 import {
   FaFacebookF,
-  FaGoogle,
-  FaTwitter,
   FaInstagram,
+  FaYoutube,
   FaPhoneAlt,
 } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import Link from "next/link";
-import Image from "next/image";
-import FooterLogo from '../../assets/images/footer-logo.png'
 
 const Footer = () => {
   return (
     <footer id="Footer">
-      <div className="container ">
+      <div className="container">
+        <div className="footerTopSection">
+          <div className="footerSlogan">
+            <h2>Sip Your Way To Wellness One Cup At A Time.</h2>
+          </div>
+          <div className="footerNewsletter">
+            <p>Get In Touch!</p>
+            <div className="subscribeBox">
+              <input type="email" placeholder="Enter your email" />
+              <button>Subscribe</button>
+            </div>
+          </div>
+        </div>
+
         <div className="FooterMain">
-        <div className="footerColumn">
-          <Link href="/" className="footerLogo">
-          <div className="FooterLogo">
-            <Image src={FooterLogo} alt="" />
+          <div className="footerColumn">
+            <h4>CONTACT INFORMATION</h4>
+            <p className="contactRow">
+              <MdEmail /> support@teacircle.com
+            </p>
+            <p className="contactRow">
+              <FaPhoneAlt /> 1800-3232-8686
+            </p>
           </div>
-          </Link>
-        </div>
-        <div className="footerColumn">
-          <h4>Information</h4>
-          <ul>
-            <li><Link href="#">About Us</Link></li>
-            <li><Link href="#">Blog</Link></li>
-            <li><Link href="#">Testimonials</Link></li>
-          </ul>
-        </div>
 
-        <div className="footerColumn">
-          <h4>Helpful Links</h4>
-          <ul>
-            <li><Link href="#">Supports</Link></li>
-            <li><Link href="#">Terms & Conditions</Link></li>
-            <li><Link href="#">Privacy Policy</Link></li>
-          </ul>
-        </div>
+          <div className="footerColumn">
+            <h4>COMPANY</h4>
+            <ul>
+              <li><Link href="#">Features</Link></li>
+              <li><Link href="#">About Us</Link></li>
+              <li><Link href="#">Contact</Link></li>
+              <li><Link href="#">Pricing</Link></li>
+            </ul>
+          </div>
 
-        <div className="footerColumn">
-          <h4>Our Services</h4>
-          <ul>
-            <li><Link href="#">Orders</Link></li>
-            <li><Link href="#">Return & Exchange</Link></li>
-          </ul>
-        </div>
+          <div className="footerColumn">
+            <h4>HELP</h4>
+            <ul>
+              <li><Link href="#">FAQ</Link></li>
+              <li><Link href="#">Help Center</Link></li>
+              <li><Link href="#">Support</Link></li>
+            </ul>
+          </div>
 
-        <div className="footerColumn">
-          <h4>Contact Us</h4>
-          <p className="contactRow">
-            <FaPhoneAlt /> +91 9999 999 999
-          </p>
-          <p className="contactRow">
-            <MdEmail /> youremailid.com
-          </p>
-
-          <div className="footerSocial">
-            <Link href="#"><FaFacebookF /></Link>
-            <Link href="#"><FaGoogle /></Link>
-            <Link href="#"><FaTwitter /></Link>
-            <Link href="#"><FaInstagram /></Link>
+          <div className="footerColumn">
+            <h4>FOLLOW US</h4>
+            <div className="footerSocial">
+              <Link href="#"><FaFacebookF /></Link>
+              <Link href="#"><FaInstagram /></Link>
+              <Link href="#"><FaYoutube /></Link>
+            </div>
           </div>
         </div>
-        </div>
 
-
-      <div className="footerBottom">
+        {/* Bottom Section */}
+        <div className="footerBottom">
           <div className="footerBottomMain">
-                <div className="footerBottomBox">
-        <p>© 2025 company. Ltd | All Right reserved</p>
-
-                </div>
+            <div className="footerBottomBox">
+              <p>© 2025 Yogi and Yathra All Rights Reserved.</p>
+            </div>
             <div className="footerBottomLinks">
-          <Link href="#">FAQ</Link>
-          <Link href="#">Privacy</Link>
-          <Link href="#">Terms & Condition</Link>
-        </div>
+              <Link href="#">Privacy</Link>
+              <Link href="#">Terms & condition</Link>
+            </div>
           </div>
         </div>
-        
-        </div>
+      </div>
     </footer>
   );
 };

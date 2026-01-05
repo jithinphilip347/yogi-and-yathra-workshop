@@ -55,7 +55,7 @@ const HomeTestimonial = () => {
           {/* Header */}
           <div className="TestimonialHead">
             <div className="HeadLeft">
-              <span className="SectionEyebrow">OUR REVIEWS</span>
+              <span className="badge">OUR REVIEWS</span>
               <h2>
                 What Our <span>Clients</span> Say
               </h2>

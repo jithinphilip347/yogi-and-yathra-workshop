@@ -32,6 +32,11 @@
 #Nav .NavMain .LogoBox .NavLogo {
   width: 100px;
 }
+@media (max-width: 768px) {
+  #Nav .NavMain .LogoBox .NavLogo {
+    width: 75px;
+  }
+}
 #Nav .NavMain .LogoBox .NavLogo .logoImg {
   width: 100%;
   height: 100%;
@@ -445,6 +450,11 @@
   top: 80px;
   z-index: 100;
 }
+@media (max-width: 1024px) {
+  #SubNav {
+    display: none;
+  }
+}
 #SubNav .SubNavMain .SubNavLinks .mainUl {
   align-items: center;
   gap: 35px;
@@ -673,6 +683,21 @@
   padding-top: 60px;
   background: transparent;
 }
+@media (max-width: 1024px) {
+  #HomeBanner {
+    padding-top: 40px;
+  }
+}
+@media (max-width: 768px) {
+  #HomeBanner {
+    padding-top: 30px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeBanner {
+    padding-top: 20px;
+  }
+}
 #HomeBanner .HomeBannerMain {
   width: 100%;
   background: #ffffff;
@@ -685,7 +710,6 @@
   #HomeBanner .HomeBannerMain {
     flex-direction: column-reverse;
     text-align: center;
-    padding: 30px 20px;
   }
 }
 #HomeBanner .HomeBannerLeft {
@@ -726,12 +750,18 @@
 @media (max-width: 480px) {
   #HomeBanner .HomeBannerLeft .HomeBannerTopBox .HomeBannerMainTitle h2 {
     font-size: 30px;
+    text-align: start;
   }
 }
 #HomeBanner .HomeBannerLeft .HomeBannerTopBox .HomeBannerDesc p {
   color: #fff;
   font-size: 15px;
   margin-bottom: 10px;
+}
+@media (max-width: 480px) {
+  #HomeBanner .HomeBannerLeft .HomeBannerTopBox .HomeBannerDesc p {
+    text-align: start;
+  }
 }
 #HomeBanner .HomeBannerLeft .HomeBannerTopBox .HomeBannerBtn .PrimaryBtn {
   background: #fff;
@@ -755,6 +785,11 @@
   gap: 20px;
   background: transparent;
 }
+@media (max-width: 480px) {
+  #HomeBanner .HomeBannerLeft .HomeBannerBottomBox {
+    flex-direction: column;
+  }
+}
 #HomeBanner .HomeBannerLeft .HomeBannerBottomBox .HomeBannerBottomLeft {
   width: 49%;
   display: flex;
@@ -765,6 +800,11 @@
   border-radius: 20px;
   padding: 10px 18px;
   height: 110px;
+}
+@media (max-width: 480px) {
+  #HomeBanner .HomeBannerLeft .HomeBannerBottomBox .HomeBannerBottomLeft {
+    width: 100%;
+  }
 }
 #HomeBanner .HomeBannerLeft .HomeBannerBottomBox .HomeBannerBottomLeft .StatItem {
   text-align: center;
@@ -789,6 +829,11 @@
   flex-direction: column;
   height: 110px;
   justify-content: center;
+}
+@media (max-width: 480px) {
+  #HomeBanner .HomeBannerLeft .HomeBannerBottomBox .HomeBannerBottomRight {
+    width: 100%;
+  }
 }
 #HomeBanner .HomeBannerLeft .HomeBannerBottomBox .HomeBannerBottomRight .StarRatingBox {
   display: flex;
@@ -886,6 +931,21 @@
   width: 100%;
   padding-top: 100px;
 }
+@media (max-width: 1024px) {
+  #HomeLiveCourse {
+    padding-top: 60px;
+  }
+}
+@media (max-width: 768px) {
+  #HomeLiveCourse {
+    padding-top: 40px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse {
+    padding-top: 30px;
+  }
+}
 #HomeLiveCourse .HomeLiveCourseMain {
   width: 100%;
   padding: 0;
@@ -903,11 +963,21 @@
   line-height: 1.2;
   font-family: myFont2;
 }
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent h2 {
+    font-size: 28px;
+  }
+}
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent h2 span {
   color: var(--primaryColor);
   font-size: 48px;
   line-height: 1.2;
   font-family: myFont2;
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent h2 span {
+    font-size: 28px;
+  }
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent p {
   margin: 15px 0 25px;
@@ -933,6 +1003,7 @@
   width: 100%;
   position: relative;
   margin-top: 30px;
+  padding-bottom: 40px;
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseSwiper {
   width: 100%;
@@ -1005,6 +1076,12 @@
   border-bottom-right-radius: 15px;
   box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
 }
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox {
+    right: 0;
+    border-bottom-right-radius: 0px;
+  }
+}
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimeTitle {
   font-size: 11px;
   font-weight: 700;
@@ -1017,6 +1094,11 @@
   display: flex;
   align-items: flex-end;
   gap: 16px;
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid {
+    justify-content: space-between;
+  }
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem {
   text-align: center;
@@ -1038,6 +1120,11 @@
   justify-content: center;
   overflow: hidden;
 }
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard {
+    height: 40px;
+  }
+}
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard::before {
   content: "";
   position: absolute;
@@ -1054,6 +1141,11 @@
   color: #000;
   line-height: 1;
 }
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard .TimerNumber {
+    font-size: 18px;
+  }
+}
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem p {
   font-size: 20px;
   font-weight: 600;
@@ -1062,6 +1154,11 @@
   letter-spacing: 0.06em;
   margin: 0;
   font-family: myFont2;
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem p {
+    font-size: 16px;
+  }
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .BookBtn {
   position: absolute;
@@ -1106,6 +1203,21 @@
   padding: 100px 0;
   position: relative;
 }
+@media (max-width: 1024px) {
+  #HomeCourse {
+    padding: 60px 0px;
+  }
+}
+@media (max-width: 768px) {
+  #HomeCourse {
+    padding: 40px 0px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeCourse {
+    padding: 30px 0px;
+  }
+}
 #HomeCourse .HomeCourseMain {
   width: 100%;
   position: relative;
@@ -1147,6 +1259,21 @@
   padding: 100px 0;
   position: relative;
 }
+@media (max-width: 1024px) {
+  #HomePopular {
+    padding: 60px 0px;
+  }
+}
+@media (max-width: 768px) {
+  #HomePopular {
+    padding: 40px 0px;
+  }
+}
+@media (max-width: 480px) {
+  #HomePopular {
+    padding: 30px 0px;
+  }
+}
 #HomePopular .PopularHead {
   width: 100%;
   display: flex;
@@ -1159,6 +1286,16 @@
   color: #000;
   font-family: myFont2;
 }
+@media (max-width: 768px) {
+  #HomePopular .PopularHead h2 {
+    font-size: 26px;
+  }
+}
+@media (max-width: 480px) {
+  #HomePopular .PopularHead h2 {
+    font-size: 20px;
+  }
+}
 #HomePopular .PopularHead .viewAllBtn {
   background: transparent;
   border: none;
@@ -1168,6 +1305,11 @@
   cursor: pointer;
   transition: 0.3s;
   font-family: myFont1;
+}
+@media (max-width: 480px) {
+  #HomePopular .PopularHead .viewAllBtn {
+    font-size: 14px;
+  }
 }
 #HomePopular .PopularHead .viewAllBtn:hover {
   text-decoration: underline;
@@ -1179,6 +1321,11 @@
   overflow-x: auto;
   padding-bottom: 6px;
 }
+@media (max-width: 480px) {
+  #HomePopular .PopularFilters {
+    margin-bottom: 15px;
+  }
+}
 #HomePopular .PopularFilters .filterBtn {
   padding: 6px 15px;
   background: #fff;
@@ -1189,6 +1336,11 @@
   color: #555;
   white-space: nowrap;
   font-family: myFont1;
+}
+@media (max-width: 480px) {
+  #HomePopular .PopularFilters .filterBtn {
+    padding: 4px 15px;
+  }
 }
 #HomePopular .PopularFilters .filterBtn:hover, #HomePopular .PopularFilters .filterBtn.active {
   background: var(--primaryColor);
@@ -1214,6 +1366,12 @@
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
   transition: 0.3s ease;
 }
+@media (max-width: 768px) {
+  #HomePopular .HomePopularMain .swiper-btn {
+    width: 35px;
+    height: 35px;
+  }
+}
 #HomePopular .HomePopularMain .swiper-btn svg {
   font-size: 18px;
   color: var(--primaryColor);
@@ -1227,14 +1385,39 @@
 #HomePopular .HomePopularMain .prev-btn {
   left: -20px;
 }
+@media (max-width: 480px) {
+  #HomePopular .HomePopularMain .prev-btn {
+    left: -12px;
+  }
+}
 #HomePopular .HomePopularMain .next-btn {
   right: -20px;
+}
+@media (max-width: 480px) {
+  #HomePopular .HomePopularMain .next-btn {
+    right: -12px;
+  }
 }
 
 #HomeTrending {
   width: 100%;
   padding: 100px 0;
   position: relative;
+}
+@media (max-width: 1024px) {
+  #HomeTrending {
+    padding: 60px 0px;
+  }
+}
+@media (max-width: 768px) {
+  #HomeTrending {
+    padding: 40px 0px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeTrending {
+    padding: 30px 0px;
+  }
 }
 #HomeTrending .HomeTrendingHead {
   width: 100%;
@@ -1244,10 +1427,20 @@
   margin-bottom: 15px;
 }
 #HomeTrending .HomeTrendingHead h2 {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   color: #000;
   font-family: myFont1;
+}
+@media (max-width: 768px) {
+  #HomeTrending .HomeTrendingHead h2 {
+    font-size: 26px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeTrending .HomeTrendingHead h2 {
+    font-size: 20px;
+  }
 }
 #HomeTrending .HomeTrendingHead .viewAllBtn {
   background: transparent;
@@ -1258,6 +1451,11 @@
   cursor: pointer;
   transition: 0.3s;
   font-family: myFont1;
+}
+@media (max-width: 480px) {
+  #HomeTrending .HomeTrendingHead .viewAllBtn {
+    font-size: 14px;
+  }
 }
 #HomeTrending .HomeTrendingHead .viewAllBtn:hover {
   text-decoration: underline;
@@ -1281,6 +1479,12 @@
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
   transition: 0.3s ease;
 }
+@media (max-width: 768px) {
+  #HomeTrending .HomeTrendingMain .swiper-btn {
+    width: 35px;
+    height: 35px;
+  }
+}
 #HomeTrending .HomeTrendingMain .swiper-btn svg {
   font-size: 18px;
   color: var(--primaryColor);
@@ -1294,8 +1498,18 @@
 #HomeTrending .HomeTrendingMain .prev-btn {
   left: -20px;
 }
+@media (max-width: 480px) {
+  #HomeTrending .HomeTrendingMain .prev-btn {
+    left: -12px;
+  }
+}
 #HomeTrending .HomeTrendingMain .next-btn {
   right: -20px;
+}
+@media (max-width: 480px) {
+  #HomeTrending .HomeTrendingMain .next-btn {
+    right: -12px;
+  }
 }
 
 #HomeLiveClass {
@@ -1303,6 +1517,16 @@
   padding: 50px 0;
   position: relative;
   background: var(--primaryColor);
+}
+@media (max-width: 768px) {
+  #HomeLiveClass {
+    padding: 40px 0px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeLiveClass {
+    padding: 30px 0px;
+  }
 }
 #HomeLiveClass .HomeLiveClassHead {
   width: 100%;
@@ -1312,10 +1536,20 @@
   margin-bottom: 15px;
 }
 #HomeLiveClass .HomeLiveClassHead h2 {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   color: #fff;
   font-family: myFont1;
+}
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassHead h2 {
+    font-size: 26px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeLiveClass .HomeLiveClassHead h2 {
+    font-size: 20px;
+  }
 }
 #HomeLiveClass .HomeLiveClassHead .viewAllBtn {
   background: transparent;
@@ -1326,6 +1560,11 @@
   cursor: pointer;
   transition: 0.3s;
   font-family: myFont1;
+}
+@media (max-width: 480px) {
+  #HomeLiveClass .HomeLiveClassHead .viewAllBtn {
+    font-size: 14px;
+  }
 }
 #HomeLiveClass .HomeLiveClassHead .viewAllBtn:hover {
   text-decoration: underline;
@@ -1345,18 +1584,39 @@
   flex-direction: column;
   background: #fff;
 }
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard {
+    aspect-ratio: 4/5;
+  }
+}
+@media (max-width: 480px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard {
+    aspect-ratio: 4/5;
+  }
+}
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseTitle {
   color: #000;
-  margin-top: 12px;
+  margin-top: 10px;
   font-family: myFont1;
   font-size: 28px;
   font-weight: 700;
   line-height: 1.3;
 }
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseTitle {
+    font-size: 18px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseTitle {
+    font-size: 16px;
+  }
+}
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .CourseLive {
   display: flex;
   align-items: center;
   gap: 5px;
+  margin-top: 10px;
 }
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .CourseLive svg {
   color: red;
@@ -1366,6 +1626,11 @@
   font-family: myFont1;
   font-weight: 500;
   color: #000;
+}
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .CourseLive p {
+    font-size: 12px;
+  }
 }
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseLiveDate {
   margin: 8px 0;
@@ -1377,6 +1642,11 @@
   font-family: myFont1;
   font-weight: 600;
 }
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseLiveDate {
+    font-size: 10px;
+  }
+}
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseLiveDate span {
   display: flex;
   align-items: center;
@@ -1384,7 +1654,12 @@
 }
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseLiveDate span svg {
   font-size: 15px;
-  color: #000;
+  color: var(--primaryColor);
+}
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .courseLiveDate span svg {
+    font-size: 10px;
+  }
 }
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorBox {
   display: flex;
@@ -1392,8 +1667,14 @@
   gap: 8px;
 }
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorImg {
-  width: 28px !important;
-  height: 28px !important;
+  width: 28px;
+  height: 28px;
+}
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorImg {
+    width: 20px;
+    height: 20px;
+  }
 }
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorImg img {
   width: 100%;
@@ -1413,11 +1694,21 @@
   font-family: myFont1;
   font-weight: 600;
 }
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorDetails .TutorLabel {
+    font-size: 10px;
+  }
+}
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorDetails .TutorName {
   font-size: 15px;
   font-weight: 600;
   color: #000;
   font-family: myFont1;
+}
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorDetails .TutorName {
+    font-size: 12px;
+  }
 }
 #HomeLiveClass .HomeLiveClassMain .swiper-btn {
   width: 45px;
@@ -1434,6 +1725,12 @@
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
   transition: 0.3s ease;
 }
+@media (max-width: 768px) {
+  #HomeLiveClass .HomeLiveClassMain .swiper-btn {
+    width: 35px;
+    height: 35px;
+  }
+}
 #HomeLiveClass .HomeLiveClassMain .swiper-btn svg {
   font-size: 18px;
   color: var(--primaryColor);
@@ -1447,14 +1744,39 @@
 #HomeLiveClass .HomeLiveClassMain .prev-btn {
   left: -20px;
 }
+@media (max-width: 480px) {
+  #HomeLiveClass .HomeLiveClassMain .prev-btn {
+    left: -12px;
+  }
+}
 #HomeLiveClass .HomeLiveClassMain .next-btn {
   right: -20px;
+}
+@media (max-width: 480px) {
+  #HomeLiveClass .HomeLiveClassMain .next-btn {
+    right: -12px;
+  }
 }
 
 #HomeNew {
   width: 100%;
   padding: 100px 0;
   position: relative;
+}
+@media (max-width: 1024px) {
+  #HomeNew {
+    padding: 60px 0px;
+  }
+}
+@media (max-width: 768px) {
+  #HomeNew {
+    padding: 40px 0px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeNew {
+    padding: 30px 0px;
+  }
 }
 #HomeNew .HomeNewHead {
   width: 100%;
@@ -1464,10 +1786,20 @@
   margin-bottom: 15px;
 }
 #HomeNew .HomeNewHead h2 {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   color: #000;
   font-family: myFont1;
+}
+@media (max-width: 768px) {
+  #HomeNew .HomeNewHead h2 {
+    font-size: 24px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeNew .HomeNewHead h2 {
+    font-size: 20px;
+  }
 }
 #HomeNew .HomeNewHead .viewAllBtn {
   background: transparent;
@@ -1478,6 +1810,11 @@
   cursor: pointer;
   transition: 0.3s;
   font-family: myFont1;
+}
+@media (max-width: 480px) {
+  #HomeNew .HomeNewHead .viewAllBtn {
+    font-size: 14px;
+  }
 }
 #HomeNew .HomeNewHead .viewAllBtn:hover {
   text-decoration: underline;
@@ -1501,6 +1838,12 @@
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
   transition: 0.3s ease;
 }
+@media (max-width: 768px) {
+  #HomeNew .HomeNewMain .swiper-btn {
+    width: 35px;
+    height: 35px;
+  }
+}
 #HomeNew .HomeNewMain .swiper-btn svg {
   font-size: 18px;
   color: var(--primaryColor);
@@ -1514,14 +1857,39 @@
 #HomeNew .HomeNewMain .prev-btn {
   left: -20px;
 }
+@media (max-width: 480px) {
+  #HomeNew .HomeNewMain .prev-btn {
+    left: -12px;
+  }
+}
 #HomeNew .HomeNewMain .next-btn {
   right: -20px;
+}
+@media (max-width: 480px) {
+  #HomeNew .HomeNewMain .next-btn {
+    right: -12px;
+  }
 }
 
 #HomeTopRated {
   width: 100%;
   padding: 100px 0;
   position: relative;
+}
+@media (max-width: 1024px) {
+  #HomeTopRated {
+    padding: 60px 0px;
+  }
+}
+@media (max-width: 768px) {
+  #HomeTopRated {
+    padding: 40px 0px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeTopRated {
+    padding: 30px 0px;
+  }
 }
 #HomeTopRated .HomeTopRatedHead {
   width: 100%;
@@ -1531,10 +1899,20 @@
   margin-bottom: 15px;
 }
 #HomeTopRated .HomeTopRatedHead h2 {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 700;
   color: #000;
   font-family: myFont1;
+}
+@media (max-width: 768px) {
+  #HomeTopRated .HomeTopRatedHead h2 {
+    font-size: 24px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeTopRated .HomeTopRatedHead h2 {
+    font-size: 20px;
+  }
 }
 #HomeTopRated .HomeTopRatedHead .viewAllBtn {
   background: transparent;
@@ -1545,6 +1923,11 @@
   cursor: pointer;
   transition: 0.3s;
   font-family: myFont1;
+}
+@media (max-width: 480px) {
+  #HomeTopRated .HomeTopRatedHead .viewAllBtn {
+    font-size: 14px;
+  }
 }
 #HomeTopRated .HomeTopRatedHead .viewAllBtn:hover {
   text-decoration: underline;
@@ -1568,6 +1951,12 @@
   box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
   transition: 0.3s ease;
 }
+@media (max-width: 768px) {
+  #HomeTopRated .HomeTopRatedMain .swiper-btn {
+    width: 35px;
+    height: 35px;
+  }
+}
 #HomeTopRated .HomeTopRatedMain .swiper-btn svg {
   font-size: 18px;
   color: var(--primaryColor);
@@ -1581,13 +1970,38 @@
 #HomeTopRated .HomeTopRatedMain .prev-btn {
   left: -20px;
 }
+@media (max-width: 480px) {
+  #HomeTopRated .HomeTopRatedMain .prev-btn {
+    left: -12px;
+  }
+}
 #HomeTopRated .HomeTopRatedMain .next-btn {
   right: -20px;
+}
+@media (max-width: 480px) {
+  #HomeTopRated .HomeTopRatedMain .next-btn {
+    right: -12px;
+  }
 }
 
 #HomeTestimonial {
   width: 100%;
   padding: 100px 0;
+}
+@media (max-width: 1024px) {
+  #HomeTestimonial {
+    padding: 60px 0px;
+  }
+}
+@media (max-width: 768px) {
+  #HomeTestimonial {
+    padding: 40px 0px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeTestimonial {
+    padding: 30px 0px;
+  }
 }
 #HomeTestimonial .TestimonialHead {
   display: flex;
@@ -1595,19 +2009,37 @@
   align-items: flex-end;
   margin-bottom: 40px;
 }
-#HomeTestimonial .TestimonialHead .SectionEyebrow {
+@media (max-width: 480px) {
+  #HomeTestimonial .TestimonialHead {
+    margin-bottom: 20px;
+  }
+}
+#HomeTestimonial .TestimonialHead .badge {
+  border: 1px solid #e0e0e0;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 11px;
-  color: #9ca3af;
-  margin-bottom: 8px;
-  font-family: myFont1;
 }
 #HomeTestimonial .TestimonialHead h2 {
-  font-size: 36px;
+  font-size: 28px;
   font-weight: 700;
   color: #000;
   font-family: myFont1;
+  margin-top: 20px;
+}
+@media (max-width: 768px) {
+  #HomeTestimonial .TestimonialHead h2 {
+    font-size: 24px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeTestimonial .TestimonialHead h2 {
+    font-size: 20px;
+    margin-top: 10px;
+  }
 }
 #HomeTestimonial .TestimonialHead h2 span {
   color: var(--primaryColor);
@@ -1617,8 +2049,8 @@
   gap: 12px;
 }
 #HomeTestimonial .ArrowGroup .ArrowBtn {
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   background: var(--primaryColor);
   border: none;
@@ -1627,6 +2059,12 @@
   justify-content: center;
   cursor: pointer;
   transition: 0.25s ease;
+}
+@media (max-width: 768px) {
+  #HomeTestimonial .ArrowGroup .ArrowBtn {
+    width: 35px;
+    height: 35px;
+  }
 }
 #HomeTestimonial .ArrowGroup .ArrowBtn svg {
   color: #fff;
@@ -1645,6 +2083,11 @@
   justify-content: flex-start;
   gap: 15px;
   transition: 0.3s ease;
+}
+@media (max-width: 480px) {
+  #HomeTestimonial .TestimonialCard {
+    padding: 20px;
+  }
 }
 #HomeTestimonial .ProfileImg {
   width: 52px;
@@ -1691,11 +2134,31 @@
   padding: 100px 0;
   background-color: #fff;
 }
+@media (max-width: 1024px) {
+  #HomeTeacher {
+    padding: 60px 0px;
+  }
+}
+@media (max-width: 768px) {
+  #HomeTeacher {
+    padding: 40px 0px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeTeacher {
+    padding: 30px 0px;
+  }
+}
 #HomeTeacher .HomeTeacherHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
   margin-bottom: 50px;
+}
+@media (max-width: 480px) {
+  #HomeTeacher .HomeTeacherHeader {
+    margin-bottom: 20px;
+  }
 }
 #HomeTeacher .HomeTeacherHeader .badge {
   border: 1px solid #e0e0e0;
@@ -1713,14 +2176,25 @@
   line-height: 1.2;
   color: #111;
 }
+@media (max-width: 768px) {
+  #HomeTeacher .HomeTeacherHeader h2 {
+    font-size: 24px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeTeacher .HomeTeacherHeader h2 {
+    font-size: 20px;
+    margin-top: 10px;
+  }
+}
 #HomeTeacher .HomeTeacherHeader .nav-buttons {
   display: flex;
   gap: 12px;
   margin-bottom: 10px;
 }
 #HomeTeacher .HomeTeacherHeader .nav-buttons .nav-btn {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: none;
   background-color: var(--primaryColor);
@@ -1732,6 +2206,12 @@
   font-size: 18px;
   transition: all 0.3s ease;
 }
+@media (max-width: 768px) {
+  #HomeTeacher .HomeTeacherHeader .nav-buttons .nav-btn {
+    width: 35px;
+    height: 35px;
+  }
+}
 #HomeTeacher .HomeTeacherHeader .nav-buttons .nav-btn:hover {
   opacity: 0.9;
   transform: scale(1.05);
@@ -1741,6 +2221,16 @@
   border-radius: 24px;
   overflow: hidden;
   position: relative;
+}
+@media (max-width: 768px) {
+  #HomeTeacher .HomeTeacherMain .card {
+    height: 370px;
+  }
+}
+@media (max-width: 480px) {
+  #HomeTeacher .HomeTeacherMain .card {
+    height: 320px;
+  }
 }
 #HomeTeacher .HomeTeacherMain .blue-card {
   background-color: var(--primaryColor);
@@ -1819,141 +2309,311 @@
 #Footer {
   width: 100%;
   background: var(--primaryColor);
-  padding: 20px 0;
+  padding: 60px 0;
+  color: #fff;
+  font-family: "myFont1", sans-serif;
+}
+#Footer .footerTopSection {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+#Footer .footerTopSection .footerSlogan {
+  flex: 1;
+  min-width: 300px;
+}
+#Footer .footerTopSection .footerSlogan h2 {
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.2;
+  max-width: 400px;
+}
+@media (max-width: 768px) {
+  #Footer .footerTopSection .footerSlogan h2 {
+    font-size: 24px;
+  }
+}
+#Footer .footerTopSection .footerNewsletter p {
+  font-size: 16px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+#Footer .footerTopSection .footerNewsletter .subscribeBox {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50px;
+  padding: 5px 5px 5px 20px;
+  min-width: 350px;
+}
+#Footer .footerTopSection .footerNewsletter .subscribeBox input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  flex: 1;
+  font-size: 14px;
+}
+#Footer .footerTopSection .footerNewsletter .subscribeBox input::-moz-placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+#Footer .footerTopSection .footerNewsletter .subscribeBox input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+#Footer .footerTopSection .footerNewsletter .subscribeBox button {
+  background: #f2f6fc;
+  color: #000;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#Footer .footerTopSection .footerNewsletter .subscribeBox button:hover {
+  background: #f2f6fc;
 }
 #Footer .FooterMain {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: 2fr 1fr 1fr 1fr;
   gap: 40px;
-  margin-bottom: 15px;
-}
-#Footer .footerColumn {
-  display: flex;
-  flex-direction: column;
+  padding-bottom: 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 #Footer .footerColumn h4 {
-  font-size: 16px;
-  font-weight: 700;
-  margin-bottom: 15px;
-  font-family: myFont1;
-  color: #fff;
-}
-#Footer .footerColumn .footerLogo {
-  width: 100px;
-}
-#Footer .footerColumn .footerLogo img {
-  width: 100%;
-  height: 100%;
-  -o-object-fit: contain;
-     object-fit: contain;
-}
-#Footer .footerColumn .footerTag {
-  font-size: 13px;
-  margin: 6px 0 15px;
-  font-family: myFont1;
-  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 #Footer .footerColumn ul {
   list-style: none;
   padding: 0;
 }
 #Footer .footerColumn ul li {
-  margin: 8px 0;
+  margin-bottom: 12px;
 }
 #Footer .footerColumn ul li a {
-  color: #000;
-  font-size: 14px;
-  text-decoration: none;
-  transition: 0.3s;
-  font-family: myFont1;
   color: #fff;
+  text-decoration: none;
+  font-size: 15px;
+  opacity: 0.9;
 }
 #Footer .footerColumn ul li a:hover {
+  opacity: 1;
   text-decoration: underline;
 }
-#Footer .subscribeBox {
-  display: flex;
-  gap: 6px;
-}
-#Footer .subscribeBox input {
-  width: 100%;
-  padding: 8px 10px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  outline: none;
-}
-#Footer .subscribeBox button {
-  padding: 8px 14px;
-  background: #fff;
-  color: var(--primaryColor);
-  font-size: 14px;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
-}
-#Footer .subscribeBox button:hover {
-  opacity: 0.8;
-}
-#Footer .contactRow {
+#Footer .footerColumn .contactRow {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  margin: 6px 0;
-  font-family: myFont1;
+  gap: 12px;
+  margin-bottom: 15px;
+  font-size: 15px;
+}
+#Footer .footerColumn .contactRow svg {
   color: #fff;
+  font-size: 18px;
 }
-#Footer .contactRow svg {
-  font-size: 16px;
-  font-family: myFont1;
-  color: #fff;
-}
-#Footer .footerSocial {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-#Footer .footerSocial a {
-  width: 30px;
-  height: 30px;
-  background: #fff;
-  color: var(--primaryColor);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  text-decoration: none;
-  transition: 0.3s;
-}
-#Footer .footerSocial a:hover {
-  opacity: 0.7;
-}
-#Footer .footerBottom {
-  width: 100%;
-  border-top: 1px solid #999;
-}
-#Footer .footerBottom .footerBottomMain {
-  margin-top: 20px;
-  padding: 15px 0;
-  display: flex;
-  justify-content: space-between;
-}
-#Footer .footerBottom .footerBottomMain .footerBottomBox p {
-  font-size: 13px;
-  font-family: myFont1;
-  color: #fff;
-}
-#Footer .footerBottom .footerBottomMain .footerBottomLinks {
+#Footer .footerColumn .footerSocial {
   display: flex;
   gap: 15px;
 }
-#Footer .footerBottom .footerBottomMain .footerBottomLinks a {
-  font-size: 13px;
-  text-decoration: none;
-  font-family: myFont1;
+#Footer .footerColumn .footerSocial a {
   color: #fff;
+  font-size: 20px;
+  transition: 0.3s;
+}
+#Footer .footerColumn .footerSocial a:hover {
+  transform: translateY(-3px);
+}
+#Footer .footerBottom {
+  padding-top: 20px;
+}
+#Footer .footerBottom .footerBottomMain {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+#Footer .footerBottom .footerBottomMain p,
+#Footer .footerBottom .footerBottomMain a {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+}
+#Footer .footerBottom .footerBottomMain .footerBottomLinks {
+  display: flex;
+  gap: 20px;
 }
 #Footer .footerBottom .footerBottomMain .footerBottomLinks a:hover {
-  text-decoration: underline;
+  color: #fff;
+}
+@media (max-width: 992px) {
+  #Footer .FooterMain {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 600px) {
+  #Footer {
+    padding: 40px 0 20px;
+  }
+  #Footer .footerTopSection {
+    flex-direction: column;
+  }
+  #Footer .footerTopSection .footerSlogan h2 {
+    font-size: 24px;
+  }
+  #Footer .footerTopSection .footerNewsletter .subscribeBox {
+    min-width: 100%;
+  }
+  #Footer .FooterMain {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  #Footer .footerBottomMain {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.NavSearchOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: #fff;
+  z-index: 10000;
+  overflow-y: auto;
+  animation: fadeIn 0.3s ease-in-out;
+}
+.NavSearchOverlay .SearchHeader {
+  display: flex;
+  align-items: center;
+  padding: 15px 25px;
+  border-bottom: 1px solid #eee;
+  gap: 20px;
+}
+.NavSearchOverlay .SearchHeader .SearchInputWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: 15px;
+}
+.NavSearchOverlay .SearchHeader .SearchInputWrapper .mainSearchIcon {
+  font-size: 24px;
+  color: #555;
+}
+.NavSearchOverlay .SearchHeader .SearchInputWrapper input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  font-family: myFont1;
+  color: #333;
+}
+.NavSearchOverlay .SearchHeader .SearchInputWrapper input::-moz-placeholder {
+  color: #999;
+}
+.NavSearchOverlay .SearchHeader .SearchInputWrapper input::placeholder {
+  color: #999;
+}
+.NavSearchOverlay .SearchHeader .CloseBtn {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+.NavSearchOverlay .SearchContent .SuggestionSection {
+  margin-bottom: 20px;
+}
+.NavSearchOverlay .SearchContent .SuggestionSection .SuggestItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+  cursor: pointer;
+  transition: 0.2s;
+  border-bottom: 1px solid #f9f9f9;
+}
+.NavSearchOverlay .SearchContent .SuggestionSection .SuggestItem svg {
+  font-size: 18px;
+  color: #777;
+}
+.NavSearchOverlay .SearchContent .SuggestionSection .SuggestItem p {
+  font-size: 16px;
+  color: #222;
+  font-weight: 500;
+}
+.NavSearchOverlay .SearchContent .SuggestionSection .SuggestItem:hover {
+  background: #fbfbfb;
+  padding-left: 10px;
+}
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox:hover {
+  background: #f5f5f5;
+}
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseImg {
+  width: 45px;
+  height: 45px;
+  flex-shrink: 0;
+}
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseImg img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 4px;
+}
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails h5 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .instructor {
+  font-size: 13px;
+  color: #666;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 768px) {
+  .NavSearchOverlay .SearchHeader {
+    padding: 10px 15px;
+  }
+  .NavSearchOverlay .SearchHeader .SearchInputWrapper input {
+    font-size: 16px;
+  }
 }/*# sourceMappingURL=style.css.map */

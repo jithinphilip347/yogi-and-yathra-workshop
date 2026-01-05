@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import Image from 'next/image';
 import { FaLinkedinIn, FaTwitter, FaInstagram, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
+import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import Team1 from '../../assets/images/team-1.jpg';
 import Team2 from '../../assets/images/team-2.jpg';
 import Team3 from '../../assets/images/team-3.jpg';
@@ -54,8 +55,8 @@ const HomeTeacher = () => {
           
           {/* Custom Navigation Buttons */}
           <div className='nav-buttons'>
-            <button ref={prevRef} className='nav-btn'><FaArrowLeft /></button>
-            <button ref={nextRef} className='nav-btn'><FaArrowRight /></button>
+            <button ref={prevRef} className='nav-btn'><BsArrowLeft /></button>
+            <button ref={nextRef} className='nav-btn'> <BsArrowRight /></button>
           </div>
         </div>
 
