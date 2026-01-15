@@ -1416,9 +1416,9 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-            @media(max-width:768px){
-                 width: 35px;
-                 height: 35px;
+            @media (max-width: 768px) {
+                width: 35px;
+                height: 35px;
             }
             svg {
                 font-size: 18px;
@@ -1520,9 +1520,9 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-            @media(max-width:768px){
-                 width: 35px;
-                 height: 35px;
+            @media (max-width: 768px) {
+                width: 35px;
+                height: 35px;
             }
             svg {
                 font-size: 18px;
@@ -1619,7 +1619,7 @@
                     display: flex;
                     flex-direction: column;
                     background: #fff;
-                       @media (max-width: 768px) {
+                    @media (max-width: 768px) {
                         aspect-ratio: 4 / 5;
                     }
                     @media (max-width: 480px) {
@@ -1652,9 +1652,9 @@
                             font-family: myFont1;
                             font-weight: 500;
                             color: #000;
-                        @media (max-width: 768px) {
-                            font-size: 12px;
-                        }
+                            @media (max-width: 768px) {
+                                font-size: 12px;
+                            }
                         }
                     }
                     .courseLiveDate {
@@ -1666,7 +1666,7 @@
                         font-size: 13px;
                         font-family: myFont1;
                         font-weight: 600;
-                         @media (max-width: 768px) {
+                        @media (max-width: 768px) {
                             font-size: 10px;
                         }
                         span {
@@ -1676,11 +1676,10 @@
 
                             svg {
                                 font-size: 15px;
-                                color: var(--primaryColor); 
-                            @media (max-width: 768px) {
-                            font-size: 10px;
-                        }
-
+                                color: var(--primaryColor);
+                                @media (max-width: 768px) {
+                                    font-size: 10px;
+                                }
                             }
                         }
                     }
@@ -1691,7 +1690,7 @@
                     }
 
                     .TutorImg {
-                        width: 28px ;
+                        width: 28px;
                         height: 28px;
                         @media (max-width: 768px) {
                             width: 20px;
@@ -1716,8 +1715,8 @@
                             font-family: myFont1;
                             font-weight: 600;
                             @media (max-width: 768px) {
-                            font-size: 10px;
-                        }
+                                font-size: 10px;
+                            }
                         }
 
                         .TutorName {
@@ -1725,9 +1724,9 @@
                             font-weight: 600;
                             color: #000;
                             font-family: myFont1;
-                         @media (max-width: 768px) {
-                            font-size: 12px;
-                        }
+                            @media (max-width: 768px) {
+                                font-size: 12px;
+                            }
                         }
                     }
                 }
@@ -1747,9 +1746,9 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-            @media(max-width:768px){
-                 width: 35px;
-                 height: 35px;
+            @media (max-width: 768px) {
+                width: 35px;
+                height: 35px;
             }
             svg {
                 font-size: 18px;
@@ -1851,9 +1850,9 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-            @media(max-width:768px){
-                 width: 35px;
-                 height: 35px;
+            @media (max-width: 768px) {
+                width: 35px;
+                height: 35px;
             }
             svg {
                 font-size: 18px;
@@ -1955,9 +1954,9 @@
             cursor: pointer;
             box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
             transition: 0.3s ease;
-            @media(max-width:768px){
-                 width: 35px;
-                 height: 35px;
+            @media (max-width: 768px) {
+                width: 35px;
+                height: 35px;
             }
             svg {
                 font-size: 18px;
@@ -2055,9 +2054,9 @@
             justify-content: center;
             cursor: pointer;
             transition: 0.25s ease;
-            @media(max-width:768px){
-                 width: 35px;
-                 height: 35px;
+            @media (max-width: 768px) {
+                width: 35px;
+                height: 35px;
             }
             svg {
                 color: #fff;
@@ -2196,10 +2195,10 @@
                 cursor: pointer;
                 font-size: 18px;
                 transition: all 0.3s ease;
-                @media(max-width:768px){
-                 width: 35px;
-                 height: 35px;
-                 }
+                @media (max-width: 768px) {
+                    width: 35px;
+                    height: 35px;
+                }
                 &:hover {
                     opacity: 0.9;
                     transform: scale(1.05);
@@ -2328,7 +2327,7 @@
                 font-weight: 500;
                 line-height: 1.2;
                 max-width: 400px;
-                @media(max-width:768px){
+                @media (max-width: 768px) {
                     font-size: 24px;
                 }
             }
@@ -2498,154 +2497,1997 @@
 
 //NavSearchOverlay
 .NavSearchOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background: #fff;
-  z-index: 10000;
-  overflow-y: auto;
-  animation: fadeIn 0.3s ease-in-out;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: #fff;
+    z-index: 10000;
+    overflow-y: auto;
+    animation: fadeIn 0.3s ease-in-out;
 
-  .SearchHeader {
-    display: flex;
-    align-items: center;
-    padding: 15px 25px;
-    border-bottom: 1px solid #eee;
-    gap: 20px;
-
-    .SearchInputWrapper {
-      display: flex;
-      align-items: center;
-      flex: 1;
-      gap: 15px;
-
-      .mainSearchIcon {
-        font-size: 24px;
-        color: #555;
-      }
-
-      input {
-        width: 100%;
-        border: none;
-        outline: none;
-        font-size: 18px;
-        font-family: myFont1;
-        color: #333;
-
-        &::placeholder {
-          color: #999;
-        }
-      }
-    }
-
-    .CloseBtn {
-      background: none;
-      border: none;
-      font-size: 28px;
-      cursor: pointer;
-      color: #333;
-      display: flex;
-      align-items: center;
-    }
-  }
-
-  .SearchContent {
-    // max-width: 800px;
-    // margin: 0 auto;
-    // padding: 20px;
-
-    .SuggestionSection {
-      margin-bottom: 20px;
-
-      .SuggestItem {
+    .SearchHeader {
         display: flex;
         align-items: center;
-        gap: 15px;
-        padding: 12px 0;
-        cursor: pointer;
-        transition: 0.2s;
-        border-bottom: 1px solid #f9f9f9;
+        padding: 15px 25px;
+        border-bottom: 1px solid #eee;
+        gap: 20px;
 
-        svg {
-          font-size: 18px;
-          color: #777;
+        .SearchInputWrapper {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            gap: 15px;
+
+            .mainSearchIcon {
+                font-size: 24px;
+                color: #555;
+            }
+
+            input {
+                width: 100%;
+                border: none;
+                outline: none;
+                font-size: 18px;
+                font-family: myFont1;
+                color: #333;
+
+                &::placeholder {
+                    color: #999;
+                }
+            }
         }
 
-        p {
-          font-size: 16px;
-          color: #222;
-          font-weight: 500;
+        .CloseBtn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #333;
+            display: flex;
+            align-items: center;
         }
-
-        &:hover {
-          background: #fbfbfb;
-          padding-left: 10px;
-        }
-      }
     }
 
-    .RecommendedSection {
-      .CourseList {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
+    .SearchContent {
+        // max-width: 800px;
+        // margin: 0 auto;
+        // padding: 20px;
 
-        .SearchCourseBox {
-          display: flex;
-          align-items: center;
-          gap: 15px;
-          padding: 10px;
-          border-radius: 8px;
-          transition: 0.3s;
-          cursor: pointer;
+        .SuggestionSection {
+            margin-bottom: 20px;
 
-          &:hover {
-            background: #f5f5f5;
-          }
+            .SuggestItem {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 12px 0;
+                cursor: pointer;
+                transition: 0.2s;
+                border-bottom: 1px solid #f9f9f9;
 
-          .CourseImg {
-            width: 45px;
-            height: 45px;
-            flex-shrink: 0;
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-              border-radius: 4px;
+                svg {
+                    font-size: 18px;
+                    color: #777;
+                }
+
+                p {
+                    font-size: 16px;
+                    color: #222;
+                    font-weight: 500;
+                }
+
+                &:hover {
+                    background: #fbfbfb;
+                    padding-left: 10px;
+                }
             }
-          }
-
-          .CourseDetails {
-            h5 {
-              font-size: 15px;
-              font-weight: 600;
-              color: #111;
-              margin-bottom: 2px;
-              line-height: 1.3;
-            }
-            .instructor {
-              font-size: 13px;
-              color: #666;
-            }
-          }
         }
-      }
+
+        .RecommendedSection {
+            .CourseList {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+
+                .SearchCourseBox {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    padding: 10px;
+                    border-radius: 8px;
+                    transition: 0.3s;
+                    cursor: pointer;
+
+                    &:hover {
+                        background: #f5f5f5;
+                    }
+
+                    .CourseImg {
+                        width: 45px;
+                        height: 45px;
+                        flex-shrink: 0;
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                            border-radius: 4px;
+                        }
+                    }
+
+                    .CourseDetails {
+                        h5 {
+                            font-size: 15px;
+                            font-weight: 600;
+                            color: #111;
+                            margin-bottom: 2px;
+                            line-height: 1.3;
+                        }
+                        .instructor {
+                            font-size: 13px;
+                            color: #666;
+                        }
+                    }
+                }
+            }
+        }
     }
-  }
 }
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 @media (max-width: 768px) {
-  .NavSearchOverlay {
-    .SearchHeader {
-      padding: 10px 15px;
-      .SearchInputWrapper input {
-        font-size: 16px;
-      }
+    .NavSearchOverlay {
+        .SearchHeader {
+            padding: 10px 15px;
+            .SearchInputWrapper input {
+                font-size: 16px;
+            }
+        }
     }
-  }
+}
+
+#Login {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px 10px 80px;
+    @media(max-width:768px){
+    padding: 20px;
+    }
+    .LoginBox {
+        display: flex;
+        width: 100%;
+        background: #fff;
+        border-radius: 25px;
+        overflow: hidden;
+        gap: 50px;
+        .LoginLeft {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            @media(max-width:768px){
+                width: 100%;
+            }
+            .LoginLogoBox {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 10px;
+                justify-content: center;
+
+                .LoginImg {
+                    width: 100px;
+                    height: 80px;
+                    object-fit: contain;
+                    @media(max-width:480px){
+                     width: 80px;
+            }
+                }
+            }
+
+            .LoginWelcomeTxt {
+                margin-bottom: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                width: 100%;
+                   @media(max-width:480px){
+                    margin-bottom: 20px;
+                    }
+                h1 {
+                    font-size: 28px;
+                    margin-bottom: 10px;
+                    color: #1a1a1a;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    @media(max-width:480px){
+                    font-size: 18px;
+                    }
+                }
+
+                p {
+                    color: gray;
+                    font-size: 15px;
+                    line-height: 1.5;
+                    text-align: center;
+                    font-family: myFont1;
+                    font-weight: 500;
+                       @media(max-width:480px){
+                    font-size: 13px;
+                    }
+                }
+            }
+
+            .LoginForm {
+                .InputGroup {
+                    margin-bottom: 15px;
+                    label {
+                        display: block;
+                        margin-bottom: 8px;
+                        font-weight: 500;
+                        font-size: 15px;
+                        color: #000;
+                        font-family: myFont1;
+                    }
+
+                    input {
+                        width: 100%;
+                        padding: 13px 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 10px;
+                        outline: none;
+                        font-size: 15px;
+                        transition: border-color 0.3s;
+
+                        &:focus {
+                            border-color: var(--primaryColor);
+                        }
+                    }
+
+                    .PasswordWrap {
+                        position: relative;
+
+                        .EyeIcon {
+                            position: absolute;
+                            right: 15px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            cursor: pointer;
+                            color: #888;
+                            display: flex;
+                            font-size: 1.1rem;
+                        }
+                    }
+                    .ErrorTxt {
+                        color: red;
+                        font-size: 12px;
+                        margin-top: 5px;
+                        display: block;
+                    }
+                }
+
+                .ForgetPassword {
+                    text-align: left;
+                    margin-bottom: 25px;
+
+                    a {
+                        font-size: 15px;
+                        color: #1a1a1a;
+                        font-weight: 500;
+                        text-decoration: none;
+                        font-family: myFont1;
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+
+                .LoginBtn {
+                    width: 100%;
+                    padding: 14px;
+                    background-color: var(--primaryColor);
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-weight: 500;
+                    font-size: 15px;
+                    margin-bottom: 10px;
+                    transition: background 0.3s;
+                    font-family: myFont1;
+                    &:hover {
+                        opacity: 0.9;
+                    }
+                }
+            }
+
+            .OrText {
+                text-align: center;
+                border-bottom: 1px solid #eee;
+                line-height: 0.1em;
+                margin: 25px 0;
+
+                span {
+                    background: #fff;
+                    padding: 0 15px;
+                    color: #aaa;
+                    font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                }
+            }
+
+            .SocialLogin {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+
+                .SocialBtn {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    padding: 12px;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 12px;
+                    background: white;
+                    cursor: pointer;
+                    font-size: 15px;
+                    font-weight: 500;
+                    color: #333;
+                    transition: 0.3s;
+                    font-family: myFont1;
+                    &:hover {
+                        background: #f9f9f9;
+                        border-color: #ccc;
+                    }
+
+                    img {
+                        object-fit: contain;
+                    }
+                }
+            }
+
+            .SignUpTxt {
+                text-align: center;
+                margin-top: 25px;
+                font-size: 15px;
+                color: #555;
+
+                .SignupLink {
+                    color: var(--primaryColor);
+                    font-weight: 700;
+                    cursor: pointer;
+                    margin-left: 5px;
+                    font-family: myFont1;
+                    font-size: 15px;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+        .LoginRight {
+            width: 55%;
+            background-image: url("../images/login-img1.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 50px 40px;
+            @media(max-width:768px){
+                display: none;
+            }
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+                border-radius: 20px;
+            }
+
+            .LoginRightOverlay {
+                position: relative;
+                z-index: 1;
+                color: white;
+                .quote {
+                    font-style: italic;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin-bottom: 15px;
+                    font-weight: 300;
+                    font-family: myFont1;
+                }
+
+                .author {
+                    font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: rgba(255, 255, 255, 0.9);
+                }
+            }
+        }
+    }
+}
+
+#Signup {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px 10px 80px;
+    @media(max-width:768px){
+    padding: 20px;
+    }
+    .LoginBox {
+        display: flex;
+        width: 100%;
+        background: #fff;
+        border-radius: 25px;
+        overflow: hidden;
+        gap: 50px;
+        .LoginLeft {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+              @media(max-width:768px){
+                width: 100%;
+            }
+            .LoginLogoBox {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 10px;
+                justify-content: center;
+
+                .LoginImg {
+                    width: 100px;
+                    height: 80px;
+                    object-fit: contain;
+                    @media(max-width:480px){
+                    width: 80px;
+                    }
+                }
+            }
+
+            .LoginWelcomeTxt {
+                margin-bottom: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                width: 100%;
+                    @media(max-width:480px){
+                margin-bottom: 20px;
+                }
+                h1 {
+                    font-size: 28px;
+                    margin-bottom: 10px;
+                    color: #1a1a1a;
+                    font-family: myFont1;
+                    font-weight: 500;
+                       @media(max-width:480px){
+                    font-size: 18px;
+                    }
+                }
+
+                p {
+                    color: gray;
+                    font-size: 15px;
+                    line-height: 1.5;
+                    text-align: center;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    @media(max-width:480px){
+                    font-size: 13px;
+                    }
+                }
+            }
+
+            .LoginForm {
+                .InputGroup {
+                    margin-bottom: 15px;
+                    label {
+                        display: block;
+                        margin-bottom: 8px;
+                        font-weight: 500;
+                        font-size: 15px;
+                        color: #000;
+                        font-family: myFont1;
+                    }
+
+                    input {
+                        width: 100%;
+                        padding: 13px 15px;
+                        border: 1px solid #ddd;
+                        border-radius: 10px;
+                        outline: none;
+                        font-size: 15px;
+                        transition: border-color 0.3s;
+
+                        &:focus {
+                            border-color: var(--primaryColor);
+                        }
+                    }
+
+                    .PasswordWrap {
+                        position: relative;
+
+                        .EyeIcon {
+                            position: absolute;
+                            right: 15px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            cursor: pointer;
+                            color: #888;
+                            display: flex;
+                            font-size: 1.1rem;
+                        }
+                    }
+                    .ErrorTxt {
+                        color: red;
+                        font-size: 12px;
+                        margin-top: 5px;
+                        display: block;
+                    }
+                }
+
+                .ForgetPassword {
+                    text-align: left;
+                    margin-bottom: 25px;
+
+                    a {
+                        font-size: 15px;
+                        color: #1a1a1a;
+                        font-weight: 500;
+                        text-decoration: none;
+                        font-family: myFont1;
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+
+                .LoginBtn {
+                    width: 100%;
+                    padding: 14px;
+                    background-color: var(--primaryColor);
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-weight: 500;
+                    font-size: 15px;
+                    margin-bottom: 10px;
+                    transition: background 0.3s;
+                    font-family: myFont1;
+                    &:hover {
+                        opacity: 0.9;
+                    }
+                }
+            }
+
+            .CheckboxGroup {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin: 15px 0;
+                label {
+                    font-size: 14px;
+                    cursor: pointer;
+                }
+                input {
+                    width: 18px;
+                    height: 18px;
+                    cursor: pointer;
+                }
+            }
+            .HealthDetailSection {
+                background: #fdf8f5;
+                padding: 15px;
+                border-radius: 10px;
+                margin-bottom: 15px;
+                border: 1px dashed var(--primaryColor);
+
+                .CustomSelect {
+                    width: 100%;
+                    padding: 12px;
+                    border-radius: 8px;
+                    border: 1px solid #ddd;
+                    outline: none;
+                }
+            }
+            .OrText {
+                text-align: center;
+                border-bottom: 1px solid #eee;
+                line-height: 0.1em;
+                margin: 25px 0;
+
+                span {
+                    background: #fff;
+                    padding: 0 15px;
+                    color: #aaa;
+                    font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                }
+            }
+
+            .SocialLogin {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+
+                .SocialBtn {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    padding: 12px;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 12px;
+                    background: white;
+                    cursor: pointer;
+                    font-size: 15px;
+                    font-weight: 500;
+                    color: #333;
+                    transition: 0.3s;
+                    font-family: myFont1;
+                    &:hover {
+                        background: #f9f9f9;
+                        border-color: #ccc;
+                    }
+
+                    img {
+                        object-fit: contain;
+                    }
+                }
+            }
+
+            .SignUpTxt {
+                text-align: center;
+                margin-top: 25px;
+                font-size: 15px;
+                color: #555;
+
+                .SignupLink {
+                    color: var(--primaryColor);
+                    font-weight: 700;
+                    cursor: pointer;
+                    margin-left: 5px;
+                    font-family: myFont1;
+                    font-size: 15px;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+        }
+
+        .LoginRight {
+            width: 55%;
+            background-image: url("../images/login-img1.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 50px 40px;
+              @media(max-width:768px){
+                display: none;
+            }
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+                border-radius: 20px;
+            }
+
+            .LoginRightOverlay {
+                position: relative;
+                z-index: 1;
+                color: white;
+                .quote {
+                    font-style: italic;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin-bottom: 15px;
+                    font-weight: 300;
+                    font-family: myFont1;
+                }
+
+                .author {
+                    font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: rgba(255, 255, 255, 0.9);
+                }
+            }
+        }
+    }
+}
+
+#ForgetPassword {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px 10px 80px;
+      @media(max-width:768px){
+    padding: 20px;
+    }
+    .LoginBox {
+        display: flex;
+        width: 100%;
+        background: #fff;
+        // border-radius: 25px;
+        overflow: hidden;
+        gap: 50px;
+        .LoginLeft {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+             @media(max-width:768px){
+                width: 100%;
+            }
+            .LoginLogoBox {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 10px;
+                justify-content: center;
+
+                .LoginImg {
+                    width: 100px;
+                    height: 80px;
+                    object-fit: contain;
+                             @media(max-width:480px){
+                     width: 80px;
+            }
+                }
+            }
+
+            .LoginWelcomeTxt {
+                margin-bottom: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                width: 100%;
+                   @media(max-width:480px){
+                    margin-bottom: 20px;
+                    }
+                h1 {
+                    font-size: 28px;
+                    margin-bottom: 10px;
+                    color: #1a1a1a;
+                    font-family: myFont1;
+                    font-weight: 500;
+                        @media(max-width:480px){
+                    font-size: 18px;
+                    }
+                }
+
+                p {
+                    color: gray;
+                    font-size: 15px;
+                    line-height: 1.5;
+                    text-align: center;
+                    font-family: myFont1;
+                    font-weight: 500;
+                           @media(max-width:480px){
+                    font-size: 13px;
+                    }
+                }
+            }
+            .InputGroup {
+                display: flex;
+                flex-direction: column;
+
+                label {
+                    font-size: 14px;
+                    font-weight: 500;
+                    margin-bottom: 8px;
+                    color: #333;
+                }
+
+                input {
+                    padding: 12px 15px;
+                    border: 1px solid #ddd;
+                    border-radius: 10px;
+                    font-size: 15px;
+                    outline: none;
+                    transition: border-color 0.3s;
+
+                    &:focus {
+                        border-color: var(--primaryColor);
+                    }
+                }
+
+                .otpBtn {
+                    margin-top: 25px;
+                    padding: 12px;
+                    background-color: var(--primaryColor); // Your primary button color
+                    color: #fff;
+                    border: none;
+                    border-radius: 10px;
+                    font-size: 16px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: background 0.3s;
+
+                    &:hover {
+                        background-color: var(--primaryColor);
+                    }
+                }
+            }
+        }
+
+        .LoginRight {
+            width: 55%;
+            background-image: url("../images/login-img1.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 50px 40px;
+            height: 100vh;
+              @media(max-width:768px){
+                display: none;
+            }
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+                border-radius: 20px;
+            }
+
+            .LoginRightOverlay {
+                position: relative;
+                z-index: 1;
+                color: white;
+                .quote {
+                    font-style: italic;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin-bottom: 15px;
+                    font-weight: 300;
+                    font-family: myFont1;
+                }
+
+                .author {
+                    font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: rgba(255, 255, 255, 0.9);
+                }
+            }
+        }
+    }
+}
+
+#Otp {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px 10px 80px;
+ @media(max-width:768px){
+    padding: 20px;
+    }
+    .LoginBox {
+        display: flex;
+        width: 100%;
+        background: #fff;
+        overflow: hidden;
+        gap: 50px;
+        .LoginLeft {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+             @media(max-width:768px){
+                width: 100%;
+            }
+            .LoginLogoBox {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 10px;
+                justify-content: center;
+
+                .LoginImg {
+                    width: 100px;
+                    height: 80px;
+                    object-fit: contain;
+                               @media(max-width:480px){
+                     width: 80px;
+            }
+                }
+            }
+
+            .LoginWelcomeTxt {
+                margin-bottom: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                width: 100%;
+                     @media(max-width:480px){
+                    margin-bottom: 20px;
+                    }
+                h1 {
+                    font-size: 28px;
+                    margin-bottom: 10px;
+                    color: #1a1a1a;
+                    font-family: myFont1;
+                    font-weight: 500;
+                      @media(max-width:480px){
+                    font-size: 18px;
+                    }
+                }
+
+                p {
+                    color: gray;
+                    font-size: 15px;
+                    line-height: 1.5;
+                    text-align: center;
+                    font-family: myFont1;
+                    font-weight: 500;
+                           @media(max-width:480px){
+                    font-size: 13px;
+                    }
+                }
+            }
+
+            .OtpEnterBox {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                width: 100%;
+
+                .OtpInputs {
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 20px;
+
+                    input {
+                        width: 45px;
+                        height: 50px;
+                        text-align: center;
+                        font-size: 20px;
+                        font-weight: 600;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        outline: none;
+                        transition: border-color 0.3s;
+
+                        &:focus {
+                            border-color: var(--primaryColor);
+                            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+                        }
+                    }
+                }
+
+                .ResendContainer {
+                    margin-bottom: 20px;
+                    font-family: myFont1;
+                    font-size: 14px;
+
+                    .resendLink {
+                        color: var(--primaryColor);
+                        cursor: pointer;
+                        font-weight: 600;
+                        text-decoration: underline;
+                    }
+
+                    .timerText {
+                        color: var(--primaryColor);
+                        font-weight: 600;
+                    }
+                }
+
+                .otpBtn {
+                    width: 100%;
+                    padding: 12px;
+                    background-color: var(--primaryColor);
+                    color: white;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+            }
+        }
+
+        .LoginRight {
+            width: 55%;
+            background-image: url("../images/login-img1.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 50px 40px;
+            height: 100vh;
+                @media(max-width:768px){
+                display: none;
+            }
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+                border-radius: 20px;
+            }
+
+            .LoginRightOverlay {
+                position: relative;
+                z-index: 1;
+                color: white;
+                .quote {
+                    font-style: italic;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin-bottom: 15px;
+                    font-weight: 300;
+                    font-family: myFont1;
+                }
+
+                .author {
+                    font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: rgba(255, 255, 255, 0.9);
+                }
+            }
+        }
+    }
+}
+
+#ChangePassword {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 10px 10px 80px;
+ @media(max-width:768px){
+    padding: 20px;
+    }
+    .LoginBox {
+        display: flex;
+        width: 100%;
+        background: #fff;
+        overflow: hidden;
+        gap: 50px;
+
+        .LoginLeft {
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            // padding: 40px;
+              @media(max-width:768px){
+                width: 100%;
+            }
+            .LoginLogoBox {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 10px;
+                justify-content: center;
+
+                .LoginImg {
+                    width: 100px;
+                    height: 80px;
+                    object-fit: contain;
+                                @media(max-width:480px){
+                     width: 80px;
+            }
+                }
+            }
+
+            .LoginWelcomeTxt {
+                margin-bottom: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                width: 100%;
+         @media(max-width:480px){
+                    margin-bottom: 20px;
+                    }
+                h1 {
+                    font-size: 28px;
+                    margin-bottom: 10px;
+                    color: #1a1a1a;
+                    font-family: myFont1;
+                    font-weight: 500;
+                        @media(max-width:480px){
+                    font-size: 18px;
+                    }
+                }
+
+                p {
+                    color: gray;
+                    font-size: 15px;
+                    line-height: 1.5;
+                    text-align: center;
+                    font-family: myFont1;
+                         @media(max-width:480px){
+                    font-size: 13px;
+                    }
+                }
+            }
+
+            .ChangePasswordBox {
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+
+                .InputFieldGroup {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+
+                    label {
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #333;
+                    }
+
+                    .InputWrapper {
+                        position: relative;
+                        width: 100%;
+
+                        input {
+                            width: 100%;
+                            padding: 12px 45px 12px 15px;
+                            border: 1px solid #ddd;
+                            border-radius: 10px;
+                            font-size: 15px;
+                            outline: none;
+                            transition: border-color 0.3s;
+
+                            &:focus {
+                                border-color: var(--primaryColor);
+                            }
+                        }
+
+                        .EyeIcon {
+                            position: absolute;
+                            right: 15px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            cursor: pointer;
+                            font-size: 20px;
+                            color: #666;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+
+                            &:hover {
+                                color: var(--primaryColor);
+                            }
+                        }
+                    }
+                }
+
+                .otpBtn {
+                    margin-top: 10px;
+                    padding: 14px;
+                    background-color: var(--primaryColor);
+                    color: #fff;
+                    border: none;
+                    border-radius: 10px;
+                    font-size: 16px;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: opacity 0.3s;
+
+                    &:hover {
+                        opacity: 0.9;
+                    }
+                }
+            }
+        }
+
+        .LoginRight {
+            width: 55%;
+            background-image: url("../images/login-img1.jpg");
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 50px 40px;
+            height: 100vh;
+                @media(max-width:768px){
+                display: none;
+            }
+            &::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+                border-radius: 20px;
+            }
+
+            .LoginRightOverlay {
+                position: relative;
+                z-index: 1;
+                color: white;
+
+                .quote {
+                    font-style: italic;
+                    font-size: 16px;
+                    line-height: 1.6;
+                    margin-bottom: 15px;
+                    font-family: myFont1;
+                }
+
+                .author {
+                    font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+}
+
+#Profile {
+    width: 100%;
+    padding: 80px 0px 50px 0px;
+    min-height: 100vh;
+    .ProfileMain {
+        display: flex;
+        align-items: flex-start;
+        gap: 30px;
+        .ProfileMainLeftNav {
+            width: 300px;
+            background: #f8fafc;
+            border-radius: 15px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: sticky;
+            top: 20px;
+            .UserProfileBox {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                margin-bottom: 30px;
+                padding-bottom: 20px;
+                border-bottom: 1px solid #eee;
+            }
+
+            .UserProfileImgBox {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                overflow: hidden;
+                border: 2px solid var(--primaryColor);
+            }
+
+            .UserProfileImgBox img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+            }
+
+            .UserInfo h4 {
+                margin: 0;
+                font-size: 15px;
+                color: #000;
+                font-family: myFont1;
+            }
+
+            .UserInfo p {
+                margin: 0;
+                font-size: 12px;
+                color: #555;
+                font-family: myFont1;
+            }
+
+            .MenuHeader{
+                width: 100%;
+                display: flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+                margin-bottom: 15px;
+                p{
+                    font-size: 15px;
+                    text-transform: uppercase;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: #555;
+                }
+
+            }
+            .LeftsideNavItem ul,
+            .LeftsideNavBottom ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .LeftsideNavItem li,
+            .LeftsideNavBottom li {
+                padding: 12px 15px;
+                margin-bottom: 8px;
+                border-radius: 8px;
+                cursor: pointer;
+                color: #000;
+                font-family: myFont1;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .nav-icon {
+            font-size: 22px; /* Material icons look best at 20-24px */
+            display: flex;
+            align-items: center;
+            }
+
+
+            .LeftsideNavItem li:hover,
+            .LeftsideNavBottom li:hover {
+                background-color: #f1f5f9;
+                color: var(--primaryColor);
+            }
+
+            .LeftsideNavItem li.active {
+                background-color: var(--primaryColor);
+                color: #ffffff;
+            }
+        }
+        .ProfileMainRight {
+            flex: 1;
+            .ContentCard {
+                background: #ffffff;
+                border-radius: 15px;
+                .DashBoard{
+                    width: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 20px;
+                    .EnrolldCourseBox{
+                        width: 100%;
+                      .DashBoardHead{
+                       h2{
+                        font-size: 18px;
+                        font-family: myFont1;
+                        font-weight: 500;
+                        color: #000;
+                       }
+                       p{
+                          font-size: 15px;
+                        font-family: myFont1;
+                        font-weight: 500;
+                        color: #555;
+                       }
+                    }
+                    .CourseGrid{
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    margin-top: 15px;
+                    .CourseItem{
+                        width: calc(100% / 3 - 10px);
+                        @media(max-width:1024px){
+                         width: 100%;
+                        }
+                    }
+                  }
+                    }
+                   .ContinueWatchBox {
+                        width: 100%;
+                        margin-top: 20px;
+                   .DashBoardHead{
+                       h2{
+                        font-size: 18px;
+                        font-family: myFont1;
+                        font-weight: 500;
+                        color: #000;
+                       }
+                       p{
+                          font-size: 15px;
+                        font-family: myFont1;
+                        font-weight: 500;
+                        color: #555;
+                       }
+                    }
+                        .ContinueGrid {
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 20px;
+                            margin-top: 15px;
+
+                            .ContinueCard {
+                            width: calc(100% / 2 - 10px); // Two cards per row
+                            display: flex;
+                            background: #fff;
+                            border: 1px solid #eee;
+                            border-radius: 12px;
+                            overflow: hidden;
+                            padding: 10px;
+                            gap: 15px;
+                            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+
+                            .Thumb {
+                                width: 120px;
+                                height: 100px;
+                                position: relative;
+                                img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                border-radius: 8px;
+                                }
+                            }
+
+                            .Details {
+                                flex: 1;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: space-between;
+
+                                h4 {
+                                font-size: 15px;
+                                margin: 0;
+                                font-family: myFont1;
+                                color: #333;
+                                }
+
+                                .ProgressContainer {
+                                margin: 8px 0;
+                                .Bar {
+                                    width: 100%;
+                                    height: 6px;
+                                    background: #e2e8f0;
+                                    border-radius: 10px;
+                                    overflow: hidden;
+                                    .Fill {
+                                    height: 100%;
+                                    background: var(--primaryColor);
+                                    border-radius: 10px;
+                                    }
+                                }
+                                p {
+                                    font-size: 11px;
+                                    margin-top: 4px;
+                                    color: #666;
+                                }
+                                }
+
+                                .CardFooter {
+                                display: flex;
+                                align-items: center;
+                                justify-content: space-between;
+
+                                .Instructor {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 8px;
+                                    img {
+                                    border-radius: 50%;
+                                    object-fit: cover;
+                                    }
+                                    span {
+                                    font-size: 12px;
+                                    color: #555;
+                                    }
+                                }
+
+                                .ContinueBtn {
+                                    padding: 6px 14px;
+                                    background: var(--primaryColor);
+                                    color: #fff;
+                                    border: none;
+                                    border-radius: 6px;
+                                    font-size: 12px;
+                                    cursor: pointer;
+                                    transition: 0.3s;
+                                    &:hover {
+                                    opacity: 0.9;
+                                    }
+                                }
+                                }
+                            }
+                            }
+                        }
+                    }
+                    .UpcomingEventsBox {
+                        width: 100%;
+                        margin-top: 30px;
+                        .DashBoardHead{
+                       h2{
+                        font-size: 18px;
+                        font-family: myFont1;
+                        font-weight: 500;
+                        color: #000;
+                       }
+                       p{
+                          font-size: 15px;
+                        font-family: myFont1;
+                        font-weight: 500;
+                        color: #555;
+                       }
+                         }
+                        .EventsList {
+                            width: 100%;
+                            display: flex;
+                            flex-direction: column;
+                            margin-top: 15px;
+
+                            .EventItem {
+                            display: flex;
+                            align-items: center;
+                            padding: 20px 0;
+                            border-bottom: 1px solid #edf2f7;
+                            gap: 20px;
+
+                            &:last-child {
+                                border-bottom: none;
+                            }
+
+                            .EventDate {
+                                min-width: 160px;
+                                display: flex;
+                                flex-direction: column;
+
+                                .FullDate {
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: #2d3748;
+                                font-family: myFont1;
+                                }
+
+                                .Time {
+                                font-size: 13px;
+                                color: #a0aec0;
+                                font-family: myFont1;
+                                }
+                            }
+
+                            .EventContent {
+                                flex: 1;
+
+                                .EventType {
+                                font-size: 14px;
+                                color: #4a5568;
+                                font-family: myFont1;
+                                }
+
+                                .EventTitle {
+                                font-size: 16px;
+                                font-weight: 600;
+                                color: var(--primaryColor); 
+                                margin: 4px 0 0 0;
+                                font-family: myFont1;
+                                cursor: pointer;
+                                &:hover {
+                                    text-decoration: underline;
+                                }
+                                }
+                            }
+
+                            .EventAction {
+                                .EventBtn {
+                                min-width: 120px;
+                                padding: 10px 20px;
+                                background-color: var(--primaryColor); // Blue button from your image
+                                color: white;
+                                border: none;
+                                border-radius: 25px;
+                                font-size: 14px;
+                                font-weight: 500;
+                                cursor: pointer;
+                                transition: background 0.3s;
+                                font-family: myFont1;
+
+                                &:hover {
+                                    background-color: var(--primaryColor);
+                                }
+                                }
+                            }
+                            }
+                        }
+                     }                  
+                }
+                .EditProfile {
+                width: 100%;
+                padding: 20px;
+
+                .PhotoUploadSection {
+                display: flex;
+                align-items: center;
+                gap: 20px;
+                margin: 30px 0;
+
+                .BigProfileImg {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                overflow: hidden;
+                position: relative;
+                cursor: pointer;
+                border: 2px solid var(--primaryColor);
+
+                img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                }
+
+                .Overlay {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.4);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 20px;
+                opacity: 0;
+                transition: 0.3s;
+                }
+
+                &:hover .Overlay {
+                opacity: 1;
+                }
+                }
+
+                .UploadInfo {
+                .hint { font-size: 12px; color: #777; margin: 0; }
+                .error-text { font-size: 12px; color: red; margin: 4px 0 0 0; }
+                }
+                }
+
+                .FormGrid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                }
+
+                .InputGroup {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-bottom: 15px;
+
+                label {
+                font-size: 14px;
+                font-weight: 500;
+                color: #333;
+                font-family: myFont1;
+                }
+
+                input, select {
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 14px;
+                outline: none;
+                transition: 0.3s;
+
+                &:focus {
+                border-color: var(--primaryColor);
+                }
+                }
+                }
+
+                .HealthSection {
+                margin: 20px 0;
+
+                .CheckboxLabel {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-size: 14px;
+                font-weight: 500;
+                cursor: pointer;
+                margin-bottom: 15px;
+                }
+
+                .HealthFieldsContainer {
+                padding: 20px;
+                border: 1px dashed #d1b4a1; // Dashed border from image
+                background: #fdfaf8;
+                border-radius: 10px;
+                }
+                }
+
+                .FormActions {
+                display: flex;
+                gap: 15px;
+                margin-top: 30px;
+
+                button {
+                padding: 12px 25px;
+                border-radius: 8px;
+                font-weight: 500;
+                cursor: pointer;
+                font-family: myFont1;
+                transition: 0.3s;
+                }
+
+                .CancelBtn {
+                background: #f1f1f1;
+                border: none;
+                color: #666;
+                &:hover { background: #e5e5e5; }
+                }
+
+                .SaveBtn {
+                background: var(--primaryColor);
+                border: none;
+                color: white;
+                &:hover { opacity: 0.9; }
+                }
+                }
+                }
+                .MyCourseBox{
+                    width: 100%;
+                    .DashBoardHead{
+                    h2{
+                    font-size: 18px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: #000;
+                    }
+                    p{
+                    font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: #555;
+                    }
+                }
+                .CourseGrid{
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                margin-top: 15px;
+                .CourseItem{
+                    width: calc(100% / 3 - 10px);
+                }
+                }
+                }
+                .UpcomingEventsBox {
+                    width: 100%;
+                    margin-top: 30px;
+                    .DashBoardHead{
+                    h2{
+                    font-size: 18px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: #000;
+                    }
+                    p{
+                        font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: #555;
+                    }
+                        }
+                    .EventsList {
+                        width: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        margin-top: 15px;
+
+                        .EventItem {
+                        display: flex;
+                        align-items: center;
+                        padding: 20px 0;
+                        border-bottom: 1px solid #edf2f7;
+                        gap: 20px;
+
+                        &:last-child {
+                            border-bottom: none;
+                        }
+
+                        .EventDate {
+                            min-width: 160px;
+                            display: flex;
+                            flex-direction: column;
+
+                            .FullDate {
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #2d3748;
+                            font-family: myFont1;
+                            }
+
+                            .Time {
+                            font-size: 13px;
+                            color: #a0aec0;
+                            font-family: myFont1;
+                            }
+                        }
+
+                        .EventContent {
+                            flex: 1;
+
+                            .EventType {
+                            font-size: 14px;
+                            color: #4a5568;
+                            font-family: myFont1;
+                            }
+
+                            .EventTitle {
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: var(--primaryColor); 
+                            margin: 4px 0 0 0;
+                            font-family: myFont1;
+                            cursor: pointer;
+                            &:hover {
+                                text-decoration: underline;
+                            }
+                            }
+                        }
+
+                        .EventAction {
+                            .EventBtn {
+                            min-width: 120px;
+                            padding: 10px 20px;
+                            background-color: var(--primaryColor); // Blue button from your image
+                            color: white;
+                            border: none;
+                            border-radius: 25px;
+                            font-size: 14px;
+                            font-weight: 500;
+                            cursor: pointer;
+                            transition: background 0.3s;
+                            font-family: myFont1;
+
+                            &:hover {
+                                background-color: var(--primaryColor);
+                            }
+                            }
+                        }
+                        }
+                    }
+                }  
+                .SettingsSection {
+                width: 100%;
+                margin-top: 30px;
+                .DashBoardHead{
+                    h2{
+                    font-size: 18px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: #000;
+                    }
+                    p{
+                    font-size: 15px;
+                    font-family: myFont1;
+                    font-weight: 500;
+                    color: #555;
+                    }
+                }
+                .PasswordForm {
+                max-width: 500px;
+                margin-top: 30px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+
+                .InputGroup {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+
+                label {
+                font-size: 14px;
+                font-weight: 500;
+                color: #333;
+                font-family: myFont1;
+                }
+
+                .PassInputWrapper {
+                position: relative;
+                width: 100%;
+
+                input {
+                    width: 100%;
+                    padding: 12px;
+                    padding-right: 45px; // Space for the eye icon
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    outline: none;
+                    transition: 0.3s;
+
+                    &:focus {
+                        border-color: var(--primaryColor);
+                    }
+                }
+
+                .EyeIcon {
+                    position: absolute;
+                    right: 15px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    cursor: pointer;
+                    color: #777;
+                    display: flex;
+                    align-items: center;
+                    font-size: 18px;
+                    transition: 0.2s;
+
+                    &:hover {
+                        color: var(--primaryColor);
+                    }
+                }
+                }
+                }
+
+                .UpdatePassBtn {
+                margin-top: 10px;
+                padding: 12px 25px;
+                background: var(--primaryColor);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                font-weight: 500;
+                cursor: pointer;
+                font-family: myFont1;
+                transition: 0.3s;
+                align-self: flex-start;
+
+                &:hover {
+                opacity: 0.9;
+                transform: translateY(-2px);
+                }
+
+                &:active {
+                transform: translateY(0);
+                }
+                }
+                }
+                }
+            }
+        }
+    }
 }

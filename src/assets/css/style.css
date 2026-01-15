@@ -2616,4 +2616,1759 @@
   .NavSearchOverlay .SearchHeader .SearchInputWrapper input {
     font-size: 16px;
   }
+}
+#Login {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 10px 10px 80px;
+}
+@media (max-width: 768px) {
+  #Login {
+    padding: 20px;
+  }
+}
+#Login .LoginBox {
+  display: flex;
+  width: 100%;
+  background: #fff;
+  border-radius: 25px;
+  overflow: hidden;
+  gap: 50px;
+}
+#Login .LoginBox .LoginLeft {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 768px) {
+  #Login .LoginBox .LoginLeft {
+    width: 100%;
+  }
+}
+#Login .LoginBox .LoginLeft .LoginLogoBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+#Login .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+  width: 100px;
+  height: 80px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+@media (max-width: 480px) {
+  #Login .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+    width: 80px;
+  }
+}
+#Login .LoginBox .LoginLeft .LoginWelcomeTxt {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+}
+@media (max-width: 480px) {
+  #Login .LoginBox .LoginLeft .LoginWelcomeTxt {
+    margin-bottom: 20px;
+  }
+}
+#Login .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+  font-family: myFont1;
+  font-weight: 500;
+}
+@media (max-width: 480px) {
+  #Login .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+    font-size: 18px;
+  }
+}
+#Login .LoginBox .LoginLeft .LoginWelcomeTxt p {
+  color: gray;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+  font-family: myFont1;
+  font-weight: 500;
+}
+@media (max-width: 480px) {
+  #Login .LoginBox .LoginLeft .LoginWelcomeTxt p {
+    font-size: 13px;
+  }
+}
+#Login .LoginBox .LoginLeft .LoginForm .InputGroup {
+  margin-bottom: 15px;
+}
+#Login .LoginBox .LoginLeft .LoginForm .InputGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 15px;
+  color: #000;
+  font-family: myFont1;
+}
+#Login .LoginBox .LoginLeft .LoginForm .InputGroup input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  font-size: 15px;
+  transition: border-color 0.3s;
+}
+#Login .LoginBox .LoginLeft .LoginForm .InputGroup input:focus {
+  border-color: var(--primaryColor);
+}
+#Login .LoginBox .LoginLeft .LoginForm .InputGroup .PasswordWrap {
+  position: relative;
+}
+#Login .LoginBox .LoginLeft .LoginForm .InputGroup .PasswordWrap .EyeIcon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  font-size: 1.1rem;
+}
+#Login .LoginBox .LoginLeft .LoginForm .InputGroup .ErrorTxt {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+#Login .LoginBox .LoginLeft .LoginForm .ForgetPassword {
+  text-align: left;
+  margin-bottom: 25px;
+}
+#Login .LoginBox .LoginLeft .LoginForm .ForgetPassword a {
+  font-size: 15px;
+  color: #1a1a1a;
+  font-weight: 500;
+  text-decoration: none;
+  font-family: myFont1;
+}
+#Login .LoginBox .LoginLeft .LoginForm .ForgetPassword a:hover {
+  text-decoration: underline;
+}
+#Login .LoginBox .LoginLeft .LoginForm .LoginBtn {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--primaryColor);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 10px;
+  transition: background 0.3s;
+  font-family: myFont1;
+}
+#Login .LoginBox .LoginLeft .LoginForm .LoginBtn:hover {
+  opacity: 0.9;
+}
+#Login .LoginBox .LoginLeft .OrText {
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  line-height: 0.1em;
+  margin: 25px 0;
+}
+#Login .LoginBox .LoginLeft .OrText span {
+  background: #fff;
+  padding: 0 15px;
+  color: #aaa;
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+}
+#Login .LoginBox .LoginLeft .SocialLogin {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#Login .LoginBox .LoginLeft .SocialLogin .SocialBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#Login .LoginBox .LoginLeft .SocialLogin .SocialBtn:hover {
+  background: #f9f9f9;
+  border-color: #ccc;
+}
+#Login .LoginBox .LoginLeft .SocialLogin .SocialBtn img {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+#Login .LoginBox .LoginLeft .SignUpTxt {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 15px;
+  color: #555;
+}
+#Login .LoginBox .LoginLeft .SignUpTxt .SignupLink {
+  color: var(--primaryColor);
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 5px;
+  font-family: myFont1;
+  font-size: 15px;
+}
+#Login .LoginBox .LoginLeft .SignUpTxt .SignupLink:hover {
+  text-decoration: underline;
+}
+#Login .LoginBox .LoginRight {
+  width: 55%;
+  background-image: url("../images/login-img1.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 50px 40px;
+}
+@media (max-width: 768px) {
+  #Login .LoginBox .LoginRight {
+    display: none;
+  }
+}
+#Login .LoginBox .LoginRight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+  border-radius: 20px;
+}
+#Login .LoginBox .LoginRight .LoginRightOverlay {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+#Login .LoginBox .LoginRight .LoginRightOverlay .quote {
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  font-weight: 300;
+  font-family: myFont1;
+}
+#Login .LoginBox .LoginRight .LoginRightOverlay .author {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#Signup {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 10px 10px 80px;
+}
+@media (max-width: 768px) {
+  #Signup {
+    padding: 20px;
+  }
+}
+#Signup .LoginBox {
+  display: flex;
+  width: 100%;
+  background: #fff;
+  border-radius: 25px;
+  overflow: hidden;
+  gap: 50px;
+}
+#Signup .LoginBox .LoginLeft {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 768px) {
+  #Signup .LoginBox .LoginLeft {
+    width: 100%;
+  }
+}
+#Signup .LoginBox .LoginLeft .LoginLogoBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+#Signup .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+  width: 100px;
+  height: 80px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+@media (max-width: 480px) {
+  #Signup .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+    width: 80px;
+  }
+}
+#Signup .LoginBox .LoginLeft .LoginWelcomeTxt {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+}
+@media (max-width: 480px) {
+  #Signup .LoginBox .LoginLeft .LoginWelcomeTxt {
+    margin-bottom: 20px;
+  }
+}
+#Signup .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+  font-family: myFont1;
+  font-weight: 500;
+}
+@media (max-width: 480px) {
+  #Signup .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+    font-size: 18px;
+  }
+}
+#Signup .LoginBox .LoginLeft .LoginWelcomeTxt p {
+  color: gray;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+  font-family: myFont1;
+  font-weight: 500;
+}
+@media (max-width: 480px) {
+  #Signup .LoginBox .LoginLeft .LoginWelcomeTxt p {
+    font-size: 13px;
+  }
+}
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup {
+  margin-bottom: 15px;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 15px;
+  color: #000;
+  font-family: myFont1;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup input {
+  width: 100%;
+  padding: 13px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  outline: none;
+  font-size: 15px;
+  transition: border-color 0.3s;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup input:focus {
+  border-color: var(--primaryColor);
+}
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup .PasswordWrap {
+  position: relative;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup .PasswordWrap .EyeIcon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  font-size: 1.1rem;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup .ErrorTxt {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .ForgetPassword {
+  text-align: left;
+  margin-bottom: 25px;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .ForgetPassword a {
+  font-size: 15px;
+  color: #1a1a1a;
+  font-weight: 500;
+  text-decoration: none;
+  font-family: myFont1;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .ForgetPassword a:hover {
+  text-decoration: underline;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .LoginBtn {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--primaryColor);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 10px;
+  transition: background 0.3s;
+  font-family: myFont1;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .LoginBtn:hover {
+  opacity: 0.9;
+}
+#Signup .LoginBox .LoginLeft .CheckboxGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+#Signup .LoginBox .LoginLeft .CheckboxGroup label {
+  font-size: 14px;
+  cursor: pointer;
+}
+#Signup .LoginBox .LoginLeft .CheckboxGroup input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+#Signup .LoginBox .LoginLeft .HealthDetailSection {
+  background: #fdf8f5;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  border: 1px dashed var(--primaryColor);
+}
+#Signup .LoginBox .LoginLeft .HealthDetailSection .CustomSelect {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  outline: none;
+}
+#Signup .LoginBox .LoginLeft .OrText {
+  text-align: center;
+  border-bottom: 1px solid #eee;
+  line-height: 0.1em;
+  margin: 25px 0;
+}
+#Signup .LoginBox .LoginLeft .OrText span {
+  background: #fff;
+  padding: 0 15px;
+  color: #aaa;
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+}
+#Signup .LoginBox .LoginLeft .SocialLogin {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#Signup .LoginBox .LoginLeft .SocialLogin .SocialBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  color: #333;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#Signup .LoginBox .LoginLeft .SocialLogin .SocialBtn:hover {
+  background: #f9f9f9;
+  border-color: #ccc;
+}
+#Signup .LoginBox .LoginLeft .SocialLogin .SocialBtn img {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+#Signup .LoginBox .LoginLeft .SignUpTxt {
+  text-align: center;
+  margin-top: 25px;
+  font-size: 15px;
+  color: #555;
+}
+#Signup .LoginBox .LoginLeft .SignUpTxt .SignupLink {
+  color: var(--primaryColor);
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 5px;
+  font-family: myFont1;
+  font-size: 15px;
+}
+#Signup .LoginBox .LoginLeft .SignUpTxt .SignupLink:hover {
+  text-decoration: underline;
+}
+#Signup .LoginBox .LoginRight {
+  width: 55%;
+  background-image: url("../images/login-img1.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 50px 40px;
+}
+@media (max-width: 768px) {
+  #Signup .LoginBox .LoginRight {
+    display: none;
+  }
+}
+#Signup .LoginBox .LoginRight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+  border-radius: 20px;
+}
+#Signup .LoginBox .LoginRight .LoginRightOverlay {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+#Signup .LoginBox .LoginRight .LoginRightOverlay .quote {
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  font-weight: 300;
+  font-family: myFont1;
+}
+#Signup .LoginBox .LoginRight .LoginRightOverlay .author {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#ForgetPassword {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 10px 10px 80px;
+}
+@media (max-width: 768px) {
+  #ForgetPassword {
+    padding: 20px;
+  }
+}
+#ForgetPassword .LoginBox {
+  display: flex;
+  width: 100%;
+  background: #fff;
+  overflow: hidden;
+  gap: 50px;
+}
+#ForgetPassword .LoginBox .LoginLeft {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 768px) {
+  #ForgetPassword .LoginBox .LoginLeft {
+    width: 100%;
+  }
+}
+#ForgetPassword .LoginBox .LoginLeft .LoginLogoBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+#ForgetPassword .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+  width: 100px;
+  height: 80px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+@media (max-width: 480px) {
+  #ForgetPassword .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+    width: 80px;
+  }
+}
+#ForgetPassword .LoginBox .LoginLeft .LoginWelcomeTxt {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+}
+@media (max-width: 480px) {
+  #ForgetPassword .LoginBox .LoginLeft .LoginWelcomeTxt {
+    margin-bottom: 20px;
+  }
+}
+#ForgetPassword .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+  font-family: myFont1;
+  font-weight: 500;
+}
+@media (max-width: 480px) {
+  #ForgetPassword .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+    font-size: 18px;
+  }
+}
+#ForgetPassword .LoginBox .LoginLeft .LoginWelcomeTxt p {
+  color: gray;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+  font-family: myFont1;
+  font-weight: 500;
+}
+@media (max-width: 480px) {
+  #ForgetPassword .LoginBox .LoginLeft .LoginWelcomeTxt p {
+    font-size: 13px;
+  }
+}
+#ForgetPassword .LoginBox .LoginLeft .InputGroup {
+  display: flex;
+  flex-direction: column;
+}
+#ForgetPassword .LoginBox .LoginLeft .InputGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #333;
+}
+#ForgetPassword .LoginBox .LoginLeft .InputGroup input {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+#ForgetPassword .LoginBox .LoginLeft .InputGroup input:focus {
+  border-color: var(--primaryColor);
+}
+#ForgetPassword .LoginBox .LoginLeft .InputGroup .otpBtn {
+  margin-top: 25px;
+  padding: 12px;
+  background-color: var(--primaryColor);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+#ForgetPassword .LoginBox .LoginLeft .InputGroup .otpBtn:hover {
+  background-color: var(--primaryColor);
+}
+#ForgetPassword .LoginBox .LoginRight {
+  width: 55%;
+  background-image: url("../images/login-img1.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 50px 40px;
+  height: 100vh;
+}
+@media (max-width: 768px) {
+  #ForgetPassword .LoginBox .LoginRight {
+    display: none;
+  }
+}
+#ForgetPassword .LoginBox .LoginRight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+  border-radius: 20px;
+}
+#ForgetPassword .LoginBox .LoginRight .LoginRightOverlay {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+#ForgetPassword .LoginBox .LoginRight .LoginRightOverlay .quote {
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  font-weight: 300;
+  font-family: myFont1;
+}
+#ForgetPassword .LoginBox .LoginRight .LoginRightOverlay .author {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#Otp {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 10px 10px 80px;
+}
+@media (max-width: 768px) {
+  #Otp {
+    padding: 20px;
+  }
+}
+#Otp .LoginBox {
+  display: flex;
+  width: 100%;
+  background: #fff;
+  overflow: hidden;
+  gap: 50px;
+}
+#Otp .LoginBox .LoginLeft {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 768px) {
+  #Otp .LoginBox .LoginLeft {
+    width: 100%;
+  }
+}
+#Otp .LoginBox .LoginLeft .LoginLogoBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+#Otp .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+  width: 100px;
+  height: 80px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+@media (max-width: 480px) {
+  #Otp .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+    width: 80px;
+  }
+}
+#Otp .LoginBox .LoginLeft .LoginWelcomeTxt {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+}
+@media (max-width: 480px) {
+  #Otp .LoginBox .LoginLeft .LoginWelcomeTxt {
+    margin-bottom: 20px;
+  }
+}
+#Otp .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+  font-family: myFont1;
+  font-weight: 500;
+}
+@media (max-width: 480px) {
+  #Otp .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+    font-size: 18px;
+  }
+}
+#Otp .LoginBox .LoginLeft .LoginWelcomeTxt p {
+  color: gray;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+  font-family: myFont1;
+  font-weight: 500;
+}
+@media (max-width: 480px) {
+  #Otp .LoginBox .LoginLeft .LoginWelcomeTxt p {
+    font-size: 13px;
+  }
+}
+#Otp .LoginBox .LoginLeft .OtpEnterBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+#Otp .LoginBox .LoginLeft .OtpEnterBox .OtpInputs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+#Otp .LoginBox .LoginLeft .OtpEnterBox .OtpInputs input {
+  width: 45px;
+  height: 50px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+#Otp .LoginBox .LoginLeft .OtpEnterBox .OtpInputs input:focus {
+  border-color: var(--primaryColor);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+#Otp .LoginBox .LoginLeft .OtpEnterBox .ResendContainer {
+  margin-bottom: 20px;
+  font-family: myFont1;
+  font-size: 14px;
+}
+#Otp .LoginBox .LoginLeft .OtpEnterBox .ResendContainer .resendLink {
+  color: var(--primaryColor);
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: underline;
+}
+#Otp .LoginBox .LoginLeft .OtpEnterBox .ResendContainer .timerText {
+  color: var(--primaryColor);
+  font-weight: 600;
+}
+#Otp .LoginBox .LoginLeft .OtpEnterBox .otpBtn {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primaryColor);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+#Otp .LoginBox .LoginRight {
+  width: 55%;
+  background-image: url("../images/login-img1.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: 20px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 50px 40px;
+  height: 100vh;
+}
+@media (max-width: 768px) {
+  #Otp .LoginBox .LoginRight {
+    display: none;
+  }
+}
+#Otp .LoginBox .LoginRight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+  border-radius: 20px;
+}
+#Otp .LoginBox .LoginRight .LoginRightOverlay {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+#Otp .LoginBox .LoginRight .LoginRightOverlay .quote {
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  font-weight: 300;
+  font-family: myFont1;
+}
+#Otp .LoginBox .LoginRight .LoginRightOverlay .author {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+#ChangePassword {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 10px 10px 80px;
+}
+@media (max-width: 768px) {
+  #ChangePassword {
+    padding: 20px;
+  }
+}
+#ChangePassword .LoginBox {
+  display: flex;
+  width: 100%;
+  background: #fff;
+  overflow: hidden;
+  gap: 50px;
+}
+#ChangePassword .LoginBox .LoginLeft {
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 768px) {
+  #ChangePassword .LoginBox .LoginLeft {
+    width: 100%;
+  }
+}
+#ChangePassword .LoginBox .LoginLeft .LoginLogoBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+  justify-content: center;
+}
+#ChangePassword .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+  width: 100px;
+  height: 80px;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+@media (max-width: 480px) {
+  #ChangePassword .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
+    width: 80px;
+  }
+}
+#ChangePassword .LoginBox .LoginLeft .LoginWelcomeTxt {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+}
+@media (max-width: 480px) {
+  #ChangePassword .LoginBox .LoginLeft .LoginWelcomeTxt {
+    margin-bottom: 20px;
+  }
+}
+#ChangePassword .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+  font-family: myFont1;
+  font-weight: 500;
+}
+@media (max-width: 480px) {
+  #ChangePassword .LoginBox .LoginLeft .LoginWelcomeTxt h1 {
+    font-size: 18px;
+  }
+}
+#ChangePassword .LoginBox .LoginLeft .LoginWelcomeTxt p {
+  color: gray;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+  font-family: myFont1;
+}
+@media (max-width: 480px) {
+  #ChangePassword .LoginBox .LoginLeft .LoginWelcomeTxt p {
+    font-size: 13px;
+  }
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox .InputFieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox .InputFieldGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox .InputFieldGroup .InputWrapper {
+  position: relative;
+  width: 100%;
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox .InputFieldGroup .InputWrapper input {
+  width: 100%;
+  padding: 12px 45px 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox .InputFieldGroup .InputWrapper input:focus {
+  border-color: var(--primaryColor);
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox .InputFieldGroup .InputWrapper .EyeIcon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 20px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox .InputFieldGroup .InputWrapper .EyeIcon:hover {
+  color: var(--primaryColor);
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox .otpBtn {
+  margin-top: 10px;
+  padding: 14px;
+  background-color: var(--primaryColor);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+#ChangePassword .LoginBox .LoginLeft .ChangePasswordBox .otpBtn:hover {
+  opacity: 0.9;
+}
+#ChangePassword .LoginBox .LoginRight {
+  width: 55%;
+  background-image: url("../images/login-img1.jpg");
+  background-size: cover;
+  background-position: center;
+  border-radius: 20px;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding: 50px 40px;
+  height: 100vh;
+}
+@media (max-width: 768px) {
+  #ChangePassword .LoginBox .LoginRight {
+    display: none;
+  }
+}
+#ChangePassword .LoginBox .LoginRight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 5%, transparent 60%);
+  border-radius: 20px;
+}
+#ChangePassword .LoginBox .LoginRight .LoginRightOverlay {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+#ChangePassword .LoginBox .LoginRight .LoginRightOverlay .quote {
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  font-family: myFont1;
+}
+#ChangePassword .LoginBox .LoginRight .LoginRightOverlay .author {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+}
+
+#Profile {
+  width: 100%;
+  padding: 80px 0px 50px 0px;
+  min-height: 100vh;
+}
+#Profile .ProfileMain {
+  display: flex;
+  align-items: flex-start;
+  gap: 30px;
+}
+#Profile .ProfileMain .ProfileMainLeftNav {
+  width: 300px;
+  background: #f8fafc;
+  border-radius: 15px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: sticky;
+  top: 20px;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .UserProfileBox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eee;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .UserProfileImgBox {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--primaryColor);
+}
+#Profile .ProfileMain .ProfileMainLeftNav .UserProfileImgBox img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .UserInfo h4 {
+  margin: 0;
+  font-size: 15px;
+  color: #000;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .UserInfo p {
+  margin: 0;
+  font-size: 12px;
+  color: #555;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .MenuHeader {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-bottom: 15px;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .MenuHeader p {
+  font-size: 15px;
+  text-transform: uppercase;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #555;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .LeftsideNavItem ul,
+#Profile .ProfileMain .ProfileMainLeftNav .LeftsideNavBottom ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .LeftsideNavItem li,
+#Profile .ProfileMain .ProfileMainLeftNav .LeftsideNavBottom li {
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #000;
+  font-family: myFont1;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .nav-icon {
+  font-size: 22px; /* Material icons look best at 20-24px */
+  display: flex;
+  align-items: center;
+}
+#Profile .ProfileMain .ProfileMainLeftNav .LeftsideNavItem li:hover,
+#Profile .ProfileMain .ProfileMainLeftNav .LeftsideNavBottom li:hover {
+  background-color: #f1f5f9;
+  color: var(--primaryColor);
+}
+#Profile .ProfileMain .ProfileMainLeftNav .LeftsideNavItem li.active {
+  background-color: var(--primaryColor);
+  color: #ffffff;
+}
+#Profile .ProfileMain .ProfileMainRight {
+  flex: 1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard {
+  background: #ffffff;
+  border-radius: 15px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .EnrolldCourseBox {
+  width: 100%;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .EnrolldCourseBox .DashBoardHead h2 {
+  font-size: 18px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #000;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .EnrolldCourseBox .DashBoardHead p {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #555;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .EnrolldCourseBox .CourseGrid {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .EnrolldCourseBox .CourseGrid .CourseItem {
+  width: calc(33.3333333333% - 10px);
+}
+@media (max-width: 1024px) {
+  #Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .EnrolldCourseBox .CourseGrid .CourseItem {
+    width: 100%;
+  }
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox {
+  width: 100%;
+  margin-top: 20px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .DashBoardHead h2 {
+  font-size: 18px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #000;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .DashBoardHead p {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #555;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 15px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard {
+  width: calc(50% - 10px);
+  display: flex;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 10px;
+  gap: 15px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Thumb {
+  width: 120px;
+  height: 100px;
+  position: relative;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Thumb img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 8px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details h4 {
+  font-size: 15px;
+  margin: 0;
+  font-family: myFont1;
+  color: #333;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .ProgressContainer {
+  margin: 8px 0;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .ProgressContainer .Bar {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .ProgressContainer .Bar .Fill {
+  height: 100%;
+  background: var(--primaryColor);
+  border-radius: 10px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .ProgressContainer p {
+  font-size: 11px;
+  margin-top: 4px;
+  color: #666;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter .Instructor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter .Instructor img {
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter .Instructor span {
+  font-size: 12px;
+  color: #555;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter .ContinueBtn {
+  padding: 6px 14px;
+  background: var(--primaryColor);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter .ContinueBtn:hover {
+  opacity: 0.9;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox {
+  width: 100%;
+  margin-top: 30px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .DashBoardHead h2 {
+  font-size: 18px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #000;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .DashBoardHead p {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #555;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem {
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #edf2f7;
+  gap: 20px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem:last-child {
+  border-bottom: none;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem .EventDate {
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem .EventDate .FullDate {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem .EventDate .Time {
+  font-size: 13px;
+  color: #a0aec0;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem .EventContent {
+  flex: 1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem .EventContent .EventType {
+  font-size: 14px;
+  color: #4a5568;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem .EventContent .EventTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primaryColor);
+  margin: 4px 0 0 0;
+  font-family: myFont1;
+  cursor: pointer;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem .EventContent .EventTitle:hover {
+  text-decoration: underline;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem .EventAction .EventBtn {
+  min-width: 120px;
+  padding: 10px 20px;
+  background-color: var(--primaryColor);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .UpcomingEventsBox .EventsList .EventItem .EventAction .EventBtn:hover {
+  background-color: var(--primaryColor);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile {
+  width: 100%;
+  padding: 20px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .PhotoUploadSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 30px 0;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .PhotoUploadSection .BigProfileImg {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  border: 2px solid var(--primaryColor);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .PhotoUploadSection .BigProfileImg img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .PhotoUploadSection .BigProfileImg .Overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+  opacity: 0;
+  transition: 0.3s;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .PhotoUploadSection .BigProfileImg:hover .Overlay {
+  opacity: 1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .PhotoUploadSection .UploadInfo .hint {
+  font-size: 12px;
+  color: #777;
+  margin: 0;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .PhotoUploadSection .UploadInfo .error-text {
+  font-size: 12px;
+  color: red;
+  margin: 4px 0 0 0;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .FormGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .InputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .InputGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .InputGroup input, #Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .InputGroup select {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .InputGroup input:focus, #Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .InputGroup select:focus {
+  border-color: var(--primaryColor);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .HealthSection {
+  margin: 20px 0;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .HealthSection .CheckboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .HealthSection .HealthFieldsContainer {
+  padding: 20px;
+  border: 1px dashed #d1b4a1;
+  background: #fdfaf8;
+  border-radius: 10px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .FormActions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .FormActions button {
+  padding: 12px 25px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: myFont1;
+  transition: 0.3s;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .FormActions .CancelBtn {
+  background: #f1f1f1;
+  border: none;
+  color: #666;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .FormActions .CancelBtn:hover {
+  background: #e5e5e5;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .FormActions .SaveBtn {
+  background: var(--primaryColor);
+  border: none;
+  color: white;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .FormActions .SaveBtn:hover {
+  opacity: 0.9;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .MyCourseBox {
+  width: 100%;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .MyCourseBox .DashBoardHead h2 {
+  font-size: 18px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #000;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .MyCourseBox .DashBoardHead p {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #555;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .MyCourseBox .CourseGrid {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 15px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .MyCourseBox .CourseGrid .CourseItem {
+  width: calc(33.3333333333% - 10px);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox {
+  width: 100%;
+  margin-top: 30px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .DashBoardHead h2 {
+  font-size: 18px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #000;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .DashBoardHead p {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #555;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem {
+  display: flex;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid #edf2f7;
+  gap: 20px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem:last-child {
+  border-bottom: none;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem .EventDate {
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem .EventDate .FullDate {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3748;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem .EventDate .Time {
+  font-size: 13px;
+  color: #a0aec0;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem .EventContent {
+  flex: 1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem .EventContent .EventType {
+  font-size: 14px;
+  color: #4a5568;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem .EventContent .EventTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--primaryColor);
+  margin: 4px 0 0 0;
+  font-family: myFont1;
+  cursor: pointer;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem .EventContent .EventTitle:hover {
+  text-decoration: underline;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem .EventAction .EventBtn {
+  min-width: 120px;
+  padding: 10px 20px;
+  background-color: var(--primaryColor);
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .UpcomingEventsBox .EventsList .EventItem .EventAction .EventBtn:hover {
+  background-color: var(--primaryColor);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection {
+  width: 100%;
+  margin-top: 30px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .DashBoardHead h2 {
+  font-size: 18px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #000;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .DashBoardHead p {
+  font-size: 15px;
+  font-family: myFont1;
+  font-weight: 500;
+  color: #555;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm {
+  max-width: 500px;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .InputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .InputGroup label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  font-family: myFont1;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .InputGroup .PassInputWrapper {
+  position: relative;
+  width: 100%;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .InputGroup .PassInputWrapper input {
+  width: 100%;
+  padding: 12px;
+  padding-right: 45px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .InputGroup .PassInputWrapper input:focus {
+  border-color: var(--primaryColor);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .InputGroup .PassInputWrapper .EyeIcon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #777;
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  transition: 0.2s;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .InputGroup .PassInputWrapper .EyeIcon:hover {
+  color: var(--primaryColor);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .UpdatePassBtn {
+  margin-top: 10px;
+  padding: 12px 25px;
+  background: var(--primaryColor);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: myFont1;
+  transition: 0.3s;
+  align-self: flex-start;
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .UpdatePassBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .SettingsSection .PasswordForm .UpdatePassBtn:active {
+  transform: translateY(0);
 }/*# sourceMappingURL=style.css.map */

@@ -142,8 +142,8 @@ const [isSearchOpen, setIsSearchOpen] = useState(false);
 
           <div className="NavRightBox">
             <div className="searchCartWishlistBox">
-              <div className="SearchIconTrigger" onClick={() => setIsSearchOpen(true)}>
-                  <BiSearch />
+              <div className="SearchIconTrigger SearchIcon" onClick={() => setIsSearchOpen(true)}>
+                  <BiSearch  />
                 </div>
 
               <Link href="/cart" className="CartIcon">
@@ -179,7 +179,7 @@ const [isSearchOpen, setIsSearchOpen] = useState(false);
             </div>
            <div className="AuthBox">
             <div className="LoginBox">
-              <Link href="/login" className="authLink">
+              <Link href="/auth/login" className="authLink">
                 <RiLoginCircleLine />
                 <button>Login</button>
               </Link>

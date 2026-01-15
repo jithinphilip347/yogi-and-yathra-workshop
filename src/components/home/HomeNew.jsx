@@ -57,7 +57,7 @@ const courses = [
     ratingIcon: <AiFillStar />,
     userIcon: <FiUsers />,
     buttonText: "View Details",
-        instructorLabel: "Instructor",
+    instructorLabel: "Instructor",
 
     title: "Full-Body Yoga Masterclass",
     lessons: "35",
