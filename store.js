@@ -10,8 +10,8 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import authReducer from "./features/auth/authSlice";
-import wishlistReducer from "./features/wishlist/wishlistSlice";
+import authReducer from "./src/features/auth/authSlice";
+import wishlistReducer from "./src/features/wishlist/wishlistSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,

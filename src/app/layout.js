@@ -30,6 +30,7 @@ import Footer from '@/components/footer/Footer';
 import SubNav from '@/components/nav/SubNav';
 import '../assets/css/main.css';
 import '../assets/css/style.css';
+import Providers from '@/components/Providers';
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
@@ -39,12 +40,14 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {!isAuthPage && <Nav />}
-        {!isAuthPage && <SubNav />}
-        
-        <main>{children}</main>
-        
-        {!isAuthPage && <Footer />}
+        <Providers>
+          {!isAuthPage && <Nav />}
+          {!isAuthPage && <SubNav />}
+          
+          <main>{children}</main>
+          
+          {!isAuthPage && <Footer />}
+        </Providers>
       </body>
     </html>
   );

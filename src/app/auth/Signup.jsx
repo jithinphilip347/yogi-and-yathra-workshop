@@ -5,18 +5,27 @@ import LoginLogo from "../../assets/images/logo.png";
 import LoginGoogle from "../../assets/images/google.png";
 import Image from "next/image";
 import Link from "next/link";
+import { useDispatch } from "react-redux";
+import { setLogin } from "../../features/auth/authSlice";
+import { useRouter } from "next/navigation";
+import authApi from "../../libs/authApi";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const [step, setStep] = useState(1); // Track form step
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState("");
+  const [loading, setLoading] = useState(false);
   
   const [formData, setFormData] = useState({
     name: "", email: "", mobile: "", password: "", confirmPassword: "",
     whatsapp: "", location: "", age: "", height: "", weight: "", otherIssue: ""
   });
   const [errors, setErrors] = useState({});
+
+  const dispatch = useDispatch();
+  const router = useRouter();
 
   const validateStep1 = () => {
     let newErrors = {};
@@ -30,6 +39,17 @@ const Signup = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const validateStep2 = () => {
+    let newErrors = {};
+    if (!formData.age) newErrors.age = "Age is required";
+    if (!formData.location) newErrors.location = "Location is required";
+    if (!formData.height) newErrors.height = "Height is required";
+    if (!formData.weight) newErrors.weight = "Weight is required";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleContinue = (e) => {
     e.preventDefault();
     if (validateStep1()) {
@@ -37,9 +57,26 @@ const Signup = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Final Signup Data:", formData);
+    if (!validateStep2()) return;
+
+    setLoading(true);
+    try {
+      const res = await authApi.register({
+        ...formData,
+        health_issue: selectedIssue === "others" ? formData.otherIssue : selectedIssue
+      });
+      console.log("Signup Success:", res.data);
+      dispatch(setLogin(res.data));
+      toast.success("Account created successfully!");
+      router.push("/");
+    } catch (error) {
+      console.error("Signup Error:", error);
+      toast.error(error.response?.data?.message || "Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,7 +95,7 @@ const Signup = () => {
           <form className="LoginForm" onSubmit={step === 1 ? handleContinue : handleSubmit}>
             {step === 1 ? (
               <>
-                {/* STEP 1 FIELDS */}
+                {/* STEP 1 FIELDS */} 
                 <div className="InputGroup">
                   <label>Full Name</label>
                   <input type="text" placeholder="Name" value={formData.name} onChange={(e)=>setFormData({...formData, name: e.target.value})} />
@@ -75,6 +112,7 @@ const Signup = () => {
                   <div className="InputGroup">
                     <label>Mobile Number</label>
                     <input type="number" placeholder="Mobile" onChange={(e)=>setFormData({...formData, mobile: e.target.value})} />
+                    {errors.mobile && <span className="ErrorTxt">{errors.mobile}</span>}
                   </div>
                   <div className="InputGroup">
                     <label>WhatsApp Number</label>
@@ -90,6 +128,7 @@ const Signup = () => {
                       {showPassword ? <FiEyeOff /> : <FiEye />}
                     </span>
                   </div>
+                  {errors.password && <span className="ErrorTxt">{errors.password}</span>}
                 </div>
 
                 <div className="InputGroup">
@@ -112,10 +151,12 @@ const Signup = () => {
                   <div className="InputGroup">
                     <label>Age</label>
                     <input type="number" placeholder="Age" onChange={(e)=>setFormData({...formData, age: e.target.value})} />
+                    {errors.age && <span className="ErrorTxt">{errors.age}</span>}
                   </div>
                   <div className="InputGroup">
                     <label>Location</label>
                     <input type="text" placeholder="Location" onChange={(e)=>setFormData({...formData, location: e.target.value})} />
+                    {errors.location && <span className="ErrorTxt">{errors.location}</span>}
                   </div>
                 </div>
 
@@ -135,10 +176,12 @@ const Signup = () => {
                     <div className="InputGroup">
                       <label>Height (cm)</label>
                       <input type="number" placeholder="Height" onChange={(e)=>setFormData({...formData, height: e.target.value})} />
+                      {errors.height && <span className="ErrorTxt">{errors.height}</span>}
                     </div>
                     <div className="InputGroup">
                       <label>Weight (kg)</label>
                       <input type="number" placeholder="Weight" onChange={(e)=>setFormData({...formData, weight: e.target.value})} />
+                      {errors.weight && <span className="ErrorTxt">{errors.weight}</span>}
                     </div>
                   </div>
 
@@ -150,8 +193,10 @@ const Signup = () => {
                   )}
                 </div>
 
-                <button type="submit" className="LoginBtn">Sign Up</button>
-                <button type="button" className="BackBtn" onClick={() => setStep(1)}>Back to Details</button>
+                <button type="submit" className="LoginBtn" disabled={loading}>
+                  {loading ? "Signing Up..." : "Sign Up"}
+                </button>
+                <button type="button" className="BackBtn" onClick={() => setStep(1)} disabled={loading}>Back to Details</button>
               </>
             )}
           </form>

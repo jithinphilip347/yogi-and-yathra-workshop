@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import CourseCard from "../coursebox/CourseCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
+import { MEDIA_BASE_URL } from "@/utils/constants";
 import CourseImg1 from "../../assets/images/courseImg-1.jpg";
 import CourseImg2 from "../../assets/images/courseImg-2.jpg";
 import CourseImg3 from "../../assets/images/courseImg-3.jpg";
@@ -22,162 +23,24 @@ import { FiUsers } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
 import { FiClock, FiBookOpen } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
-
-const courses = [
-  {
-    image: CourseImg1,
-    wishlistIcon: <FaHeart />,
-    lessonsIcon: <FiBookOpen />,
-    clockIcon: <FiClock />,
-    priceIcon: "₹",
-    oldPriceIcon: "₹",
-    lessonsLabel: "Lessons",
-    ratingIcon: <AiFillStar />,
-    userIcon: <FiUsers />,
-    buttonText: "View Details",
-    instructorLabel: "Instructor",
-    title: "Mindful Meditation for Beginners",
-    lessons: "25",
-    duration: "20 hrs",
-    price: "499",
-    oldPrice: "899",
-    rating: "4.9",
-    students: "780",
-    instructorImg: User3,
-    instructorName: "Maya Krishna",
-  },
-  {
-    image: CourseImg2,
-    wishlistIcon: <FaHeart />,
-    lessonsIcon: <FiBookOpen />,
-    clockIcon: <FiClock />,
-    priceIcon: "₹",
-    oldPriceIcon: "₹",
-    lessonsLabel: "Lessons",
-    ratingIcon: <AiFillStar />,
-    userIcon: <FiUsers />,
-    buttonText: "View Details",
-    instructorLabel: "Instructor",
-
-    title: "Full-Body Yoga Masterclass",
-    lessons: "35",
-    duration: "45 hrs",
-    price: "899",
-    oldPrice: "1299",
-    rating: "4.8",
-    students: "1260",
-    instructorImg: User2,
-    instructorName: "Anil Dev",
-  },
-  {
-    image: CourseImg3,
-    wishlistIcon: <FaHeart />,
-    lessonsIcon: <FiBookOpen />,
-    clockIcon: <FiClock />,
-    priceIcon: "₹",
-    oldPriceIcon: "₹",
-    lessonsLabel: "Lessons",
-    ratingIcon: <AiFillStar />,
-    userIcon: <FiUsers />,
-    buttonText: "View Details",
-        instructorLabel: "Instructor",
-
-    title: "Breathwork Healingy",
-    lessons: "18",
-    duration: "16 hrs",
-    price: "699",
-    oldPrice: "999",
-    rating: "4.7",
-    students: "640",
-    instructorImg: User1,
-    instructorName: "Akhil ",
-  },
-  {
-    image: CourseImg4,
-    wishlistIcon: <FaHeart />,
-    lessonsIcon: <FiBookOpen />,
-    clockIcon: <FiClock />,
-    priceIcon: "₹",
-    oldPriceIcon: "₹",
-    lessonsLabel: "Lessons",
-    ratingIcon: <AiFillStar />,
-    userIcon: <FiUsers />,
-    buttonText: "View Details",
-        instructorLabel: "Instructor",
-
-    title: "Spiritual Wellness & Inner Peace",
-    lessons: "20",
-    duration: "25 hrs",
-    price: "749",
-    oldPrice: "1299",
-    rating: "4.6",
-    students: "530",
-    instructorImg: User4,
-    instructorName: "Richa Kumar",
-  },
-  {
-    image: CourseImg5,
-    wishlistIcon: <FaHeart />,
-    lessonsIcon: <FiBookOpen />,
-    clockIcon: <FiClock />,
-    priceIcon: "₹",
-    oldPriceIcon: "₹",
-    lessonsLabel: "Lessons",
-    ratingIcon: <AiFillStar />,
-    userIcon: <FiUsers />,
-    buttonText: "View Details",
-        instructorLabel: "Instructor",
-
-    title: "Yoga for Stress Relief & Sleep",
-    lessons: "15",
-    duration: "12 hrs",
-    price: "449",
-    oldPrice: "899",
-    rating: "4.8",
-    students: "950",
-    instructorImg: User6,
-    instructorName: "Asha Mehta",
-  },
-  {
-    image: CourseImg6,
-    wishlistIcon: <FaHeart />,
-    lessonsIcon: <FiBookOpen />,
-    clockIcon: <FiClock />,
-    priceIcon: "₹",
-    oldPriceIcon: "₹",
-    lessonsLabel: "Lessons",
-    ratingIcon: <AiFillStar />,
-    userIcon: <FiUsers />,
-    buttonText: "View Details",
-        instructorLabel: "Instructor",
-
-    title: "Advanced Meditation with Mantras",
-    lessons: "30",
-    duration: "32 hrs",
-    price: "1199",
-    oldPrice: "1599",
-    rating: "4.9",
-    students: "1120",
-    instructorImg: User5,
-    instructorName: "Aravind Dev",
-  },
-];
+import useCourse from "@/hooks/useCourse";
 
 const HomeNew = () => {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 2000);
-  }, []);
+  const queries = {
+    order_by: "desc",
+    sort: "created_at",
+  };
+  const { courseQuery } = useCourse({ queries });
+  const { data, isLoading } = courseQuery;
+  const courses = data?.data || [];
 
   return (
     <div id="HomeNew">
-
       <div className="container">
-              <div className="HomeNewHead">
-        <h2>Newly Launched Programs</h2>
-        <button className="viewAllBtn">View All</button>
-      </div>
+        <div className="HomeNewHead">
+          <h2>Newly Launched Programs</h2>
+          <button className="viewAllBtn">View All</button>
+        </div>
         <div className="HomeNewMain">
           <div className="swiper-btn prev-btn">
             <FaChevronLeft />
@@ -204,9 +67,39 @@ const HomeNew = () => {
               1400: { slidesPerView: 5 },
             }}
           >
-            {(loading ? Array(6).fill({}) : courses).map((course, i) => (
+            {(isLoading ? Array(6).fill({}) : courses).map((course, i) => (
               <SwiperSlide key={i}>
-                <CourseCard loading={loading} {...course} />
+                <CourseCard
+                  loading={isLoading}
+                  image={
+                    course.thumbnail
+                      ? `${MEDIA_BASE_URL}${course.thumbnail}`
+                      : null
+                  }
+                  title={course.title}
+                  lessons={course?.lessons_count}
+                  duration={(course.duration || 0) + " hrs"}
+                  price={Number(course.price)}
+                  oldPrice={Number(course.discount_price)}
+                  rating="4.5" 
+                  students="100" 
+                  instructorName={course?.instructor?.name}
+                  wishlistIcon={<FaHeart />}
+                  lessonsIcon={<FiBookOpen />}
+                  clockIcon={<FiClock />}
+                  priceIcon="₹"
+                  oldPriceIcon="₹"
+                  lessonsLabel="Lessons"
+                  ratingIcon={<AiFillStar />}
+                  userIcon={<FiUsers />}
+                  buttonText="View Details"
+                  instructorImg={
+                    course?.instructor?.avatar
+                      ? `${MEDIA_BASE_URL}${course.instructor.avatar}`
+                      : null
+                  }
+                  instructorLabel={course?.instructor?.role}
+                />
               </SwiperSlide>
             ))}
           </Swiper>
