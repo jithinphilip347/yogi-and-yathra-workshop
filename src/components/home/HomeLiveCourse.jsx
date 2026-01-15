@@ -13,6 +13,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import { MEDIA_BASE_URL } from "@/utils/constants";
 
 const EventSlide = ({ image, targetDate }) => {
   const [timeLeft, setTimeLeft] = useState({
@@ -50,7 +51,7 @@ const EventSlide = ({ image, targetDate }) => {
 
   return (
     <div className="LiveCourseImgBox">
-      <Image src={image} alt="Live Yoga" className="MainImage" priority />
+      <Image src={image} alt="Live Yoga" className="MainImage" priority width={1000} height={1000} />
       <div className="Overlay"></div>
 
       <div className="TimingBox">
@@ -74,77 +75,52 @@ const EventSlide = ({ image, targetDate }) => {
   );
 };
 
-const HomeLiveCourse = () => {
-  const events = [
-    {
-      id: 1,
-      image: LiveBg1,
-      heading: <>Join Our <span>Live Yoga Meditation</span> Event</>,
-      description: "Calm your mind & refresh your body with relaxing meditation.",
-      scrollText: "Scroll Down To Discover",
-      targetDate: new Date("2025-12-30T18:30:00").getTime(),
-    },
-    {
-      id: 2,
-      image: LiveBg2,
-      heading: <>Sunrise <span>Pranayam</span> Session</>,
-      description: "Start your morning with positive breathing & fresh energy.",
-      scrollText: "Explore More",
-      targetDate: new Date("2026-01-05T17:00:00").getTime(),
-    },
-    {
-      id: 3,
-      image: LiveBg3,
-      heading: <>Advanced <span>Yoga Challenge</span></>,
-      description: "Build strength & flexibility with expert instructors.",
-      scrollText: "Discover More",
-      targetDate: new Date("2026-02-10T19:00:00").getTime(),
-    },
-    {
-      id: 4,
-      image: LiveBg4,
-      heading: <>Night <span>Mind Healing</span> Therapy</>,
-      description: "Deep healing meditation for emotional peace & better sleep.",
-      scrollText: "Learn More",
-      targetDate: new Date("2026-03-10T19:00:00").getTime(),
-    },
-  ];
-
+const HomeLiveCourse = ({ liveSections }) => {
   const [activeSlide, setActiveSlide] = useState(0);
+
+  const activeSection = liveSections && liveSections[activeSlide];
 
   return (
     <section id="HomeLiveCourse">
       <div className="HomeLiveCourseMain">
-      <div className="container">
-        
-        <div className="LiveCourseContent fadeAnim">
-          <h2 key={activeSlide}>{events[activeSlide].heading}</h2>
-          <p key={activeSlide + "-p"}>{events[activeSlide].description}</p>
+        <div className="container">
+          <div className="LiveCourseContent fadeAnim">
+            <h2 key={activeSlide}>{activeSection?.title}</h2>
+            <p key={activeSlide + "-p"}>
+              {activeSection?.description ||
+                `Join our exclusive ${activeSection?.title} session with ${activeSection?.instructor?.name}.`}
+            </p>
 
-          <a href="#courseDetails" className="scrollDown">
-            {events[activeSlide].scrollText} <MdKeyboardArrowRight />
-          </a>
-        </div>
+            <a href={`/course/${activeSection?.slug}`} className="scrollDown">
+              Discover More <MdKeyboardArrowRight />
+            </a>
+          </div>
 
-        <div className="LiveCourseMainBox">
-          <Swiper
-                modules={[Navigation]}
-                navigation={true}
-                loop={true}
-                grabCursor={true}
-                slidesPerView={1}
-                speed={700}              
-                className="LiveCourseSwiper"
-                onSlideChange={(swiper) => setActiveSlide(swiper.realIndex)}
-
-          >
-            {events.map((event) => (
-              <SwiperSlide key={event.id}>
-                <EventSlide image={event.image} targetDate={event.targetDate} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+          <div className="LiveCourseMainBox">
+            <Swiper
+              modules={[Navigation]}
+              navigation={true}
+              loop={true}
+              grabCursor={true}
+              slidesPerView={1}
+              speed={700}
+              className="LiveCourseSwiper"
+              onSlideChange={(swiper) => setActiveSlide(swiper.realIndex)}
+            >
+              {liveSections?.map((event) => (
+                <SwiperSlide key={event.id}>
+                  <EventSlide
+                    image={
+                      event.thumbnail
+                        ? `${MEDIA_BASE_URL}${event.thumbnail}`
+                        : null
+                    }
+                    targetDate={new Date(event.date).getTime()}
+                  />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
         </div>
       </div>
     </section>

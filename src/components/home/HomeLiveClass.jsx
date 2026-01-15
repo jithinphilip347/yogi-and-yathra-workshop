@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { MEDIA_BASE_URL } from "@/utils/constants";
 import CourseCard from "../coursebox/CourseCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
@@ -25,100 +26,9 @@ import { FaHeart } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
 import { MdDateRange } from "react-icons/md";
 
-const courses = [
-  {
-    image: CourseImg1,
-    wishlistIcon: <FaHeart />,
-    dateIcon:<MdDateRange /> ,
-    time: "07 : 30 AM" ,
-    timeIcon:<FiClock /> ,
-    dateFormat:"20 Dec 2025" ,
-    dotsIcon: <GoDotFill />,
-    liveText:"Live",
-    buttonText: "Join Now",
-    instructorLabel: "Instructor",
-    title: "Mindful Meditation",
-    instructorImg: User3,
-    instructorName: "Maya Krishna",
-  },
-  {
-    image: CourseImg2,
-    wishlistIcon: <FaHeart />,
-        dateIcon:<MdDateRange /> ,
-    time: "06 : 00 AM" ,
-    timeIcon:<FiClock /> ,
-    dateFormat:"20 Dec 2025" ,
-    dotsIcon: <GoDotFill />,
-    liveText:"Live",
-    buttonText: "Join Now",
-    instructorLabel: "Instructor",
-    title: "Full-Body Yoga Masterclass",
-    instructorImg: User2,
-    instructorName: "Anil Dev",
-  },
-  {
-    image: CourseImg3,
-    wishlistIcon: <FaHeart />,
-      dateIcon:<MdDateRange /> ,
-    time: "05 : 30 AM" ,
-    timeIcon:<FiClock /> ,
-    dateFormat:"20 Dec 2025" ,
-    dotsIcon: <GoDotFill />,
-    liveText:"Live",
-    buttonText: "Join Now",
-    instructorLabel: "Instructor",
-    title: "Breathwork Healingy",
-    instructorImg: User1,
-    instructorName: "Akhil ",
-  },
-  {
-    image: CourseImg4,
-    wishlistIcon: <FaHeart />,
-        dateIcon:<MdDateRange /> ,
-    time: "08 : 00 AM" ,
-    timeIcon:<FiClock /> ,
-    dateFormat:"20 Dec 2025" ,
-    dotsIcon: <GoDotFill />,
-    liveText:"Live",
-    buttonText: "Join Now",
-    instructorLabel: "Instructor",
-    title: "Spiritual Wellness ",
-    instructorImg: User4,
-    instructorName: "Richa Kumar",
-  },
-  {
-    image: CourseImg5,
-    wishlistIcon: <FaHeart />,
-    dateIcon:<MdDateRange /> ,
-    time: "08 : 30 AM" ,
-    timeIcon:<FiClock /> ,
-    dateFormat:"20 Dec 2025" ,
-    dotsIcon: <GoDotFill />,
-    liveText:"Live",
-    buttonText: "Join Now",
-    instructorLabel: "Instructor",
-    title: "Yoga for Stress Relief",
-    instructorImg: User6,
-    instructorName: "Asha Mehta",
-  },
-  {
-    image: CourseImg6,
-    wishlistIcon: <FaHeart />,
-        dateIcon:<MdDateRange /> ,
-    time: "07 : 00 AM" ,
-    timeIcon:<FiClock /> ,
-    dateFormat:"20 Dec 2025" ,
-    dotsIcon: <GoDotFill />,
-    liveText:"Live",
-    buttonText: "Join Now",
-    instructorLabel: "Instructor",
-    title: "Advanced Meditation ",
-    instructorImg: User5,
-    instructorName: "Aravind Dev",
-  },
-];
 
-const HomeLiveClass = () => {
+
+const HomeLiveClass = ({ dailyClasses }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -140,40 +50,43 @@ const HomeLiveClass = () => {
             <FaChevronRight />
           </div>
 
-          {/* <Swiper
+          <Swiper
             modules={[Navigation]}
             navigation={{
               nextEl: ".next-btn",
               prevEl: ".prev-btn",
             }}
             loop={true}
-            slidesPerView={5}
-            spaceBetween={25}
+            slidesPerView={2}
+            spaceBetween={30}
             breakpoints={{
               320: { slidesPerView: 1 },
-              480: { slidesPerView: 2 },
-              768: { slidesPerView: 3 },
-              1024: { slidesPerView: 4 },
-              1400: { slidesPerView: 5 },
+              768: { slidesPerView: 2 },
             }}
-          > */}
-          <Swiper
-              modules={[Navigation]}
-              navigation={{
-                nextEl: ".next-btn",
-                prevEl: ".prev-btn",
-              }}
-              loop={true}
-              slidesPerView={2}  
-              spaceBetween={30}
-              breakpoints={{
-                320: { slidesPerView: 1 },
-                768: { slidesPerView: 2 },
-              }}
-            >
-            {(loading ? Array(6).fill({}) : courses).map((course, i) => (
+          >
+            {(loading ? Array(6).fill({}) : dailyClasses).map((course, i) => (
               <SwiperSlide key={i}>
-                <CourseCard loading={loading} {...course} />
+                <CourseCard
+                  loading={loading}
+                  image={course?.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : null}
+                  title={course?.title}
+                  wishlistIcon={<FaHeart />}
+                  dateIcon={<MdDateRange />}
+                  time={course?.human_class_time}
+                  timeIcon={<FiClock />}
+                  dateFormat={course?.human_start_date}
+                  dotsIcon={<GoDotFill />}
+                  liveText="Live"
+                  buttonText="Join Now"
+                  instructorLabel="Instructor"
+                  instructorImg={
+                    course?.instructor?.avatar
+                      ? `${MEDIA_BASE_URL}${course.instructor.avatar}`
+                      : null
+                  }
+                  instructorName={course?.instructor?.name}
+                  tutorImageSize='medium'
+                />
               </SwiperSlide>
             ))}
           </Swiper>

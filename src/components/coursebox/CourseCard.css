@@ -265,9 +265,13 @@
   align-items: center;
   gap: 8px;
 }
-.TutorImg {
+.TutorImg.small {
   width: 20px !important;
   height: 20px !important;
+}
+.TutorImg.medium {
+  width: 30px !important;
+  height: 30px !important;
 }
 .TutorImg img {
   width: 100%;
