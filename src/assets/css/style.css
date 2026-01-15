@@ -2970,6 +2970,7 @@
 }
 #Signup .LoginBox .LoginLeft .LoginForm .InputGroup {
   margin-bottom: 15px;
+  position: relative;
 }
 #Signup .LoginBox .LoginLeft .LoginForm .InputGroup label {
   display: block;
@@ -2979,7 +2980,7 @@
   color: #000;
   font-family: myFont1;
 }
-#Signup .LoginBox .LoginLeft .LoginForm .InputGroup input {
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup input, #Signup .LoginBox .LoginLeft .LoginForm .InputGroup .CustomSelect {
   width: 100%;
   padding: 13px 15px;
   border: 1px solid #ddd;
@@ -2988,11 +2989,12 @@
   font-size: 15px;
   transition: border-color 0.3s;
 }
-#Signup .LoginBox .LoginLeft .LoginForm .InputGroup input:focus {
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup input:focus, #Signup .LoginBox .LoginLeft .LoginForm .InputGroup .CustomSelect:focus {
   border-color: var(--primaryColor);
 }
 #Signup .LoginBox .LoginLeft .LoginForm .InputGroup .PasswordWrap {
   position: relative;
+  width: 100%;
 }
 #Signup .LoginBox .LoginLeft .LoginForm .InputGroup .PasswordWrap .EyeIcon {
   position: absolute;
@@ -3002,7 +3004,11 @@
   cursor: pointer;
   color: #888;
   display: flex;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+  z-index: 2;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .InputGroup .PasswordWrap .EyeIcon:hover {
+  color: var(--primaryColor);
 }
 #Signup .LoginBox .LoginLeft .LoginForm .InputGroup .ErrorTxt {
   color: red;
@@ -3010,19 +3016,12 @@
   margin-top: 5px;
   display: block;
 }
-#Signup .LoginBox .LoginLeft .LoginForm .ForgetPassword {
-  text-align: left;
-  margin-bottom: 25px;
+#Signup .LoginBox .LoginLeft .LoginForm .FormRow {
+  display: flex;
+  gap: 15px;
 }
-#Signup .LoginBox .LoginLeft .LoginForm .ForgetPassword a {
-  font-size: 15px;
-  color: #1a1a1a;
-  font-weight: 500;
-  text-decoration: none;
-  font-family: myFont1;
-}
-#Signup .LoginBox .LoginLeft .LoginForm .ForgetPassword a:hover {
-  text-decoration: underline;
+#Signup .LoginBox .LoginLeft .LoginForm .FormRow .InputGroup {
+  flex: 1;
 }
 #Signup .LoginBox .LoginLeft .LoginForm .LoginBtn {
   width: 100%;
@@ -3034,12 +3033,22 @@
   cursor: pointer;
   font-weight: 500;
   font-size: 15px;
-  margin-bottom: 10px;
-  transition: background 0.3s;
+  margin-top: 10px;
+  transition: 0.3s;
   font-family: myFont1;
 }
 #Signup .LoginBox .LoginLeft .LoginForm .LoginBtn:hover {
   opacity: 0.9;
+}
+#Signup .LoginBox .LoginLeft .LoginForm .BackBtn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: var(--primaryColor);
+  font-size: 13px;
+  margin-top: 10px;
+  cursor: pointer;
+  text-decoration: underline;
 }
 #Signup .LoginBox .LoginLeft .CheckboxGroup {
   display: flex;
@@ -3055,13 +3064,6 @@
   width: 18px;
   height: 18px;
   cursor: pointer;
-}
-#Signup .LoginBox .LoginLeft .HealthDetailSection {
-  background: #fdf8f5;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  border: 1px dashed var(--primaryColor);
 }
 #Signup .LoginBox .LoginLeft .HealthDetailSection .CustomSelect {
   width: 100%;
