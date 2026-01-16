@@ -8,7 +8,7 @@ import HomeTeacher from "@/components/home/HomeTeacher";
 import HomeTestimonial from "@/components/home/HomeTestimonial";
 import HomeTopRated from "@/components/home/HomeTopRated";
 import HomeTrending from "@/components/home/HomeTrending";
-import { fetchDailyClasses, fetchLiveSections } from "@/libs/course";
+import { fetchCategories, fetchDailyClasses, fetchLiveSections } from "@/libs/course";
 
 const revalidate = 600;
 
@@ -17,12 +17,13 @@ const revalidate = 600;
 export default async function Home() {
   const dailyClasses = await fetchDailyClasses();
   const liveSections = await fetchLiveSections();
+  const categories = await fetchCategories();
   return (
     <>
     <HomeBanner />
     <HomeLiveCourse liveSections={liveSections} />
     {/* <HomeCourse /> */}
-    <HomePopular />
+    <HomePopular categories={categories} />
     <HomeTrending />
     <HomeLiveClass dailyClasses={dailyClasses} />
     <HomeNew />

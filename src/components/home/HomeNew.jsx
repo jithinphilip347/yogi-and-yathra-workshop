@@ -24,6 +24,8 @@ import { AiFillStar } from "react-icons/ai";
 import { FiClock, FiBookOpen } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import useCourse from "@/hooks/useCourse";
+import useWishlist from "@/hooks/useWishlist";
+
 
 const HomeNew = () => {
   const queries = {
@@ -33,6 +35,8 @@ const HomeNew = () => {
   const { courseQuery } = useCourse({ queries });
   const { data, isLoading } = courseQuery;
   const courses = data?.data || [];
+  const { findWishlistIcon } = useWishlist();
+
 
   return (
     <div id="HomeNew">
@@ -84,7 +88,7 @@ const HomeNew = () => {
                   rating="4.5" 
                   students="100" 
                   instructorName={course?.instructor?.name}
-                  wishlistIcon={<FaHeart />}
+                  wishlistIcon={findWishlistIcon(course.id, "course")}
                   lessonsIcon={<FiBookOpen />}
                   clockIcon={<FiClock />}
                   priceIcon="₹"
@@ -99,6 +103,8 @@ const HomeNew = () => {
                       : null
                   }
                   instructorLabel={course?.instructor?.role}
+                  id={course.id}
+                  type="course"
                 />
               </SwiperSlide>
             ))}

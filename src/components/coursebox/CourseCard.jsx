@@ -6,6 +6,7 @@ import "./CourseCard.css";
 
 import Image from "next/image";
 import CourseCardSkeleton from "./CourseCardSkeleton";
+import useWishlist from "@/hooks/useWishlist";
 
 const CourseCard = ({
   image,
@@ -37,6 +38,8 @@ const CourseCard = ({
   onClick,
   loading = false,
   tutorImageSize = "small",
+  type="course",
+  id
 }) => {
   const [btnLoading, setBtnLoading] = useState(false);
 
@@ -48,6 +51,8 @@ const CourseCard = ({
     }, 800);
   };
 
+  const { handleWishlist } = useWishlist();
+
   return (
     <div className="courseCard">
       {loading ? (
@@ -56,7 +61,7 @@ const CourseCard = ({
         <>
           <div className="courseImgWrapper">
             <Image src={image} alt={title} fill className="courseImage" />
-            <button className="wishlistBtn">
+            <button className="wishlistBtn" onClick={() => handleWishlist({ id, title, image, price, oldPrice, rating, students, instructorName, lessons, duration, instructorImg, instructorLabel }, type)}>
                 {wishlistIcon} 
             </button>
           </div>

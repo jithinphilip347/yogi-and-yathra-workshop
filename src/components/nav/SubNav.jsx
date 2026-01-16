@@ -1,8 +1,9 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { MdKeyboardArrowDown } from "react-icons/md";
+import { fetchCategories } from '@/libs/course';
 
 const SubNav = () => {
   const pathname = usePathname();
@@ -15,19 +16,12 @@ const SubNav = () => {
     { name: "Blog", path: "/blog" },
     { name: "Contact", path: "/contact" },
   ];
-
-  const categories = [
-    { name: "Development", slug: "development" },
-    { name: "Business", slug: "business" },
-    { name: "Finance & Accounting", slug: "finance-accounting" },
-    { name: "IT & Software", slug: "it-software" },
-    { name: "Office Productivity", slug: "office-productivity" },
-    { name: "Personal Development", slug: "personal-development" },
-    { name: "Design", slug: "design" },
-    { name: "Marketing", slug: "marketing" },
-    { name: "Health & Fitness", slug: "health-fitness" },
-    { name: "Music", slug: "music" },
-  ];
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    fetchCategories().then((res) => {
+      setCategories(res)
+    });
+  }, []);
 
   return (
     <div id='SubNav'>
