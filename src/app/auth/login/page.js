@@ -1,11 +1,12 @@
 import React from 'react'
 import Login from './Login'
+import PublicRoute from '@/hocs/PublicRoute'
 
 const page = () => {
   return (
-    <div>
+      <PublicRoute> 
         <Login />
-    </div>
+      </PublicRoute>
   )
 }
 

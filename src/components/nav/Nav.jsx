@@ -26,6 +26,7 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { RiLoginCircleLine, RiUserLine } from "react-icons/ri";
 import { IoPeopleOutline, IoCartOutline } from "react-icons/io5";
 import NavSearchOverlay from "./NavSearchOverlay";
+import { useSelector } from "react-redux";
 
 const Nav = () => {
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -37,8 +38,15 @@ const Nav = () => {
   const searchRef = useRef(null);
   const path = usePathname();
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
-const [isSearchOpen, setIsSearchOpen] = useState(false);
-  // Outside Click Close
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { user, isAuthenticated } = useSelector(state => state.auth)
+  
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -71,18 +79,6 @@ const [isSearchOpen, setIsSearchOpen] = useState(false);
             <Image src={Logo} alt="Logo" className="logoImg" />
           </Link>
           </div>
-       
-
-          {/* <div className="NavLinks">
-            <ul>
-              <li>
-                <Link href="/" className={path === "/" ? "active" : ""}>Home</Link>
-              </li>
-              <li>
-                <Link href="/course" className={path === "/course" ? "active" : ""}>Course</Link>
-              </li>
-            </ul>
-          </div> */}
           <div className="NavSearchContainer" ref={searchRef}>
             <div className={`SearchWrapper ${isSearching ? "focused" : ""}`}>
               <BiSearch className="SearchIcon" />
@@ -177,42 +173,48 @@ const [isSearchOpen, setIsSearchOpen] = useState(false);
                 )}
               </div>
             </div>
-           <div className="AuthBox">
-            <div className="LoginBox">
-              <Link href="/auth/login" className="authLink">
-                <RiLoginCircleLine />
-                <button>Login</button>
-              </Link>
+           {mounted && !isAuthenticated && (
+            <div className="AuthBox">
+              <div className="LoginBox">
+                <Link href="/auth/login" className="authLink">
+                  <RiLoginCircleLine />
+                  <button>Login</button>
+                </Link>
+              </div>
+              <div className="SignBox">
+                <Link href="/signup" className="authLink">
+                  <RiUserLine />
+                  <button>Sign Up</button>
+                </Link>
+              </div>
             </div>
-            <div className="SignBox">
-              <Link href="/signup" className="authLink">
-                <RiUserLine />
-                <button>Sign Up</button>
-              </Link>
-            </div>
-          </div>
-            {/* <div className="UserProfileBox"
+            )}
+            <div className="UserProfileBox"
               ref={dropdownRef}
               onClick={() => {
                 setOpenDropdown(!openDropdown);
                 setOpenNotification(false);
               }}
             >
-              <div className="ProfileImageBox">
-                <Image src={UserImg} alt="User" className="UserImage" />
-              </div>
+              {mounted && isAuthenticated && (
+                <>
+                  <div className="ProfileImageBox">
+                    <Image src={UserImg} alt="User" className="UserImage" />
+                  </div>
 
-              <div className="UserNameDropIconBox">
-                <div className="UserNameBox">
-                  <p className="UserWelcome">Hi Welcome</p>
-                  <p className="UserName">Achu Sivadasan</p>
-                </div>
-                <MdKeyboardArrowDown className="DropIcon" />
-              </div>
+                  <div className="UserNameDropIconBox">
+                    <div className="UserNameBox">
+                      <p className="UserWelcome">Hi Welcome</p>
+                      <p className="UserName">{user.name}</p>
+                    </div>
+                    <MdKeyboardArrowDown className="DropIcon" />
+                  </div>
+                </>
+              )}
 
               {openDropdown && (
                 <div className="UserDropdown">
-                  <Link href="/profile" className="DropItem">
+                  <Link href="/auth/profile" className="DropItem">
                     <MdPerson /> Profile
                   </Link>
 
@@ -226,7 +228,7 @@ const [isSearchOpen, setIsSearchOpen] = useState(false);
                 </div>
               )}
 
-            </div> */}
+            </div>
           </div>
         </div>
       </div>

@@ -6,12 +6,14 @@ import React from 'react'
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import authApi from '@/libs/authApi';
 
 const useProfile = () => {
 
   const router = useRouter();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
+
   const updateProfile = useMutation({
     mutationFn: ({ id , data }) => ProfileApi.update({ id , data }),
     onSuccess: ({ data }) => {
@@ -24,6 +26,17 @@ const useProfile = () => {
     }
   })
 
+
+  const changePassword = (data) => {
+    try {
+      const res = authApi.change(data);
+      toast.success("Password changed successfully");
+    } catch (error) {
+      toast.error(error?.data?.message);
+    }
+  }
+  
+
   const handleLogout = () => {
     dispatch(logout())
     queryClient.invalidateQueries({ queryKey: ['profile'] });
@@ -35,6 +48,7 @@ const useProfile = () => {
   return {
     updateProfile,
     handleLogout,
+    changePassword,
   }
 }
 
