@@ -88,7 +88,7 @@ const HomePopular = ({ categories }) => {
                   price={Number(course.price)}
                   oldPrice={Number(course.discount_price)}
                   rating="4.5"
-                  students="100"
+                  students={course?.enrollments_count}
                   instructorName={course?.instructor?.name}
                   wishlistIcon={findWishlistIcon(course.id, "course")}
                   lessonsIcon={<FiBookOpen />}

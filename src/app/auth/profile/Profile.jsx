@@ -25,6 +25,7 @@ import Settings from "@/components/profile/Settings";
 import HelpSupport from "@/components/profile/HelpSupport";
 import { useSelector } from "react-redux";
 import { MEDIA_BASE_URL } from "@/utils/constants";
+import useCourse from "@/hooks/useCourse";
 
 const courses = [
   {
@@ -156,12 +157,16 @@ const Profile = () => {
     }
   },[user])
 
+  const { enrollmentsQuery } = useCourse({});
+  const { data: data, isLoading, error } = enrollmentsQuery;
+  const enrollments = data?.data.courses;
+
   const renderContent = () => {
     switch (activeTab) {
       case "Dashboard":
         return (
           <Dashboard
-            courses={courses}
+            courses={enrollments?.map((course) => course.course)}
             continueCourses={continueCourses}
             upcomingEvents={upcomingEvents}
             user={user}
@@ -172,7 +177,7 @@ const Profile = () => {
           <EditProfile profileImg={profileImg} setProfileImg={setProfileImg} user={user} />
         );
       case "My Courses":
-        return <MyCourses courses={courses} />;
+        return <MyCourses courses={enrollments.map((course) => course.course)} />;
       case "Live Classes":
         return <LiveClasses />;
       case "Events":

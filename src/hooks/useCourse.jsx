@@ -11,13 +11,24 @@ const useCourse = ({ queries }) => {
     queryKey: ['course', queries],
     queryFn: () => courseApi.all(queries),
     refetchOnWindowFocus: false,
+    enabled: !!queries,
+    onError: (err) => {
+        console.log(err)
+    }
+  })
+
+  const enrollmentsQuery = useQuery({
+    queryKey: ['enrollments'],
+    queryFn: () => courseApi.enrollments(),
+    refetchOnWindowFocus: false,
     onError: (err) => {
         console.log(err)
     }
   })
 
   return {
-    courseQuery
+    courseQuery,
+    enrollmentsQuery
   }
 }
 
