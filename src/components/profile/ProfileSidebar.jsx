@@ -11,8 +11,11 @@ import {
   MdLogout,
 } from "react-icons/md";
 import UserProfileImg from "@/assets/images/user-img.jpg";
+import { MEDIA_BASE_URL } from "@/utils/constants";
+import { useDispatch } from "react-redux";
+import useProfile from "@/hooks/useProfile";
 
-const ProfileSidebar = ({ activeTab, setActiveTab, profileImg }) => {
+const ProfileSidebar = ({ activeTab, setActiveTab, profileImg, user, setProfileImg }) => {
   const navItems = [
     { name: "Dashboard", icon: <MdDashboard /> },
     { name: "Edit Profile", icon: <MdEditNote /> },
@@ -27,21 +30,24 @@ const ProfileSidebar = ({ activeTab, setActiveTab, profileImg }) => {
     { name: "Logout", icon: <MdLogout /> },
   ];
 
+  const { handleLogout } = useProfile();
+
   return (
     <div className="ProfileMainLeftNav">
       <div className="LeftsideNavTop">
         <div className="UserProfileBox">
           <div className="UserProfileImgBox">
             <Image
-              src={profileImg || UserProfileImg}
-              alt="User"
+              src={profileImg}
+              alt="User"  
               width={60}
               height={60}
+              onError={() => setProfileImg(MEDIA_BASE_URL + profileImg)}
             />
           </div>
           <div className="UserInfo">
-            <h4>Achu Sivadasan</h4>
-            <p>Daily learner</p>
+            <h4>{user.name}</h4>
+            <p>{user.email}</p>
           </div>
         </div>
 
@@ -72,7 +78,7 @@ const ProfileSidebar = ({ activeTab, setActiveTab, profileImg }) => {
               className={activeTab === item.name ? "active" : ""}
               onClick={() =>
                 item.name === "Logout"
-                  ? alert("Logging out...")
+                  ? handleLogout()
                   : setActiveTab(item.name)
               }
             >

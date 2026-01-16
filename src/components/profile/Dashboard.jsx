@@ -2,8 +2,9 @@ import React from "react";
 import Image from "next/image";
 import CourseCard from "@/components/coursebox/CourseCard";
 
-const Dashboard = ({ courses, continueCourses, upcomingEvents }) => {
+const Dashboard = ({ courses, continueCourses, upcomingEvents, user }) => {
   return (
+
     <div className="DashBoard">
       <div className="EnrolldCourseBox">
         <div className="DashBoardHead">

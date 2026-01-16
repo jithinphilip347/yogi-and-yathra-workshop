@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserProfileImg from "../../../assets/images/user-img.jpg";
 import CourseImg1 from "../../../assets/images/courseImg-1.jpg";
 import CourseImg2 from "../../../assets/images/courseImg-2.jpg";
@@ -24,6 +24,7 @@ import Events from "@/components/profile/Events";
 import Settings from "@/components/profile/Settings";
 import HelpSupport from "@/components/profile/HelpSupport";
 import { useSelector } from "react-redux";
+import { MEDIA_BASE_URL } from "@/utils/constants";
 
 const courses = [
   {
@@ -147,7 +148,13 @@ const upcomingEvents = [
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [profileImg, setProfileImg] = useState(UserProfileImg);
-  const { user } = useSelector(state => state.user)
+  const { user } = useSelector(state => state.auth)
+
+  useEffect(() => {
+    if (user?.avatar) {
+      setProfileImg(user.avatar)
+    }
+  },[user])
 
   const renderContent = () => {
     switch (activeTab) {
@@ -187,6 +194,8 @@ const Profile = () => {
             activeTab={activeTab}
             setActiveTab={setActiveTab}
             profileImg={profileImg}
+            user={user}
+            setProfileImg={setProfileImg}
           />
 
           <div className="ProfileMainRight">
