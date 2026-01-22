@@ -1,0 +1,69 @@
+.BreadcrumbsContainer {
+//   padding: 20px 0;
+//   margin-bottom: 20px;
+     width: 100%;
+  .BreadcrumbsList {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .BreadcrumbItem {
+      display: flex;
+      align-items: center;
+
+      &.active {
+        .CurrentPage {
+          color: var(--primaryColor); // Ippo ulla page-inte color
+          font-weight: 600;
+        }
+      }
+    }
+
+    .Separator {
+      display: flex;
+      align-items: center;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+
+    .BreadcrumbLink {
+      text-decoration: none;
+      color: #64748b;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s ease;
+
+      &:hover {
+        color: var(--primaryColor);
+      }
+
+
+      &.HomeLink {
+        svg {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .CurrentPage {
+      font-size: 14px;
+      color: #000;
+    }
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .BreadcrumbsContainer {
+    .BreadcrumbLink, .CurrentPage {
+      font-size: 13px;
+    }
+  }
+}

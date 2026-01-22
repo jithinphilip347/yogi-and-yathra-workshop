@@ -1,0 +1,53 @@
+.BreadcrumbsContainer {
+  width: 100%;
+}
+.BreadcrumbsContainer .BreadcrumbsList {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.BreadcrumbsContainer .BreadcrumbsList .BreadcrumbItem {
+  display: flex;
+  align-items: center;
+}
+.BreadcrumbsContainer .BreadcrumbsList .BreadcrumbItem.active .CurrentPage {
+  color: var(--primaryColor);
+  font-weight: 600;
+}
+.BreadcrumbsContainer .BreadcrumbsList .Separator {
+  display: flex;
+  align-items: center;
+  color: #94a3b8;
+  font-size: 14px;
+}
+.BreadcrumbsContainer .BreadcrumbsList .BreadcrumbLink {
+  text-decoration: none;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 0.2s ease;
+}
+.BreadcrumbsContainer .BreadcrumbsList .BreadcrumbLink:hover {
+  color: var(--primaryColor);
+}
+.BreadcrumbsContainer .BreadcrumbsList .BreadcrumbLink.HomeLink svg {
+  font-size: 16px;
+}
+.BreadcrumbsContainer .BreadcrumbsList .CurrentPage {
+  font-size: 14px;
+  color: #000;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .BreadcrumbsContainer .BreadcrumbLink, .BreadcrumbsContainer .CurrentPage {
+    font-size: 13px;
+  }
+}/*# sourceMappingURL=Breadcrumbs.css.map */
