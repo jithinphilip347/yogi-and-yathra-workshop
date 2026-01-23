@@ -4729,6 +4729,7 @@
   background: #fcfcfc;
   font-family: myFont1;
   /* MAIN CONTENT AREA */
+  /* FIXED BOTTOM BAR */
 }
 #CourseDetails .CourseBanner {
   background: var(--primaryColor);
@@ -4990,6 +4991,9 @@
   color: #000;
   font-family: myFont1;
 }
+#CourseDetails .CourseDetailsMain .DetailsLeft .InstructorDetails .InstructorCard .InsMeta .Stats .ratingStar {
+  color: var(--secondaryColor);
+}
 #CourseDetails .CourseDetailsMain .DetailsLeft .InstructorDetails .InstructorCard .InsMeta .Stats span {
   display: flex;
   align-items: center;
@@ -5148,9 +5152,10 @@
 }
 #CourseDetails .CourseDetailsMain .DetailsLeft .SubmitReview .ReviewForm .RateInput .rateIconBox svg {
   font-size: 18px;
+  color: var(--secondaryColor);
 }
 #CourseDetails .CourseDetailsMain .DetailsLeft .SubmitReview .ReviewForm .RateInput .rateIconBox svg:hover {
-  color: var(--primaryColor);
+  color: var(--secondaryColor);
 }
 #CourseDetails .CourseDetailsMain .DetailsLeft .SubmitReview .ReviewForm .FormBottom {
   display: flex;
@@ -5313,4 +5318,690 @@
 #CourseDetails .CourseDetailsMain .DetailsRight .PreviewCard .Includes ul li svg {
   color: #1a1a1a;
   font-size: 16px;
+}
+#CourseDetails .HighlightBox {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 30px;
+}
+#CourseDetails .HighlightBox h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 15px;
+}
+#CourseDetails .HighlightBox .BoxSub {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+#CourseDetails .RequirementsSection .ReqList {
+  margin-bottom: 25px;
+}
+#CourseDetails .RequirementsSection .ReqList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+#CourseDetails .RequirementsSection .ReqList li svg {
+  color: #2ecc71;
+}
+#CourseDetails .RequirementsSection .ProductList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  background: #fafafa;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft {
+  display: flex;
+  gap: 15px;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft img {
+  border-radius: 6px;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: #000;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo p {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo .PriceRow .Curr {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primaryColor);
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo .PriceRow del {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-left: 5px;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea {
+  display: flex;
+  gap: 10px;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .ViewDetailsBtn {
+  padding: 8px 15px;
+  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s ease;
+  border: 1.5px solid var(--primaryColor);
+  background: transparent;
+  color: var(--primaryColor);
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn:hover {
+  background: var(--primaryColor);
+  color: #fff;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn.added {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn.added:hover {
+  background: #ef4444;
+  color: #fff;
+}
+#CourseDetails .FixedBottomCart {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--primaryColor);
+  padding: 15px 0;
+  z-index: 1000;
+  color: #fff;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+}
+#CourseDetails .FixedBottomCart .BottomFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CourseBrief {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CourseBrief img {
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CourseBrief .Text h5 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CourseBrief .Text p {
+  font-size: 13px;
+  margin: 2px 0 0;
+  font-weight: 700;
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CourseBrief .Text p del {
+  font-weight: 400;
+  opacity: 0.7;
+  font-size: 11px;
+  margin-left: 5px;
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CartActions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CartActions .DrawerTrigger {
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CartActions .DrawerTrigger svg {
+  font-size: 20px;
+  transition: 0.3s;
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CartActions .DrawerTrigger svg.rotate {
+  transform: rotate(180deg);
+}
+#CourseDetails .FixedBottomCart .BottomFlex .CartActions .GoToCartBtn {
+  background: var(--secondaryColor);
+  color: #000;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 5px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+#CourseDetails .FixedBottomCart .CartDrawerPopup {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  width: 100%;
+  max-width: 1200px;
+  background: #fff;
+  color: #000;
+  padding: 20px;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.3s ease;
+}
+#CourseDetails .FixedBottomCart .CartDrawerPopup.active {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+#CourseDetails .FixedBottomCart .CartDrawerPopup h4 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+#CourseDetails .FixedBottomCart .CartDrawerPopup .DrawerItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+#CourseDetails .FixedBottomCart .CartDrawerPopup .DrawerItem p {
+  font-size: 14px;
+  margin: 0;
+}
+#CourseDetails .FixedBottomCart .CartDrawerPopup .DrawerItem span {
+  font-weight: 700;
+  color: var(--primaryColor);
+}
+
+#DailyLiveClassDetails {
+  width: 100%;
+  padding: 60px 0px;
+  background-color: #f8fafc;
+  font-family: myFont1;
+}
+#DailyLiveClassDetails .LiveClassDetailsMain {
+  width: 100%;
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+#DailyLiveClassDetails .DetailsLeft {
+  flex: 1;
+}
+#DailyLiveClassDetails .DetailsLeft .ThumbnailWrapper {
+  position: relative;
+  width: 100%;
+  height: 480px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader {
+  background: #fff;
+  padding: 35px;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 30px;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 25px;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ScheduleGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+  padding-bottom: 25px;
+  border-bottom: 1px dashed #e2e8f0;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ScheduleGrid .ScheduleItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ScheduleGrid .ScheduleItem svg {
+  font-size: 24px;
+  color: var(--primaryColor);
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ScheduleGrid .ScheduleItem .TextWrap {
+  display: flex;
+  flex-direction: column;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ScheduleGrid .ScheduleItem .TextWrap small {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ScheduleGrid .ScheduleItem .TextWrap span {
+  color: #000;
+  font-weight: 500;
+  font-size: 14px;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ActionFlex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ActionFlex .DayGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ActionFlex .DayGroup label {
+  font-weight: 600;
+  font-size: 14px;
+  color: #1e293b;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ActionFlex .DayGroup .DayList {
+  display: flex;
+  gap: 8px;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ActionFlex .DayGroup .DayList .DayBox {
+  background: var(--primaryColor);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ActionFlex .EnrollBtn {
+  background: var(--primaryColor);
+  color: #fff;
+  padding: 14px 35px;
+  border-radius: 10px;
+  font-weight: 500;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+#DailyLiveClassDetails .DetailsLeft .ClassHeader .ActionFlex .EnrollBtn:hover {
+  background: var(--primaryColor);
+}
+#DailyLiveClassDetails .DetailsLeft .InstructorSection {
+  margin-bottom: 30px;
+}
+#DailyLiveClassDetails .DetailsLeft .InstructorSection .AuthCard {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+#DailyLiveClassDetails .DetailsLeft .InstructorSection .AuthCard .AuthImg {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#DailyLiveClassDetails .DetailsLeft .InstructorSection .AuthCard .AuthRight h4 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+#DailyLiveClassDetails .DetailsLeft .InstructorSection .AuthCard .AuthRight .AuthMeta {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+}
+#DailyLiveClassDetails .DetailsLeft .InstructorSection .AuthCard .AuthRight .AuthMeta .Rating {
+  color: #f59e0b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#DailyLiveClassDetails .DetailsLeft .InstructorSection .AuthCard .AuthRight .AuthMeta .Students {
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#DailyLiveClassDetails .DetailsLeft .DescriptionBox {
+  background: #fff;
+  padding: 35px;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 30px;
+}
+#DailyLiveClassDetails .DetailsLeft .DescriptionBox h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #000;
+}
+#DailyLiveClassDetails .DetailsLeft .DescriptionBox p {
+  color: #475569;
+  line-height: 1.8;
+  font-size: 16px;
+}
+#DailyLiveClassDetails .DetailsLeft .DescriptionBox .ReqList {
+  list-style: none;
+  padding: 0;
+}
+#DailyLiveClassDetails .DetailsLeft .DescriptionBox .ReqList li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+  color: #475569;
+  font-size: 15px;
+}
+#DailyLiveClassDetails .DetailsLeft .DescriptionBox .ReqList li svg {
+  color: #2ecc71;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+#DailyLiveClassDetails .DetailsLeft .HighlightBox {
+  background: #fff;
+  border-radius: 12px;
+  padding: 30px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 30px;
+}
+#DailyLiveClassDetails .DetailsLeft .HighlightBox h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 15px;
+}
+#DailyLiveClassDetails .DetailsLeft .HighlightBox .BoxSub {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ReqList {
+  margin-bottom: 25px;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ReqList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ReqList li svg {
+  color: #2ecc71;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  background: #fafafa;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ProdLeft {
+  display: flex;
+  gap: 15px;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ProdLeft img {
+  border-radius: 6px;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: #000;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo p {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo .PriceRow .Curr {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primaryColor);
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo .PriceRow del {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-left: 5px;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ActionArea {
+  display: flex;
+  gap: 10px;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ActionArea .ViewDetailsBtn {
+  padding: 8px 15px;
+  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn {
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s ease;
+  border: 1.5px solid var(--primaryColor);
+  background: transparent;
+  color: var(--primaryColor);
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn:hover {
+  background: var(--primaryColor);
+  color: #fff;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn.added {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #ef4444;
+}
+#DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn.added:hover {
+  background: #ef4444;
+  color: #fff;
+}
+#DailyLiveClassDetails .DetailsLeft .ReviewSection {
+  background: #fff;
+  padding: 35px;
+  border-radius: 15px;
+  border: 1px solid #e2e8f0;
+}
+#DailyLiveClassDetails .DetailsLeft .ReviewSection h3 {
+  margin-bottom: 25px;
+  font-size: 20px;
+  font-weight: 700;
+}
+#DailyLiveClassDetails .DetailsLeft .ReviewSection .StarInput {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #cbd5e1;
+  margin-bottom: 15px;
+}
+#DailyLiveClassDetails .DetailsLeft .ReviewSection .StarInput span {
+  color: #64748b;
+  margin-left: 10px;
+  font-size: 14px;
+}
+#DailyLiveClassDetails .DetailsLeft .ReviewSection textarea {
+  width: 100%;
+  height: 120px;
+  padding: 15px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  resize: none;
+  margin-bottom: 20px;
+  font-family: inherit;
+}
+#DailyLiveClassDetails .DetailsLeft .ReviewSection textarea:focus {
+  border-color: var(--primaryColor);
+  outline: none;
+}
+#DailyLiveClassDetails .DetailsLeft .ReviewSection .SubmitBtn {
+  background: var(--primaryColor);
+  color: #fff;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#DailyLiveClassDetails .DetailsLeft .ReviewSection .SubmitBtn:hover {
+  opacity: 0.9;
+}
+#DailyLiveClassDetails .ChatSidebar {
+  width: 400px;
+  height: 850px;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 120px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+}
+#DailyLiveClassDetails .ChatSidebar .ChatHeader {
+  padding: 25px;
+  border-bottom: 1px solid #f1f5f9;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatHeader h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody {
+  flex: 1;
+  overflow-y: auto;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem {
+  display: flex;
+  gap: 15px;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem .UserImg img {
+  border-radius: 50%;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem .MsgContent {
+  max-width: 85%;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem .MsgContent .UserMeta h5 {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 0 0 5px;
+  color: #1e293b;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem .MsgContent .MsgBubble {
+  background: #f1f5f9;
+  padding: 12px 18px;
+  border-radius: 0 15px 15px 15px;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem .MsgContent .MsgBubble p {
+  font-size: 14px;
+  color: #334155;
+  margin: 0;
+  line-height: 1.4;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem .MsgContent .Time {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 6px;
+  display: block;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem.me {
+  flex-direction: row-reverse;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem.me .MsgBubble {
+  background: #0d9488;
+  border-radius: 15px 0 15px 15px;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem.me .MsgBubble p {
+  color: #fff;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem.me .UserMeta h5,
+#DailyLiveClassDetails .ChatSidebar .ChatBody .ChatItem.me .Time {
+  text-align: right;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatFooter {
+  padding: 25px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  gap: 12px;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatFooter input {
+  flex: 1;
+  padding: 12px 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatFooter .SendBtn {
+  background: #0d9488;
+  color: #fff;
+  border: none;
+  width: 45px;
+  height: 45px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#DailyLiveClassDetails .ChatSidebar .ChatFooter .SendBtn:hover {
+  transform: scale(1.05);
 }/*# sourceMappingURL=style.css.map */
