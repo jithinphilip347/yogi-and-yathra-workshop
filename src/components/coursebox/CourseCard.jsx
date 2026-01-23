@@ -7,6 +7,7 @@ import "./CourseCard.css";
 import Image from "next/image";
 import CourseCardSkeleton from "./CourseCardSkeleton";
 import useWishlist from "@/hooks/useWishlist";
+import Link from "next/link";
 
 const CourseCard = ({
   image,
@@ -115,9 +116,9 @@ const CourseCard = ({
               </div>
             </div>
 
-            <a href="/course/course-details" className="viewBtn" onClick={handleClick}>
+            <Link className="viewBtn" href={`/course/course-details`}>
               {btnLoading ? <div className="spinner"></div> : buttonText}
-            </a>
+            </Link>
           </div>
         </>
       )}
