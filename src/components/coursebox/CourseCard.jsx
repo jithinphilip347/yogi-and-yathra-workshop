@@ -120,7 +120,7 @@ const CourseCard = ({
               {btnLoading ? <div className="spinner"></div> : buttonText}
             </Link>
           </div>
-        </>
+        </> 
       )}
     </div>
   );
