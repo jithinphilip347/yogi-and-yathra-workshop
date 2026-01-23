@@ -21,7 +21,6 @@ const useWishlist = () => {
       dispatch(removeFromWishlist({ id: item.id , type }))
       toast.success("Removed from wishlist")
     } else {
-      
       dispatch(addToWishlist({ ...item, type }))
       toast.success("Added to wishlist")
     }
