@@ -17,7 +17,7 @@ const HomeCourse = () => {
   };
   const { courseQuery } = useCourse({ queries });
   const { data, isLoading } = courseQuery;
-  const courses = data?.data || [];
+  const courses = data?.data?.data || [];
 
   const { findWishlistIcon } = useWishlist();
   

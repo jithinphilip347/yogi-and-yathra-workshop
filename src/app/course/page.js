@@ -8,25 +8,51 @@ import useCourse from "@/hooks/useCourse";
 import useWishlist from "@/hooks/useWishlist";
 import FilterBox from "@/components/filter/FilterBox";
 import Breadcrumbs from "../../components/breadcrumbs/Breadcrumbs"; 
+import { fetchCategories } from "@/libs/course";
+
 const Page = () => {
+  const [categories, setCategories] = useState([]);
+  
+  useEffect(() => {
+    fetchCategories().then((data) => {
+      setCategories(data || []);
+    });
+  }, []);
+
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   
   const [category, setCategory] = useState("All");
   const [level, setLevel] = useState("");
-  const [price, setPrice] = useState(500);
+  const [price, setPrice] = useState(5000);
   const [sort, setSort] = useState("Newest");
+  const [sortValue, setSortValue] = useState("created_at");
+  const [page, setPage] = useState(1);
+  const [coursesList, setCoursesList] = useState([]);
+
+  const handleSortChange = (item) => {
+    const sorts = {
+      "Newest": "created_at",
+      "Price": "price",
+      "Rating": "rating"
+    }
+    setSort(item)
+    setSortValue(sorts[item])
+    setSortOpen(false);
+    setPage(1);
+    setCoursesList([]);
+  };
+
+
 
   const categoryRef = useRef(null);
   const sortRef = useRef(null);
   const drawerRef = useRef(null);
 
   const breadcrumbItems = [
-
     { label: "Courses" },
   ];
-
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,11 +64,42 @@ const Page = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDrawerOpen]);
 
-  const queries = { sort, category, level, min_price: 0, max_price: price, order_by: "desc" };
+  useEffect(() => {
+    setPage(1);
+    setCoursesList([]);
+    // console.log(category, level, price);
+  }, [category, level, price]);
+
+  const queries = { 
+    sort: sortValue, 
+    category_id: category, 
+    level, 
+    min_price: 0, 
+    max_price: price, 
+    order_by: "desc", 
+    per_page: 12, 
+    page 
+  };
+
   const { courseQuery } = useCourse({ queries });
-  const { data, isLoading } = courseQuery;
-  const courses = data?.data ?? [];
+  const { data, isLoading, isFetching } = courseQuery;
+  
+  
+
+  
+  useEffect(() => {
+    if (data?.data?.data) {
+      if (page === 1) {
+        setCoursesList(data.data.data);
+      } else {
+        setCoursesList(prev => [...prev, ...data.data.data]);
+      }
+    }
+  }, [data, page]);
+
   const { findWishlistIcon } = useWishlist();
+
+  const hasMore = data?.data?.next_page_url !== null;
 
   return (
     <div id="CourseList">
@@ -65,7 +122,7 @@ const Page = () => {
               {sortOpen && (
                 <ul className="DropdownList">
                   {["Newest", "Price", "Rating"].map((item) => (
-                    <li key={item} onClick={() => setSort(item)}>{item}</li>
+                    <li key={item} onClick={() => handleSortChange(item)}>{item}</li>
                   ))}
                 </ul>
               )}
@@ -81,6 +138,7 @@ const Page = () => {
               categoryOpen={categoryOpen} setCategoryOpen={setCategoryOpen}
               categoryRef={categoryRef} level={level} setLevel={setLevel}
               price={price} setPrice={setPrice}
+              categories={categories}
             />
           </div>
 
@@ -94,6 +152,7 @@ const Page = () => {
                   categoryOpen={categoryOpen} setCategoryOpen={setCategoryOpen}
                   categoryRef={categoryRef} level={level} setLevel={setLevel}
                   price={price} setPrice={setPrice}
+                  categories={categories}
                 />
               </div>
             </div>
@@ -101,19 +160,19 @@ const Page = () => {
 
           <div className="ContentArea">
             <div className="CourseGrid">
-              {isLoading ? (
+              {isLoading && page === 1 ? (
                 Array(8).fill({}).map((_, i) => <CourseCard key={i} loading={true} />)
-              ) : courses.length > 0 ? (
-                courses.map((course) => (
+              ) : coursesList.length > 0 ? (
+                coursesList.map((course) => (
                   <CourseCard
                     key={course.id}
                     loading={false}
-                    image={course?.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : null}
+                    image={course?.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : "/images/course-placeholder.jpg"}
                     title={course?.title}
                     lessons={course?.lessons_count}
                     duration={`${course?.duration ?? 0} hrs`}
-                    price={course?.price}
-                    oldPrice={course?.discount_price}
+                    price={course?.discount_price}
+                    oldPrice={course?.price}
                     rating="4.5"
                     students={course?.enrollments_count}
                     instructorName={course?.instructor?.name}
@@ -122,16 +181,25 @@ const Page = () => {
                     buttonText="View Details"
                     instructorImg={course?.instructor?.avatar ? `${MEDIA_BASE_URL}${course.instructor.avatar}` : null}
                     type="course"
+                    instructorLabel={course?.instructor?.role}
+                    id={course?.id}
                   />
                 ))
               ) : (
-                <div className="NoData">No courses found matching your filters.</div>
+                !isLoading && <div className="NoData">No courses found matching your filters.</div>
               )}
+              {isFetching && page > 1 && Array(4).fill({}).map((_, i) => <CourseCard key={i} loading={true} />)}
             </div>
             
-            {!isLoading && courses.length > 0 && (
+            {!isLoading && hasMore && (
               <div className="LoadMoreWrapper">
-                <button className="LoadMoreBtn">Load More Courses</button>
+                <button 
+                  className="LoadMoreBtn" 
+                  onClick={() => setPage(prev => prev + 1)}
+                  disabled={isFetching}
+                >
+                  {isFetching ? "Loading..." : "Load More Courses"}
+                </button>
               </div>
             )}
           </div>

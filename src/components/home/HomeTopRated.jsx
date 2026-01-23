@@ -9,6 +9,8 @@ import { FiUsers, FiClock, FiBookOpen } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
 import useCourse from "@/hooks/useCourse";
 import useWishlist from "@/hooks/useWishlist";
+import Link from "next/link";
+
 
 
 const HomeTopRated = () => {
@@ -18,7 +20,7 @@ const HomeTopRated = () => {
   };
   const { courseQuery } = useCourse({ queries });
   const { data, isLoading } = courseQuery;
-  const courses = data?.data || [];
+  const courses = data?.data?.data || [];
   const { findWishlistIcon } = useWishlist();
 
   return (
@@ -26,7 +28,7 @@ const HomeTopRated = () => {
       <div className="container">
         <div className="HomeTopRatedHead">
           <h2>Top-Rated by Learners</h2>
-          <button className="viewAllBtn">View All</button>
+          <Link href="/course" className="viewAllBtn">View All</Link>
         </div>
         <div className="HomeTopRatedMain">
           <div className="swiper-btn prev-btn">

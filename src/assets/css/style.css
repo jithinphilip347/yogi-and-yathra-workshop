@@ -1305,6 +1305,7 @@
   cursor: pointer;
   transition: 0.3s;
   font-family: myFont1;
+  text-decoration: none;
 }
 @media (max-width: 480px) {
   #HomePopular .PopularHead .viewAllBtn {
@@ -1451,6 +1452,7 @@
   cursor: pointer;
   transition: 0.3s;
   font-family: myFont1;
+  text-decoration: none;
 }
 @media (max-width: 480px) {
   #HomeTrending .HomeTrendingHead .viewAllBtn {
@@ -1811,6 +1813,7 @@
   cursor: pointer;
   transition: 0.3s;
   font-family: myFont1;
+  text-decoration: none;
 }
 @media (max-width: 480px) {
   #HomeNew .HomeNewHead .viewAllBtn {
@@ -1924,6 +1927,7 @@
   cursor: pointer;
   transition: 0.3s;
   font-family: myFont1;
+  text-decoration: none;
 }
 @media (max-width: 480px) {
   #HomeTopRated .HomeTopRatedHead .viewAllBtn {

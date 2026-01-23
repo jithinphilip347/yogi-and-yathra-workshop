@@ -6,14 +6,27 @@ import { FiClock } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
 import { MdDateRange } from "react-icons/md";
 import useWishlist from "@/hooks/useWishlist";
+import { fetchDailyClasses } from "@/libs/course";
 
-const Page = ({ dailyClasses = [] }) => {
+
+
+
+const Page = () => {
   const [loading, setLoading] = useState(true);
   const { findWishlistIcon } = useWishlist();
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 2000);
   }, []);
+  const [dailyClasses, setDailyClasses] = useState([]);
+
+  useEffect(() => {
+    fetchDailyClasses().then((data) => {
+      console.log(data);
+      setDailyClasses(data);
+    });
+  }, []);
+ 
 
   return (
     <div id="DailyLiveClass">
@@ -56,11 +69,11 @@ const Page = ({ dailyClasses = [] }) => {
         </div>
 
         {/* Optional chaining added here too */}
-        {!loading && dailyClasses?.length > 0 && (
+        {/* {!loading && dailyClasses?.length > 0 && (
           <div className="LoadMoreContainer">
             <button className="LoadMoreBtn">Load More</button>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );

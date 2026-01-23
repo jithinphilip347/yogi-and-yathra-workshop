@@ -1,11 +1,24 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { FiChevronDown, FiX } from "react-icons/fi";
 
 const FilterBox = ({ 
   category, setCategory, categoryOpen, setCategoryOpen, categoryRef,
-  level, setLevel, price, setPrice, isMobile = false, onClose 
+  level, setLevel, price, setPrice, isMobile = false, onClose, categories = [] 
 }) => {
+  const handleReset = () => {
+    setCategory("All");
+    setLevel("");
+    setPrice(5000);
+    if(isMobile) onClose();
+  };
+
+  const getCategoryDisplay = () => {
+    if (category === "All") return "All Categories";
+    const found = categories.find(c => c.id === category);
+    return found ? found.name : "All Categories";
+  };
+
   return (
     <aside className={`CourseFilter ${isMobile ? "MobileDrawer" : ""}`}>
       <div className="FilterHeader">
@@ -16,12 +29,21 @@ const FilterBox = ({
       <div className="FilterBlock">
         <label>Category</label>
         <div className="CustomDropdown" ref={categoryRef} onClick={() => setCategoryOpen(!categoryOpen)}>
-          <span>{category}</span>
+          <span>{getCategoryDisplay()}</span>
           <FiChevronDown />
           {categoryOpen && (
             <ul className="DropdownList">
-              {["All", "Yoga", "Fitness", "Meditation"].map((item) => (
-                <li key={item} onClick={() => setCategory(item)}>{item}</li>
+              <li onClick={(e) => {
+                e.stopPropagation();
+                setCategory("All");
+                setCategoryOpen(false);
+              }}>All Categories</li>
+              {categories.map((item) => (
+                <li key={item.id} onClick={(e) => {
+                  e.stopPropagation();
+                  setCategory(item.id);
+                  setCategoryOpen(false);
+                }}>{item.name}</li>
               ))}
             </ul>
           )}
@@ -31,9 +53,15 @@ const FilterBox = ({
       <div className="FilterBlock">
         <label>Course Level</label>
         <div className="RadioGroup">
-          {["Beginner", "Mid Level"].map((l) => (
+          {["Beginner", "Intermediate", "Advanced"].map((l) => (
             <label key={l} className="RadioItem">
-              <input type="radio" name={isMobile ? "level-mob" : "level"} value={l.toLowerCase()} onChange={(e) => setLevel(e.target.value)} />
+              <input 
+                type="radio" 
+                name={isMobile ? "level-mob" : "level"} 
+                value={l.toLowerCase()} 
+                checked={level === l.toLowerCase()}
+                onChange={(e) => setLevel(e.target.value)} 
+              />
               <span>{l}</span>
             </label>
           ))}
@@ -42,7 +70,18 @@ const FilterBox = ({
 
       <div className="FilterBlock">
         <label>Price Range</label>
-        <input type="range" min="0" max="1000" value={price} onChange={(e) => setPrice(e.target.value)} className="PriceSlider" />
+        <div className="PriceRangeHeader">
+          <span>₹ 0 - ₹ {price}</span>
+        </div>
+        <input 
+          type="range" 
+          min="0" 
+          max="5000" 
+          step="100"
+          value={price} 
+          onChange={(e) => setPrice(e.target.value)} 
+          className="PriceSlider" 
+        />
         <div className="PriceInputs">
           <div className="InputBox">
             <small>Min</small>
@@ -56,8 +95,8 @@ const FilterBox = ({
       </div>
 
       <div className="FilterButtons">
-        <button className="CancelBtn">Reset</button>
-        <button className="ApplyBtn" onClick={onClose}>Apply Filters</button>
+        <button className="CancelBtn" onClick={handleReset}>Reset</button>
+        <button className="ApplyBtn" onClick={() => onClose && onClose()}>Apply Filters</button>
       </div>
     </aside>
   );

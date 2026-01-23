@@ -9,6 +9,7 @@ import { FiUsers, FiClock, FiBookOpen } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
 import useCourse from "@/hooks/useCourse";
 import useWishlist from "@/hooks/useWishlist";
+import Link from "next/link";
 
 const HomeTrending = () => {
   const queries = {
@@ -18,14 +19,15 @@ const HomeTrending = () => {
   const { findWishlistIcon } = useWishlist();
   const { courseQuery } = useCourse({ queries });
   const { data, isLoading } = courseQuery;
-  const courses = data?.data || [];
+  const courses = data?.data?.data || [];
+
 
   return (
     <div id="HomeTrending">
       <div className="container">
         <div className="HomeTrendingHead">
           <h2>Trending This Week</h2>
-          <button className="viewAllBtn">View All</button>
+          <Link href="/course" className="viewAllBtn">View All</Link>
         </div>
         <div className="HomeTrendingMain">
           <div className="swiper-btn prev-btn">

@@ -10,7 +10,7 @@ import { AiFillStar } from "react-icons/ai";
 import useCourse from "@/hooks/useCourse";
 import { useSelector } from "react-redux";
 import useWishlist from "@/hooks/useWishlist";
-
+import Link from "next/link";
 const HomePopular = ({ categories }) => {
   const [selectedCategory,setSelectedCategory] = useState("All")
   const { user } = useSelector(state => state.auth)
@@ -23,7 +23,7 @@ const HomePopular = ({ categories }) => {
   };
   const { courseQuery } = useCourse({ queries });
   const { data, isLoading } = courseQuery;
-  const courses = data?.data || [];
+  const courses = data?.data?.data || [];
 
   
 
@@ -34,7 +34,7 @@ const HomePopular = ({ categories }) => {
       <div className="container">
         <div className="PopularHead">
           <h2>Popular Right Now</h2>
-          <button className="viewAllBtn">View All</button>
+          <Link href="/course" className="viewAllBtn">View All</Link>
         </div>
 
         <div className="PopularFilters">

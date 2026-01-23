@@ -18,6 +18,7 @@ import User4 from "../../assets/images/instructor-4.jpg";
 import User5 from "../../assets/images/instructor-5.jpg";
 import User6 from "../../assets/images/instructor-6.jpg";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import Link from "next/link";
 
 import { FiUsers } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
@@ -34,7 +35,7 @@ const HomeNew = () => {
   };
   const { courseQuery } = useCourse({ queries });
   const { data, isLoading } = courseQuery;
-  const courses = data?.data || [];
+  const courses = data?.data?.data || [];
   const { findWishlistIcon } = useWishlist();
 
 
@@ -43,7 +44,7 @@ const HomeNew = () => {
       <div className="container">
         <div className="HomeNewHead">
           <h2>Newly Launched Programs</h2>
-          <button className="viewAllBtn">View All</button>
+          <Link href="/course" className="viewAllBtn">View All</Link>
         </div>
         <div className="HomeNewMain">
           <div className="swiper-btn prev-btn">
