@@ -115,9 +115,9 @@ const CourseCard = ({
               </div>
             </div>
 
-            <button className="viewBtn" onClick={handleClick}>
+            <a href="/course/course-details" className="viewBtn" onClick={handleClick}>
               {btnLoading ? <div className="spinner"></div> : buttonText}
-            </button>
+            </a>
           </div>
         </>
       )}
