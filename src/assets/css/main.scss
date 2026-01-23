@@ -5,7 +5,7 @@
 
 @font-face {
     font-family: myFont1;
-    src: url(../fonts/outfit/Outfit-Regular.ttf);
+    src: url(../fonts/noto/NotoSans-Regular.ttf);
 }
 
 @font-face {
@@ -156,37 +156,495 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    z-index: 9999;
+    background: rgba(0, 0, 0, 0.85); // Darker overlay for focus
+    backdrop-filter: blur(5px); // Premium blur effect
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-.PopupContent {
+
+.PopupContent.VideoContainer {
     background: #fff;
-    border-radius: 16px;
-    width: 90%;
-    max-width: 700px;
-    padding: 30px;
+    border-radius: 20px;
+    width: 95%;
+    max-width: 800px;
+    max-height: 90vh;
     position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+
     .CloseBtn {
         position: absolute;
-        top: 20px;
-        right: 20px;
+        top: 15px;
+        right: 15px;
+        z-index: 10;
+        background: #fff;
+        border: none;
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         cursor: pointer;
-        font-size: 24px;
+        font-size: 20px;
+        color: #000;
+        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+
+        &:hover {
+            background: var(--primaryColor);
+            color: #fff;
+            transform: scale(1.1);
+        }
     }
-    &.VideoContainer {
-        padding: 0;
-        overflow: hidden;
+
+    .VideoArea {
+        background: #000;
+        width: 100%;
+        
+        .VideoWrapper {
+            width: 100%;
+            iframe {
+                display: block;
+            }
+        }
+    }
+
+    .PopupBodyScroll {
+        padding: 30px;
+        overflow-y: auto;
+        flex: 1;
+
+        .VideoInfo {
+            .Label {
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                color: var(--primaryColor);
+                font-weight: 700;
+                margin-bottom: 8px;
+                display: block;
+            }
+
+            h4 {
+                font-size: 24px;
+                font-weight: 700;
+                color: #1e293b;
+                margin-bottom: 12px;
+            }
+
+            .ShortDesc {
+                font-size: 15px;
+                color: #64748b;
+                line-height: 1.6;
+                margin-bottom: 25px;
+            }
+
+            .CourseBriefInfo {
+                background: #f8fafc;
+                padding: 20px;
+                border-radius: 12px;
+                border: 1px solid #e2e8f0;
+
+                h5 {
+                    font-size: 16px;
+                    font-weight: 600;
+                    color: #1e293b;
+                    margin-bottom: 15px;
+                }
+
+                .Highlights {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 12px;
+                    list-style: none;
+                    padding: 0;
+
+                    li {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+                        font-size: 14px;
+                        color: #475569;
+
+                        svg {
+                            color: #22c55e;
+                            font-size: 16px;
+                            flex-shrink: 0;
+                        }
+                    }
+                }
+            }
+        }
     }
 }
-.VideoWrapper {
-    background: #fff;
+// Tablet and Mobile Adjustments
+@media (max-width: 600px) {
+    .PopupContent.VideoContainer {
+        .PopupBodyScroll {
+            padding: 20px;
+            .VideoInfo {
+                h4 { font-size: 20px; }
+                .CourseBriefInfo .Highlights { grid-template-columns: 1fr; }
+            }
+        }
+    }
+}
+
+.ProductPopupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 2500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    .ProductPopupContent {
+        background: #fff;
+        width: 100%;
+        max-width: 650px;
+        border-radius: 24px;
+        height: 90vh;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        overflow: hidden;
+        animation: popupFade 0.3s ease-out;
+
+        .ClosePopup {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            z-index: 50;
+            background: #fff;
+            border: 1px solid #eee;
+            width: 40px;
+            height: 40px;
+            // border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s;
+            background: none;
+            border: none;
+            outline: none;
+
+            &:hover {  transform: rotate(90deg); }
+        }
+
+        .PopupBodyScroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            scrollbar-width: thin;
+
+            .MainSliderSection {
+                margin-bottom: 35px;
+                
+                .MainImageSwiper {
+                    border-radius: 18px;
+                    overflow: hidden;
+                    background: #f8fafc;
+                    margin-bottom: 15px;
+                    
+                    .MainSlideImg {
+                        position: relative;
+                        width: 100%;
+                        height: 350px;
+                    }
+
+                    .custom-nav {
+                        position: absolute;
+                        top: 50%;
+                        transform: translateY(-50%);
+                        z-index: 10;
+                        background: rgba(255, 255, 255, 0.9);
+                        border: none;
+                        width: 44px;
+                        height: 44px;
+                        border-radius: 50%;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 22px;
+                        transition: 0.2s;
+                        &:hover { background: #fff; color: var(--primaryColor); }
+                        &.main-prev { left: 15px; }
+                        &.main-next { right: 15px; }
+                    }
+                }
+
+                .ThumbnailsWrapper {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                    padding: 0 5px;
+
+                    .ThumbSwiper {
+                        flex: 1;
+                        .swiper-slide {
+                            opacity: 0.4;
+                            transition: 0.3s;
+                            cursor: pointer;
+                            &-thumb-active { opacity: 1; .ThumbSlideImg { border-color: var(--primaryColor); } }
+                        }
+                    }
+
+                    .ThumbSlideImg {
+                        position: relative;
+                        width: 100%;
+                        height: 70px;
+                        border-radius: 10px;
+                        overflow: hidden;
+                        border: 2.5px solid transparent;
+                        transition: 0.2s;
+                        img{
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+                    }
+
+                    button {
+                        background: #f1f5f9;
+                        border: none;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: #64748b;
+                        &:hover { background: #e2e8f0; color: #1e293b; }
+                    }
+                }
+            }
+
+            .ProductTextDetails {
+                .TitleRow {
+                    margin-bottom: 25px;
+                    .CategoryTag { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--primaryColor); letter-spacing: 1px; }
+                    h3 { font-size: 26px; font-weight: 700; color: #1e293b; margin: 5px 0 10px; }
+                    .Stars { display: flex; align-items: center; gap: 4px; color: #f59e0b; font-size: 14px; span { color: #94a3b8; margin-left: 8px; font-weight: 400; } }
+                }
+
+                .DetailSection {
+                    margin-bottom: 30px;
+                    h4 { font-size: 16px; font-weight: 700; color: #1e293b; margin-bottom: 12px; border-left: 4px solid var(--primaryColor); padding-left: 12px; }
+                    .ProdDesc { font-size: 15px; color: #475569; line-height: 1.7; margin-bottom: 15px; }
+                    
+                    .FeatureList {
+                        list-style: none; padding: 0;
+                        li { display: flex; align-items: center; gap: 10px; font-size: 14px; color: #1e293b; margin-bottom: 8px; svg { color: #22c55e; } }
+                    }
+
+                    .SpecGrid {
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 12px;
+                        .SpecItem {
+                            font-size: 14px; color: #475569;
+                            span { font-weight: 700; color: #1e293b; margin-right: 5px; }
+                        }
+                    }
+                }
+            }
+        }
+
+        .PopupFixedBottom {
+            padding: 20px 30px;
+            border-top: 1px solid #f1f5f9;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.02);
+
+            .LeftBrief {
+                display: flex;
+                gap: 15px;
+                align-items: center;
+                .ImgBox { border-radius: 8px; overflow: hidden; border: 1px solid #eee; height: 50px; width: 50px; }
+                h5 { font-size: 15px; font-weight: 700; margin: 0; color: #1e293b; }
+                .PriceRow { font-size: 14px; font-weight: 800; color: var(--primaryColor); margin: 3px 0 0; del { font-weight: 400; color: #94a3b8; font-size: 12px; margin-left: 6px; } }
+            }
+
+            .PopupCartBtn {
+                background: var(--primaryColor);
+                color: #fff;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 12px;
+                font-weight: 700;
+                font-size: 14px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                transition: 0.3s;
+                box-shadow: 0 4px 12px rgba(var(--primaryColorRGB), 0.3);
+                &:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(var(--primaryColorRGB), 0.4); }
+                &.added { background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+            }
+        }
+    }
+}
+
+@keyframes popupFade { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+@media (max-width: 600px) {
+    .ProductPopupContent { height: 100vh !important; border-radius: 0 !important; }
+    .ProductPopupContent .PopupBodyScroll .ProductTextDetails .SpecGrid { grid-template-columns: 1fr; }
+    .ProductPopupContent .PopupFixedBottom { flex-direction: column; gap: 15px; .LeftBrief { width: 100%; } .PopupCartBtn { width: 100%; } }
+}
+
+.ReviewPopupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
 }
-.Scrollable {
-    max-height: 500px;
-    overflow-y: auto;
-    padding-right: 15px;
+
+.RePopupContent.ReviewContainer {
+    background: #fff;
+    width: 100%;
+    max-width: 750px;
+    border-radius: 16px;
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e2e8f0; // ക്ലീൻ ബോർഡർ
+
+    .PopupHeader {
+        padding: 20px 30px;
+        border-bottom: 1px solid #f1f5f9;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        h3 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 0;
+        }
+
+        .CloseBtn {
+            background: transparent;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+            &:hover { color: #000; }
+        }
+    }
+
+    .PopupBody.Scrollable {
+        padding: 10px 30px 30px;
+        overflow-y: auto;
+        flex: 1;
+
+        .SingleReviewItem {
+            padding: 25px 0;
+            border-bottom: 1px solid #f1f5f9;
+            &:last-child { border-bottom: none; }
+
+            .ReviewTop {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+
+                .UserMeta {
+                    display: flex;
+                    gap: 15px;
+                    align-items: center;
+
+                    .UserImg {
+                        width: 45px;
+                        height: 45px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
+
+                    .UserInfo {
+                        h5 {
+                            font-size: 16px;
+                            font-weight: 600;
+                            color: #1a1a1a;
+                            margin: 0;
+
+                        }
+                         span {
+                                font-weight: 400;
+                                color: #94a3b8;
+                                font-size: 13px;
+                                margin-left: 10px;
+                            }
+               
+                    }
+                }
+                    .UserStars {
+                    color: #f59e0b;
+                    display: flex;
+                    align-items: center;
+                    gap: 3px;
+                    font-size: 13px;
+                    margin-top: 4px;
+                    .RatingNum {
+                        color: #1a1a1a;
+                        font-weight: 700;
+                        margin-left: 5px;
+                    }
+                }
+            }
+
+            .Comment {
+                font-size: 15px;
+                color: #475569;
+                line-height: 1.6;
+                margin: 0;
+            }
+        }
+    }
+}
+
+// കസ്റ്റം സ്ക്രോൾ ബാർ ഡിസൈൻ
+.Scrollable::-webkit-scrollbar {
+    width: 6px;
+}
+.Scrollable::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+.Scrollable::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
 }

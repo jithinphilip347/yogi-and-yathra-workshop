@@ -34,7 +34,7 @@ const HomePopular = ({ categories }) => {
       <div className="container">
         <div className="PopularHead">
           <h2>Popular Right Now</h2>
-          <button className="viewAllBtn">View All</button>
+          <a href="/course/course-details" className="viewAllBtn">View All</a>
         </div>
 
         <div className="PopularFilters">
