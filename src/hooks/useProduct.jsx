@@ -1,25 +1,22 @@
 import products from "@/libs/products";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
-const useProduct = ({ id }) => {
-    const queryClient = useQueryClient();
-    
-    const getProduct = useQuery({
-        queryKey: ["products", id],
+const useProduct = ({ id, type }) => {
+    const productQuery = useQuery({
+        queryKey: ["product", id],
         queryFn: () => products.getById(id),
+        enabled: !!id && type === "normal",
     });
 
-    const getCombo = useQuery({
-        queryKey: ["combos", id],
+    const comboQuery = useQuery({
+        queryKey: ["combo", id],
         queryFn: () => products.getCombo(id),
+        enabled: !!id && type === "combo",
     });
-
-    
 
     return {
-        getProduct,
-        getCombo,
+        productQuery: type === "combo" ? comboQuery : productQuery,
     };
-}
+};
 
 export default useProduct;

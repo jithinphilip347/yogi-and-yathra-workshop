@@ -48,7 +48,7 @@ const CourseDetails = ({ courseDetails }) => {
             {course?.level && <span className='Badge' style={{textTransform: 'uppercase'}}>{course.level}</span>}
             {/* <span className='Badge'>Bestseller</span> */}
             <h1>{course?.title || "Course Title"}</h1>
-            <p className='ShortDesc'>{course?.category?.name || "Category"}</p>
+            <p className='ShortDesc'>{course?.short_description || "Course Description"}</p>
             <div className='MetaInfo'>
               <div className='InstructorInfo'>
                 {instructor?.avatar ? (
@@ -108,7 +108,6 @@ const CourseDetails = ({ courseDetails }) => {
                 {products.map((prod, index) => (
                   <div className='ProductItem' key={index}>
                     <div className='ProdLeft'>
-                      {console.log(PRODUCT_MEDIA_BASE_URL + prod.image)}
                       <Image src={prod.image ? `${PRODUCT_MEDIA_BASE_URL}${prod.image}` : ThumbNail} alt="Product" width={60} height={60} />
                       <div className='ProdInfo'>
                         <h4>{prod.label}</h4>

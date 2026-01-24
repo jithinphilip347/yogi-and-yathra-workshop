@@ -90,6 +90,7 @@ const HomeLiveClass = ({ dailyClasses }) => {
                   tutorImageSize='medium'
                   id={course.id}
                   type="daily_class"
+                  slug={course.slug || 'live-class'}
                 />
               </SwiperSlide>
             ))}

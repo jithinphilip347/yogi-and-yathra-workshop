@@ -45,5 +45,16 @@ const fetchCourseDetails = async (id) => {
     return data;
 }
 
+const fetchDailyClassDetails = async (id) => {
+    const res = await fetch(API_BASE_URL + "home/daily-class/" + id, {
+        method: "GET",
+        next: {
+            revalidate: 600,
+        }
+    })
+    const data = await res.json();
+    return data;
+}
 
-export { fetchLiveSections, fetchDailyClasses, fetchCategories, fetchCourseDetails } 
+
+export { fetchLiveSections, fetchDailyClasses, fetchCategories, fetchCourseDetails, fetchDailyClassDetails } 

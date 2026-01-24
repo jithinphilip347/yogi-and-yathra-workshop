@@ -40,7 +40,8 @@ const CourseCard = ({
   loading = false,
   tutorImageSize = "small",
   type="course",
-  id
+  id,
+  slug
 }) => {
   const [btnLoading, setBtnLoading] = useState(false);
 
@@ -116,7 +117,7 @@ const CourseCard = ({
               </div>
             </div>
 
-            <Link className="viewBtn" href={`/course/course-details`}>
+            <Link className="viewBtn"  href={type === "course" ? `/course/${slug}/${id}` : `/live-class/${slug}/${id}`}>
               {btnLoading ? <div className="spinner"></div> : buttonText}
             </Link>
           </div>

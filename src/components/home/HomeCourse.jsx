@@ -83,6 +83,7 @@ const HomeCourse = () => {
                   instructorLabel={course?.instructor?.role}
                   id={course.id}
                   type="course"
+                  slug={course.slug}
                 />
               </SwiperSlide>
             ))}

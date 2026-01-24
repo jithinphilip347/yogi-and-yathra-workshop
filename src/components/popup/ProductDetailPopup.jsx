@@ -10,11 +10,18 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/effect-fade';
+import useProduct from '@/hooks/useProduct';
+import { PRODUCT_MEDIA_BASE_URL } from "@/utils/constants"
 
 const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
+ 
+  // Call hook unconditionally
+  const { productQuery } = useProduct({ 
+    id: product?.id || product?.value, 
+    type: product?.type || 'normal' 
+  });
 
-  // Prevent background scroll when popup is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -24,8 +31,67 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
 
   if (!product) return null;
 
-  // Mock thumbnails (replace with product.images if available)
-  const productImages = [product.image, product.image, product.image, product.image];
+  const isLoading = productQuery.isLoading;
+  const rawData = productQuery.data;
+
+  // Normalization Step
+  let displayData = {
+    title: product.label || product.title,
+    price: product.price,
+    oldPrice: product.oldPrice || 1499,
+    description: "",
+    images: [product.image],
+    specs: {},
+    isCombo: product.type === 'combo',
+    comboItems: []
+  };
+
+  if (rawData) {
+    if (product.type === 'combo') {
+      // Combo Structure
+      displayData = {
+        title: rawData.title,
+        price: rawData.combo_price || rawData.price,
+        oldPrice: rawData.original_price || rawData.price,
+        description: rawData.specifications,
+        images: rawData.media?.length > 0 
+                  ? rawData.media.map(m => `${PRODUCT_MEDIA_BASE_URL}${m.file_path}`) 
+                  : [product.image],
+        specs: {},
+        isCombo: true,
+        comboItems: rawData.products || []
+      };
+    } else {
+      // Normal Product Structure (wrapped in .product)
+      const p = rawData.product;
+      if (p) {
+        displayData = {
+          title: p.name,
+          price: p.sale_price || p.price,
+          oldPrice: p.price,
+          description: p.description,
+          images: p.media?.length > 0 
+                    ? p.media.map(m => `${PRODUCT_MEDIA_BASE_URL}${m.file_path}`) 
+                    : [product.image],
+          specs: p.custom_feilds || {},
+          isCombo: false,
+          comboItems: []
+        };
+      }
+    }
+  }
+
+  const productImages = displayData.images;
+
+  if (isLoading) {
+    return (
+      <div className='ProductPopupOverlay'>
+        <div className='ProductPopupContent' style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="loader">Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='ProductPopupOverlay' onClick={onClose}>
@@ -50,7 +116,12 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
               {productImages.map((img, i) => (
                 <SwiperSlide key={i}>
                   <div className='MainSlideImg'>
-                    <Image src={img} alt={`${product.title} ${i}`} layout="fill" objectFit="cover" />
+                    <Image 
+                      src={img.startsWith('http') ? img : `${PRODUCT_MEDIA_BASE_URL}${img}`} 
+                      alt={`${displayData.title} ${i}`} 
+                      layout="fill" 
+                      objectFit="contain" 
+                    />
                   </div>
                 </SwiperSlide>
               ))}
@@ -77,7 +148,13 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
                 {productImages.map((img, i) => (
                   <SwiperSlide key={i}>
                     <div className='ThumbSlideImg'>
-                      <Image src={img} alt="thumb" width={80} height={80} objectFit="cover" />
+                      <Image 
+                        src={img.startsWith('http') ? img : `${PRODUCT_MEDIA_BASE_URL}${img}`} 
+                        alt="thumb" 
+                        width={80} 
+                        height={80} 
+                        objectFit="cover" 
+                      />
                     </div>
                   </SwiperSlide>
                 ))}
@@ -89,8 +166,8 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
           {/* Details Content */}
           <div className='ProductTextDetails'>
             <div className='TitleRow'>
-                <span className='CategoryTag'>Premium Gear</span>
-                <h3>{product.title}</h3>
+                <span className='CategoryTag'>{displayData.isCombo ? 'Combo Offer' : 'Premium Gear'}</span>
+                <h3>{displayData.title}</h3>
                 <div className='Stars'>
                     <AiFillStar /><AiFillStar /><AiFillStar /><AiFillStar /><AiFillStar />
                     <span>(48 Reviews)</span>
@@ -99,28 +176,39 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
             
             <div className='DetailSection'>
                 <h4>Description</h4>
-                <p className='ProdDesc'>
-                    Elevate your practice with the {product.title}. Specifically engineered for {product.title.toLowerCase().includes('mat') ? 'grip and comfort' : 'support and alignment'}, this professional-grade gear is a must-have for both beginners and advanced yogis. 
-                    Made from high-quality, eco-friendly materials, it ensures a safe and sustainable practice session every time.
-                </p>
-                <ul className='FeatureList'>
-                    <li><FiCheck /> Non-slip surface for superior stability</li>
-                    <li><FiCheck /> Odor-resistant and easy to clean</li>
-                    <li><FiCheck /> 100% Recyclable and non-toxic material</li>
-                </ul>
+                <div 
+                  className='ProdDesc ContentText' 
+                  dangerouslySetInnerHTML={{ __html: displayData.description }}
+                />
             </div>
-            
-            <div className='DetailSection'>
-              <h4>Specifications</h4>
-              <div className='SpecGrid'>
-                <div className='SpecItem'><span>Material:</span> Eco-friendly TPE / Foam</div>
-                <div className='SpecItem'><span>Dimensions:</span> 183cm x 61cm</div>
-                <div className='SpecItem'><span>Thickness:</span> 6mm High Density</div>
-                <div className='SpecItem'><span>Weight:</span> Approx. 1.2kg</div>
-                <div className='SpecItem'><span>Color:</span> Deep Crimson / Slate</div>
-                <div className='SpecItem'><span>Warranty:</span> 1 Year Manufacturing</div>
+
+            {displayData.isCombo && displayData.comboItems.length > 0 && (
+              <div className='DetailSection'>
+                <h4>Items in this Combo</h4>
+                <div className='ComboItemsList'>
+                  {displayData.comboItems.map((item, idx) => (
+                    <div key={idx} className='ComboMiniItem'>
+                      <FiCheck /> <span>{item.name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
+            
+            {!displayData.isCombo && Object.keys(displayData.specs).length > 0 && (
+              <div className='DetailSection'>
+                <h4>Specifications</h4>
+                <div className='SpecGrid'>
+                  {Object.entries(displayData.specs).map(([key, value]) => (
+                    value && (
+                      <div className='SpecItem' key={key}>
+                        <span>{key}:</span> {value}
+                      </div>
+                    )
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -128,16 +216,21 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
         <div className='PopupFixedBottom'>
           <div className='LeftBrief'>
             <div className='ImgBox'>
-                <Image src={product.image} alt="brief" width={50} height={50} />
+                <Image 
+                  src={productImages[0].startsWith('http') ? productImages[0] : `${PRODUCT_MEDIA_BASE_URL}${productImages[0]}`} 
+                  alt="brief" 
+                  width={50} 
+                  height={50} 
+                />
             </div>
             <div className='Text'>
-              <h5>{product.title}</h5>
-              <p className='PriceRow'>₹{product.price} <del>₹1,499</del></p>
+              <h5>{displayData.title}</h5>
+              <p className='PriceRow'>₹{displayData.price} <del>₹{displayData.oldPrice}</del></p>
             </div>
           </div>
           <button 
             className={`PopupCartBtn ${isAdded ? 'added' : ''}`}
-            onClick={() => onToggleCart(product.id)}
+            onClick={() => onToggleCart(product.id || product.value)}
           >
             {isAdded ? (
                 <><FiShoppingCart /> Remove from Cart</>
