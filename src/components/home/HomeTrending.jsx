@@ -66,7 +66,7 @@ const HomeTrending = () => {
                   }
                   title={course.title}
                   lessons={course?.lessons_count}
-                  duration={(course.duration || 0) + " hrs"}
+                  duration={(course.duration_in_hours || 0) + " hrs"}
                   price={Number(course.price)}
                   oldPrice={Number(course.discount_price)}
                   rating="4.5"

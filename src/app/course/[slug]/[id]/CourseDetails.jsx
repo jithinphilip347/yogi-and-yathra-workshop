@@ -6,6 +6,7 @@ import {
   FiCheckCircle, FiChevronUp, FiShoppingCart 
 } from 'react-icons/fi';
 import { AiFillStar } from 'react-icons/ai';
+import { toast } from 'react-hot-toast';
 import Image from 'next/image';
 import Inst1 from '@/assets/images/instructor-1.jpg';
 import ThumbNail from '@/assets/images/live1.jpg';
@@ -15,13 +16,17 @@ import ReviewPopup from '@/components/popup/ReviewPopup';
 import VideoPreviewPopup from '@/components/popup/VideoPreviewPopup';
 import ProductDetailPopup from '@/components/popup/ProductDetailPopup';
 import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from '@/utils/constants';
+import useReview from '@/hooks/useReview';
+import useFormatDate from '@/hooks/useFormatDate';
 
 const CourseDetails = ({ courseDetails }) => {
   const course = courseDetails;
-  
+  const { getHowLongAgo } = useFormatDate();
+  const { createCourseReview, getCourseReview } = useReview({ course_id: course?.id, perPage: 2 });
+  const reviews = getCourseReview.data;
   useEffect(() => {
-    console.log(course);
-  }, [course]);
+
+  }, [getCourseReview]);
   
   const [activeAccordion, setActiveAccordion] = useState(0);
   const [showReviewPopup, setShowReviewPopup] = useState(false);
@@ -29,6 +34,36 @@ const CourseDetails = ({ courseDetails }) => {
   const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cartItems, setCartItems] = useState([]);
+
+  // Review State
+  const [rating, setRating] = useState(0);
+  const [reviewContent, setReviewContent] = useState("");
+
+  const handleSubmitReview = () => {
+    if (rating === 0) {
+      toast.error("Please select a rating");
+      return;
+    }
+    if (!reviewContent.trim()) {
+      toast.error("Please write a review");
+      return;
+    }
+
+    createCourseReview.mutate({
+      course_id: course?.id,
+      rating: rating,
+      comment: reviewContent
+    }, {
+      onSuccess: () => {
+        toast.success("Review submitted successfully");
+        setRating(0);
+        setReviewContent("");
+      },
+      onError: (error) => {
+        toast.error(error?.response?.data?.message || "Failed to submit review");
+      }
+    });
+  };
 
   const toggleCartItem = (id) => {
     setCartItems(prev => 
@@ -60,7 +95,7 @@ const CourseDetails = ({ courseDetails }) => {
               </div>
               <div className='Ratings'>
                 <AiFillStar className='star' />
-                <span>4.5 (250 Reviews)</span>
+                <span>{course?.rating || "0"} ({course?.total_reviews || "0"} Reviews)</span>
                 <span className='Students'><FiUsers /> {course?.enrollments_count || "0"} Students</span>
               </div>
             </div>
@@ -181,45 +216,68 @@ const CourseDetails = ({ courseDetails }) => {
             <div className='HighlightBox ReviewsSection'>
             <h3>Student Feedback</h3>
             <div className='ReviewList'>
-              {[1, 2].map(rev => (
-                <div key={rev} className='SingleReview'>
+              {reviews?.data?.map(rev => (
+                <div key={rev.id} className='SingleReview'>
                   <div className='ReviewTop'>
                     <div className='UserInfo'>
-                    <Image src={Inst1} alt="User" className='UserImg' />
+                    <Image src={MEDIA_BASE_URL + rev.user.avatar} alt="User" className='UserImg' width={50} height={50} />
                       <div className='UserInfo'>
-                      <h5>Emma Crieght <span>4 months ago</span></h5>
+                      <h5>{rev.user.name} <span>{getHowLongAgo(rev.created_at)}</span></h5>
                     </div>
                     </div>
                        <div className='UserStars'>
-                        <AiFillStar /><AiFillStar /><AiFillStar /><AiFillStar /><AiFillStar /> 
-                        <span className='RatingNum'>5.0</span>
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <AiFillStar key={star} style={{ color: star <= rev.rating ? '#FFD700' : '#ccc' }} />
+                        ))}
+                        <span className='RatingNum'>{rev.rating}</span>
                       </div>
                   </div>
-                  <p className='Comment'>Effortless booking, unbeatable affordability! Small yet comfortable rooms in the heart of Sheffield&apos;s nightlife. Peaceful gem!</p>
+                  <p className='Comment'>{rev.comment}</p>
                 </div>
               ))}
             </div>
-            <button className='ReadAllBtn' onClick={() => setShowReviewPopup(true)}>Read all reviews</button>
+            {reviews?.meta?.total > 2 && (
+              <button className='ReadAllBtn' onClick={() => setShowReviewPopup(true)}>Read all reviews</button>
+            )}
           </div>
 
-          <div className='HighlightBox SubmitReview'>
+            <div className='HighlightBox SubmitReview'>
             <h3>Write a Review</h3>
             <div className='ReviewForm'>
                   <div className='RateInput'> 
                 <span>Rate this course</span>
                 <div className='rateIconBox'>
-                  <FiStar />
-                <FiStar />
-                <FiStar />
-                <FiStar />
-                <FiStar />
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button 
+                      key={star} 
+                      type="button" 
+                      onClick={() => setRating(star)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                    >
+                      {star <= rating ? (
+                        <AiFillStar style={{ color: '#FFD700', fontSize: '20px' }} />
+                      ) : (
+                        <FiStar style={{ fontSize: '20px' }} />
+                      )}
+                    </button>
+                  ))}
                 </div>
            
                 </div>
-              <textarea placeholder="Share your experience with this course..."></textarea>
+              <textarea 
+                placeholder="Share your experience with this course..."
+                value={reviewContent}
+                onChange={(e) => setReviewContent(e.target.value)}
+              ></textarea>
               <div className='FormBottom'>
                   
-                <button className='SubmitBtn'>Submit Review</button>
+                <button 
+                  className='SubmitBtn' 
+                  onClick={handleSubmitReview}
+                  disabled={createCourseReview.isPending}
+                >
+                  {createCourseReview.isPending ? 'Submitting...' : 'Submit Review'}
+                </button>
               </div>
             </div>
           </div>
@@ -291,7 +349,7 @@ const CourseDetails = ({ courseDetails }) => {
           isAdded={cartItems.includes(selectedProduct.value)}
         />
       )}
-      {showReviewPopup && <ReviewPopup onClose={() => setShowReviewPopup(false)} />}
+      {showReviewPopup && <ReviewPopup onClose={() => setShowReviewPopup(false)} course_id={course?.id} />}
       {showPreviewPopup && <VideoPreviewPopup onClose={() => setShowPreviewPopup(false)} />}
     </div>
   );
