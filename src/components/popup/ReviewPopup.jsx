@@ -31,7 +31,6 @@ const ReviewPopup = ({ onClose, course_id }) => {
         </div>
 
         <div className='PopupBody Scrollable'>
-          {/* റിവ്യൂ ലിസ്റ്റ് - നിങ്ങൾ നൽകിയ ഇമേജ് ഡിസൈൻ പ്രകാരം */}
           {reviews?.data?.map((rev) => (
             <div key={rev.id} className='SingleReviewItem'>
               <div className='ReviewTop'>
