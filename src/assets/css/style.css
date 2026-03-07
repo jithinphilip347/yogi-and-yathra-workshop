@@ -898,7 +898,7 @@
 }
 #HomeBanner .HomeBannerRight {
   width: 50%;
-  background-image: url("../../assets/images/bannerbg.jpg");
+  background-image: url("../../assets/images/bannerbg.webp");
   background-size: cover;
   background-position: center;
   border-radius: 30px;
@@ -1018,8 +1018,7 @@
   height: 28px !important;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.35);
-  -webkit-backdrop-filter: blur(4px);
-          backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2163,9 +2162,12 @@
 @media (max-width: 480px) {
   #HomeTeacher .HomeTeacherHeader {
     margin-bottom: 20px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
   }
 }
-#HomeTeacher .HomeTeacherHeader .badge {
+#HomeTeacher .HomeTeacherHeader .title-area .badge {
   border: 1px solid #e0e0e0;
   padding: 6px 16px;
   border-radius: 50px;
@@ -2173,8 +2175,9 @@
   letter-spacing: 1px;
   font-weight: 500;
   text-transform: uppercase;
+  display: inline-block;
 }
-#HomeTeacher .HomeTeacherHeader h2 {
+#HomeTeacher .HomeTeacherHeader .title-area h2 {
   font-size: clamp(28px, 4vw, 42px);
   margin-top: 20px;
   font-weight: 600;
@@ -2182,133 +2185,58 @@
   color: #111;
 }
 @media (max-width: 768px) {
-  #HomeTeacher .HomeTeacherHeader h2 {
+  #HomeTeacher .HomeTeacherHeader .title-area h2 {
     font-size: 24px;
   }
 }
 @media (max-width: 480px) {
-  #HomeTeacher .HomeTeacherHeader h2 {
+  #HomeTeacher .HomeTeacherHeader .title-area h2 {
     font-size: 20px;
     margin-top: 10px;
   }
 }
 #HomeTeacher .HomeTeacherHeader .nav-buttons {
   display: flex;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-#HomeTeacher .HomeTeacherHeader .nav-buttons .nav-btn {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: none;
-  background-color: var(--primaryColor);
-  color: white;
-  display: flex;
   align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 18px;
-  transition: all 0.3s ease;
 }
-@media (max-width: 768px) {
-  #HomeTeacher .HomeTeacherHeader .nav-buttons .nav-btn {
-    width: 35px;
-    height: 35px;
+#HomeTeacher .HomeTeacherHeader .nav-buttons .viewAllBtn {
+  background: transparent;
+  border: none;
+  color: var(--primaryColor);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: myFont1;
+  text-decoration: none;
+}
+@media (max-width: 480px) {
+  #HomeTeacher .HomeTeacherHeader .nav-buttons .viewAllBtn {
+    font-size: 14px;
   }
 }
-#HomeTeacher .HomeTeacherHeader .nav-buttons .nav-btn:hover {
-  opacity: 0.9;
-  transform: scale(1.05);
+#HomeTeacher .HomeTeacherHeader .nav-buttons .viewAllBtn:hover {
+  text-decoration: underline;
 }
-#HomeTeacher .HomeTeacherMain .card {
-  height: 480px;
-  border-radius: 24px;
-  overflow: hidden;
-  position: relative;
+#HomeTeacher .HomeTeacherMain .TeacherGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+@media (max-width: 1024px) {
+  #HomeTeacher .HomeTeacherMain .TeacherGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 @media (max-width: 768px) {
-  #HomeTeacher .HomeTeacherMain .card {
-    height: 370px;
+  #HomeTeacher .HomeTeacherMain .TeacherGrid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 @media (max-width: 480px) {
-  #HomeTeacher .HomeTeacherMain .card {
-    height: 320px;
+  #HomeTeacher .HomeTeacherMain .TeacherGrid {
+    grid-template-columns: 1fr;
   }
-}
-#HomeTeacher .HomeTeacherMain .blue-card {
-  background-color: var(--primaryColor);
-  color: white;
-  padding: 40px;
-  display: flex;
-  flex-direction: column;
-}
-#HomeTeacher .HomeTeacherMain .blue-card h3 {
-  font-size: 24px;
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-#HomeTeacher .HomeTeacherMain .blue-card .role {
-  font-size: 16px;
-  opacity: 0.8;
-  margin-bottom: 30px;
-}
-#HomeTeacher .HomeTeacherMain .blue-card .desc {
-  font-size: 15px;
-  line-height: 1.6;
-  opacity: 0.8;
-}
-#HomeTeacher .HomeTeacherMain .blue-card .social-links {
-  margin-top: auto;
-  display: flex;
-  gap: 20px;
-  font-size: 20px;
-}
-#HomeTeacher .HomeTeacherMain .blue-card .social-links svg {
-  cursor: pointer;
-  transition: 0.3s;
-}
-#HomeTeacher .HomeTeacherMain .blue-card .social-links svg:hover {
-  opacity: 0.7;
-}
-#HomeTeacher .HomeTeacherMain .image-card {
-  position: relative;
-  background-color: #f0f0f0;
-}
-#HomeTeacher .HomeTeacherMain .image-card .img-placeholder {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
-}
-#HomeTeacher .HomeTeacherMain .image-card .img-placeholder img {
-  width: 100% !important;
-  height: 100% !important;
-  -o-object-fit: cover;
-     object-fit: cover;
-  display: block;
-}
-#HomeTeacher .HomeTeacherMain .image-card .card-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 40px 20px 30px;
-  text-align: center;
-  color: white;
-  z-index: 2;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-}
-#HomeTeacher .HomeTeacherMain .image-card .card-info h4 {
-  font-size: 20px;
-  margin: 0;
-  font-weight: 600;
-}
-#HomeTeacher .HomeTeacherMain .image-card .card-info p {
-  font-size: 14px;
-  margin-top: 5px;
-  opacity: 0.9;
 }
 
 #Footer {
@@ -2844,7 +2772,7 @@
 }
 #Login .LoginBox .LoginRight {
   width: 55%;
-  background-image: url("../images/login-img1.jpg");
+  background-image: url("../images/login-img1.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -3141,7 +3069,7 @@
 }
 #Signup .LoginBox .LoginRight {
   width: 55%;
-  background-image: url("../images/login-img1.jpg");
+  background-image: url("../images/login-img1.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -3307,7 +3235,7 @@
 }
 #ForgetPassword .LoginBox .LoginRight {
   width: 55%;
-  background-image: url("../images/login-img1.jpg");
+  background-image: url("../images/login-img1.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -3490,7 +3418,7 @@
 }
 #Otp .LoginBox .LoginRight {
   width: 55%;
-  background-image: url("../images/login-img1.jpg");
+  background-image: url("../images/login-img1.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -3681,7 +3609,7 @@
 }
 #ChangePassword .LoginBox .LoginRight {
   width: 55%;
-  background-image: url("../images/login-img1.jpg");
+  background-image: url("../images/login-img1.webp");
   background-size: cover;
   background-position: center;
   border-radius: 20px;
@@ -4388,9 +4316,6 @@
   width: 100%;
   padding: 60px 0;
   background-color: #fff;
-  /* DRAWER STYLES */
-  /* GRID REPOSNSIVE */
-  /* RESPONSIVE BREAKPOINTS */
 }
 #CourseList .BreadCrumbsBox {
   width: 100%;
@@ -4576,6 +4501,9 @@
   background: var(--primaryColor);
   color: #fff;
 }
+#CourseList {
+  /* DRAWER STYLES */
+}
 #CourseList .DrawerOverlay {
   position: fixed;
   top: 0;
@@ -4604,6 +4532,9 @@
   to {
     transform: translateY(0);
   }
+}
+#CourseList {
+  /* GRID REPOSNSIVE */
 }
 #CourseList .ContentArea {
   flex-grow: 1;
@@ -4638,6 +4569,9 @@
 #CourseList .LoadMoreWrapper .LoadMoreBtn:hover {
   background: var(--primaryColor);
   color: #fff;
+}
+#CourseList {
+  /* RESPONSIVE BREAKPOINTS */
 }
 @media (max-width: 1024px) {
   #CourseList .CourseGrid {
@@ -4677,7 +4611,6 @@
   width: 100%;
   padding: 100px 0px;
   background-color: #fff;
-  /* Responsive Adjustments */
 }
 #DailyLiveClass .DailyLiveClassMain {
   width: 100%;
@@ -4713,17 +4646,20 @@
   background-color: var(--primaryColor);
   color: #fff;
 }
+#DailyLiveClass {
+  /* Responsive Adjustments */
+}
 @media (max-width: 1024px) {
   #DailyLiveClass .DailyLiveClassMain {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 @media (max-width: 600px) {
-  #DailyLiveClass {
-    padding: 60px 0px;
-  }
   #DailyLiveClass .DailyLiveClassMain {
     grid-template-columns: 1fr;
+  }
+  #DailyLiveClass {
+    padding: 60px 0px;
   }
 }
 
@@ -4732,8 +4668,6 @@
   padding-bottom: 80px;
   background: #fcfcfc;
   font-family: myFont1;
-  /* MAIN CONTENT AREA */
-  /* FIXED BOTTOM BAR */
 }
 #CourseDetails .CourseBanner {
   background: var(--primaryColor);
@@ -4812,6 +4746,9 @@
   align-items: center;
   gap: 6px;
 }
+#CourseDetails {
+  /* MAIN CONTENT AREA */
+}
 #CourseDetails .CourseDetailsMain {
   display: flex;
   gap: 40px;
@@ -4821,8 +4758,6 @@
 #CourseDetails .CourseDetailsMain .DetailsLeft {
   flex: 1;
   /* Shared styles for content boxes */
-  /* Learning Highlights */
-  /* Instructor Section */
 }
 #CourseDetails .CourseDetailsMain .DetailsLeft .HighlightBox {
   background: #fff;
@@ -4837,6 +4772,9 @@
   font-weight: 600;
   color: #1a1a1a;
   font-family: myFont1;
+}
+#CourseDetails .CourseDetailsMain .DetailsLeft {
+  /* Learning Highlights */
 }
 #CourseDetails .CourseDetailsMain .DetailsLeft .LearningBox .GridItems {
   display: grid;
@@ -4960,6 +4898,9 @@
   list-style: disc;
   margin-bottom: 8px;
   font-family: myFont1;
+}
+#CourseDetails .CourseDetailsMain .DetailsLeft {
+  /* Instructor Section */
 }
 #CourseDetails .CourseDetailsMain .DetailsLeft .InstructorDetails .InstructorCard {
   display: flex;
@@ -5371,6 +5312,7 @@
 #CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft {
   display: flex;
   gap: 15px;
+  width: 50%;
 }
 #CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft img {
   border-radius: 6px;
@@ -5434,6 +5376,9 @@
 #CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn.added:hover {
   background: #ef4444;
   color: #fff;
+}
+#CourseDetails {
+  /* FIXED BOTTOM BAR */
 }
 #CourseDetails .FixedBottomCart {
   position: fixed;
@@ -5789,6 +5734,7 @@
 #DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ProdLeft {
   display: flex;
   gap: 15px;
+  width: 50%;
 }
 #DailyLiveClassDetails .DetailsLeft .RequirementsSection .ProductList .ProductItem .ProdLeft img {
   border-radius: 6px;

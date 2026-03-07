@@ -10,12 +10,18 @@ import {
   MdHelpCenter,
   MdLogout,
 } from "react-icons/md";
-import UserProfileImg from "@/assets/images/user-img.jpg";
+import UserProfileImg from "@/assets/images/user-img.webp";
 import { MEDIA_BASE_URL } from "@/utils/constants";
 import { useDispatch } from "react-redux";
 import useProfile from "@/hooks/useProfile";
 
-const ProfileSidebar = ({ activeTab, setActiveTab, profileImg, user, setProfileImg }) => {
+const ProfileSidebar = ({
+  activeTab,
+  setActiveTab,
+  profileImg,
+  user,
+  setProfileImg,
+}) => {
   const navItems = [
     { name: "Dashboard", icon: <MdDashboard /> },
     { name: "Edit Profile", icon: <MdEditNote /> },
@@ -39,7 +45,7 @@ const ProfileSidebar = ({ activeTab, setActiveTab, profileImg, user, setProfileI
           <div className="UserProfileImgBox">
             <Image
               src={profileImg}
-              alt="User"  
+              alt="User"
               width={60}
               height={60}
               onError={() => setProfileImg(MEDIA_BASE_URL + profileImg)}

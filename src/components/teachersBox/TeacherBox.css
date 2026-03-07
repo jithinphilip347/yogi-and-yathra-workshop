@@ -1,0 +1,123 @@
+.card.image-card {
+  height: 480px;
+  border-radius: 24px;
+  overflow: hidden;
+  position: relative;
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .card.image-card {
+    height: 370px;
+  }
+}
+@media (max-width: 480px) {
+  .card.image-card {
+    height: 320px;
+  }
+}
+.card.image-card .img-placeholder {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+}
+.card.image-card .img-placeholder img {
+  width: 100% !important;
+  height: 100% !important;
+  -o-object-fit: cover;
+     object-fit: cover;
+  display: block;
+  transition: 0.5s ease;
+}
+.card.image-card .card-hover-info {
+  position: absolute;
+  inset: 0;
+  background-color: var(--primaryColor);
+  color: white;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.4s ease;
+  transform: translateY(20px);
+  z-index: 2;
+}
+.card.image-card .card-hover-info h3 {
+  font-size: 24px;
+  margin-bottom: 5px;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.4s ease 0.1s;
+}
+.card.image-card .card-hover-info .role {
+  font-size: 14px;
+  opacity: 0;
+  margin-bottom: 25px;
+  transform: translateY(15px);
+  transition: all 0.4s ease 0.15s;
+  font-weight: 500;
+}
+.card.image-card .card-hover-info .desc {
+  font-size: 14px;
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.4s ease 0.2s;
+}
+.card.image-card .card-hover-info .social-links {
+  margin-top: auto;
+  display: flex;
+  gap: 15px;
+  font-size: 18px;
+  margin-bottom: 25px;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.4s ease 0.25s;
+}
+.card.image-card .card-hover-info .social-links svg {
+  cursor: pointer;
+  transition: 0.3s;
+}
+.card.image-card .card-hover-info .social-links svg:hover {
+  opacity: 0.7;
+}
+.card.image-card .card-hover-info .learn-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  opacity: 0;
+  transform: translateY(15px);
+  transition: all 0.4s ease 0.3s;
+  font-family: myFont1;
+  border: 1px solid #fff;
+  border-radius: 24px;
+  padding: 8px 20px;
+  justify-content: center;
+}
+.card.image-card .card-hover-info .learn-more .arrow-icon {
+  transition: transform 0.3s;
+  font-size: 18px;
+}
+.card.image-card .card-hover-info .learn-more:hover .arrow-icon {
+  transform: translateX(6px);
+}
+.card.image-card:hover .img-placeholder img {
+  transform: scale(1.1);
+}
+.card.image-card:hover .card-hover-info {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.card.image-card:hover .card-hover-info h3, .card.image-card:hover .card-hover-info .role, .card.image-card:hover .card-hover-info .desc, .card.image-card:hover .card-hover-info .social-links, .card.image-card:hover .card-hover-info .learn-more {
+  opacity: 1;
+  transform: translateY(0);
+}/*# sourceMappingURL=TeacherBox.css.map */

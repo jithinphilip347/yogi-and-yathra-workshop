@@ -4,19 +4,19 @@ import CourseCard from "../coursebox/CourseCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { MEDIA_BASE_URL } from "@/utils/constants";
-import CourseImg1 from "../../assets/images/courseImg-1.jpg";
-import CourseImg2 from "../../assets/images/courseImg-2.jpg";
-import CourseImg3 from "../../assets/images/courseImg-3.jpg";
-import CourseImg4 from "../../assets/images/courseImg-4.jpg";
-import CourseImg5 from "../../assets/images/courseImg-5.jpg";
-import CourseImg6 from "../../assets/images/courseImg-6.jpg";
+import CourseImg1 from "../../assets/images/courseImg-1.webp";
+import CourseImg2 from "../../assets/images/courseImg-2.webp";
+import CourseImg3 from "../../assets/images/courseImg-3.webp";
+import CourseImg4 from "../../assets/images/courseImg-4.webp";
+import CourseImg5 from "../../assets/images/courseImg-5.webp";
+import CourseImg6 from "../../assets/images/courseImg-6.webp";
 
-import User1 from "../../assets/images/instructor-1.jpg";
-import User2 from "../../assets/images/instructor-2.jpg";
-import User3 from "../../assets/images/instructor-3.jpg";
-import User4 from "../../assets/images/instructor-4.jpg";
-import User5 from "../../assets/images/instructor-5.jpg";
-import User6 from "../../assets/images/instructor-6.jpg";
+import User1 from "../../assets/images/instructor-1.webp";
+import User2 from "../../assets/images/instructor-2.webp";
+import User3 from "../../assets/images/instructor-3.webp";
+import User4 from "../../assets/images/instructor-4.webp";
+import User5 from "../../assets/images/instructor-5.webp";
+import User6 from "../../assets/images/instructor-6.webp";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Link from "next/link";
 
@@ -26,7 +26,6 @@ import { FiClock, FiBookOpen } from "react-icons/fi";
 import { FaHeart } from "react-icons/fa";
 import useCourse from "@/hooks/useCourse";
 import useWishlist from "@/hooks/useWishlist";
-
 
 const HomeNew = () => {
   const queries = {
@@ -38,13 +37,14 @@ const HomeNew = () => {
   const courses = data?.data?.data || [];
   const { findWishlistIcon } = useWishlist();
 
-
   return (
     <div id="HomeNew">
       <div className="container">
         <div className="HomeNewHead">
           <h2>Newly Launched Programs</h2>
-          <Link href="/course" className="viewAllBtn">View All</Link>
+          <Link href="/course" className="viewAllBtn">
+            View All
+          </Link>
         </div>
         <div className="HomeNewMain">
           <div className="swiper-btn prev-btn">
@@ -86,8 +86,8 @@ const HomeNew = () => {
                   duration={(course.duration || 0) + " hrs"}
                   price={Number(course.price)}
                   oldPrice={Number(course.discount_price)}
-                  rating="4.5" 
-                  students={course?.enrollments_count} 
+                  rating="4.5"
+                  students={course?.enrollments_count}
                   instructorName={course?.instructor?.name}
                   wishlistIcon={findWishlistIcon(course.id, "course")}
                   lessonsIcon={<FiBookOpen />}

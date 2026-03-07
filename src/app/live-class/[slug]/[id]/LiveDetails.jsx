@@ -12,24 +12,24 @@ import {
 import { AiFillStar } from "react-icons/ai";
 import Image from "next/image";
 import Link from "next/link";
-import Inst1 from "@/assets/images/instructor-1.jpg";
-import ThumbNail from "@/assets/images/live1.jpg";
-import ProductDetailPopup from '@/components/popup/ProductDetailPopup'; 
-import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from '@/utils/constants';
+import Inst1 from "@/assets/images/instructor-1.webp";
+import ThumbNail from "@/assets/images/live1.webp";
+import ProductDetailPopup from "@/components/popup/ProductDetailPopup";
+import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from "@/utils/constants";
 
 const LiveDetails = ({ id, classDetails }) => {
   const liveClass = classDetails || {};
-  
+
   const [message, setMessage] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cartItems, setCartItems] = useState([]);
 
   const toggleCartItem = (id) => {
-    setCartItems(prev => 
-      prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
+    setCartItems((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
     );
   };
-  
+
   // Static chat messages as placeholder
   const chatMessages = [
     {
@@ -73,7 +73,11 @@ const LiveDetails = ({ id, classDetails }) => {
           <div className="DetailsLeft">
             <div className="ThumbnailWrapper">
               <Image
-                src={liveClass?.thumbnail ? `${MEDIA_BASE_URL}${liveClass.thumbnail}` : ThumbNail}
+                src={
+                  liveClass?.thumbnail
+                    ? `${MEDIA_BASE_URL}${liveClass.thumbnail}`
+                    : ThumbNail
+                }
                 alt="Class Thumbnail"
                 layout="fill"
                 objectFit="cover"
@@ -81,7 +85,14 @@ const LiveDetails = ({ id, classDetails }) => {
             </div>
 
             <div className="ClassHeader">
-              {liveClass?.category?.name && <span className='Badge' style={{marginBottom: '10px', display: 'inline-block'}}>{liveClass.category.name}</span>}
+              {liveClass?.category?.name && (
+                <span
+                  className="Badge"
+                  style={{ marginBottom: "10px", display: "inline-block" }}
+                >
+                  {liveClass.category.name}
+                </span>
+              )}
               <h1>{liveClass?.title || "Live Class Title"}</h1>
 
               <div className="ScheduleGrid">
@@ -89,14 +100,20 @@ const LiveDetails = ({ id, classDetails }) => {
                   <FiCalendar />
                   <div className="TextWrap">
                     <small>Duration</small>
-                    <span>{liveClass?.human_start_date} - {liveClass?.human_end_date}</span>
+                    <span>
+                      {liveClass?.human_start_date} -{" "}
+                      {liveClass?.human_end_date}
+                    </span>
                   </div>
                 </div>
                 <div className="ScheduleItem">
                   <FiClock />
                   <div className="TextWrap">
                     <small>Class Time</small>
-                    <span>{liveClass?.human_class_time} ({liveClass?.duration || 60} mins)</span>
+                    <span>
+                      {liveClass?.human_class_time} ({liveClass?.duration || 60}{" "}
+                      mins)
+                    </span>
                   </div>
                 </div>
               </div>
@@ -105,11 +122,13 @@ const LiveDetails = ({ id, classDetails }) => {
                 <div className="DayGroup">
                   <label>Class Days:</label>
                   <div className="DayList">
-                    {days.length > 0 ? days.map((day, i) => (
-                      <span key={i} className="DayBox">
-                        {day}
-                      </span>
-                    )) : (
+                    {days.length > 0 ? (
+                      days.map((day, i) => (
+                        <span key={i} className="DayBox">
+                          {day}
+                        </span>
+                      ))
+                    ) : (
                       <span className="DayBox">No days scheduled</span>
                     )}
                   </div>
@@ -123,15 +142,22 @@ const LiveDetails = ({ id, classDetails }) => {
             <div className="InstructorSection">
               <div className="AuthCard">
                 <div className="AuthLeft">
-                   {instructor?.avatar ? (
-                    <Image src={`${MEDIA_BASE_URL}${instructor.avatar}`} alt="Author" width={60} height={60} className="AuthImg" style={{borderRadius: '50%'}} />
+                  {instructor?.avatar ? (
+                    <Image
+                      src={`${MEDIA_BASE_URL}${instructor.avatar}`}
+                      alt="Author"
+                      width={60}
+                      height={60}
+                      className="AuthImg"
+                      style={{ borderRadius: "50%" }}
+                    />
                   ) : (
                     <Image src={Inst1} alt="Author" className="AuthImg" />
                   )}
                 </div>
                 <div className="AuthRight">
                   <h4>{instructor?.name || "Instructor Name"}</h4>
-                   <p>{instructor?.role || "Instructor"}</p>
+                  <p>{instructor?.role || "Instructor"}</p>
                   <div className="AuthMeta">
                     <span className="Rating">
                       <AiFillStar /> 4.8 Rating
@@ -142,55 +168,86 @@ const LiveDetails = ({ id, classDetails }) => {
                   </div>
                 </div>
               </div>
-               {/* <div className='Bio ContentText' dangerouslySetInnerHTML={{ __html: instructor?.bio_graphy || "Instructor biography not available." }}></div> */}
+              {/* <div className='Bio ContentText' dangerouslySetInnerHTML={{ __html: instructor?.bio_graphy || "Instructor biography not available." }}></div> */}
             </div>
 
             <div className="DescriptionBox">
               <h3>About this Daily Live Class</h3>
-              <div className='ContentText' dangerouslySetInnerHTML={{ __html: liveClass?.description || "<p>No description available.</p>" }}>
+              <div
+                className="ContentText"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    liveClass?.description ||
+                    "<p>No description available.</p>",
+                }}
+              ></div>
+            </div>
+
+            {/* REQUIREMENTS & PRODUCTS BOX */}
+            <div className="HighlightBox RequirementsSection">
+              <h3>Course Requirements & Gear</h3>
+              <p className="BoxSub">
+                To get the best results from this course, we recommend the
+                following gear:
+              </p>
+              <ul className="ReqList">
+                {liveClass?.requirements &&
+                Array.isArray(liveClass.requirements) &&
+                liveClass.requirements.length > 0 ? (
+                  liveClass.requirements.map((req, idx) => (
+                    <li key={idx}>
+                      <FiCheckCircle /> {req}
+                    </li>
+                  ))
+                ) : (
+                  <li>
+                    <FiCheckCircle /> Basic understanding of yoga.
+                  </li>
+                )}
+              </ul>
+
+              <div className="ProductList">
+                {products.map((prod, index) => (
+                  <div className="ProductItem" key={index}>
+                    <div className="ProdLeft">
+                      <Image
+                        src={
+                          prod.image
+                            ? `${PRODUCT_MEDIA_BASE_URL}${prod.image}`
+                            : ThumbNail
+                        }
+                        alt="Product"
+                        width={60}
+                        height={60}
+                      />
+                      <div className="ProdInfo">
+                        <h4>{prod.label}</h4>
+                        <div className="PriceRow">
+                          <span className="Curr">₹{prod.price}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="ActionArea">
+                      <button
+                        className="ViewDetailsBtn"
+                        onClick={() => setSelectedProduct(prod)}
+                      >
+                        View Details
+                      </button>
+                      <button
+                        className={`AddToCartBtn ${cartItems.includes(prod.value) ? "added" : ""}`}
+                        onClick={() => toggleCartItem(prod.value)}
+                      >
+                        {cartItems.includes(prod.value)
+                          ? "Remove from Cart"
+                          : "Add to Cart"}
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-                 {/* REQUIREMENTS & PRODUCTS BOX */}
-                <div className='HighlightBox RequirementsSection'>
-                  <h3>Course Requirements & Gear</h3>
-                  <p className='BoxSub'>To get the best results from this course, we recommend the following gear:</p>
-                  <ul className='ReqList'>
-                     {liveClass?.requirements && Array.isArray(liveClass.requirements) && liveClass.requirements.length > 0 ? (
-                        liveClass.requirements.map((req, idx) => (
-                          <li key={idx}><FiCheckCircle /> {req}</li>
-                        ))
-                    ) : (
-                        <li><FiCheckCircle /> Basic understanding of yoga.</li>
-                    )}
-                  </ul>
-    
-                <div className='ProductList'>
-                    {products.map((prod, index) => (
-                      <div className='ProductItem' key={index}>
-                        <div className='ProdLeft'>
-                          <Image src={prod.image ? `${PRODUCT_MEDIA_BASE_URL}${prod.image}` : ThumbNail} alt="Product" width={60} height={60} />
-                          <div className='ProdInfo'>
-                            <h4>{prod.label}</h4>
-                            <div className='PriceRow'>
-                              <span className='Curr'>₹{prod.price}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className='ActionArea'>
-                          <button className='ViewDetailsBtn' onClick={() => setSelectedProduct(prod)}>View Details</button>
-                          <button 
-                            className={`AddToCartBtn ${cartItems.includes(prod.value) ? 'added' : ''}`}
-                            onClick={() => toggleCartItem(prod.value)}
-                          >
-                            {cartItems.includes(prod.value) ? 'Remove from Cart' : 'Add to Cart'}
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-            
             <div className="ReviewSection">
               <h3>Write a Review</h3>
               <div className="ReviewForm">
@@ -245,14 +302,14 @@ const LiveDetails = ({ id, classDetails }) => {
           </aside>
         </div>
       </div>
-    {selectedProduct && (
-        <ProductDetailPopup 
-        product={selectedProduct} 
-        onClose={() => setSelectedProduct(null)} 
-        onToggleCart={toggleCartItem}
-        isAdded={cartItems.includes(selectedProduct.value)}
+      {selectedProduct && (
+        <ProductDetailPopup
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+          onToggleCart={toggleCartItem}
+          isAdded={cartItems.includes(selectedProduct.value)}
         />
-    )}
+      )}
     </div>
   );
 };

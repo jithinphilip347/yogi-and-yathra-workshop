@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { MdCameraAlt } from "react-icons/md";
 import { toast, Toaster } from "react-hot-toast";
-import UserProfileImg from "@/assets/images/user-img.jpg";
+import UserProfileImg from "@/assets/images/user-img.webp";
 import useProfile from "@/hooks/useProfile";
 import { MEDIA_BASE_URL } from "@/utils/constants";
 
@@ -35,7 +35,7 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
         whatsapp: user.whatsapp || "",
         location: user.location || "",
         age: user.age || "",
-        hasHealthIssues: !!user.health_issue, 
+        hasHealthIssues: !!user.health_issue,
         health_issue: user.health_issue || "",
         height: user.height || "",
         weight: user.weight || "",
@@ -59,7 +59,7 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
     const newErrors = {};
 
     if (!formData.name?.trim()) newErrors.name = "Full Name is required";
-    
+
     if (!formData.email?.trim()) {
       newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -72,12 +72,18 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
       newErrors.phone = "Invalid Mobile Number";
     }
 
-    if (formData.age && (isNaN(formData.age) || formData.age < 0 || formData.age > 120)) {
-        newErrors.age = "Please enter a valid age";
+    if (
+      formData.age &&
+      (isNaN(formData.age) || formData.age < 0 || formData.age > 120)
+    ) {
+      newErrors.age = "Please enter a valid age";
     }
 
     if (formData.hasHealthIssues) {
-      if (!formData.health_issue || formData.health_issue === "Select an Issue") {
+      if (
+        !formData.health_issue ||
+        formData.health_issue === "Select an Issue"
+      ) {
         newErrors.health_issue = "Please select a health issue";
       }
     }
@@ -123,32 +129,30 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
       toast.error("Please fix the errors");
       return;
     }
-    
+
     const formDataObj = new FormData();
-    Object.keys(formData).forEach(key => {
-        formDataObj.append(key, formData[key]);
+    Object.keys(formData).forEach((key) => {
+      formDataObj.append(key, formData[key]);
     });
 
     if (selectedFile) {
-        formDataObj.append('avatar', selectedFile);
+      formDataObj.append("avatar", selectedFile);
     } else if (profileImg) {
-         formDataObj.append('avatar', profileImg);
+      formDataObj.append("avatar", profileImg);
     }
 
     // append _method PUT to trick some frameworks if needed, or just standard PUT
-    formDataObj.append('_method', 'PUT'); 
+    formDataObj.append("_method", "PUT");
 
     updateProfile.mutate(
       { id: user?.id, data: formDataObj },
       {
-        onSuccess: () => {
-           
-        },
+        onSuccess: () => {},
         onError: (error) => {
           console.log(error);
           toast.error(error?.data?.message);
-        }
-      }
+        },
+      },
     );
   };
 
@@ -188,7 +192,9 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
         {/* Form Fields from Image */}
         <div className="FormGrid">
           <div className="InputGroup">
-            <label>Full Name <span style={{color:'red'}}>*</span></label>
+            <label>
+              Full Name <span style={{ color: "red" }}>*</span>
+            </label>
             <input
               type="text"
               name="name"
@@ -197,10 +203,19 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
               onChange={handleChange}
               className={errors.name ? "error-border" : ""}
             />
-            {errors.name && <span className="error-text" style={{color: 'red', fontSize: '12px'}}>{errors.name}</span>}
+            {errors.name && (
+              <span
+                className="error-text"
+                style={{ color: "red", fontSize: "12px" }}
+              >
+                {errors.name}
+              </span>
+            )}
           </div>
           <div className="InputGroup">
-            <label>Email <span style={{color:'red'}}>*</span></label>
+            <label>
+              Email <span style={{ color: "red" }}>*</span>
+            </label>
             <input
               type="email"
               name="email"
@@ -209,10 +224,19 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
               onChange={handleChange}
               className={errors.email ? "error-border" : ""}
             />
-            {errors.email && <span className="error-text" style={{color: 'red', fontSize: '12px'}}>{errors.email}</span>}
+            {errors.email && (
+              <span
+                className="error-text"
+                style={{ color: "red", fontSize: "12px" }}
+              >
+                {errors.email}
+              </span>
+            )}
           </div>
           <div className="InputGroup">
-            <label>Mobile Number <span style={{color:'red'}}>*</span></label>
+            <label>
+              Mobile Number <span style={{ color: "red" }}>*</span>
+            </label>
             <input
               type="text"
               name="phone"
@@ -221,7 +245,14 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
               onChange={handleChange}
               className={errors.phone ? "error-border" : ""}
             />
-            {errors.phone && <span className="error-text" style={{color: 'red', fontSize: '12px'}}>{errors.phone}</span>}
+            {errors.phone && (
+              <span
+                className="error-text"
+                style={{ color: "red", fontSize: "12px" }}
+              >
+                {errors.phone}
+              </span>
+            )}
           </div>
           <div className="InputGroup">
             <label>WhatsApp Number</label>
@@ -251,9 +282,16 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
               placeholder="Age"
               value={formData.age}
               onChange={handleChange}
-               className={errors.age ? "error-border" : ""}
+              className={errors.age ? "error-border" : ""}
             />
-             {errors.age && <span className="error-text" style={{color: 'red', fontSize: '12px'}}>{errors.age}</span>}
+            {errors.age && (
+              <span
+                className="error-text"
+                style={{ color: "red", fontSize: "12px" }}
+              >
+                {errors.age}
+              </span>
+            )}
           </div>
         </div>
 
@@ -272,7 +310,9 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
           {formData.hasHealthIssues && (
             <div className="HealthFieldsContainer">
               <div className="InputGroup">
-                <label>Select Health Issue <span style={{color:'red'}}>*</span></label>
+                <label>
+                  Select Health Issue <span style={{ color: "red" }}>*</span>
+                </label>
                 <select
                   name="health_issue"
                   value={formData.health_issue}
@@ -285,7 +325,12 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
                   <option value="Other">Other</option>
                 </select>
                 {errors.health_issue && (
-                  <span className="error-text" style={{color: 'red', fontSize: '12px'}}>{errors.health_issue}</span>
+                  <span
+                    className="error-text"
+                    style={{ color: "red", fontSize: "12px" }}
+                  >
+                    {errors.health_issue}
+                  </span>
                 )}
               </div>
               <div className="InputGroup">

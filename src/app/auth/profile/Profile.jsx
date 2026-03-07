@@ -1,14 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import UserProfileImg from "../../../assets/images/user-img.jpg";
-import CourseImg1 from "../../../assets/images/courseImg-1.jpg";
-import CourseImg2 from "../../../assets/images/courseImg-2.jpg";
-import CourseImg3 from "../../../assets/images/courseImg-3.jpg";
+import UserProfileImg from "../../../assets/images/user-img.webp";
+import CourseImg1 from "../../../assets/images/courseImg-1.webp";
+import CourseImg2 from "../../../assets/images/courseImg-2.webp";
+import CourseImg3 from "../../../assets/images/courseImg-3.webp";
 
-import User1 from "../../../assets/images/instructor-1.jpg";
-import User2 from "../../../assets/images/instructor-2.jpg";
-import User3 from "../../../assets/images/instructor-3.jpg";
+import User1 from "../../../assets/images/instructor-1.webp";
+import User2 from "../../../assets/images/instructor-2.webp";
+import User3 from "../../../assets/images/instructor-3.webp";
 
 import { FiUsers } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
@@ -149,13 +149,13 @@ const upcomingEvents = [
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [profileImg, setProfileImg] = useState(UserProfileImg);
-  const { user } = useSelector(state => state.auth)
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (user?.avatar) {
-      setProfileImg(user.avatar)
+      setProfileImg(user.avatar);
     }
-  },[user])
+  }, [user]);
 
   const { enrollmentsQuery } = useCourse({});
   const { data: data, isLoading, error } = enrollmentsQuery;
@@ -174,10 +174,16 @@ const Profile = () => {
         );
       case "Edit Profile":
         return (
-          <EditProfile profileImg={profileImg} setProfileImg={setProfileImg} user={user} />
+          <EditProfile
+            profileImg={profileImg}
+            setProfileImg={setProfileImg}
+            user={user}
+          />
         );
       case "My Courses":
-        return <MyCourses courses={enrollments.map((course) => course.course)} />;
+        return (
+          <MyCourses courses={enrollments.map((course) => course.course)} />
+        );
       case "Live Classes":
         return <LiveClasses />;
       case "Events":

@@ -1,28 +1,28 @@
 "use client";
-import React, { useState, useEffect } from 'react';
-import UserImg from "../../assets/images/user.jpg";
-import Link from 'next/link';
-import { 
-  MdClose, 
-  MdKeyboardArrowDown, 
-  MdFavoriteBorder, 
-  MdOutlineInfo, 
-  MdOutlineContactSupport 
+import React, { useState, useEffect } from "react";
+import UserImg from "../../assets/images/user.webp";
+import Link from "next/link";
+import {
+  MdClose,
+  MdKeyboardArrowDown,
+  MdFavoriteBorder,
+  MdOutlineInfo,
+  MdOutlineContactSupport,
 } from "react-icons/md";
-import { IoMdNotificationsOutline } from "react-icons/io"; 
+import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoCartOutline } from "react-icons/io5";
 import { HiOutlineHome, HiOutlineBookOpen } from "react-icons/hi";
 import { BiNews } from "react-icons/bi";
-import Image from 'next/image';
+import Image from "next/image";
 
 const Sidnav = ({ isOpen, onClose }) => {
   const [isCourseOpen, setIsCourseOpen] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
   }, [isOpen]);
 
@@ -37,28 +37,29 @@ const Sidnav = ({ isOpen, onClose }) => {
 
   return (
     <>
-      <div className={`SideNavOverlay ${isOpen ? 'active' : ''}`} onClick={onClose}></div>
+      <div
+        className={`SideNavOverlay ${isOpen ? "active" : ""}`}
+        onClick={onClose}
+      ></div>
 
-      <div id='Sidnav' className={isOpen ? 'open' : ''}>
+      <div id="Sidnav" className={isOpen ? "open" : ""}>
         <div className="SideNavHeader">
           <div className="CloseIcon" onClick={onClose}>
             <MdClose />
           </div>
         </div>
-            <div className="UserProfileBox"
-         
-            >
-              <div className="ProfileImageBox">
-                <Image src={UserImg} alt="User" className="UserImage" />
-              </div>
+        <div className="UserProfileBox">
+          <div className="ProfileImageBox">
+            <Image src={UserImg} alt="User" className="UserImage" />
+          </div>
 
-              <div className="UserNameDropIconBox">
-                <div className="UserNameBox">
-                  <p className="UserWelcome">Hi Welcome</p>
-                  <p className="UserName">Achu Sivadasan</p>
-                </div>
-              </div>
+          <div className="UserNameDropIconBox">
+            <div className="UserNameBox">
+              <p className="UserWelcome">Hi Welcome</p>
+              <p className="UserName">Achu Sivadasan</p>
             </div>
+          </div>
+        </div>
         <div className="SideNavLinks">
           <ul>
             {/* Home Link */}
@@ -67,20 +68,25 @@ const Sidnav = ({ isOpen, onClose }) => {
                 <HiOutlineHome /> Home
               </Link>
             </li>
-            
+
             {/* Courses Dropdown */}
             <li className="HasSub">
-              <div className="SideNavLinkItem" onClick={() => setIsCourseOpen(!isCourseOpen)}>
+              <div
+                className="SideNavLinkItem"
+                onClick={() => setIsCourseOpen(!isCourseOpen)}
+              >
                 <div className="itemLeft">
-                   <HiOutlineBookOpen /> Courses
+                  <HiOutlineBookOpen /> Courses
                 </div>
-                <MdKeyboardArrowDown className={isCourseOpen ? 'rotate' : ''} />
+                <MdKeyboardArrowDown className={isCourseOpen ? "rotate" : ""} />
               </div>
-              
-              <ul className={`SideSubMenu ${isCourseOpen ? 'show' : ''}`}>
+
+              <ul className={`SideSubMenu ${isCourseOpen ? "show" : ""}`}>
                 {categories.map((cat, i) => (
                   <li key={i}>
-                    <Link href={`/course/${cat.slug}`} onClick={onClose}>{cat.name}</Link>
+                    <Link href={`/course/${cat.slug}`} onClick={onClose}>
+                      {cat.name}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -106,7 +112,7 @@ const Sidnav = ({ isOpen, onClose }) => {
                 <MdOutlineContactSupport /> Contact
               </Link>
             </li>
-            
+
             <div className="Divider"></div>
 
             {/* Shop Related Links */}
@@ -130,6 +136,6 @@ const Sidnav = ({ isOpen, onClose }) => {
       </div>
     </>
   );
-}
+};
 
 export default Sidnav;

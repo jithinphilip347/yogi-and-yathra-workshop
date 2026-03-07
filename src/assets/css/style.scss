@@ -957,7 +957,7 @@
     }
     .HomeBannerRight {
         width: 50%;
-        background-image: url("../../assets/images/bannerbg.jpg");
+        background-image: url("../../assets/images/bannerbg.webp");
         background-size: cover;
         background-position: center;
         border-radius: 30px;
@@ -1069,6 +1069,7 @@
                 height: 28px !important;
                 border-radius: 50%;
                 background: rgba(0, 0, 0, 0.35);
+                -webkit-backdrop-filter: blur(4px);
                 backdrop-filter: blur(4px);
                 display: flex;
                 align-items: center;
@@ -2156,156 +2157,77 @@
         margin-bottom: 50px;
         @media (max-width: 480px) {
             margin-bottom: 20px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
         }
-        .badge {
-            border: 1px solid #e0e0e0;
-            padding: 6px 16px;
-            border-radius: 50px;
-            font-size: 12px;
-            letter-spacing: 1px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        h2 {
-            font-size: clamp(28px, 4vw, 42px); // Responsive font size
-            margin-top: 20px;
-            font-weight: 600;
-            line-height: 1.2;
-            color: #111;
-            @media (max-width: 768px) {
-                font-size: 24px;
+        .title-area {
+            .badge {
+                border: 1px solid #e0e0e0;
+                padding: 6px 16px;
+                border-radius: 50px;
+                font-size: 12px;
+                letter-spacing: 1px;
+                font-weight: 500;
+                text-transform: uppercase;
+                display: inline-block;
             }
-            @media (max-width: 480px) {
-                font-size: 20px;
-                margin-top: 10px;
+
+            h2 {
+                font-size: clamp(28px, 4vw, 42px); // Responsive font size
+                margin-top: 20px;
+                font-weight: 600;
+                line-height: 1.2;
+                color: #111;
+                @media (max-width: 768px) {
+                    font-size: 24px;
+                }
+                @media (max-width: 480px) {
+                    font-size: 20px;
+                    margin-top: 10px;
+                }
             }
         }
-
         .nav-buttons {
             display: flex;
-            gap: 12px;
-            margin-bottom: 10px;
+            align-items: center;
 
-            .nav-btn {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                border: none;
-                background-color: var(--primaryColor);
-                color: white;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                font-size: 18px;
-                transition: all 0.3s ease;
-                @media (max-width: 768px) {
-                    width: 35px;
-                    height: 35px;
-                }
-                &:hover {
-                    opacity: 0.9;
-                    transform: scale(1.05);
-                }
+            .viewAllBtn {
+            background: transparent;
+            border: none;
+            color: var(--primaryColor);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: myFont1;
+            text-decoration: none;
+            @media (max-width: 480px) {
+                font-size: 14px;
             }
+            &:hover {
+                text-decoration: underline;
+            }
+        }
         }
     }
 
     .HomeTeacherMain {
-        .card {
-            height: 480px;
-            border-radius: 24px;
-            overflow: hidden;
-            position: relative;
+        .TeacherGrid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            @media (max-width: 1024px) {
+                grid-template-columns: repeat(3, 1fr);
+            }
             @media (max-width: 768px) {
-                height: 370px;
+                grid-template-columns: repeat(2, 1fr);
             }
             @media (max-width: 480px) {
-                height: 320px;
+                grid-template-columns: 1fr;
             }
         }
 
-        .blue-card {
-            background-color: var(--primaryColor);
-            color: white;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-
-            h3 {
-                font-size: 24px;
-                margin-bottom: 8px;
-                font-weight: 600;
-            }
-            .role {
-                font-size: 16px;
-                opacity: 0.8;
-                margin-bottom: 30px;
-            }
-            .desc {
-                font-size: 15px;
-                line-height: 1.6;
-                opacity: 0.8;
-            }
-
-            .social-links {
-                margin-top: auto;
-                display: flex;
-                gap: 20px;
-                font-size: 20px;
-
-                svg {
-                    cursor: pointer;
-                    transition: 0.3s;
-                    &:hover {
-                        opacity: 0.7;
-                    }
-                }
-            }
-        }
-
-        .image-card {
-            position: relative;
-            background-color: #f0f0f0;
-
-            .img-placeholder {
-                width: 100%;
-                height: 100%;
-                position: relative;
-                overflow: hidden;
-                img {
-                    width: 100% !important;
-                    height: 100% !important;
-                    object-fit: cover;
-                    display: block;
-                }
-            }
-
-            .card-info {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                padding: 40px 20px 30px; // Bottom padding increase
-                text-align: center;
-                color: white;
-                z-index: 2;
-                // Text clear aayi kaanan ulla dark gradient
-                background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
-
-                h4 {
-                    font-size: 20px;
-                    margin: 0;
-                    font-weight: 600;
-                }
-                p {
-                    font-size: 14px;
-                    margin-top: 5px;
-                    opacity: 0.9;
-                }
-            }
-        }
     }
 }
 
@@ -2887,7 +2809,7 @@
 
         .LoginRight {
             width: 55%;
-            background-image: url("../images/login-img1.jpg");
+            background-image: url("../images/login-img1.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -3209,7 +3131,7 @@
 
         .LoginRight {
             width: 55%;
-            background-image: url("../images/login-img1.jpg");
+            background-image: url("../images/login-img1.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -3372,7 +3294,7 @@
 
         .LoginRight {
             width: 55%;
-            background-image: url("../images/login-img1.jpg");
+            background-image: url("../images/login-img1.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -3554,7 +3476,7 @@
 
         .LoginRight {
             width: 55%;
-            background-image: url("../images/login-img1.jpg");
+            background-image: url("../images/login-img1.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -3748,7 +3670,7 @@
 
         .LoginRight {
             width: 55%;
-            background-image: url("../images/login-img1.jpg");
+            background-image: url("../images/login-img1.webp");
             background-size: cover;
             background-position: center;
             border-radius: 20px;
@@ -5596,6 +5518,7 @@
         .ProdLeft {
           display: flex;
           gap: 15px;
+          width: 50%;
           img { border-radius: 6px; object-fit: cover; }
           .ProdInfo {
             h4 { font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #000; }
@@ -5944,120 +5867,7 @@
             }
         }
 
-        // .RequirementsSection {
-        //     background: #fff;
-        //     padding: 35px;
-        //     border-radius: 15px;
-        //     border: 1px solid #e2e8f0;
-        //     margin-bottom: 30px;
-
-        //     h3 {
-        //         font-size: 22px;
-        //         font-weight: 600;
-        //         margin-bottom: 20px;
-        //         color: #000;
-        //     }
-
-        //     .ReqList {
-        //         list-style: none;
-        //         padding: 0;
-
-        //         .ReqPoint {
-        //             display: flex;
-        //             align-items: center;
-        //             gap: 12px;
-        //             margin-bottom: 15px;
-        //             color: #475569;
-        //             font-size: 15px;
-        //             svg {
-        //                 color: #2ecc71;
-        //                 font-size: 18px;
-        //                 flex-shrink: 0;
-        //             }
-        //         }
-
-        //         /* PRODUCT GRID STYLES */
-
-        //     }
-        //           .ProductArea {
-        //             background: #f8fafc;
-        //             padding: 20px;
-        //             border-radius: 12px;
-        //             margin: 10px 0 25px 0px; 
-        //             border: 1px dashed #cbd5e1;
-        //             .ProductGrid {
-        //                 display: flex;
-        //                 flex-direction: column;
-        //                 gap: 15px;
-        //             }
-
-        //             .ProductCard {
-        //                 display: flex;
-        //                 gap: 15px;
-        //                 background: #fff;
-        //                 padding: 12px;
-        //                 border-radius: 10px;
-        //                 border: 1px solid #e2e8f0;
-        //                 align-items: center;
-        //                 transition: 0.3s;
-        //                 align-items: center;
-        //                 justify-content: space-between;
-        //                 &:hover {
-        //                     border-color: var(--primaryColor);
-        //                 }
-        //                 .ProductImgDetatils{
-        //                     display: flex;
-        //                     align-items: center;
-        //                     gap: 15px;
-        //                 .ProdImg {
-        //                     flex-shrink: 0;
-        //                     img {
-        //                         border-radius: 8px;
-        //                         object-fit: cover;
-        //                     }
-        //                 }
-
-        //                 .ProdDetails {
-        //                     flex: 1;
-        //                     h4 {
-        //                         font-size: 15px;
-        //                         font-weight: 600;
-        //                         color: #000;
-        //                         margin-bottom: 4px;
-        //                     }
-        //                     p {
-        //                         font-size: 13px;
-        //                         color: #64748b;
-        //                         line-height: 1.4;
-        //                         margin-bottom: 8px;
-        //                     }
-
-
-        //                 }
-        //                 }
-
-
-        //                 .AddtoCart{
-        //                     .ProdCartBtn {
-        //                         background: var(--primaryColor);
-        //                         color: #fff;
-        //                         border: none;
-        //                         padding: 6px 15px;
-        //                         font-size: 12px;
-        //                         font-weight: 500;
-        //                         border-radius: 5px;
-        //                         cursor: pointer;
-        //                         transition: 0.2s;
-        //                         &:hover {
-        //                             background: var(--primaryColor);
-        //                         }
-        //                     }
-        //                 }
-        //             }
-        //         }
-        // }
-
-           .HighlightBox {
+        .HighlightBox {
         background: #fff;
         border-radius: 12px;
         padding: 30px;
@@ -6091,6 +5901,7 @@
         .ProdLeft {
           display: flex;
           gap: 15px;
+          width: 50%;
           img { border-radius: 6px; object-fit: cover; }
           .ProdInfo {
             h4 { font-size: 15px; font-weight: 600; margin-bottom: 2px; color: #000; }

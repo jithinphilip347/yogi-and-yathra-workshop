@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { RiArrowRightUpLine } from "react-icons/ri";
 
-import LiveBg1 from "../../assets/images/live1.jpg";
-import LiveBg2 from "../../assets/images/live2.jpg";
-import LiveBg3 from "../../assets/images/live3.jpg";
-import LiveBg4 from "../../assets/images/live4.jpg";
+import LiveBg1 from "../../assets/images/live1.webp";
+import LiveBg2 from "../../assets/images/live2.webp";
+import LiveBg3 from "../../assets/images/live3.webp";
+import LiveBg4 from "../../assets/images/live4.webp";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
@@ -51,7 +51,14 @@ const EventSlide = ({ image, targetDate }) => {
 
   return (
     <div className="LiveCourseImgBox">
-      <Image src={image} alt="Live Yoga" className="MainImage" priority width={1000} height={1000} />
+      <Image
+        src={image}
+        alt="Live Yoga"
+        className="MainImage"
+        priority
+        width={1000}
+        height={1000}
+      />
       <div className="Overlay"></div>
 
       <div className="TimingBox">

@@ -1,22 +1,20 @@
-"use client"
-import React, { useRef } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import Image from 'next/image';
-import { FaLinkedinIn, FaTwitter, FaInstagram, FaArrowLeft, FaArrowRight } from 'react-icons/fa';
-import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
-import Team1 from '../../assets/images/team-1.jpg';
-import Team2 from '../../assets/images/team-2.jpg';
-import Team3 from '../../assets/images/team-3.jpg';
-
-
-// Swiper styles
-import 'swiper/css';
-import 'swiper/css/navigation';
+"use client";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Team1 from "../../assets/images/team-1.webp";
+import Team2 from "../../assets/images/team-2.webp";
+import Team3 from "../../assets/images/team-3.webp";
+import Team4 from "../../assets/images/instructor-1.webp";
+import TeacherBox from "../teachersBox/TeacherBox";
 
 const HomeTeacher = () => {
-  const prevRef = useRef(null);
-  const nextRef = useRef(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000);
+  }, []);
 
   const teamMembers = [
     {
@@ -24,89 +22,63 @@ const HomeTeacher = () => {
       name: "Alice Johnson",
       role: "CEO & Founder",
       desc: "Alice has over 15 years of experience in strategic leadership and business development.",
-      isBlue: true
+      img: Team1,
     },
-    { id: 2, 
-        name: "Carter Botosh", 
-        role: "Chief Financial Officer",
-        img: Team1,
+    {
+      id: 2,
+      name: "Carter Botosh",
+      role: "Chief Financial Officer",
+      desc: "Carter specializes in comprehensive financial strategy and corporate operations.",
+      img: Team2,
     },
-
-    { id: 3, 
-        name: "Phillip Ekstrom", 
-        role: "Head of Technology", 
-        img: Team2 ,
+    {
+      id: 3,
+      name: "Phillip Ekstrom",
+      role: "Head of Technology",
+      desc: "Phillip drives our technological vision with cutting-edge innovations and execution.",
+      img: Team3,
     },
-    { id: 4, 
-        name: "Abram Culhane", 
-        role: "Head of Technology", 
-        img: Team3 ,
+    {
+      id: 4,
+      name: "Abram Culhane",
+      role: "Lead Developer",
+      desc: "Abram leads the development teams with a constant focus on code quality.",
+      img: Team4,
     },
   ];
 
   return (
-    <section id='HomeTeacher'>
-      <div className='container'>
-        <div className='HomeTeacherHeader'>
+    <section id="HomeTeacher">
+      <div className="container">
+        <div className="HomeTeacherHeader">
           <div className="title-area">
-            <span className='badge'>EXPERTISE</span>
-            <h2>Explore our comprehensive <br /> service offerings</h2>
+            <span className="badge">EXPERTISE</span>
+            <h2>
+              Explore our comprehensive <br /> service offerings
+            </h2>
           </div>
-          
-          {/* Custom Navigation Buttons */}
-          <div className='nav-buttons'>
-            <button ref={prevRef} className='nav-btn'><BsArrowLeft /></button>
-            <button ref={nextRef} className='nav-btn'> <BsArrowRight /></button>
+
+          <div className="nav-buttons">
+            <Link href="/teacher-list" className="viewAllBtn">
+              View All
+            </Link>
           </div>
         </div>
 
-        <div className='HomeTeacherMain'>
-          <Swiper
-            modules={[Navigation]}
-            spaceBetween={20}
-            slidesPerView={1.2}
-            onInit={(swiper) => {
-              swiper.params.navigation.prevEl = prevRef.current;
-              swiper.params.navigation.nextEl = nextRef.current;
-              swiper.navigation.init();
-              swiper.navigation.update();
-            }}
-            breakpoints={{
-              640: { slidesPerView: 2.2 },
-              1024: { slidesPerView: 3.8 },
-            }}
-          >
-            {teamMembers.map((member) => (
-              <SwiperSlide key={member.id}>
-                {member.isBlue ? (
-                  <div className="card blue-card">
-                    <h3>{member.name}</h3>
-                    <p className="role">{member.role}</p>
-                    <p className="desc">{member.desc}</p>
-                    <div className="social-links">
-                      <FaLinkedinIn /> <FaTwitter /> <FaInstagram />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="card image-card">
-                <div className="img-placeholder">
-                <Image 
-                    src={member.img} 
-                    alt={member.name} 
-                    fill 
-                    style={{ objectFit: 'cover' }} 
-                    priority={member.id === 2} 
-                />
-            </div>
-                    <div className="card-info">
-                      <h4>{member.name}</h4>
-                      <p>{member.role}</p>
-                    </div>
-                  </div>
-                )}
-              </SwiperSlide>
-            ))}
-          </Swiper>
+        <div className="HomeTeacherMain">
+          <div className="TeacherGrid">
+            {loading
+              ? // Show skeleton cards when loading
+                Array(4)
+                  .fill()
+                  .map((_, index) => (
+                    <TeacherBox key={`skeleton-${index}`} loading={true} />
+                  ))
+              : // Show actual cards when loaded
+                teamMembers.map((member) => (
+                  <TeacherBox key={member.id} member={member} loading={false} />
+                ))}
+          </div>
         </div>
       </div>
     </section>

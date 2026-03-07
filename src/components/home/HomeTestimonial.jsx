@@ -5,10 +5,10 @@ import { Navigation } from "swiper/modules";
 import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
 import { BiSolidQuoteLeft } from "react-icons/bi";
 import "swiper/css";
-import User1 from "../../assets/images/instructor-1.jpg";
-import User2 from "../../assets/images/instructor-2.jpg";
-import User3 from "../../assets/images/instructor-3.jpg";
-import User4 from "../../assets/images/instructor-4.jpg";
+import User1 from "../../assets/images/instructor-1.webp";
+import User2 from "../../assets/images/instructor-2.webp";
+import User3 from "../../assets/images/instructor-3.webp";
+import User4 from "../../assets/images/instructor-4.webp";
 import Image from "next/image";
 
 const testimonials = [
@@ -43,7 +43,7 @@ const testimonials = [
     quote:
       "A perfect blend of ancient yogic wisdom and practical lifestyle guidance for modern lives!",
     location: "Chennai, India",
-  }
+  },
 ];
 
 const HomeTestimonial = () => {
@@ -51,7 +51,6 @@ const HomeTestimonial = () => {
     <div id="HomeTestimonial">
       <div className="container">
         <div className="HomeTestimonialMain">
-
           {/* Header */}
           <div className="TestimonialHead">
             <div className="HeadLeft">
@@ -90,8 +89,11 @@ const HomeTestimonial = () => {
             {testimonials.map((item, index) => (
               <SwiperSlide key={index}>
                 <div className="TestimonialCard">
-                  
-                  <Image src={item.img} alt={item.name} className="ProfileImg" />
+                  <Image
+                    src={item.img}
+                    alt={item.name}
+                    className="ProfileImg"
+                  />
 
                   <div className="QuoteIcon">
                     <BiSolidQuoteLeft />
@@ -104,12 +106,10 @@ const HomeTestimonial = () => {
                     <p className="ReviewerRole">{item.role}</p>
                     <p className="ReviewerLocation">{item.location}</p>
                   </div>
-
                 </div>
               </SwiperSlide>
             ))}
           </Swiper>
-
         </div>
       </div>
     </div>

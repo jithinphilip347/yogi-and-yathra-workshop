@@ -1,12 +1,12 @@
 "use client";
 import Image from "next/image";
 import React, { useState, useRef, useEffect } from "react";
-import UserImg from "../../assets/images/user.jpg";
+import UserImg from "../../assets/images/user.webp";
 import Logo from "../../assets/images/logo.png";
-import courseImg1 from "../../assets/images/courseImg-1.jpg";
+import courseImg1 from "../../assets/images/courseImg-1.webp";
 import { BiSearch, BiTimeFive } from "react-icons/bi";
 import { VscMenu } from "react-icons/vsc";
-import Sidnav from "./Sidnav"; 
+import Sidnav from "./Sidnav";
 
 import {
   MdOutlineShoppingBag,
@@ -39,8 +39,8 @@ const Nav = () => {
   const path = usePathname();
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const { user, isAuthenticated } = useSelector(state => state.auth)
-  
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -68,180 +68,186 @@ const Nav = () => {
 
   return (
     <>
-    <nav id="Nav">
-      <div className="container">
-        <div className="NavMain">
-          <div className="LogoBox">
-          <div className="ToogleMenuBox" onClick={() => setIsSideNavOpen(true)}>
+      <nav id="Nav">
+        <div className="container">
+          <div className="NavMain">
+            <div className="LogoBox">
+              <div
+                className="ToogleMenuBox"
+                onClick={() => setIsSideNavOpen(true)}
+              >
                 <VscMenu />
               </div>
-          <Link href="/" className="NavLogo">
-            <Image src={Logo} alt="Logo" className="logoImg" />
-          </Link>
-          </div>
-          <div className="NavSearchContainer" ref={searchRef}>
-            <div className={`SearchWrapper ${isSearching ? "focused" : ""}`}>
-              <BiSearch className="SearchIcon" />
-              <input
-                type="text"
-                placeholder="Search for courses..."
-                value={searchQuery}
-                onFocus={() => setIsSearching(true)}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+              <Link href="/" className="NavLogo">
+                <Image src={Logo} alt="Logo" className="logoImg" />
+              </Link>
             </div>
+            <div className="NavSearchContainer" ref={searchRef}>
+              <div className={`SearchWrapper ${isSearching ? "focused" : ""}`}>
+                <BiSearch className="SearchIcon" />
+                <input
+                  type="text"
+                  placeholder="Search for courses..."
+                  value={searchQuery}
+                  onFocus={() => setIsSearching(true)}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
 
-            {/* Search Dropdown */}
-            {isSearching && (
-              <div className="SearchDropdown">
-                <div className="SuggestionSection">
-                  <div className="SuggestItem">
-                    <BiTimeFive /> <p>Yoga for Beginners</p>
+              {/* Search Dropdown */}
+              {isSearching && (
+                <div className="SearchDropdown">
+                  <div className="SuggestionSection">
+                    <div className="SuggestItem">
+                      <BiTimeFive /> <p>Yoga for Beginners</p>
+                    </div>
+                    <div className="SuggestItem">
+                      <BiTimeFive /> <p>Advanced Meditation Techniques</p>
+                    </div>
                   </div>
-                  <div className="SuggestItem">
-                    <BiTimeFive /> <p>Advanced Meditation Techniques</p>
-                  </div>
-                </div>
 
-                <div className="RecommendedSection">
-                  <h4>Recommended Courses</h4>
-                  <div className="CourseList">
-                    {[1, 2].map((item) => (
-                      <div className="SearchCourseBox" key={item}>
-                        <div className="CourseImg">
-                          <Image src={courseImg1} alt="course" />
-                        </div>
-                        <div className="CourseDetails">
-                          <h5>Mastering Hatha Yoga</h5>
-                          <div className="CourseMeta">
-                            <span>
-                              <MdStar className="star" /> 4.8
-                            </span>
-                            <span>
-                              <MdPlayCircleOutline /> 12 Lessons
-                            </span>
-                            <span>
-                              <IoPeopleOutline /> 1.2k
-                            </span>
-                            <span>
-                              <MdOutlineFileDownload /> 240
-                            </span>
+                  <div className="RecommendedSection">
+                    <h4>Recommended Courses</h4>
+                    <div className="CourseList">
+                      {[1, 2].map((item) => (
+                        <div className="SearchCourseBox" key={item}>
+                          <div className="CourseImg">
+                            <Image src={courseImg1} alt="course" />
+                          </div>
+                          <div className="CourseDetails">
+                            <h5>Mastering Hatha Yoga</h5>
+                            <div className="CourseMeta">
+                              <span>
+                                <MdStar className="star" /> 4.8
+                              </span>
+                              <span>
+                                <MdPlayCircleOutline /> 12 Lessons
+                              </span>
+                              <span>
+                                <IoPeopleOutline /> 1.2k
+                              </span>
+                              <span>
+                                <MdOutlineFileDownload /> 240
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
 
-          <div className="NavRightBox">
-            <div className="searchCartWishlistBox">
-              <div className="SearchIconTrigger SearchIcon" onClick={() => setIsSearchOpen(true)}>
-                  <BiSearch  />
+            <div className="NavRightBox">
+              <div className="searchCartWishlistBox">
+                <div
+                  className="SearchIconTrigger SearchIcon"
+                  onClick={() => setIsSearchOpen(true)}
+                >
+                  <BiSearch />
                 </div>
 
-              <Link href="/cart" className="CartIcon">
-                <IoCartOutline />
-              </Link>
+                <Link href="/cart" className="CartIcon">
+                  <IoCartOutline />
+                </Link>
 
-              <Link href="/wishlist" className="WishlistIcon">
-                <MdFavoriteBorder />
-              </Link>
+                <Link href="/wishlist" className="WishlistIcon">
+                  <MdFavoriteBorder />
+                </Link>
 
+                <div
+                  className="NavIcon NotificationIcon"
+                  ref={notificationRef}
+                  onClick={() => {
+                    setOpenNotification(!openNotification);
+                    setOpenDropdown(false);
+                  }}
+                >
+                  <IoMdNotificationsOutline />
+                  <span className="notifBadge"></span>
+
+                  {openNotification && (
+                    <div className="NotificationDropdown">
+                      <p className="notifItem">New course added </p>
+                      <p className="notifItem">50% Off on Yoga Course </p>
+                      <p className="notifItem">New updates available</p>
+                      <Link href="/notifications" className="viewAll">
+                        View All
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              </div>
+              {mounted && !isAuthenticated && (
+                <div className="AuthBox">
+                  <div className="LoginBox">
+                    <Link href="/auth/login" className="authLink">
+                      <RiLoginCircleLine />
+                      <button>Login</button>
+                    </Link>
+                  </div>
+                  <div className="SignBox">
+                    <Link href="/signup" className="authLink">
+                      <RiUserLine />
+                      <button>Sign Up</button>
+                    </Link>
+                  </div>
+                </div>
+              )}
               <div
-                className="NavIcon NotificationIcon"
-                ref={notificationRef}
+                className="UserProfileBox"
+                ref={dropdownRef}
                 onClick={() => {
-                  setOpenNotification(!openNotification);
-                  setOpenDropdown(false);
+                  setOpenDropdown(!openDropdown);
+                  setOpenNotification(false);
                 }}
               >
-                <IoMdNotificationsOutline />
-                <span className="notifBadge"></span>
+                {mounted && isAuthenticated && (
+                  <>
+                    <div className="ProfileImageBox">
+                      <Image src={UserImg} alt="User" className="UserImage" />
+                    </div>
 
-                {openNotification && (
-                  <div className="NotificationDropdown">
-                    <p className="notifItem">New course added </p>
-                    <p className="notifItem">50% Off on Yoga Course </p>
-                    <p className="notifItem">New updates available</p>
-                    <Link href="/notifications" className="viewAll">
-                      View All
+                    <div className="UserNameDropIconBox">
+                      <div className="UserNameBox">
+                        <p className="UserWelcome">Hi Welcome</p>
+                        <p className="UserName">{user.name}</p>
+                      </div>
+                      <MdKeyboardArrowDown className="DropIcon" />
+                    </div>
+                  </>
+                )}
+
+                {openDropdown && (
+                  <div className="UserDropdown">
+                    <Link href="/auth/profile" className="DropItem">
+                      <MdPerson /> Profile
                     </Link>
+
+                    <div className="DropItem borderBottom">
+                      <MdNotifications /> Notifications
+                    </div>
+
+                    <div className="DropItem">
+                      <MdLogout /> Logout
+                    </div>
                   </div>
                 )}
               </div>
             </div>
-           {mounted && !isAuthenticated && (
-            <div className="AuthBox">
-              <div className="LoginBox">
-                <Link href="/auth/login" className="authLink">
-                  <RiLoginCircleLine />
-                  <button>Login</button>
-                </Link>
-              </div>
-              <div className="SignBox">
-                <Link href="/signup" className="authLink">
-                  <RiUserLine />
-                  <button>Sign Up</button>
-                </Link>
-              </div>
-            </div>
-            )}
-            <div className="UserProfileBox"
-              ref={dropdownRef}
-              onClick={() => {
-                setOpenDropdown(!openDropdown);
-                setOpenNotification(false);
-              }}
-            >
-              {mounted && isAuthenticated && (
-                <>
-                  <div className="ProfileImageBox">
-                    <Image src={UserImg} alt="User" className="UserImage" />
-                  </div>
-
-                  <div className="UserNameDropIconBox">
-                    <div className="UserNameBox">
-                      <p className="UserWelcome">Hi Welcome</p>
-                      <p className="UserName">{user.name}</p>
-                    </div>
-                    <MdKeyboardArrowDown className="DropIcon" />
-                  </div>
-                </>
-              )}
-
-              {openDropdown && (
-                <div className="UserDropdown">
-                  <Link href="/auth/profile" className="DropItem">
-                    <MdPerson /> Profile
-                  </Link>
-
-                  <div className="DropItem borderBottom">
-                    <MdNotifications /> Notifications
-                  </div>
-
-                  <div className="DropItem">
-                    <MdLogout /> Logout
-                  </div>
-                </div>
-              )}
-
-            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
 
-    <NavSearchOverlay
-        isOpen={isSearchOpen} 
-        onClose={() => setIsSearchOpen(false)} 
+      <NavSearchOverlay
+        isOpen={isSearchOpen}
+        onClose={() => setIsSearchOpen(false)}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
 
-    <Sidnav isOpen={isSideNavOpen} onClose={() => setIsSideNavOpen(false)} />
+      <Sidnav isOpen={isSideNavOpen} onClose={() => setIsSideNavOpen(false)} />
     </>
   );
 };

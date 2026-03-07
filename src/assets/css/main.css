@@ -1,10 +1,10 @@
 @font-face {
   font-family: myFont1;
-  src: url(../fonts/noto/NotoSans-Regular.ttf);
+  src: url(../fonts/Montserrat/Montserrat-Regular.ttf);
 }
 @font-face {
   font-family: myFont2;
-  src: url(../fonts/grift/grift-bold.ttf);
+  src: url(../fonts/Montserrat/Montserrat-Bold.ttf);
 }
 * {
   margin: 0;
@@ -160,8 +160,7 @@ main {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.85);
-  -webkit-backdrop-filter: blur(5px);
-          backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
   z-index: 10000;
   display: flex;
   align-items: center;
@@ -290,8 +289,7 @@ main {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
-  -webkit-backdrop-filter: blur(4px);
-          backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   z-index: 2500;
   display: flex;
   align-items: center;
@@ -604,8 +602,7 @@ main {
   width: 100%;
   height: 100%;
   background: rgba(0, 0, 0, 0.7);
-  -webkit-backdrop-filter: blur(4px);
-          backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
   z-index: 10000;
   display: flex;
   align-items: center;
