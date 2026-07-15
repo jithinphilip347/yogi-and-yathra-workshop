@@ -1,39 +1,67 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { FaLinkedinIn, FaTwitter, FaInstagram } from "react-icons/fa";
-import { BsArrowRight } from "react-icons/bs";
-import TeacherBoxSkeleton from "./TeacherBoxSkeleton";
+import { FaXTwitter, FaInstagram } from "react-icons/fa6";
 import "./TeacherBox.css";
+const TeacherBox = ({
+  image,
+  name,
+  position,
+  twitter,
+  instagram,
+  profileLink,
+  loading = false,
+}) => {
 
-const TeacherBox = ({ member, loading = false }) => {
   if (loading) {
-    return <TeacherBoxSkeleton />;
+    return (
+      <div className="TeacherBox skeleton">
+        <div className="TeacherImage skeleton-img"></div>
+
+        <div className="TeacherContent">
+          <div className="TeacherInfo">
+            <div className="skeleton-text name"></div>
+            <div className="skeleton-text role"></div>
+          </div>
+
+          <div className="TeacherSocial">
+            <div className="skeleton-icon"></div>
+            <div className="skeleton-icon"></div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="card image-card">
-      <div className="img-placeholder">
-        <Image
-          src={member?.img}
-          alt={member?.name}
-          fill
-          style={{ objectFit: "cover" }}
-          priority={member?.id <= 2}
-        />
+    <div className="TeacherBox">
+      <div className="TeacherImage">
+        <Image src={image} alt={name} fill className="img" />
       </div>
 
-      <div className="card-hover-info blue-card">
-        <h3>{member?.name}</h3>
-        <p className="role">{member?.role}</p>
-        <p className="desc">{member?.desc}</p>
-        <div className="social-links">
-          <FaLinkedinIn /> <FaTwitter /> <FaInstagram />
+      <div className="TeacherContent">
+        <div className="TeacherInfo">
+          <h4>{name}</h4>
+          <p>{position}</p>
         </div>
-        <Link href="/teacher-list/teacher-details" className="learn-more">
-          Learn More <BsArrowRight className="arrow-icon" />
-        </Link>
+
+        <div className="TeacherSocial">
+          {twitter && (
+            <Link href={twitter}>
+              <FaXTwitter />
+            </Link>
+          )}
+
+          {instagram && (
+            <Link href={instagram}>
+              <FaInstagram />
+            </Link>
+          )}
+        </div>
       </div>
+
+      <Link href={profileLink} className="TeacherOverlay"></Link>
     </div>
   );
 };

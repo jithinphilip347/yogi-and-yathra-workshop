@@ -1,123 +1,90 @@
-.card.image-card {
-  height: 480px;
-  border-radius: 24px;
-  overflow: hidden;
+.TeacherBox {
   position: relative;
-  background-color: #f0f0f0;
-  cursor: pointer;
-}
-@media (max-width: 768px) {
-  .card.image-card {
-    height: 370px;
-  }
-}
-@media (max-width: 480px) {
-  .card.image-card {
-    height: 320px;
-  }
-}
-.card.image-card .img-placeholder {
   width: 100%;
-  height: 100%;
-  position: relative;
+  border-radius: 15px;
   overflow: hidden;
-  transition: 0.3s;
+  background: #f5f5f5;
+  transition: 0.4s;
 }
-.card.image-card .img-placeholder img {
-  width: 100% !important;
-  height: 100% !important;
+.TeacherBox .TeacherImage {
+  position: relative;
+  width: 100%;
+  height: 280px;
+}
+.TeacherBox .TeacherImage .img {
   -o-object-fit: cover;
      object-fit: cover;
-  display: block;
-  transition: 0.5s ease;
 }
-.card.image-card .card-hover-info {
-  position: absolute;
-  inset: 0;
-  background-color: var(--primaryColor);
-  color: white;
-  padding: 40px;
+.TeacherBox .TeacherContent {
   display: flex;
-  flex-direction: column;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.4s ease;
-  transform: translateY(20px);
-  z-index: 2;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
 }
-.card.image-card .card-hover-info h3 {
-  font-size: 24px;
-  margin-bottom: 5px;
-  font-weight: 600;
-  opacity: 0;
-  transform: translateY(15px);
-  transition: all 0.4s ease 0.1s;
-}
-.card.image-card .card-hover-info .role {
-  font-size: 14px;
-  opacity: 0;
-  margin-bottom: 25px;
-  transform: translateY(15px);
-  transition: all 0.4s ease 0.15s;
-  font-weight: 500;
-}
-.card.image-card .card-hover-info .desc {
-  font-size: 14px;
-  line-height: 1.6;
-  opacity: 0;
-  transform: translateY(15px);
-  transition: all 0.4s ease 0.2s;
-}
-.card.image-card .card-hover-info .social-links {
-  margin-top: auto;
-  display: flex;
-  gap: 15px;
+.TeacherBox .TeacherContent h4 {
   font-size: 18px;
-  margin-bottom: 25px;
-  opacity: 0;
-  transform: translateY(15px);
-  transition: all 0.4s ease 0.25s;
+  margin: 0;
+  font-weight: 600;
 }
-.card.image-card .card-hover-info .social-links svg {
-  cursor: pointer;
+.TeacherBox .TeacherContent p {
+  font-size: 14px;
+  color: #777;
+  margin-top: 4px;
+}
+.TeacherBox .TeacherSocial {
+  display: flex;
+  gap: 10px;
+}
+.TeacherBox .TeacherSocial a {
+  font-size: 16px;
+  color: #111;
   transition: 0.3s;
 }
-.card.image-card .card-hover-info .social-links svg:hover {
-  opacity: 0.7;
+.TeacherBox .TeacherSocial a:hover {
+  color: var(--primaryColor);
 }
-.card.image-card .card-hover-info .learn-more {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #fff;
-  font-weight: 600;
-  font-size: 15px;
-  text-decoration: none;
-  opacity: 0;
-  transform: translateY(15px);
-  transition: all 0.4s ease 0.3s;
-  font-family: myFont1;
-  border: 1px solid #fff;
-  border-radius: 24px;
-  padding: 8px 20px;
-  justify-content: center;
+.TeacherBox .TeacherOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
 }
-.card.image-card .card-hover-info .learn-more .arrow-icon {
-  transition: transform 0.3s;
-  font-size: 18px;
+.TeacherBox .skeleton .skeleton-img {
+  width: 100%;
+  height: 280px;
+  border-radius: 12px;
 }
-.card.image-card .card-hover-info .learn-more:hover .arrow-icon {
-  transform: translateX(6px);
+.TeacherBox .skeleton .skeleton-text {
+  height: 14px;
+  border-radius: 4px;
+  margin-bottom: 6px;
 }
-.card.image-card:hover .img-placeholder img {
-  transform: scale(1.1);
+.TeacherBox .skeleton .skeleton-text.name {
+  width: 120px;
+  height: 16px;
 }
-.card.image-card:hover .card-hover-info {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+.TeacherBox .skeleton .skeleton-text.role {
+  width: 80px;
 }
-.card.image-card:hover .card-hover-info h3, .card.image-card:hover .card-hover-info .role, .card.image-card:hover .card-hover-info .desc, .card.image-card:hover .card-hover-info .social-links, .card.image-card:hover .card-hover-info .learn-more {
-  opacity: 1;
-  transform: translateY(0);
+.TeacherBox .skeleton .skeleton-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+}
+.TeacherBox {
+  /* shimmer animation */
+}
+.TeacherBox .skeleton-img,
+.TeacherBox .skeleton-text,
+.TeacherBox .skeleton-icon {
+  background: linear-gradient(90deg, #eeeeee 25%, #dddddd 37%, #eeeeee 63%);
+  background-size: 400% 100%;
+  animation: skeletonLoading 1.4s ease infinite;
+}
+@keyframes skeletonLoading {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }/*# sourceMappingURL=TeacherBox.css.map */

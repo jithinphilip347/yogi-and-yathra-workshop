@@ -6,7 +6,7 @@ import Image from "next/image";
 import Inst1 from "../../assets/images/instructor-1.webp";
 
 const ReviewPopup = ({ onClose }) => {
-  // ബാക്ക്ഗ്രൗണ്ട് സ്ക്രോൾ ലോക്ക് ചെയ്യാൻ
+ 
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
