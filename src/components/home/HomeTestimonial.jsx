@@ -71,7 +71,7 @@ const HomeTestimonial = () => {
           </div>
 
           {/* Swiper */}
-          <Swiper
+            <Swiper
             modules={[Navigation]}
             navigation={{
               nextEl: ".testimonial-next",
@@ -79,32 +79,34 @@ const HomeTestimonial = () => {
             }}
             loop={true}
             spaceBetween={30}
-            slidesPerView={3}
+            slidesPerView={4}
             breakpoints={{
               320: { slidesPerView: 1 },
               768: { slidesPerView: 2 },
-              1200: { slidesPerView: 3 },
+              1024: { slidesPerView: 3 },
+              1200: { slidesPerView: 4 },
             }}
           >
             {testimonials.map((item, index) => (
               <SwiperSlide key={index}>
                 <div className="TestimonialCard">
-                  <Image
-                    src={item.img}
-                    alt={item.name}
-                    className="ProfileImg"
-                  />
-
                   <div className="QuoteIcon">
                     <BiSolidQuoteLeft />
                   </div>
 
                   <p className="QuoteText">{item.quote}</p>
 
-                  <div className="ReviewerInfo">
-                    <p className="ReviewerName">{item.name}</p>
-                    <p className="ReviewerRole">{item.role}</p>
-                    <p className="ReviewerLocation">{item.location}</p>
+                  <div className="ReviewerProfile">
+                    <Image
+                      src={item.img}
+                      alt={item.name}
+                      className="ProfileImg"
+                    />
+                    <div className="ReviewerInfo">
+                      <p className="ReviewerName">{item.name}</p>
+                      <p className="ReviewerRole">{item.role}</p>
+                      <p className="ReviewerLocation">{item.location}</p>
+                    </div>
                   </div>
                 </div>
               </SwiperSlide>

@@ -216,6 +216,13 @@ const Cart = () => {
                     <h2>₹{totalPrice}</h2>
                   </div>
 
+                  <div className="MobileTotalDetails">
+                    <p className="MobTotalLabel">Total:</p>
+                    <h2>₹{totalPrice}</h2>
+                    <span className="MobOldPrice">₹{originalPrice}</span>
+                    <span className="MobDiscount">-₹{discount}</span>
+                  </div>
+
                 </div>
 
                 <button className="checkoutBtn">

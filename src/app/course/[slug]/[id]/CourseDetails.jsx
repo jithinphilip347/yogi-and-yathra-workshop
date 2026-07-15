@@ -50,6 +50,29 @@ const CourseDetails = ({ courseDetails }) => {
       <section className="CourseBanner">
         <div className="container">
           <div className="HeroSection">
+            {/* MOBILE ONLY: Video Preview */}
+            <div className="MobilePreviewCard">
+              <div
+                className="VideoThumb"
+                onClick={() => setShowPreviewPopup(true)}
+              >
+                <Image
+                  src={
+                    course?.thumbnail
+                      ? `${MEDIA_BASE_URL}${course.thumbnail}`
+                      : ThumbNail
+                  }
+                  alt="Preview"
+                  width={400}
+                  height={225}
+                />
+                <button className="PlayBtn">
+                  <FiPlayCircle />
+                </button>
+                <span>Preview this course</span>
+              </div>
+            </div>
+
             {course?.level && (
               <span className="Badge" style={{ textTransform: "uppercase" }}>
                 {course.level}
@@ -84,6 +107,30 @@ const CourseDetails = ({ courseDetails }) => {
                 <span className="Students">
                   <FiUsers /> {course?.enrollments_count || "0"} Students
                 </span>
+              </div>
+            </div>
+
+            {/* MOBILE ONLY: Purchasing Box */}
+            <div className="MobilePricingBox">
+              <div className="Pricing">
+                <div className="PriceRow">
+                  <h2>₹{course?.discount_price || course?.price || "0"}</h2>
+                  {course?.discount_price && <del>₹{course?.price}</del>}
+                  {course?.discount_price && (
+                    <span className="Off">
+                      {Math.round(
+                        ((course.price - course.discount_price) /
+                          course.price) *
+                          100,
+                      )}
+                      % OFF
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="ActionBtns">
+                <button className="AddToCart">Add to Cart</button>
+                <button className="BuyNow">Buy Now</button>
               </div>
             </div>
           </div>
