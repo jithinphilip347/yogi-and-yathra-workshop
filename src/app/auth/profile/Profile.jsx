@@ -148,6 +148,7 @@ const upcomingEvents = [
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
+  const [mobileView, setMobileView] = useState("menu");
   const [profileImg, setProfileImg] = useState(UserProfileImg);
   const { user } = useSelector((state) => state.auth);
 
@@ -160,6 +161,11 @@ const Profile = () => {
   const { enrollmentsQuery } = useCourse({});
   const { data: data, isLoading, error } = enrollmentsQuery;
   const enrollments = data?.data.courses;
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setMobileView("content");
+  };
 
   const renderContent = () => {
     switch (activeTab) {
@@ -182,7 +188,7 @@ const Profile = () => {
         );
       case "My Courses":
         return (
-          <MyCourses courses={enrollments.map((course) => course.course)} />
+          <MyCourses courses={enrollments?.map((course) => course.course)} />
         );
       case "Live Classes":
         return <LiveClasses />;
@@ -200,16 +206,19 @@ const Profile = () => {
   return (
     <div id="Profile">
       <div className="container">
-        <div className="ProfileMain">
+        <div className={`ProfileMain ${mobileView === 'menu' ? 'show-menu' : 'show-content'}`}>
           <ProfileSidebar
             activeTab={activeTab}
-            setActiveTab={setActiveTab}
+            setActiveTab={handleTabChange}
             profileImg={profileImg}
             user={user}
             setProfileImg={setProfileImg}
           />
 
           <div className="ProfileMainRight">
+            <button className="MobileBackBtn" onClick={() => setMobileView("menu")}>
+               &larr; Back to Profile Menu
+            </button>
             <div className="ContentCard">{renderContent()}</div>
           </div>
         </div>
