@@ -1,0 +1,371 @@
+#Contact {
+  padding: 100px 0;
+  background: #fff;
+  font-family: myFont1;
+  /* Responsive 1024px, 768px, 480px, 420px */
+}
+@media (max-width: 1024px) {
+  #Contact {
+    padding: 80px 0;
+  }
+}
+@media (max-width: 768px) {
+  #Contact {
+    padding: 60px 0;
+  }
+}
+@media (max-width: 480px) {
+  #Contact {
+    padding: 40px 0;
+  }
+}
+@media (max-width: 420px) {
+  #Contact {
+    padding: 30px 0;
+  }
+}
+#Contact .ContactHeader {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 80px;
+  /* Responsive 1024px, 768px, 480px, 420px */
+}
+@media (max-width: 1024px) {
+  #Contact .ContactHeader {
+    margin-bottom: 60px;
+  }
+}
+@media (max-width: 768px) {
+  #Contact .ContactHeader {
+    margin-bottom: 50px;
+  }
+}
+@media (max-width: 480px) {
+  #Contact .ContactHeader {
+    margin-bottom: 40px;
+  }
+}
+@media (max-width: 420px) {
+  #Contact .ContactHeader {
+    margin-bottom: 30px;
+  }
+}
+#Contact .ContactHeader h2 {
+  font-size: 54px;
+  color: #0f172a;
+  font-weight: 400;
+  line-height: 1.15;
+  margin-bottom: 25px;
+  letter-spacing: -0.02em;
+  /* Responsive 1024px, 768px, 480px, 420px */
+}
+@media (max-width: 1024px) {
+  #Contact .ContactHeader h2 {
+    font-size: 46px;
+  }
+}
+@media (max-width: 768px) {
+  #Contact .ContactHeader h2 {
+    font-size: 38px;
+  }
+}
+@media (max-width: 480px) {
+  #Contact .ContactHeader h2 {
+    font-size: 32px;
+  }
+}
+@media (max-width: 420px) {
+  #Contact .ContactHeader h2 {
+    font-size: 28px;
+  }
+}
+#Contact .ContactHeader p {
+  font-size: 16px;
+  color: #64748b;
+  line-height: 1.7;
+  max-width: 600px;
+  margin: 0 auto;
+  /* Responsive 1024px, 768px, 480px, 420px */
+}
+@media (max-width: 768px) {
+  #Contact .ContactHeader p {
+    font-size: 15px;
+  }
+}
+@media (max-width: 480px) {
+  #Contact .ContactHeader p {
+    font-size: 14px;
+  }
+}
+@media (max-width: 420px) {
+  #Contact .ContactHeader p {
+    font-size: 14px;
+  }
+}
+#Contact .ContactBody {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+  max-width: 1000px;
+  margin: 0 auto;
+  /* Responsive 1024px, 768px, 480px, 420px */
+}
+@media (max-width: 1024px) {
+  #Contact .ContactBody {
+    gap: 40px;
+  }
+}
+@media (max-width: 768px) {
+  #Contact .ContactBody {
+    flex-direction: column;
+    gap: 50px;
+  }
+}
+#Contact .ContactBody .ContactDetailsWrapper {
+  flex: 1;
+  padding: 20px 0;
+}
+#Contact .ContactBody .ContactDetailsWrapper .DetailsInner h3 {
+  font-size: 32px;
+  color: #0f172a;
+  font-weight: 400;
+  margin-bottom: 15px;
+  /* Responsive */
+}
+@media (max-width: 1024px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner h3 {
+    font-size: 28px;
+  }
+}
+@media (max-width: 768px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner h3 {
+    font-size: 26px;
+  }
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner h3 {
+    font-size: 24px;
+  }
+}
+#Contact .ContactBody .ContactDetailsWrapper .DetailsInner .DetailsDesc {
+  font-size: 16px;
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 40px;
+  /* Responsive */
+}
+@media (max-width: 768px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner .DetailsDesc {
+    font-size: 15px;
+    margin-bottom: 30px;
+  }
+}
+#Contact .ContactBody .ContactDetailsWrapper .DetailsInner .InfoItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+  /* Responsive */
+}
+@media (max-width: 768px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner .InfoItem {
+    margin-bottom: 20px;
+  }
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner .InfoItem {
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+}
+#Contact .ContactBody .ContactDetailsWrapper .DetailsInner .InfoItem .InfoIcon {
+  font-size: 20px;
+  color: var(--primaryColor, #d97706);
+  /* Responsive */
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner .InfoItem .InfoIcon {
+    font-size: 18px;
+  }
+}
+#Contact .ContactBody .ContactDetailsWrapper .DetailsInner .InfoItem span {
+  font-size: 16px;
+  color: #0f172a;
+  /* Responsive */
+}
+@media (max-width: 768px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner .InfoItem span {
+    font-size: 15px;
+  }
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner .InfoItem span {
+    font-size: 14px;
+  }
+}
+#Contact .ContactBody .ContactDetailsWrapper .DetailsInner .SocialLinks {
+  display: flex;
+  gap: 15px;
+  margin-top: 40px;
+  /* Responsive */
+}
+@media (max-width: 768px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner .SocialLinks {
+    margin-top: 30px;
+  }
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner .SocialLinks {
+    margin-top: 20px;
+  }
+}
+#Contact .ContactBody .ContactDetailsWrapper .DetailsInner .SocialLinks a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  color: #0f172a;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 18px;
+}
+#Contact .ContactBody .ContactDetailsWrapper .DetailsInner .SocialLinks a:hover {
+  background: var(--primaryColor, #d97706);
+  color: #fff;
+  border-color: var(--primaryColor, #d97706);
+}
+#Contact .ContactBody .ContactDetailsWrapper .DetailsInner .SocialLinks a {
+  /* Responsive */
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactDetailsWrapper .DetailsInner .SocialLinks a {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+}
+#Contact .ContactBody .ContactFormWrapper {
+  flex: 1.5;
+  background: #fff;
+  width: 100%;
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  /* Responsive */
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactFormWrapper .ContactForm {
+    gap: 20px;
+  }
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormRow {
+  display: flex;
+  gap: 25px;
+  /* Responsive */
+}
+@media (max-width: 640px) {
+  #Contact .ContactBody .ContactFormWrapper .ContactForm .FormRow {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormRow .FormGroup {
+  flex: 1;
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup {
+  display: flex;
+  flex-direction: column;
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup label {
+  font-size: 15px;
+  color: #0f172a;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-family: myFont1;
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup label {
+    font-size: 14px;
+  }
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup input, #Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup textarea {
+  width: 100%;
+  padding: 15px 20px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  font-family: myFont1;
+  font-size: 15px;
+  color: #0f172a;
+  background: transparent;
+  transition: all 0.3s ease;
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup input:focus, #Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup textarea:focus {
+  outline: none;
+  border-color: var(--primaryColor, #d97706);
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup input.error, #Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup textarea.error {
+  border-color: #ef4444;
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup input, #Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup textarea {
+  /* Responsive */
+}
+@media (max-width: 768px) {
+  #Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup input, #Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup textarea {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup input, #Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup textarea {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .FormGroup .ErrorText {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 5px;
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .SubmitBtn {
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid var(--primaryColor, #d97706);
+  color: var(--primaryColor, #d97706);
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: myFont1;
+  margin-top: 10px;
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .SubmitBtn:hover {
+  background: var(--primaryColor, #d97706);
+  color: #fff;
+}
+#Contact .ContactBody .ContactFormWrapper .ContactForm .SubmitBtn {
+  /* Responsive */
+}
+@media (max-width: 768px) {
+  #Contact .ContactBody .ContactFormWrapper .ContactForm .SubmitBtn {
+    padding: 14px;
+    font-size: 15px;
+  }
+}
+@media (max-width: 480px) {
+  #Contact .ContactBody .ContactFormWrapper .ContactForm .SubmitBtn {
+    padding: 12px;
+    font-size: 14px;
+  }
+}/*# sourceMappingURL=contact.css.map */

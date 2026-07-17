@@ -1,0 +1,256 @@
+#Contact {
+    padding: 100px 0;
+    background: #fff;
+    font-family: myFont1;
+
+    /* Responsive 1024px, 768px, 480px, 420px */
+    @media (max-width: 1024px) { padding: 80px 0; }
+    @media (max-width: 768px) { padding: 60px 0; }
+    @media (max-width: 480px) { padding: 40px 0; }
+    @media (max-width: 420px) { padding: 30px 0; }
+
+    .ContactHeader {
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto 80px;
+
+        /* Responsive 1024px, 768px, 480px, 420px */
+        @media (max-width: 1024px) { margin-bottom: 60px; }
+        @media (max-width: 768px) { margin-bottom: 50px; }
+        @media (max-width: 480px) { margin-bottom: 40px; }
+        @media (max-width: 420px) { margin-bottom: 30px; }
+
+        h2 {
+            font-size: 54px;
+            color: #0f172a;
+            font-weight: 400;
+            line-height: 1.15;
+            margin-bottom: 25px;
+            letter-spacing: -0.02em;
+            
+            /* Responsive 1024px, 768px, 480px, 420px */
+            @media (max-width: 1024px) { font-size: 46px; }
+            @media (max-width: 768px) { font-size: 38px; }
+            @media (max-width: 480px) { font-size: 32px; }
+            @media (max-width: 420px) { font-size: 28px; }
+        }
+
+        p {
+            font-size: 16px;
+            color: #64748b;
+            line-height: 1.7;
+            max-width: 600px;
+            margin: 0 auto;
+
+            /* Responsive 1024px, 768px, 480px, 420px */
+            @media (max-width: 768px) { font-size: 15px; }
+            @media (max-width: 480px) { font-size: 14px; }
+            @media (max-width: 420px) { font-size: 14px; }
+        }
+    }
+
+    .ContactBody {
+        display: flex;
+        gap: 60px;
+        align-items: flex-start;
+        max-width: 1000px;
+        margin: 0 auto;
+
+        /* Responsive 1024px, 768px, 480px, 420px */
+        @media (max-width: 1024px) { gap: 40px; }
+        @media (max-width: 768px) { flex-direction: column; gap: 50px; }
+
+        .ContactDetailsWrapper {
+            flex: 1;
+            padding: 20px 0;
+
+            .DetailsInner {
+                h3 {
+                    font-size: 32px;
+                    color: #0f172a;
+                    font-weight: 400;
+                    margin-bottom: 15px;
+
+                    /* Responsive */
+                    @media (max-width: 1024px) { font-size: 28px; }
+                    @media (max-width: 768px) { font-size: 26px; }
+                    @media (max-width: 480px) { font-size: 24px; }
+                }
+
+                .DetailsDesc {
+                    font-size: 16px;
+                    color: #64748b;
+                    line-height: 1.6;
+                    margin-bottom: 40px;
+
+                    /* Responsive */
+                    @media (max-width: 768px) { font-size: 15px; margin-bottom: 30px; }
+                }
+
+                .InfoItem {
+                    display: flex;
+                    align-items: center;
+                    gap: 15px;
+                    margin-bottom: 25px;
+
+                    /* Responsive */
+                    @media (max-width: 768px) { margin-bottom: 20px; }
+                    @media (max-width: 480px) { gap: 10px; margin-bottom: 15px; }
+
+                    .InfoIcon {
+                        font-size: 20px;
+                        color: var(--primaryColor, #d97706);
+
+                        /* Responsive */
+                        @media (max-width: 480px) { font-size: 18px; }
+                    }
+
+                    span {
+                        font-size: 16px;
+                        color: #0f172a;
+
+                        /* Responsive */
+                        @media (max-width: 768px) { font-size: 15px; }
+                        @media (max-width: 480px) { font-size: 14px; }
+                    }
+                }
+
+                .SocialLinks {
+                    display: flex;
+                    gap: 15px;
+                    margin-top: 40px;
+
+                    /* Responsive */
+                    @media (max-width: 768px) { margin-top: 30px; }
+                    @media (max-width: 480px) { margin-top: 20px; }
+
+                    a {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 45px;
+                        height: 45px;
+                        border-radius: 50%;
+                        background: #fff;
+                        border: 1px solid #e2e8f0;
+                        color: #0f172a;
+                        text-decoration: none;
+                        transition: all 0.3s ease;
+                        font-size: 18px;
+
+                        &:hover {
+                            background: var(--primaryColor, #d97706);
+                            color: #fff;
+                            border-color: var(--primaryColor, #d97706);
+                        }
+
+                        /* Responsive */
+                        @media (max-width: 480px) { width: 40px; height: 40px; font-size: 16px; }
+                    }
+                }
+            }
+        }
+
+        .ContactFormWrapper {
+            flex: 1.5;
+            background: #fff;
+            width: 100%;
+
+            .ContactForm {
+                display: flex;
+                flex-direction: column;
+                gap: 25px;
+
+                /* Responsive */
+                @media (max-width: 480px) { gap: 20px; }
+
+                .FormRow {
+                    display: flex;
+                    gap: 25px;
+
+                    /* Responsive */
+                    @media (max-width: 640px) { flex-direction: column; gap: 20px; }
+                    
+                    .FormGroup {
+                        flex: 1;
+                    }
+                }
+
+                .FormGroup {
+                    display: flex;
+                    flex-direction: column;
+
+                    label {
+                        font-size: 15px;
+                        color: #0f172a;
+                        margin-bottom: 8px;
+                        font-weight: 500;
+                        font-family: myFont1;
+
+                        @media (max-width: 480px) { font-size: 14px; }
+                    }
+
+                    input, textarea {
+                        width: 100%;
+                        padding: 15px 20px;
+                        border: 1px solid #cbd5e1;
+                        border-radius: 4px; // 4px border radius as requested
+                        font-family: myFont1;
+                        font-size: 15px;
+                        color: #0f172a;
+                        background: transparent; // Removed inner color
+                        transition: all 0.3s ease;
+
+                        &:focus {
+                            outline: none;
+                            border-color: var(--primaryColor, #d97706);
+                        }
+
+                        &.error {
+                            border-color: #ef4444;
+                        }
+                        
+                        /* Responsive */
+                        @media (max-width: 768px) { padding: 12px 16px; font-size: 14px; }
+                        @media (max-width: 480px) { padding: 10px 14px; font-size: 14px; }
+                    }
+
+                    textarea {
+                        resize: vertical;
+                        min-height: 120px;
+                    }
+
+                    .ErrorText {
+                        color: #ef4444;
+                        font-size: 13px;
+                        margin-top: 5px;
+                    }
+                }
+
+                .SubmitBtn {
+                    width: 100%;
+                    padding: 16px;
+                    background: transparent;
+                    border: 1px solid var(--primaryColor, #d97706);
+                    color: var(--primaryColor, #d97706);
+                    font-size: 16px;
+                    font-weight: 500;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-family: myFont1;
+                    margin-top: 10px;
+
+                    &:hover {
+                        background: var(--primaryColor, #d97706);
+                        color: #fff;
+                    }
+
+                    /* Responsive */
+                    @media (max-width: 768px) { padding: 14px; font-size: 15px; }
+                    @media (max-width: 480px) { padding: 12px; font-size: 14px; }
+                }
+            }
+        }
+    }
+}
