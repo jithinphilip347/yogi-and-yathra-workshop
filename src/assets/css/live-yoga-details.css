@@ -1,0 +1,780 @@
+@charset "UTF-8";
+#LiveYogaDetails {
+  background: #f9fbfd;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+#LiveYogaDetails * {
+  font-family: var(--myFont1), "Inter", sans-serif !important;
+}
+#LiveYogaDetails .card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: none;
+  border: 1px solid #eee;
+}
+@media (max-width: 768px) {
+  #LiveYogaDetails .card {
+    padding: 20px;
+  }
+}
+#LiveYogaDetails .card h2 {
+  font-size: 24px;
+  color: #2d3436;
+  margin-bottom: 20px;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 12px;
+}
+#LiveYogaDetails .card h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--primaryColor, #6c5ce7);
+  border-radius: 2px;
+}
+#LiveYogaDetails .ChipWrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 5px;
+}
+#LiveYogaDetails .ChipWrap .Chip {
+  background: rgba(0, 0, 0, 0.04);
+  color: #2d3436;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+#LiveYogaDetails .ChipWrap .Chip.TagChip {
+  background: #fff;
+  border: 1px solid #eee;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#LiveYogaDetails .ChipWrap .Chip.TagChip:hover {
+  border-color: var(--primaryColor, #6c5ce7);
+  color: var(--primaryColor, #6c5ce7);
+}
+#LiveYogaDetails .BreadcrumbWrap {
+  padding: 15px 0;
+  font-size: 13px;
+  color: #636e72;
+}
+#LiveYogaDetails .BreadcrumbWrap span {
+  cursor: pointer;
+}
+#LiveYogaDetails .BreadcrumbWrap span:hover {
+  color: var(--primaryColor, #6c5ce7);
+}
+#LiveYogaDetails .BreadcrumbWrap .CurrentPath {
+  color: var(--primaryColor, #6c5ce7);
+  font-weight: 600;
+}
+#LiveYogaDetails .HeroBanner {
+  position: relative;
+  padding: 80px 0;
+  background: url("https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=1600&auto=format&fit=crop&q=80") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  color: white;
+}
+@media (max-width: 768px) {
+  #LiveYogaDetails .HeroBanner {
+    padding: 50px 0;
+  }
+}
+#LiveYogaDetails .HeroBanner .HeroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.5));
+}
+#LiveYogaDetails .HeroBanner .container {
+  position: relative;
+  z-index: 2;
+}
+#LiveYogaDetails .HeroBanner .HeroContent {
+  max-width: 850px;
+}
+#LiveYogaDetails .HeroBanner .HeroContent .BadgesWrap {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+#LiveYogaDetails .HeroBanner .HeroContent .BadgesWrap .CategoryBadge {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+#LiveYogaDetails .HeroBanner .HeroContent .BadgesWrap .LiveBadge {
+  background: #e74c3c;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#LiveYogaDetails .HeroBanner .HeroContent .BadgesWrap .LiveBadge .Pulse {
+  width: 8px;
+  height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+#LiveYogaDetails .HeroBanner .HeroContent h1 {
+  font-size: 46px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+@media (max-width: 768px) {
+  #LiveYogaDetails .HeroBanner .HeroContent h1 {
+    font-size: 30px;
+  }
+}
+#LiveYogaDetails .HeroBanner .HeroContent .RatingBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+#LiveYogaDetails .HeroBanner .HeroContent .RatingBox .StarIcon {
+  color: #fdcb6e;
+  font-size: 20px;
+}
+#LiveYogaDetails .HeroBanner .HeroContent .RatingBox .ReviewCount {
+  opacity: 0.8;
+}
+#LiveYogaDetails .HeroBanner .HeroContent .HeroSummaryGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
+}
+#LiveYogaDetails .HeroBanner .HeroContent .HeroSummaryGrid .SumItem {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 50px;
+  font-size: 14px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+#LiveYogaDetails .ContentLayout {
+  display: flex;
+  gap: 30px;
+  margin-top: -30px;
+  position: relative;
+  z-index: 10;
+  /* Removed align-items: flex-start to allow RightColumn to stretch and enable sticky behavior */
+}
+@media (max-width: 992px) {
+  #LiveYogaDetails .ContentLayout {
+    flex-direction: column;
+    margin-top: 20px;
+  }
+}
+#LiveYogaDetails .ContentLayout .LeftColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+#LiveYogaDetails .ContentLayout .RightColumn {
+  width: 350px;
+}
+@media (max-width: 992px) {
+  #LiveYogaDetails .ContentLayout .RightColumn {
+    width: 100%;
+    order: -1;
+  }
+}
+#LiveYogaDetails .ContentLayout .RightColumn .StickySidebar {
+  position: sticky;
+  top: 70px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+#LiveYogaDetails .PricingCard {
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: none;
+  border: 1px solid #eee;
+  padding: 24px;
+}
+#LiveYogaDetails .PricingCard .CardHeaderBadge {
+  background: rgba(var(--primaryColor, #6c5ce7), 0.1);
+  color: var(--primaryColor, #6c5ce7);
+  text-align: center;
+  padding: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  border-radius: 8px 8px 0 0;
+  margin: -24px -24px 20px -24px;
+  text-transform: uppercase;
+}
+#LiveYogaDetails .PricingCard .PriceHeader {
+  text-align: center;
+  margin-bottom: 20px;
+}
+#LiveYogaDetails .PricingCard .PriceHeader h2 {
+  font-size: 38px;
+  margin: 0 0 5px 0;
+  color: #2d3436;
+  font-weight: 800;
+}
+#LiveYogaDetails .PricingCard .PriceHeader h2::after {
+  display: none;
+}
+#LiveYogaDetails .PricingCard .PriceHeader .OriginalPrice {
+  font-size: 16px;
+  color: #636e72;
+  text-decoration: line-through;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+#LiveYogaDetails .PricingCard .PriceHeader .DiscountBadge {
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+}
+#LiveYogaDetails .PricingCard .CountdownBlock {
+  background: #fcfcfc;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+  border: 1px solid #eee;
+}
+#LiveYogaDetails .PricingCard .CountdownBlock p {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  color: #636e72;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+#LiveYogaDetails .PricingCard .CountdownBlock .CountdownGrid {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+#LiveYogaDetails .PricingCard .CountdownBlock .CountdownGrid .TimeBox {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 8px;
+  width: 60px;
+  box-shadow: none;
+}
+#LiveYogaDetails .PricingCard .CountdownBlock .CountdownGrid .TimeBox .TimeVal {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primaryColor, #6c5ce7);
+  margin-bottom: 2px;
+}
+#LiveYogaDetails .PricingCard .CountdownBlock .CountdownGrid .TimeBox .TimeLabel {
+  font-size: 9px;
+  color: #636e72;
+  font-weight: 600;
+}
+#LiveYogaDetails .PricingCard .CountdownBlock .CalendarBtn {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #eee;
+  color: #2d3436;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#LiveYogaDetails .PricingCard .CountdownBlock .CalendarBtn:hover {
+  border-color: var(--primaryColor, #6c5ce7);
+  color: var(--primaryColor, #6c5ce7);
+}
+#LiveYogaDetails .PricingCard .SeatsVisualBlock {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: rgba(255, 118, 117, 0.04);
+  border: 1px solid rgba(255, 118, 117, 0.1);
+  border-radius: 8px;
+}
+#LiveYogaDetails .PricingCard .SeatsVisualBlock .SeatHeader,
+#LiveYogaDetails .PricingCard .SeatsVisualBlock .SeatFooter {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #2d3436;
+  margin-bottom: 8px;
+}
+#LiveYogaDetails .PricingCard .SeatsVisualBlock .ProgressBar {
+  height: 6px;
+  background: rgba(255, 118, 117, 0.15);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+#LiveYogaDetails .PricingCard .SeatsVisualBlock .ProgressBar .ProgressFill {
+  height: 100%;
+  background: #ff7675;
+  border-radius: 8px;
+}
+#LiveYogaDetails .PricingCard .SeatsVisualBlock .HurryText {
+  color: #ff7675;
+  font-weight: 600;
+}
+#LiveYogaDetails .PricingCard .BookBtnSidebar {
+  width: 100%;
+  background: var(--primaryColor, #6c5ce7);
+  color: white;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: 0.3s;
+  box-shadow: none;
+}
+#LiveYogaDetails .PricingCard .BookBtnSidebar:hover {
+  opacity: 0.9;
+}
+#LiveYogaDetails .PricingCard .BookBtnSidebar:hover .ArrowAnim {
+  transform: translateX(5px);
+}
+#LiveYogaDetails .PricingCard .BookBtnSidebar .ArrowAnim {
+  font-size: 20px;
+  transition: 0.3s;
+}
+#LiveYogaDetails .PricingCard .SecureCheckout {
+  text-align: center;
+  font-size: 11px;
+  color: #636e72;
+  margin-top: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+#LiveYogaDetails .PricingCard .SecureCheckout::before {
+  content: "🔒";
+  font-size: 13px;
+}
+#LiveYogaDetails .QuickHighlights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+@media (max-width: 576px) {
+  #LiveYogaDetails .QuickHighlights {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+#LiveYogaDetails .QuickHighlights .HighlightItem {
+  background: #f4f6f9;
+  padding: 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #2d3436;
+  font-weight: 500;
+}
+#LiveYogaDetails .QuickHighlights .HighlightItem svg {
+  font-size: 20px;
+  color: var(--primaryColor, #6c5ce7);
+}
+#LiveYogaDetails .LearnGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+@media (max-width: 576px) {
+  #LiveYogaDetails .LearnGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#LiveYogaDetails .LearnGrid .LearnItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  color: #2d3436;
+}
+#LiveYogaDetails .LearnGrid .LearnItem .CheckIcon {
+  color: #00b894;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+#LiveYogaDetails .AudienceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  #LiveYogaDetails .AudienceGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#LiveYogaDetails .AudienceGrid .AudienceCard {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 25px;
+  border: 1px solid #eee;
+}
+#LiveYogaDetails .AudienceGrid .AudienceCard h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+#LiveYogaDetails .AudienceGrid .AudienceCard ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+#LiveYogaDetails .AudienceGrid .AudienceCard ul li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 15px;
+  color: #636e72;
+}
+#LiveYogaDetails .AudienceGrid .PerfectFor h3 .Icon {
+  color: #00b894;
+}
+#LiveYogaDetails .AudienceGrid .PerfectFor .ListIcon {
+  color: #00b894;
+  margin-top: 3px;
+}
+#LiveYogaDetails .AudienceGrid .AvoidFor h3 .Icon {
+  color: #d63031;
+}
+#LiveYogaDetails .AudienceGrid .AvoidFor .ListIcon {
+  color: #d63031;
+  margin-top: 3px;
+}
+#LiveYogaDetails .Timeline {
+  position: relative;
+  padding-left: 20px;
+}
+#LiveYogaDetails .Timeline::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: rgba(var(--primaryColor, #6c5ce7), 0.2);
+}
+#LiveYogaDetails .Timeline .TimelineItem {
+  position: relative;
+  margin-bottom: 20px;
+  padding-left: 20px;
+}
+#LiveYogaDetails .Timeline .TimelineItem:last-child {
+  margin-bottom: 0;
+}
+#LiveYogaDetails .Timeline .TimelineItem .TimePoint {
+  position: absolute;
+  left: -22px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  background: #ffffff;
+  border: 2px solid var(--primaryColor, #6c5ce7);
+  border-radius: 50%;
+}
+#LiveYogaDetails .Timeline .TimelineItem .TimeLabel {
+  font-size: 13px;
+  color: var(--primaryColor, #6c5ce7);
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+#LiveYogaDetails .Timeline .TimelineItem .TaskLabel {
+  font-size: 16px;
+  color: #2d3436;
+  font-weight: 500;
+}
+#LiveYogaDetails .FeaturesGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+@media (max-width: 576px) {
+  #LiveYogaDetails .FeaturesGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#LiveYogaDetails .FeaturesGrid div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #2d3436;
+  font-weight: 500;
+}
+#LiveYogaDetails .FeaturesGrid .FeatIcon {
+  color: #0984e3;
+  font-size: 18px;
+}
+#LiveYogaDetails .InstructorProfile {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+@media (max-width: 576px) {
+  #LiveYogaDetails .InstructorProfile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+#LiveYogaDetails .InstructorProfile .InstImage {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #eee;
+  box-shadow: none;
+  flex-shrink: 0;
+}
+#LiveYogaDetails .InstructorProfile .InstImage img {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#LiveYogaDetails .InstructorProfile .InstDetails {
+  flex: 1;
+}
+#LiveYogaDetails .InstructorProfile .InstDetails h3 {
+  font-size: 20px;
+  color: #2d3436;
+  margin-bottom: 4px;
+}
+#LiveYogaDetails .InstructorProfile .InstDetails h3::after {
+  display: none;
+}
+#LiveYogaDetails .InstructorProfile .InstDetails .Profession {
+  color: var(--primaryColor, #6c5ce7);
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+#LiveYogaDetails .InstructorProfile .InstDetails .InstStats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+@media (max-width: 576px) {
+  #LiveYogaDetails .InstructorProfile .InstDetails .InstStats {
+    justify-content: center;
+  }
+}
+#LiveYogaDetails .InstructorProfile .InstDetails .InstStats .Stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #2d3436;
+  background: #f8f9fa;
+  padding: 6px 12px;
+  border-radius: 50px;
+  border: 1px solid #eee;
+}
+#LiveYogaDetails .InstructorProfile .InstDetails .InstStats .Stat .Icon {
+  color: #fdcb6e;
+  font-size: 15px;
+}
+#LiveYogaDetails .InstructorProfile .InstDetails .InstExtraInfo {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+#LiveYogaDetails .InstructorProfile .InstDetails .InstExtraInfo .InfoBlock strong {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  color: #636e72;
+}
+#LiveYogaDetails .InfoSplitGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+@media (max-width: 768px) {
+  #LiveYogaDetails .InfoSplitGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#LiveYogaDetails .InfoSplitGrid h3 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #2d3436;
+}
+#LiveYogaDetails .InfoSplitGrid .SimpleList {
+  padding-left: 20px;
+  margin: 0;
+}
+#LiveYogaDetails .InfoSplitGrid .SimpleList li {
+  margin-bottom: 10px;
+  color: #636e72;
+  font-size: 15px;
+  line-height: 1.5;
+}
+#LiveYogaDetails .InfoSplitGrid p {
+  font-size: 15px;
+  color: #636e72;
+  line-height: 1.6;
+}
+#LiveYogaDetails .ReviewGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  #LiveYogaDetails .ReviewGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#LiveYogaDetails .ReviewGrid .ReviewCard {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+}
+#LiveYogaDetails .ReviewGrid .ReviewCard .Stars {
+  margin-bottom: 10px;
+}
+#LiveYogaDetails .ReviewGrid .ReviewCard .Stars .StarFill {
+  color: #fdcb6e;
+  font-size: 18px;
+}
+#LiveYogaDetails .ReviewGrid .ReviewCard p {
+  font-size: 15px;
+  font-style: italic;
+  color: #2d3436;
+  margin-bottom: 15px;
+}
+#LiveYogaDetails .ReviewGrid .ReviewCard h4 {
+  font-size: 14px;
+  color: #636e72;
+  margin: 0;
+}
+#LiveYogaDetails .FAQList {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+#LiveYogaDetails .FAQList .FAQItem {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: 0.3s;
+}
+#LiveYogaDetails .FAQList .FAQItem.active {
+  border-color: var(--primaryColor, #6c5ce7);
+  box-shadow: none;
+}
+#LiveYogaDetails .FAQList .FAQItem.active .FAQHead {
+  background: rgba(var(--primaryColor, #6c5ce7), 0.05);
+}
+#LiveYogaDetails .FAQList .FAQItem.active .FAQHead .Arrow {
+  transform: rotate(180deg);
+  color: var(--primaryColor, #6c5ce7);
+}
+#LiveYogaDetails .FAQList .FAQItem.active .FAQBody {
+  display: block;
+}
+#LiveYogaDetails .FAQList .FAQItem .FAQHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 20px;
+  cursor: pointer;
+}
+#LiveYogaDetails .FAQList .FAQItem .FAQHead h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #2d3436;
+  font-weight: 600;
+}
+#LiveYogaDetails .FAQList .FAQItem .FAQHead .Arrow {
+  font-size: 24px;
+  color: #636e72;
+  transition: 0.3s;
+}
+#LiveYogaDetails .FAQList .FAQItem .FAQBody {
+  display: none;
+  padding: 0 20px 20px 20px;
+}
+#LiveYogaDetails .FAQList .FAQItem .FAQBody p {
+  margin: 0;
+  color: #636e72;
+  font-size: 15px;
+  line-height: 1.6;
+}/*# sourceMappingURL=live-yoga-details.css.map */

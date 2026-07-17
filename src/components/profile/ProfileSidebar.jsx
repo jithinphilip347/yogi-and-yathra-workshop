@@ -27,6 +27,7 @@ const ProfileSidebar = ({
     { name: "Edit Profile", icon: <MdEditNote /> },
     { name: "My Courses", icon: <MdMenuBook /> },
     { name: "Live Classes", icon: <MdVideoCameraFront /> },
+    { name: "Live Sessions", icon: <MdVideoCameraFront /> },
     { name: "Events", icon: <MdEvent /> },
   ];
 

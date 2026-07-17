@@ -26,77 +26,78 @@ import HelpSupport from "@/components/profile/HelpSupport";
 import { useSelector } from "react-redux";
 import { MEDIA_BASE_URL } from "@/utils/constants";
 import useCourse from "@/hooks/useCourse";
+import LiveYoga from "@/components/profile/LiveYoga";
 
-const courses = [
-  {
-    image: CourseImg1,
-    wishlistIcon: <FaHeart />,
-    lessonsIcon: <FiBookOpen />,
-    clockIcon: <FiClock />,
-    priceIcon: "₹",
-    oldPriceIcon: "₹",
-    lessonsLabel: "Lessons",
-    ratingIcon: <AiFillStar />,
-    userIcon: <FiUsers />,
-    buttonText: "Enrolled",
-    instructorLabel: "Instructor",
-    title: "Mindful Meditation for Beginners",
-    lessons: "25",
-    duration: "20 hrs",
-    price: "499",
-    oldPrice: "899",
-    rating: "4.9",
-    students: "780",
-    instructorImg: User3,
-    instructorName: "Maya Krishna",
-  },
-  {
-    image: CourseImg2,
-    wishlistIcon: <FaHeart />,
-    lessonsIcon: <FiBookOpen />,
-    clockIcon: <FiClock />,
-    priceIcon: "₹",
-    oldPriceIcon: "₹",
-    lessonsLabel: "Lessons",
-    ratingIcon: <AiFillStar />,
-    userIcon: <FiUsers />,
-    buttonText: "Enrolled",
-    instructorLabel: "Instructor",
+// const courses = [
+//   {
+//     image: CourseImg1,
+//     wishlistIcon: <FaHeart />,
+//     lessonsIcon: <FiBookOpen />,
+//     clockIcon: <FiClock />,
+//     priceIcon: "₹",
+//     oldPriceIcon: "₹",
+//     lessonsLabel: "Lessons",
+//     ratingIcon: <AiFillStar />,
+//     userIcon: <FiUsers />,
+//     buttonText: "Enrolled",
+//     instructorLabel: "Instructor",
+//     title: "Mindful Meditation for Beginners",
+//     lessons: "25",
+//     duration: "20 hrs",
+//     price: "499",
+//     oldPrice: "899",
+//     rating: "4.9",
+//     students: "780",
+//     instructorImg: User3,
+//     instructorName: "Maya Krishna",
+//   },
+//   {
+//     image: CourseImg2,
+//     wishlistIcon: <FaHeart />,
+//     lessonsIcon: <FiBookOpen />,
+//     clockIcon: <FiClock />,
+//     priceIcon: "₹",
+//     oldPriceIcon: "₹",
+//     lessonsLabel: "Lessons",
+//     ratingIcon: <AiFillStar />,
+//     userIcon: <FiUsers />,
+//     buttonText: "Enrolled",
+//     instructorLabel: "Instructor",
 
-    title: "Full-Body Yoga Masterclass",
-    lessons: "35",
-    duration: "45 hrs",
-    price: "899",
-    oldPrice: "1299",
-    rating: "4.8",
-    students: "1260",
-    instructorImg: User2,
-    instructorName: "Anil Dev",
-  },
-  {
-    image: CourseImg3,
-    wishlistIcon: <FaHeart />,
-    lessonsIcon: <FiBookOpen />,
-    clockIcon: <FiClock />,
-    priceIcon: "₹",
-    oldPriceIcon: "₹",
-    lessonsLabel: "Lessons",
-    ratingIcon: <AiFillStar />,
-    userIcon: <FiUsers />,
-    buttonText: "Enrolled",
-    instructorLabel: "Instructor",
+//     title: "Full-Body Yoga Masterclass",
+//     lessons: "35",
+//     duration: "45 hrs",
+//     price: "899",
+//     oldPrice: "1299",
+//     rating: "4.8",
+//     students: "1260",
+//     instructorImg: User2,
+//     instructorName: "Anil Dev",
+//   },
+//   {
+//     image: CourseImg3,
+//     wishlistIcon: <FaHeart />,
+//     lessonsIcon: <FiBookOpen />,
+//     clockIcon: <FiClock />,
+//     priceIcon: "₹",
+//     oldPriceIcon: "₹",
+//     lessonsLabel: "Lessons",
+//     ratingIcon: <AiFillStar />,
+//     userIcon: <FiUsers />,
+//     buttonText: "Enrolled",
+//     instructorLabel: "Instructor",
 
-    title: "Breathwork Healingy",
-    lessons: "18",
-    duration: "16 hrs",
-    price: "699",
-    oldPrice: "999",
-    rating: "4.7",
-    students: "640",
-    instructorImg: User1,
-    instructorName: "Akhil ",
-  },
-];
+//     title: "Breathwork Healingy",
+//     lessons: "18",
+//     duration: "16 hrs",
+//     price: "699",
+//     oldPrice: "999",
+//     rating: "4.7",
+//     students: "640",
+//     instructorImg: User1,
+//     instructorName: "Akhil ",
+//   },
+// ];
 
 const continueCourses = [
   {
@@ -150,13 +151,21 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [mobileView, setMobileView] = useState("menu");
   const [profileImg, setProfileImg] = useState(UserProfileImg);
+  const [prevUserAvatar, setPrevUserAvatar] = useState(null);
   const { user } = useSelector((state) => state.auth);
 
-  useEffect(() => {
+  if (user?.avatar !== prevUserAvatar) {
+    setPrevUserAvatar(user?.avatar);
     if (user?.avatar) {
       setProfileImg(user.avatar);
     }
-  }, [user]);
+  }
+
+  //  useEffect(() => {
+  //   if (user?.avatar) {
+  //     setProfileImg(user.avatar);
+  //   }
+  // }, [user]);
 
   const { enrollmentsQuery } = useCourse({});
   const { data: data, isLoading, error } = enrollmentsQuery;
@@ -192,6 +201,9 @@ const Profile = () => {
         );
       case "Live Classes":
         return <LiveClasses />;
+      case "Live Sessions":
+        return <LiveYoga />;
+
       case "Events":
         return <Events upcomingEvents={upcomingEvents} />;
       case "Settings":

@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { RiArrowRightUpLine } from "react-icons/ri";
@@ -75,9 +76,11 @@ const EventSlide = ({ image, targetDate }) => {
         </div>
       </div>
 
-      <button className="BookBtn">
-        Pre Book Now <RiArrowRightUpLine className="arrowAnim" />
-      </button>
+      <Link href="/checkout" style={{ textDecoration: 'none' }}>
+        <button className="BookBtn">
+          Pre Book Now <RiArrowRightUpLine className="arrowAnim" />
+        </button>
+      </Link>
     </div>
   );
 };
@@ -98,7 +101,9 @@ const HomeLiveCourse = ({ liveSections }) => {
                 `Join our exclusive ${activeSection?.title} session with ${activeSection?.instructor?.name}.`}
             </p>
 
-            <a href={`/course/${activeSection?.slug}`} className="scrollDown">
+            <a href="/live-yoga-class" className="scrollDown">
+
+            {/* <a href={`/course/${activeSection?.slug}`} className="scrollDown"> */}
               Discover More <MdKeyboardArrowRight />
             </a>
           </div>

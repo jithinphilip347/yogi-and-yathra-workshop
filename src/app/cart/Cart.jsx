@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
+import Link from "next/link";
 import CourseImg1 from "../../assets/images/courseImg-1.webp";
 import CourseImg2 from "../../assets/images/courseImg-2.webp";
 import CourseImg3 from "../../assets/images/courseImg-3.webp";
@@ -225,9 +226,11 @@ const Cart = () => {
 
                 </div>
 
-                <button className="checkoutBtn">
-                  Proceed to Checkout
-                </button>
+                <Link href="/checkout" style={{ textDecoration: 'none' }}>
+                  <button className="checkoutBtn">
+                    Proceed to Checkout
+                  </button>
+                </Link>
 
               </div>
 
