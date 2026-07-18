@@ -4384,6 +4384,461 @@
                         }
                     }
                 }
+                .LiveClasses{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 24px;
+                    width: 100%;
+
+                    .TabsNav {
+                        display: flex;
+                        gap: 12px;
+                        border-bottom: 1px solid #e2e8f0;
+                        padding-bottom: 16px;
+                        
+                        .TabBtn {
+                            padding: 8px 16px;
+                            border-radius: 20px;
+                            background: transparent;
+                            border: 1px solid transparent;
+                            color: #64748b;
+                            font-weight: 500;
+                            font-size: 14px;
+                            cursor: pointer;
+                            transition: all 0.2s;
+                            
+                            &:hover {
+                                background: #f8fafc;
+                                color: #1e293b;
+                            }
+                            
+                            &.Active {
+                                background: #fff;
+                                border-color: #e2e8f0;
+                                color: var(--primaryColor);
+                                box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+                                font-weight: 600;
+                            }
+                        }
+                    }
+
+                    .ClassList {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 20px;
+                        
+                        .EmptyState {
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            padding: 60px 20px;
+                            background: #f8fafc;
+                            border-radius: 12px;
+                            border: 1px dashed #cbd5e1;
+                            color: #64748b;
+                            text-align: center;
+                            
+                            .EmptyIconWrapper {
+                                width: 64px;
+                                height: 64px;
+                                border-radius: 50%;
+                                background: #f1f5f9;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                margin-bottom: 16px;
+                                
+                                .EmptyIcon {
+                                    font-size: 32px;
+                                    color: #94a3b8;
+                                }
+                            }
+                            
+                            h3 {
+                                font-size: 16px;
+                                font-weight: 500;
+                                color: #1e293b;
+                                margin: 0 0 8px 0;
+                            }
+                            
+                            p {
+                                font-size: 14px;
+                                color: #64748b;
+                                margin: 0;
+                                max-width: 400px;
+                                line-height: 1.5;
+                            }
+                        }
+
+                        .ProgramCard {
+                            display: flex;
+                            background: #fff;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 12px;
+                            padding: 20px;
+                            gap: 24px;
+                            position: relative;
+                            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+                            
+                            @media (max-width: 1024px) {
+                                gap: 20px;
+                            }
+                            
+                            @media (max-width: 768px) {
+                                flex-direction: column;
+                                padding: 20px;
+                                gap: 20px;
+                            }
+
+                            @media (max-width: 480px) {
+                                padding: 16px;
+                                gap: 16px;
+                            }
+                            
+                            @media (max-width: 420px) {
+                                padding: 12px;
+                            }
+
+                            .ActiveBadge {
+                                position: absolute;
+                                top: 16px;
+                                left: 16px;
+                                background: #10b981;
+                                color: #fff;
+                                font-size: 10px;
+                                font-weight: 500;
+                                padding: 4px 8px;
+                                border-radius: 4px;
+                                letter-spacing: 0.5px;
+                                z-index: 2;
+                            }
+
+                            &.cancelled {
+                                opacity: 0.8;
+                                .CardLeft .Thumb .Img {
+                                    filter: grayscale(100%);
+                                }
+                            }
+
+                            .MoreOptions {
+                                position: absolute;
+                                top: 16px;
+                                right: 16px;
+                                z-index: 50;
+                                
+                                .MoreBtn {
+                                    background: transparent;
+                                    border: none;
+                                    color: #94a3b8;
+                                    font-size: 20px;
+                                    cursor: pointer;
+                                    padding: 4px;
+                                    border-radius: 4px;
+                                    &:hover {
+                                        background: #f1f5f9;
+                                        color: #475569;
+                                    }
+                                }
+                                
+                                .DropdownMenu {
+                                    position: absolute;
+                                    top: 100%;
+                                    right: 0;
+                                    background: #fff;
+                                    border: 1px solid #e2e8f0;
+                                    border-radius: 8px;
+                                    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                                    padding: 8px 0;
+                                    min-width: 160px;
+                                    z-index: 60;
+                                    
+                                    button {
+                                        display: block;
+                                        width: 100%;
+                                        text-align: left;
+                                        padding: 10px 16px;
+                                        background: transparent;
+                                        border: none;
+                                        font-size: 13px;
+                                        color: #475569;
+                                        cursor: pointer;
+                                        font-weight: 500;
+                                        
+                                        &:hover {
+                                            background: #f8fafc;
+                                            color: var(--primaryColor);
+                                        }
+                                        &.CancelBtn {
+                                            color: #ef4444;
+                                            &:hover {
+                                                color: #dc2626;
+                                                background: #fef2f2;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            .CardLeft {
+                                flex: 1;
+                                display: flex;
+                                flex-direction: column;
+                                gap: 16px;
+                                
+                                .Header {
+                                    display: flex;
+                                    gap: 16px;
+                                    
+                                    @media (max-width: 480px) {
+                                        gap: 12px;
+                                    }
+
+                                    .Thumb {
+                                        position: relative;
+                                        width: 100px;
+                                        height: 70px;
+                                        border-radius: 8px;
+                                        overflow: hidden;
+                                        
+                                        .Img {
+                                            object-fit: cover;
+                                        }
+                                        
+                                        .Category {
+                                            position: absolute;
+                                            bottom: 4px;
+                                            left: 4px;
+                                            background: rgba(0,0,0,0.6);
+                                            color: #fff;
+                                            font-size: 10px;
+                                            padding: 2px 6px;
+                                            border-radius: 4px;
+                                            font-weight: 500;
+                                        }
+                                    }
+                                    
+                                    .TitleInfo {
+                                        display: flex;
+                                        flex-direction: column;
+                                        justify-content: center;
+                                        
+                                        h3 {
+                                            font-size: 16px;
+                                            font-weight: 500;
+                                            color: #1e293b;
+                                            margin: 0 0 4px 0;
+                                            
+                                            @media (max-width: 480px) {
+                                                font-size: 15px;
+                                            }
+                                        }
+                                        .Instructor {
+                                            font-size: 12px;
+                                            color: #64748b;
+                                            margin: 0;
+                                            font-weight: 500;
+                                            span {
+                                                color: #334155;
+                                                font-weight: 500;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                .ScheduleMeta {
+                                    display: flex;
+                                    gap: 20px;
+                                    
+                                    @media (max-width: 420px) {
+                                        flex-direction: column;
+                                        gap: 8px;
+                                    }
+
+                                    .MetaItem {
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 6px;
+                                        font-size: 13px;
+                                        color: #475569;
+                                        font-weight: 500;
+                                        
+                                        .Icon {
+                                            color: var(--primaryColor);
+                                            font-size: 14px;
+                                        }
+                                    }
+                                }
+                                
+                                .WeeklyChips {
+                                    display: flex;
+                                    gap: 6px;
+                                    flex-wrap: wrap;
+                                    
+                                    .Chip {
+                                        width: 28px;
+                                        height: 28px;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        border-radius: 6px;
+                                        font-size: 11px;
+                                        font-weight: 500;
+                                        background: #f1f5f9;
+                                        color: #94a3b8;
+                                        border: 1px solid transparent;
+                                        
+                                        &.Active {
+                                            background: rgba(var(--primaryColorRgb), 0.1);
+                                            color: var(--primaryColor);
+                                            border-color: rgba(var(--primaryColorRgb), 0.2);
+                                        }
+                                    }
+                                }
+                            }
+
+                            .CardRight {
+                                flex: 0 0 260px;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                                gap: 16px;
+                                padding-left: 24px;
+                                border-left: 1px dashed #e2e8f0;
+                                
+                                @media (max-width: 1024px) {
+                                    flex: 0 0 240px;
+                                    padding-left: 16px;
+                                }
+
+                                @media (max-width: 768px) {
+                                    padding-left: 0;
+                                    border-left: none;
+                                    border-top: 1px dashed #e2e8f0;
+                                    padding-top: 20px;
+                                    flex: auto;
+                                }
+
+                                .ProgressHero {
+                                    .ProgressHeader {
+                                        display: flex;
+                                        justify-content: space-between;
+                                        align-items: flex-end;
+                                        margin-bottom: 8px;
+                                        padding-right: 24px;
+                                        
+                                        .Label {
+                                            font-size: 11px;
+                                            color: #64748b;
+                                            font-weight: 500;
+                                            text-transform: uppercase;
+                                            letter-spacing: 0.5px;
+                                        }
+                                        .Value {
+                                            font-size: 13px;
+                                            font-weight: 500;
+                                            color: var(--primaryColor);
+                                        }
+                                    }
+                                    
+                                    .ProgressBar {
+                                        width: 100%;
+                                        height: 6px;
+                                        background: #f1f5f9;
+                                        border-radius: 4px;
+                                        overflow: hidden;
+                                        
+                                        .Fill {
+                                            height: 100%;
+                                            background: var(--primaryColor);
+                                            border-radius: 4px;
+                                        }
+                                    }
+                                }
+
+                                .TodayStatusBox {
+                                    background: #f8fafc;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                    
+                                    .StatusHeader {
+                                        margin-bottom: 4px;
+                                        .Title {
+                                            font-size: 11px;
+                                            color: #64748b;
+                                            font-weight: 500;
+                                        }
+                                    }
+                                    .StatusMessage {
+                                        font-size: 13px;
+                                        font-weight: 500;
+                                        color: #1e293b;
+                                    }
+                                    .HelperText {
+                                        margin-top: 4px;
+                                        font-size: 11px;
+                                        color: #94a3b8;
+                                        font-weight: 500;
+                                    }
+                                }
+
+                                .ActionBtn {
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    gap: 8px;
+                                    width: 100%;
+                                    padding: 12px;
+                                    border-radius: 8px;
+                                    font-size: 13px;
+                                    font-weight: 500;
+                                    cursor: pointer;
+                                    border: none;
+                                    transition: all 0.2s;
+                                    
+                                    .BtnIcon {
+                                        font-size: 16px;
+                                    }
+                                    
+                                    &.primary {
+                                        background: var(--primaryColor);
+                                        color: #fff;
+                                        &:hover {
+                                            opacity: 0.9;
+                                            transform: translateY(-1px);
+                                            box-shadow: 0 4px 12px rgba(var(--primaryColorRgb), 0.3);
+                                        }
+                                    }
+                                    
+                                    &.secondary {
+                                        background: transparent;
+                                        color: var(--primaryColor);
+                                        border: 1px solid var(--primaryColor);
+                                        &:hover {
+                                            background: rgba(var(--primaryColorRgb), 0.05);
+                                        }
+                                    }
+
+                                    &.success {
+                                        background: #10b981;
+                                        color: #fff;
+                                        &:hover {
+                                            opacity: 0.9;
+                                        }
+                                    }
+
+                                    &.disabled {
+                                        background: #f1f5f9;
+                                        color: #94a3b8;
+                                        cursor: not-allowed;
+                                        border: 1px solid #e2e8f0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 .LiveYoga {
                     width: 100%;
                     display: flex;
