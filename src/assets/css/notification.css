@@ -1,6 +1,21 @@
 #Notification {
-  padding: 20px 0 40px 0;
+  padding: 80px 0px;
   background: #fff;
+}
+@media (max-width: 1024px) {
+  #Notification {
+    padding: 60px 0px;
+  }
+}
+@media (max-width: 768px) {
+  #Notification {
+    padding: 40px 0px;
+  }
+}
+@media (max-width: 480px) {
+  #Notification {
+    padding: 20px 0px;
+  }
 }
 #Notification .NotificationTopBar {
   display: flex;
