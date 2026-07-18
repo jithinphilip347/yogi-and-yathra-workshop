@@ -984,6 +984,9 @@
   transition: 0.3s;
   border-bottom: 1px solid #eee;
   font-family: myFont1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 #Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationDropdown .notifItem:hover {
   background: rgba(0, 0, 0, 0.05);
