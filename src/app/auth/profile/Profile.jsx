@@ -204,12 +204,12 @@ const Profile = () => {
       case "Live Sessions":
         return <LiveYoga />;
 
-      case "Events":
-        return <Events upcomingEvents={upcomingEvents} />;
+      // case "Events":
+      //   return <Events upcomingEvents={upcomingEvents} />;
       case "Settings":
         return <Settings />;
-      case "Help & Support":
-        return <HelpSupport />;
+      // case "Help & Support":
+      //   return <HelpSupport />;
       default:
         return <div>Select an option from the menu</div>;
     }

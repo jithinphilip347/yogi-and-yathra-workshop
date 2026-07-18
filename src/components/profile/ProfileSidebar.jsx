@@ -28,12 +28,12 @@ const ProfileSidebar = ({
     { name: "My Courses", icon: <MdMenuBook /> },
     { name: "Live Classes", icon: <MdVideoCameraFront /> },
     { name: "Live Sessions", icon: <MdVideoCameraFront /> },
-    { name: "Events", icon: <MdEvent /> },
+    // { name: "Events", icon: <MdEvent /> },
   ];
 
   const bottomNavItems = [
     { name: "Settings", icon: <MdSettings /> },
-    { name: "Help & Support", icon: <MdHelpCenter /> },
+    // { name: "Help & Support", icon: <MdHelpCenter /> },
     { name: "Logout", icon: <MdLogout /> },
   ];
 

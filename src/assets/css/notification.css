@@ -1,0 +1,181 @@
+#Notification {
+  padding: 20px 0 40px 0;
+  background: #fff;
+}
+#Notification .NotificationTopBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+#Notification .NotificationTopBar .ActionBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: var(--myFont1);
+}
+#Notification .NotificationTopBar .ActionBtn:hover {
+  color: var(--primaryColor);
+}
+#Notification .NotificationTopBar .ActionBtn .Icon {
+  font-size: 16px;
+}
+#Notification .NotificationList {
+  display: flex;
+  flex-direction: column;
+}
+#Notification .NotificationList .NotifItems {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+#Notification .NotificationList .NotifItems .NotifCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 15px;
+  transition: 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+@media (max-width: 768px) {
+  #Notification .NotificationList .NotifItems .NotifCard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+}
+#Notification .NotificationList .NotifItems .NotifCard:hover {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  border-color: #cbd5e1;
+}
+#Notification .NotificationList .NotifItems .NotifCard.unread, #Notification .NotificationList .NotifItems .NotifCard.read {
+  background: #fff;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardLeft {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardLeft .ImageWrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardLeft .ImageWrapper img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardLeft .NotifContent h5 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 5px 0;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardLeft .NotifContent p {
+  font-size: 14px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.4;
+  max-width: 500px;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 25px;
+}
+@media (max-width: 768px) {
+  #Notification .NotificationList .NotifItems .NotifCard .CardRight {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight .NotifDateTime {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 13px;
+  color: #94a3b8;
+  gap: 4px;
+}
+@media (max-width: 768px) {
+  #Notification .NotificationList .NotifItems .NotifCard .CardRight .NotifDateTime {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight .NotifDateTime span {
+  font-weight: 500;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight .NotifDateTime .Time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight .CardActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight .CardActions .MarkReadBtn, #Notification .NotificationList .NotifItems .NotifCard .CardRight .CardActions .DeleteBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 20px;
+  background: transparent;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight .CardActions .MarkReadBtn {
+  color: #2563eb;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight .CardActions .MarkReadBtn:hover {
+  background: #f1f5f9;
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight .CardActions .DeleteBtn {
+  color: var(--primaryColor);
+}
+#Notification .NotificationList .NotifItems .NotifCard .CardRight .CardActions .DeleteBtn:hover {
+  background: #f1f5f9;
+}
+#Notification .NotificationList .EmptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  text-align: center;
+}
+#Notification .NotificationList .EmptyState h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 10px 0;
+}
+#Notification .NotificationList .EmptyState p {
+  font-size: 15px;
+  color: #64748b;
+  margin: 0;
+}/*# sourceMappingURL=notification.css.map */
