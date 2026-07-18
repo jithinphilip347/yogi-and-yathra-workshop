@@ -1,3 +1,729 @@
+#DailyLiveClassDetails {
+  background: #f9fbfd;
+  min-height: 100vh;
+  padding-bottom: 80px;
+  color: #2d3436;
+}
+#DailyLiveClassDetails * {
+  font-family: var(--myFont1), "Inter", sans-serif !important;
+}
+#DailyLiveClassDetails .card {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 30px;
+  box-shadow: none;
+  border: 1px solid #eee;
+  margin-bottom: 24px;
+}
+@media (max-width: 768px) {
+  #DailyLiveClassDetails .card {
+    padding: 20px;
+  }
+}
+#DailyLiveClassDetails .card h2 {
+  font-size: 20px;
+  color: #2d3436;
+  margin-bottom: 20px;
+  font-weight: 700;
+  position: relative;
+  padding-bottom: 12px;
+}
+#DailyLiveClassDetails .card h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: var(--primaryColor);
+  border-radius: 2px;
+}
+#DailyLiveClassDetails .ContentLayout {
+  display: flex;
+  gap: 30px;
+  margin-top: 30px;
+  position: relative;
+  z-index: 10;
+}
+@media (max-width: 1024px) {
+  #DailyLiveClassDetails .ContentLayout {
+    flex-direction: column;
+  }
+}
+#DailyLiveClassDetails .ContentLayout .LeftColumn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn {
+  width: 350px;
+}
+@media (max-width: 1024px) {
+  #DailyLiveClassDetails .ContentLayout .RightColumn {
+    width: 100%;
+  }
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar {
+  position: sticky;
+  top: 100px;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .ECardItem {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  font-size: 15px;
+  color: #636e72;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .ECardItem strong {
+  color: #2d3436;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .PriceRow {
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .PriceRow .Label {
+  font-size: 14px;
+  color: #636e72;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .PriceRow .Price {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primaryColor);
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .EnrollSidebarBtn {
+  width: 100%;
+  background: var(--primaryColor);
+  color: white;
+  border: none;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: 0.3s;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .EnrollSidebarBtn:hover {
+  opacity: 0.9;
+}
+#DailyLiveClassDetails .HeroBanner {
+  position: relative;
+  padding: 80px 0;
+  display: flex;
+  align-items: center;
+  color: white;
+  background-color: #111;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+@media (max-width: 768px) {
+  #DailyLiveClassDetails .HeroBanner {
+    padding: 50px 0;
+  }
+}
+#DailyLiveClassDetails .HeroBanner .HeroOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.5));
+}
+#DailyLiveClassDetails .HeroBanner .container {
+  position: relative;
+  z-index: 2;
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent {
+  max-width: 800px;
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent .CategoryBadge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent h1 {
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+@media (max-width: 768px) {
+  #DailyLiveClassDetails .HeroBanner .HeroContent h1 {
+    font-size: 32px;
+  }
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent .RatingStudents {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 15px;
+  margin-bottom: 25px;
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent .RatingStudents .Stars {
+  color: #fdcb6e;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent .HeroSummaryGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+  padding: 20px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent .HeroSummaryGrid .SumItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 50px;
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent .HeroSummaryGrid .SumItem svg {
+  color: var(--primaryColor);
+  font-size: 16px;
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent .ViewPlansBtn {
+  background: var(--primaryColor);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.3s;
+}
+#DailyLiveClassDetails .HeroBanner .HeroContent .ViewPlansBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+#DailyLiveClassDetails .QuickInfoGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 30px;
+}
+@media (max-width: 768px) {
+  #DailyLiveClassDetails .QuickInfoGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  #DailyLiveClassDetails .QuickInfoGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#DailyLiveClassDetails .QuickInfoGrid .InfoCard {
+  background: #fff;
+  border: 1px solid #eee;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+#DailyLiveClassDetails .QuickInfoGrid .InfoCard .IconWrap {
+  background: #f4f3fd;
+  color: var(--primaryColor);
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+#DailyLiveClassDetails .QuickInfoGrid .InfoCard .InfoText small {
+  display: block;
+  color: #636e72;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+#DailyLiveClassDetails .QuickInfoGrid .InfoCard .InfoText strong {
+  color: #2d3436;
+  font-size: 15px;
+  font-weight: 600;
+}
+#DailyLiveClassDetails .LearnGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+@media (max-width: 480px) {
+  #DailyLiveClassDetails .LearnGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#DailyLiveClassDetails .LearnGrid .LearnItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  color: #2d3436;
+}
+#DailyLiveClassDetails .LearnGrid .LearnItem .CheckIcon {
+  color: #00b894;
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+#DailyLiveClassDetails .WeeklyScheduleModern {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding: 20px 24px;
+  background: #fafafa;
+  border: 1px solid #f1f5f9;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+@media (max-width: 640px) {
+  #DailyLiveClassDetails .WeeklyScheduleModern {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .TimeBox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding-right: 40px;
+  border-right: 2px dashed #e2e8f0;
+}
+@media (max-width: 640px) {
+  #DailyLiveClassDetails .WeeklyScheduleModern .TimeBox {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 2px dashed #e2e8f0;
+    padding-bottom: 20px;
+    width: 100%;
+  }
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .TimeBox .Icon {
+  font-size: 24px;
+  color: var(--primaryColor);
+  background: #fff;
+  padding: 6px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .TimeBox .TimeDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .TimeBox .TimeDetails .Label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 500;
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .TimeBox .TimeDetails .Time {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e293b;
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .DaysRowWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .DaysRowWrap .DaysLabel {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .DaysRowWrap .DaysRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .DaysRowWrap .DaysRow .DayBadge {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  background: #fff;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
+#DailyLiveClassDetails .WeeklyScheduleModern .DaysRowWrap .DaysRow .DayBadge.Active {
+  background: var(--primaryColor);
+  color: #fff;
+  border-color: var(--primaryColor);
+  box-shadow: 0 4px 10px rgba(var(--primaryColorRgb), 0.3);
+}
+#DailyLiveClassDetails .InstructorProfile {
+  display: flex;
+  gap: 25px;
+  align-items: flex-start;
+}
+@media (max-width: 480px) {
+  #DailyLiveClassDetails .InstructorProfile {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+}
+#DailyLiveClassDetails .InstructorProfile .InstImage {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid #eee;
+  flex-shrink: 0;
+}
+#DailyLiveClassDetails .InstructorProfile .InstDetails {
+  flex: 1;
+}
+#DailyLiveClassDetails .InstructorProfile .InstDetails h3 {
+  font-size: 22px;
+  margin-bottom: 2px;
+  color: #111;
+}
+#DailyLiveClassDetails .InstructorProfile .InstDetails h3::after {
+  display: none;
+}
+#DailyLiveClassDetails .InstructorProfile .InstDetails .Profession {
+  color: var(--primaryColor);
+  font-weight: 500;
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+#DailyLiveClassDetails .InstructorProfile .InstDetails .InstStats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+@media (max-width: 480px) {
+  #DailyLiveClassDetails .InstructorProfile .InstDetails .InstStats {
+    justify-content: center;
+  }
+}
+#DailyLiveClassDetails .InstructorProfile .InstDetails .InstStats .Stat {
+  font-size: 12px;
+  color: #555;
+  background: #fff;
+  padding: 6px 14px;
+  border-radius: 50px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#DailyLiveClassDetails .InstructorProfile .InstDetails .InstStats .Stat svg {
+  color: #64748b;
+}
+#DailyLiveClassDetails .ReqGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+@media (max-width: 480px) {
+  #DailyLiveClassDetails .ReqGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#DailyLiveClassDetails .ReqGrid .ReqItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #2d3436;
+  background: #fafafa;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+#DailyLiveClassDetails .ReqGrid .ReqItem .ReqIcon {
+  color: var(--primaryColor);
+  font-size: 18px;
+}
+#DailyLiveClassDetails .PricingGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 992px) {
+  #DailyLiveClassDetails .PricingGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  #DailyLiveClassDetails .PricingGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 20px;
+  position: relative;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard:hover {
+  border-color: var(--primaryColor);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard.FeaturedPlan {
+  border: 2px solid var(--primaryColor);
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard.FeaturedPlan .PopularBadge {
+  position: absolute;
+  top: -12px;
+  right: 15px;
+  background: var(--primaryColor);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .PlanName {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #2d3436;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .PlanPrice {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--primaryColor);
+  margin-bottom: 5px;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .PlanPrice .Period {
+  font-size: 13px;
+  color: #636e72;
+  font-weight: 500;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .PlanDesc {
+  font-size: 12px;
+  color: #636e72;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .PlanFeatures {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+  flex: 1;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .PlanFeatures li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  color: #2d3436;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .PlanFeatures li .Check {
+  color: #00b894;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .PlanFeatures li .Cross {
+  color: #d63031;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .SelectPlanBtn {
+  width: 100%;
+  background: transparent;
+  color: var(--primaryColor);
+  border: 1px solid var(--primaryColor);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#DailyLiveClassDetails .PricingGrid .PlanCard .SelectPlanBtn:hover, #DailyLiveClassDetails .PricingGrid .PlanCard .SelectPlanBtn.FilledBtn {
+  background: var(--primaryColor);
+  color: #fff;
+}
+#DailyLiveClassDetails .ProductList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+}
+@media (max-width: 768px) {
+  #DailyLiveClassDetails .ProductList {
+    grid-template-columns: 1fr;
+  }
+}
+#DailyLiveClassDetails .ProductList .ProductItem {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  background: #fafafa;
+}
+#DailyLiveClassDetails .ProductList .ProductItem .ProdLeft {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+#DailyLiveClassDetails .ProductList .ProductItem .ProdLeft .ProdImage {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+#DailyLiveClassDetails .ProductList .ProductItem .ProdLeft .ProdInfo h4 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #2d3436;
+}
+#DailyLiveClassDetails .ProductList .ProductItem .ProdLeft .ProdInfo .PriceRow {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primaryColor);
+}
+#DailyLiveClassDetails .ProductList .ProductItem .ActionArea {
+  display: flex;
+  gap: 10px;
+}
+#DailyLiveClassDetails .ProductList .ProductItem .ActionArea .ViewDetailsBtn {
+  flex: 1;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+#DailyLiveClassDetails .ProductList .ProductItem .ActionArea .AddToCartBtn {
+  flex: 1;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--primaryColor);
+  background: transparent;
+  color: var(--primaryColor);
+  transition: 0.3s;
+}
+#DailyLiveClassDetails .ProductList .ProductItem .ActionArea .AddToCartBtn:hover {
+  background: var(--primaryColor);
+  color: #fff;
+}
+#DailyLiveClassDetails .ReviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  #DailyLiveClassDetails .ReviewGrid {
+    grid-template-columns: 1fr;
+  }
+}
+#DailyLiveClassDetails .ReviewGrid .ReviewCard {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+#DailyLiveClassDetails .ReviewGrid .ReviewCard .Stars {
+  color: #fdcb6e;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+#DailyLiveClassDetails .ReviewGrid .ReviewCard p {
+  font-size: 14px;
+  font-style: italic;
+  color: #636e72;
+  margin-bottom: 15px;
+  line-height: 1.5;
+}
+#DailyLiveClassDetails .ReviewGrid .ReviewCard .Reviewer {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2d3436;
+}
+#DailyLiveClassDetails .FAQList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+#DailyLiveClassDetails .FAQList .FAQItem {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  overflow: hidden;
+}
+#DailyLiveClassDetails .FAQList .FAQItem .FAQHead {
+  padding: 15px 20px;
+  background: #fafafa;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#DailyLiveClassDetails .FAQList .FAQItem .FAQHead h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2d3436;
+}
+#DailyLiveClassDetails .FAQList .FAQItem .FAQHead .Icon {
+  color: #636e72;
+}
+#DailyLiveClassDetails .FAQList .FAQItem .FAQBody {
+  padding: 15px 20px;
+  font-size: 14px;
+  color: #636e72;
+  line-height: 1.6;
+  border-top: 1px solid #eee;
+}
+
 #Nav {
   width: 100%;
   height: 80px;
