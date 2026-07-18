@@ -3,35 +3,20 @@
   min-height: 100vh;
   padding-bottom: 80px;
 
-  * {
-    font-family: var(--myFont1), "Inter", sans-serif !important;
-  }
-
-  // Use the global primary color from the project's style.scss
-  $primary: var(--primaryColor, #6c5ce7);
-  $primary-hover: rgba(0, 0, 0, 0.1);
-  $secondary: #ff7675;
-  $text-dark: #2d3436;
-  $text-light: #636e72;
-  $bg-white: #ffffff;
-  $border-color: #eee;
-  $shadow: none;
-  $radius: 8px;
-
-  // General Card
+ 
   .card {
-    background: $bg-white;
-    border-radius: $radius;
+    background: #ffffff;
+    border-radius: 8px;
     padding: 30px;
-    box-shadow: $shadow;
-    border: 1px solid $border-color;
+    box-shadow: none;
+    border: 1px solid #eee;
     @media (max-width: 768px) {
       padding: 20px;
     }
 
     h2 {
       font-size: 24px;
-      color: $text-dark;
+      color: #2d3436;
       margin-bottom: 20px;
       font-weight: 700;
       position: relative;
@@ -44,7 +29,7 @@
         left: 0;
         width: 40px;
         height: 3px;
-        background: $primary;
+        background: var(--primaryColor);
         border-radius: 2px;
       }
     }
@@ -59,19 +44,19 @@
 
     .Chip {
       background: rgba(0, 0, 0, 0.04);
-      color: $text-dark;
+      color: #2d3436;
       padding: 6px 14px;
       border-radius: 20px;
       font-size: 13px;
       font-weight: 500;
       &.TagChip {
         background: #fff;
-        border: 1px solid $border-color;
+        border: 1px solid #eee;
         cursor: pointer;
         transition: 0.3s;
         &:hover {
-          border-color: $primary;
-          color: $primary;
+          border-color: var(--primaryColor);
+          color: var(--primaryColor);
         }
       }
     }
@@ -81,20 +66,20 @@
   .BreadcrumbWrap {
     padding: 15px 0;
     font-size: 13px;
-    color: $text-light;
+    color: #636e72;
     span {
       cursor: pointer;
       &:hover {
-        color: $primary;
+        color: var(--primaryColor);
       }
     }
     .CurrentPath {
-      color: $primary;
+      color: var(--primaryColor);
       font-weight: 600;
     }
   }
 
-  // 1 & 15. Hero Banner
+ 
   .HeroBanner {
     position: relative;
     padding: 80px 0;
@@ -236,9 +221,8 @@
     margin-top: -30px;
     position: relative;
     z-index: 10;
-    /* Removed align-items: flex-start to allow RightColumn to stretch and enable sticky behavior */
 
-    @media (max-width: 992px) {
+    @media (max-width: 1024px) {
       flex-direction: column;
       margin-top: 20px;
     }
@@ -253,7 +237,7 @@
 
     .RightColumn {
       width: 350px;
-      @media (max-width: 992px) {
+      @media (max-width: 1024px) {
         width: 100%;
         order: -1; // Brings the right column to the top on mobile!
       }
@@ -268,18 +252,18 @@
     }
   }
 
-  // Right Column: Price Card & Countdown
+  
   .PricingCard {
     position: relative;
     background: #fff;
     border-radius: 8px;
     box-shadow: none;
-    border: 1px solid $border-color;
+    border: 1px solid #eee;
     padding: 24px;
 
     .CardHeaderBadge {
-      background: rgba($primary, 0.1);
-      color: $primary;
+      background: #f4f3fd;
+      color: var(--primaryColor);
       text-align: center;
       padding: 10px;
       font-weight: 700;
@@ -296,7 +280,7 @@
       h2 {
         font-size: 38px;
         margin: 0 0 5px 0;
-        color: $text-dark;
+        color: #2d3436;
         font-weight: 800;
         &::after {
           display: none;
@@ -304,7 +288,7 @@
       }
       .OriginalPrice {
         font-size: 16px;
-        color: $text-light;
+        color: #636e72;
         text-decoration: line-through;
         margin-right: 8px;
         opacity: 0.7;
@@ -325,12 +309,12 @@
       border-radius: 8px;
       text-align: center;
       margin-bottom: 20px;
-      border: 1px solid $border-color;
+      border: 1px solid #eee;
 
       p {
         margin: 0 0 10px 0;
         font-weight: 600;
-        color: $text-light;
+        color: #636e72;
         font-size: 12px;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -343,7 +327,7 @@
         margin-bottom: 15px;
         .TimeBox {
           background: #fff;
-          border: 1px solid $border-color;
+          border: 1px solid #eee;
           border-radius: 8px;
           padding: 8px;
           width: 60px;
@@ -352,12 +336,12 @@
             display: block;
             font-size: 20px;
             font-weight: 800;
-            color: $primary;
+            color: var(--primaryColor);
             margin-bottom: 2px;
           }
           .TimeLabel {
             font-size: 9px;
-            color: $text-light;
+            color: #636e72;
             font-weight: 600;
           }
         }
@@ -366,8 +350,8 @@
       .CalendarBtn {
         width: 100%;
         background: #fff;
-        border: 1px solid $border-color;
-        color: $text-dark;
+        border: 1px solid #eee;
+        color: #2d3436;
         padding: 10px;
         border-radius: 8px;
         font-size: 13px;
@@ -379,8 +363,8 @@
         cursor: pointer;
         transition: 0.3s;
         &:hover {
-          border-color: $primary;
-          color: $primary;
+          border-color: var(--primaryColor);
+          color: var(--primaryColor);
         }
       }
     }
@@ -388,8 +372,8 @@
     .SeatsVisualBlock {
       margin-bottom: 20px;
       padding: 12px 16px;
-      background: rgba($secondary, 0.04);
-      border: 1px solid rgba($secondary, 0.1);
+      background: #fff1f1;
+      border: 1px solid #ffe1e1;
       border-radius: 8px;
 
       .SeatHeader,
@@ -397,30 +381,30 @@
         display: flex;
         justify-content: space-between;
         font-size: 12px;
-        color: $text-dark;
+        color: #2d3436;
         margin-bottom: 8px;
       }
       .ProgressBar {
         height: 6px;
-        background: rgba($secondary, 0.15);
+        background: #ffd1d1;
         border-radius: 8px;
         overflow: hidden;
         margin-bottom: 8px;
         .ProgressFill {
           height: 100%;
-          background: $secondary;
+          background: #ff7675;
           border-radius: 8px;
         }
       }
       .HurryText {
-        color: $secondary;
+        color: #ff7675;
         font-weight: 600;
       }
     }
 
     .BookBtnSidebar {
       width: 100%;
-      background: $primary;
+      background: var(--primaryColor);
       color: white;
       border: none;
       padding: 14px;
@@ -449,15 +433,15 @@
     .SecureCheckout {
       text-align: center;
       font-size: 11px;
-      color: $text-light;
+      color: #636e72;
       margin-top: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 5px;
-      &::before {
-        content: '🔒';
+      svg {
         font-size: 13px;
+        color: #636e72;
       }
     }
   }
@@ -468,8 +452,11 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 15px;
     margin-top: 20px;
-    @media (max-width: 576px) {
+    @media (max-width: 480px) {
       grid-template-columns: repeat(2, 1fr);
+      @media (max-width: 420px) {
+        grid-template-columns: 1fr;
+      }
     }
 
     .HighlightItem {
@@ -480,11 +467,11 @@
       align-items: center;
       gap: 10px;
       font-size: 14px;
-      color: $text-dark;
+      color: #2d3436;
       font-weight: 500;
       svg {
         font-size: 20px;
-        color: $primary;
+        color: var(--primaryColor);
       }
     }
   }
@@ -494,7 +481,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
-    @media (max-width: 576px) {
+    @media (max-width: 480px) {
       grid-template-columns: 1fr;
     }
 
@@ -503,7 +490,7 @@
       align-items: flex-start;
       gap: 10px;
       font-size: 15px;
-      color: $text-dark;
+      color: #2d3436;
       .CheckIcon {
         color: #00b894;
         font-size: 20px;
@@ -523,10 +510,10 @@
     }
 
     .AudienceCard {
-      background: $bg-white;
-      border-radius: $radius;
+      background: #ffffff;
+      border-radius: 8px;
       padding: 25px;
-      border: 1px solid $border-color;
+      border: 1px solid #eee;
       h3 {
         display: flex;
         align-items: center;
@@ -544,7 +531,7 @@
           gap: 10px;
           margin-bottom: 12px;
           font-size: 15px;
-          color: $text-light;
+          color: #636e72;
         }
       }
     }
@@ -567,47 +554,37 @@
   }
 
   // 5. Session Flow
-  .Timeline {
-    position: relative;
-    padding-left: 20px;
-    &::before {
-      content: "";
-      position: absolute;
-      left: 3px;
-      top: 10px;
-      bottom: 10px;
-      width: 2px;
-      background: rgba($primary, 0.2);
-    }
+  .SimpleAgendaList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
-    .TimelineItem {
-      position: relative;
-      margin-bottom: 20px;
-      padding-left: 20px;
-      &:last-child {
-        margin-bottom: 0;
+    .SimpleAgendaItem {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      border: 1px solid #eee;
+      transition: all 0.2s ease;
+      border-left: 3px solid transparent;
+
+      &:hover {
+        border-left: 3px solid var(--primaryColor);
+        transform: translateX(4px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
       }
 
-      .TimePoint {
-        position: absolute;
-        left: -22px;
-        top: 4px;
-        width: 12px;
-        height: 12px;
-        background: $bg-white;
-        border: 2px solid $primary;
-        border-radius: 50%;
-      }
-
-      .TimeLabel {
-        font-size: 13px;
-        color: $primary;
+      .AgendaTime {
         font-weight: 700;
-        margin-bottom: 5px;
+        color: var(--primaryColor);
+        min-width: 80px;
+        font-size: 14px;
       }
-      .TaskLabel {
-        font-size: 16px;
-        color: $text-dark;
+
+      .AgendaDesc {
+        font-size: 14px;
+        color: #2d3436;
         font-weight: 500;
       }
     }
@@ -618,7 +595,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
-    @media (max-width: 576px) {
+    @media (max-width: 480px) {
       grid-template-columns: 1fr;
     }
     div {
@@ -626,7 +603,7 @@
       align-items: center;
       gap: 10px;
       font-size: 15px;
-      color: $text-dark;
+      color: #2d3436;
       font-weight: 500;
     }
     .FeatIcon {
@@ -640,7 +617,7 @@
     display: flex;
     gap: 20px;
     align-items: flex-start;
-    @media (max-width: 576px) {
+    @media (max-width: 480px) {
       flex-direction: column;
       align-items: center;
       text-align: center;
@@ -652,7 +629,7 @@
       height: 100px;
       border-radius: 50%;
       overflow: hidden;
-      border: 3px solid $border-color;
+      border: 3px solid #eee;
       box-shadow: none;
       flex-shrink: 0;
       img {
@@ -664,12 +641,12 @@
       flex: 1;
       h3 {
         font-size: 20px;
-        color: $text-dark;
+        color: #2d3436;
         margin-bottom: 4px;
         &::after { display: none; }
       }
       .Profession {
-        color: $primary;
+        color: var(--primaryColor);
         font-weight: 600;
         margin-bottom: 12px;
         font-size: 14px;
@@ -680,8 +657,8 @@
         flex-wrap: wrap;
         margin-bottom: 15px;
         padding-bottom: 15px;
-        border-bottom: 1px solid $border-color;
-        @media (max-width: 576px) {
+        border-bottom: 1px solid #eee;
+        @media (max-width: 480px) {
           justify-content: center;
         }
         .Stat {
@@ -689,11 +666,11 @@
           align-items: center;
           gap: 6px;
           font-size: 12px;
-          color: $text-dark;
+          color: #2d3436;
           background: #f8f9fa;
           padding: 6px 12px;
           border-radius: 50px;
-          border: 1px solid $border-color;
+          border: 1px solid #eee;
           .Icon {
             color: #fdcb6e;
             font-size: 15px;
@@ -712,7 +689,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 6px;
-            color: $text-light;
+            color: #636e72;
           }
         }
       }
@@ -731,21 +708,21 @@
     h3 {
       font-size: 18px;
       margin-bottom: 15px;
-      color: $text-dark;
+      color: #2d3436;
     }
     .SimpleList {
       padding-left: 20px;
       margin: 0;
       li {
         margin-bottom: 10px;
-        color: $text-light;
+        color: #636e72;
         font-size: 15px;
         line-height: 1.5;
       }
     }
     p {
       font-size: 15px;
-      color: $text-light;
+      color: #636e72;
       line-height: 1.6;
     }
   }
@@ -762,7 +739,7 @@
       background: #f8f9fa;
       padding: 20px;
       border-radius: 12px;
-      border: 1px solid $border-color;
+      border: 1px solid #eee;
       .Stars {
         margin-bottom: 10px;
         .StarFill {
@@ -773,12 +750,12 @@
       p {
         font-size: 15px;
         font-style: italic;
-        color: $text-dark;
+        color: #2d3436;
         margin-bottom: 15px;
       }
       h4 {
         font-size: 14px;
-        color: $text-light;
+        color: #636e72;
         margin: 0;
       }
     }
@@ -790,18 +767,18 @@
     flex-direction: column;
     gap: 15px;
     .FAQItem {
-      border: 1px solid $border-color;
+      border: 1px solid #eee;
       border-radius: 8px;
       overflow: hidden;
       transition: 0.3s;
       &.active {
-        border-color: $primary;
+        border-color: var(--primaryColor);
         box-shadow: none;
         .FAQHead {
-          background: rgba($primary, 0.05);
+          background: #faf9ff;
           .Arrow {
             transform: rotate(180deg);
-            color: $primary;
+            color: var(--primaryColor);
           }
         }
         .FAQBody {
@@ -817,12 +794,12 @@
         h4 {
           margin: 0;
           font-size: 16px;
-          color: $text-dark;
+          color: #2d3436;
           font-weight: 600;
         }
         .Arrow {
           font-size: 24px;
-          color: $text-light;
+          color: #636e72;
           transition: 0.3s;
         }
       }
@@ -831,15 +808,12 @@
         padding: 0 20px 20px 20px;
         p {
           margin: 0;
-          color: $text-light;
+          color: #636e72;
           font-size: 15px;
           line-height: 1.6;
         }
       }
     }
   }
-
-
-
 
 }

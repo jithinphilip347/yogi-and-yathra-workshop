@@ -65,9 +65,9 @@ const LiveYoga = () => {
 
   const getActionButton = (session) => {
     switch(session.status) {
-      case 'upcoming': return <button className="ActionBtn disabled" disabled>Available 30 Min Before <MdLock style={{ marginLeft: '6px' }}/></button>;
+      case 'upcoming': return <Link href={`/live-stream`} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
       case 'ready': return <button className="ActionBtn primary">Join Waiting Room</button>;
-      case 'live': return <button className="ActionBtn primary live-btn">🔴 Join Live</button>;
+      case 'live': return <Link href={`/live-stream`} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
       case 'completed': return <button className="ActionBtn primary outline">Watch Recording</button>;
       case 'expired': return <button className="ActionBtn secondary">View Details</button>;
       case 'cancelled': return <button className="ActionBtn disabled" disabled>Cancelled</button>;
@@ -171,7 +171,7 @@ const LiveYoga = () => {
           })
         ) : (
           <div className="EmptyState">
-            <div className="EmptyIcon">🧘‍♀️</div>
+            <div className="EmptyIcon"><MdEvent size={48} color="#9ca3af" /></div>
             <h3>No Live Sessions Yet</h3>
             <p>Book your first live yoga session.</p>
             <button className="ExploreBtn">Explore Live Sessions</button>

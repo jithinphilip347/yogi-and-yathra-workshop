@@ -15,7 +15,8 @@ import {
   MdEventSeat,
   MdTrendingUp,
   MdOutlineLocationOn,
-  MdShare
+  MdShare,
+  MdLock
 } from 'react-icons/md';
 import { FiUsers, FiAward, FiClock, FiPlayCircle, FiCheck, FiXCircle } from 'react-icons/fi';
 import { FaChalkboardTeacher, FaWhatsapp, FaFacebook, FaRegCalendarAlt, FaCopy } from 'react-icons/fa';
@@ -190,13 +191,13 @@ const LiveYogaDetails = () => {
             
             {/* Expanded Hero Summary */}
             <div className="HeroSummaryGrid">
-              <div className="SumItem">📅 {sessionData.date}</div>
-              <div className="SumItem">🕒 {sessionData.time}</div>
-              <div className="SumItem">⏱ {sessionData.duration}</div>
-              <div className="SumItem">👥 {sessionData.bookedSeats} / {sessionData.totalSeats} Filled</div>
-              <div className="SumItem">🌐 {sessionData.language}</div>
-              <div className="SumItem">⭐ {sessionData.level}</div>
-              <div className="SumItem">💻 {sessionData.format}</div>
+              <div className="SumItem"><MdOutlineDateRange /> {sessionData.date}</div>
+              <div className="SumItem"><MdOutlineAccessTime /> {sessionData.time}</div>
+              <div className="SumItem"><FiClock /> {sessionData.duration}</div>
+              <div className="SumItem"><FiUsers /> {sessionData.bookedSeats} / {sessionData.totalSeats} Filled</div>
+              <div className="SumItem"><MdOutlineLanguage /> {sessionData.language}</div>
+              <div className="SumItem"><MdStar /> {sessionData.level}</div>
+              <div className="SumItem"><MdOutlineOndemandVideo /> {sessionData.format}</div>
             </div>
           </div>
         </div>
@@ -256,12 +257,11 @@ const LiveYogaDetails = () => {
           
           <section className="AgendaSection card">
             <h2>Session Agenda</h2>
-            <div className="Timeline">
+            <div className="SimpleAgendaList">
               {sessionData.agenda.map((step, i) => (
-                <div className="TimelineItem" key={i}>
-                  <div className="TimePoint"></div>
-                  <div className="TimeLabel">{step.time}</div>
-                  <div className="TaskLabel">{step.task}</div>
+                <div className="SimpleAgendaItem" key={i}>
+                  <span className="AgendaTime">{step.time}</span>
+                  <span className="AgendaDesc">{step.task}</span>
                 </div>
               ))}
             </div>
@@ -414,7 +414,7 @@ const LiveYogaDetails = () => {
                 Pre Book Now <MdKeyboardArrowRight className="ArrowAnim" />
               </button>
             </Link>
-            <p className="SecureCheckout">Secure Checkout</p>
+            <p className="SecureCheckout"><MdLock /> Secure Checkout</p>
           </div>
             
           </div>
