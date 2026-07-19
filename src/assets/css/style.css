@@ -1616,6 +1616,12 @@
 #HomeBanner .HomeBannerLeft .HomeBannerBottomBox .HomeBannerBottomRight .StudentsListBox .StudentsReviewBox {
   line-height: 1.1;
 }
+#HomeBanner .HomeBannerLeft .HomeBannerBottomBox .HomeBannerBottomRight .StudentsListBox .StudentsReviewBox .BasedOnText {
+  font-size: 11px;
+  color: #777;
+  display: block;
+  margin-bottom: 3px;
+}
 #HomeBanner .HomeBannerLeft .HomeBannerBottomBox .HomeBannerBottomRight .StudentsListBox .StudentsReviewBox h2 {
   font-size: 17px;
   font-weight: 700;
@@ -1681,61 +1687,38 @@
   background: #d27d5c;
   color: #fff;
   position: relative;
+  padding-bottom: 60px;
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent {
-  text-align: left;
+#HomeLiveCourse .HomeLiveCourseMain .SectionHeader {
+  text-align: center;
   width: 100%;
-  padding-top: 40px;
+  padding-top: 50px;
+  margin-bottom: 30px;
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent h2 {
-  font-size: 48px;
+#HomeLiveCourse .HomeLiveCourseMain .SectionHeader h2 {
+  font-size: 42px;
   line-height: 1.2;
   font-family: myFont2;
+  color: #fff;
 }
 @media (max-width: 480px) {
-  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent h2 {
+  #HomeLiveCourse .HomeLiveCourseMain .SectionHeader h2 {
     font-size: 28px;
   }
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent h2 span {
-  color: var(--primaryColor);
-  font-size: 48px;
-  line-height: 1.2;
-  font-family: myFont2;
-}
-@media (max-width: 480px) {
-  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent h2 span {
-    font-size: 28px;
-  }
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent p {
-  margin: 15px 0 25px;
+#HomeLiveCourse .HomeLiveCourseMain .SectionHeader p {
+  margin: 15px auto 0;
   max-width: 600px;
-  font-size: 15px;
-  color: #fff;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent .scrollDown {
-  font-size: 14px;
-  color: #fff;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  opacity: 0.8;
-  transition: 0.3s;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseContent .scrollDown:hover {
-  opacity: 1;
-  transform: translateY(2px);
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.9);
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox {
   width: 100%;
   position: relative;
-  margin-top: 30px;
-  padding-bottom: 40px;
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseSwiper {
   width: 100%;
+  padding-bottom: 20px;
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-slide {
   display: flex;
@@ -1743,186 +1726,412 @@
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-prev,
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-next {
-  width: 28px !important;
-  height: 28px !important;
+  width: 40px !important;
+  height: 40px !important;
   border-radius: 50%;
-  background: rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(4px);
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: #000;
   transition: background 0.25s ease, transform 0.25s ease;
+  z-index: 10;
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-prev::after,
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-next::after {
-  font-size: 12px !important;
+  font-size: 16px !important;
   font-weight: 700;
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-prev:hover,
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-next:hover {
-  background: rgba(0, 0, 0, 0.7);
+  background: #f1f5f9;
   transform: scale(1.08);
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-prev {
-  left: 12px !important;
+  left: 10px !important;
+}
+@media (max-width: 768px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-prev {
+    left: 0px !important;
+  }
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-next {
-  right: 12px !important;
+  right: 10px !important;
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox {
-  width: 100%;
-  height: 480px;
-  position: relative;
+@media (max-width: 768px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .swiper-button-next {
+    right: 0px !important;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard {
+  background: #fff;
+  border-radius: 24px;
   overflow: hidden;
-  border-radius: 15px;
-  cursor: pointer;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .MainImage {
-  width: 100%;
-  height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
-  transform: scale(1.03);
-  transition: transform 0.8s ease-out;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox:hover .MainImage {
-  transform: scale(1.08);
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .Overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.35);
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox {
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: #f2f6fc;
-  padding: 16px 22px;
-  text-align: center;
-  border-bottom-right-radius: 15px;
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.25);
-}
-@media (max-width: 480px) {
-  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox {
-    right: 0;
-    border-bottom-right-radius: 0px;
-  }
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimeTitle {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: #222;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid {
   display: flex;
-  align-items: flex-end;
-  gap: 16px;
+  align-items: stretch;
+  width: 95%;
+  margin: 0 auto;
+  cursor: pointer;
+  transition: transform 0.3s ease;
 }
-@media (max-width: 480px) {
-  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid {
-    justify-content: space-between;
+@media (max-width: 992px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard {
+    flex-direction: column-reverse;
+    width: 100%;
   }
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem {
-  text-align: center;
-  min-width: 52px;
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails {
+  width: 55%;
+  padding: 35px 40px;
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  text-align: left;
+}
+@media (max-width: 992px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails {
+    width: 100%;
+    padding: 25px;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CategoryBadge {
+  display: inline-flex;
   align-items: center;
   gap: 6px;
+  padding: 5px 12px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  border-radius: 50px;
+  width: -moz-fit-content;
+  width: fit-content;
+  font-family: var(--myFont1);
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard {
-  width: 52px;
-  height: 70px;
-  background: linear-gradient(to bottom, #ffffff, #f3f3f3);
-  border-radius: 4px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-  position: relative;
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CategoryBadge .icon {
+  font-size: 14px;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails h2 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.2;
+  font-family: myFont2;
+  margin: 0;
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails h2 {
+    font-size: 22px;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails p.desc {
+  font-size: 14px;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0;
+  font-family: var(--myFont1);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .MetaRow1 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .MetaRow1 .dot {
+  color: #cbd5e1;
+  font-size: 16px;
+  line-height: 1;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .MetaRow1 .Badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  background: #f1f5f9;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-family: var(--myFont1);
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .MetaRow1 .Badge .icon {
+  font-size: 15px;
+  color: #64748b;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .MetaRow1 .Badge .icon.star {
+  color: #f59e0b;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .MetaRow1 .Badge.difficulty {
+  background: #dcfce7;
+  color: #166534;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .MetaRow1 .Badge.difficulty .icon {
+  color: #166534;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InfoChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 0 0 0;
+  border-top: 1px solid #e2e8f0;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InfoChips .Chip {
+  font-size: 13px;
+  font-weight: 500;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--myFont1);
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InfoChips .Chip .icon {
+  font-size: 15px;
+  color: var(--primaryColor);
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InstructorRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InstructorRow .dot {
+  color: #cbd5e1;
+  font-size: 16px;
+  line-height: 1;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InstructorRow .InstructorInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InstructorRow .InstructorInfo .ProfileImg {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InstructorRow .InstructorInfo .ProfilePlaceholder {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  font-size: 14px;
 }
-@media (max-width: 480px) {
-  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard {
-    height: 40px;
-  }
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 1px;
-  background: #dadada;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard .TimerNumber {
-  font-size: 30px;
-  font-weight: 800;
-  font-family: myFont2;
-  color: #000;
-  line-height: 1;
-}
-@media (max-width: 480px) {
-  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem .TimerCard .TimerNumber {
-    font-size: 18px;
-  }
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem p {
-  font-size: 20px;
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InstructorRow .InstructorInfo .Name {
+  font-size: 13px;
   font-weight: 600;
-  color: #000;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin: 0;
-  font-family: myFont2;
+  color: #1e293b;
+  font-family: var(--myFont1);
 }
-@media (max-width: 480px) {
-  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .TimingBox .TimerGrid .TimerItem p {
-    font-size: 16px;
-  }
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InstructorRow .Language {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 500;
+  font-family: var(--myFont1);
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .BookBtn {
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  background: #f2f6fc;
-  padding: 12px 18px;
-  font-size: 18px;
-  font-family: myFont1;
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InstructorRow .Language .icon {
+  font-size: 15px;
+  color: var(--primaryColor);
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .SeatsLeft {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ea580c;
+  background: #ffedd5;
+  padding: 6px 12px;
+  border-radius: 6px;
+  width: -moz-fit-content;
+  width: fit-content;
+  font-family: var(--myFont1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .SeatsLeft .icon.fire {
+  font-size: 16px;
+  color: #ea580c;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper {
+  margin-top: 10px;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .PrimaryBtn {
+  background: var(--primaryColor);
+  color: #fff;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-size: 16px;
   font-weight: 700;
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  color: var(--primaryColor);
-  border-top-left-radius: 15px;
-  box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.25);
-  transition: background 0.3s, transform 0.3s;
+  justify-content: center;
+  gap: 8px;
+  transition: 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: var(--myFont1);
+  width: -moz-fit-content;
+  width: fit-content;
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .BookBtn .arrowAnim {
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .PrimaryBtn {
+    width: 100%;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .PrimaryBtn .arrowAnim {
   animation: arrowMove 1.4s infinite ease-in-out;
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveCourseImgBox .BookBtn:hover {
-  background: #ededed;
-  transform: translateY(-2px);
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .PrimaryBtn:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  background: #bc6b4b;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .CtaSubtext {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 8px;
+  font-weight: 500;
+  font-family: var(--myFont1);
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .CtaSubtext {
+    text-align: center;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper {
+  width: 45%;
+  position: relative;
+}
+@media (max-width: 992px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper {
+    width: 100%;
+    height: 300px;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .MainImage {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  z-index: 2;
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox {
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    border-radius: 12px;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimeTitle {
+  font-size: 11px;
+  font-weight: 800;
+  color: #334155;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGrid {
+  display: flex;
+  gap: 12px;
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGrid {
+    gap: 6px;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGrid .TimerItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGrid .TimerItem .TimerCard {
+  background: #f1f5f9;
+  padding: 10px 12px;
+  border-radius: 8px;
+  min-width: 48px;
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGrid .TimerItem .TimerCard {
+    min-width: 38px;
+    padding: 6px;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGrid .TimerItem .TimerCard .TimerNumber {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primaryColor);
+  font-family: myFont2;
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGrid .TimerItem .TimerCard .TimerNumber {
+    font-size: 16px;
+  }
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGrid .TimerItem p {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+@media (max-width: 480px) {
+  #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGrid .TimerItem p {
+    font-size: 9px;
+  }
 }
 @keyframes arrowMove {
   0% {
-    transform: translateY(0);
+    transform: translateX(0);
   }
   50% {
-    transform: translateY(-4px);
+    transform: translateX(4px);
   }
   100% {
-    transform: translateY(0);
+    transform: translateX(0);
   }
 }
 
