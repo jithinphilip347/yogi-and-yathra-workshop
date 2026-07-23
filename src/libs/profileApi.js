@@ -1,9 +1,12 @@
-import apiClient from "@/services/apiClient"
+import apiClient from "@/services/apiClient";
+
 const ProfileApi = {
-    update: ({ id,data }) => apiClient.post(`user/profile/${id}`,data, {
-        headers: {
-            "Content-Type": "multipart/form-data"
-        }
+  update: ({ id, data }) =>
+    apiClient.post(`auth/profile`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }),
-}
-export default ProfileApi
+};
+
+export default ProfileApi;
