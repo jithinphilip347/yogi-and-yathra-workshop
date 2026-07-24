@@ -9,6 +9,7 @@ import HomeTestimonial from "@/components/home/HomeTestimonial";
 import HomeTopRated from "@/components/home/HomeTopRated";
 import HomeTrending from "@/components/home/HomeTrending";
 import { fetchCategories, fetchDailyClasses, fetchLiveSections } from "@/libs/course";
+import HomeFAQ from "@/components/home/HomeFAQ";
 
 const revalidate = 600;
 
@@ -30,6 +31,7 @@ export default async function Home() {
     <HomeTopRated />
     <HomeTestimonial />
     <HomeTeacher />
+    <HomeFAQ />
     </>
   );
 }

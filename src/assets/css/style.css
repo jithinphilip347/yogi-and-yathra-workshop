@@ -8923,6 +8923,43 @@
   padding-bottom: 30px;
   border-bottom: 1px solid #f1f5f9;
 }
+#TeacherDetails .ProfileSidebar .ProfileBasicInfo .HeaderTrustBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+#TeacherDetails .ProfileSidebar .ProfileBasicInfo .HeaderTrustBadge .Stars {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 14px;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileSidebar .ProfileBasicInfo .HeaderTrustBadge .Stars .star-icon {
+  color: #f59e0b;
+}
+#TeacherDetails .ProfileSidebar .ProfileBasicInfo .HeaderTrustBadge .ReviewCount {
+  font-size: 13px;
+  color: #64748b;
+  font-family: myFont1;
+  font-weight: 500;
+}
+#TeacherDetails .ProfileSidebar .ProfileBasicInfo .FeaturedBadge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: #fef3c7;
+  color: #d97706;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  font-family: myFont1;
+  border: 1px solid #fde68a;
+}
 @media (max-width: 1024px) {
   #TeacherDetails .ProfileSidebar .ProfileBasicInfo {
     margin-bottom: 30px;
@@ -9219,45 +9256,113 @@
   background: linear-gradient(90deg, var(--primaryColor), transparent);
   border-radius: 3px;
 }
-#TeacherDetails .ProfileContent .AboutSection p {
+#TeacherDetails .ProfileContent .AboutSection p.BioText {
   font-size: 16px;
   color: #334155;
   line-height: 1.8;
-  margin: 0;
+  margin: 0 0 25px 0;
   font-family: myFont1;
 }
-#TeacherDetails .ProfileContent .SkillsSection .SkillsGrid {
-  display: flex;
-  flex-wrap: wrap;
+#TeacherDetails .ProfileContent .AboutSection .TeachingPhilosophy {
+  background: #f8fafc;
+  padding: 25px;
+  border-radius: 12px;
+  border-left: 4px solid var(--primaryColor);
+  margin-bottom: 30px;
+}
+#TeacherDetails .ProfileContent .AboutSection .TeachingPhilosophy h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 10px;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .AboutSection .TeachingPhilosophy blockquote {
+  font-size: 17px;
+  font-style: italic;
+  color: #475569;
+  margin: 0;
+  line-height: 1.6;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .AboutSection .ExpertiseArea {
+  margin-bottom: 30px;
+}
+#TeacherDetails .ProfileContent .AboutSection .ExpertiseArea h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 15px;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .AboutSection .ExpertiseArea .ExpertiseList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px;
 }
-#TeacherDetails .ProfileContent .SkillsSection .SkillsGrid .SkillBadge {
+#TeacherDetails .ProfileContent .AboutSection .ExpertiseArea .ExpertiseList li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: #334155;
+  font-family: myFont1;
+  font-weight: 500;
+}
+#TeacherDetails .ProfileContent .AboutSection .ExpertiseArea .ExpertiseList li .check-icon {
+  color: #10b981;
+  font-size: 18px;
+}
+#TeacherDetails .ProfileContent .AboutSection .LanguagesArea h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 15px;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .AboutSection .LanguagesArea .LangList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+#TeacherDetails .ProfileContent .AboutSection .LanguagesArea .LangList .LangBadge {
+  padding: 8px 16px;
+  background: #f1f5f9;
+  color: #475569;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .CoursesSection .SectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+#TeacherDetails .ProfileContent .CoursesSection .SectionHeader h2 {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+#TeacherDetails .ProfileContent .CoursesSection .SectionHeader h2::after {
+  display: none;
+}
+#TeacherDetails .ProfileContent .CoursesSection .SectionHeader .ViewAllLink {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 20px;
-  background: #f8fafc;
-  color: #334155;
-  border-radius: 50px;
-  font-size: 15px;
-  font-weight: 500;
-  border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
-}
-#TeacherDetails .ProfileContent .SkillsSection .SkillsGrid .SkillBadge .leaf-icon {
   color: var(--primaryColor);
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
   transition: 0.3s;
+  font-family: myFont1;
 }
-#TeacherDetails .ProfileContent .SkillsSection .SkillsGrid .SkillBadge:hover {
-  background: var(--primaryColor);
-  color: #fff;
-  border-color: var(--primaryColor);
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(var(--primaryColor), 0.2);
-}
-#TeacherDetails .ProfileContent .SkillsSection .SkillsGrid .SkillBadge:hover .leaf-icon {
-  color: #fff;
+#TeacherDetails .ProfileContent .CoursesSection .SectionHeader .ViewAllLink:hover {
+  gap: 12px;
 }
 #TeacherDetails .ProfileContent .CoursesSection .TeacherCoursesGrid {
   display: grid;
@@ -9273,10 +9378,267 @@
   width: 100%;
   max-width: 100%;
 }
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid .DailyClassCard {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 24px;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid .DailyClassCard:hover {
+  border-color: var(--primaryColor);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transform: translateY(-3px);
+}
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid .DailyClassCard .ClassInfo {
+  margin-bottom: 20px;
+}
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid .DailyClassCard .ClassInfo h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 15px;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid .DailyClassCard .ClassInfo .ClassMeta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid .DailyClassCard .ClassInfo .ClassMeta span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #64748b;
+  font-family: myFont1;
+  font-weight: 500;
+}
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid .DailyClassCard .ClassInfo .ClassMeta span svg {
+  color: var(--primaryColor);
+}
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid .DailyClassCard .EnrollBtn {
+  width: 100%;
+  padding: 10px;
+  background: #f8fafc;
+  color: var(--primaryColor);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  font-family: myFont1;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#TeacherDetails .ProfileContent .LiveClassesSection .DailyClassesGrid .DailyClassCard .EnrollBtn:hover {
+  background: var(--primaryColor);
+  color: #fff;
+  border-color: var(--primaryColor);
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  transition: 0.3s;
+}
+@media (max-width: 480px) {
+  #TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard:hover {
+  border-color: var(--primaryColor);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .WsDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fff5f5;
+  color: var(--primaryColor);
+  min-width: 70px;
+  height: 70px;
+  border-radius: 12px;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .WsDate .WsDay {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .WsDate .WsMonth {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .WsInfo {
+  flex: 1;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .WsInfo h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 8px;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .WsInfo .WsMeta {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .WsInfo .WsMeta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  font-family: myFont1;
+  font-weight: 500;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .WsInfo .WsMeta span svg {
+  color: var(--primaryColor);
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .WsInfo .SeatsLeft {
+  font-size: 12px;
+  color: #e11d48;
+  font-weight: 600;
+  background: #ffe4e6;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .PreBookBtn {
+  padding: 8px 14px;
+  background: var(--primaryColor);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard .PreBookBtn:hover {
+  opacity: 0.9;
+  box-shadow: 0 5px 15px rgba(var(--primaryColor), 0.3);
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #f1f5f9;
+}
+@media (max-width: 768px) {
+  #TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 25px;
+  }
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .OverallRating {
+  text-align: center;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .OverallRating h2 {
+  font-size: 64px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 10px 0;
+  padding: 0 !important;
+  line-height: 1;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .OverallRating h2::after {
+  display: none;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .OverallRating .Stars {
+  color: #f59e0b;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .OverallRating p {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+  margin: 0;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .RatingBreakdown {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .RatingBreakdown .BreakdownRow {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .RatingBreakdown .BreakdownRow .StarLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  min-width: 45px;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .RatingBreakdown .BreakdownRow .StarLabel .star-icon {
+  color: #f59e0b;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .RatingBreakdown .BreakdownRow .ProgressBar {
+  flex: 1;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .RatingBreakdown .BreakdownRow .ProgressBar .ProgressFill {
+  height: 100%;
+  background: #f59e0b;
+  border-radius: 10px;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsTop .RatingBreakdown .BreakdownRow .CountLabel {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  min-width: 30px;
+}
 #TeacherDetails .ProfileContent .ReviewsSection .ReviewsList {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+#TeacherDetails .ProfileContent .ReviewsSection .ReviewsList .LatestReviewsTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 10px;
+  font-family: myFont1;
 }
 #TeacherDetails .ProfileContent .ReviewsSection .ReviewsList .ReviewCard {
   background: #fdfdfd;
@@ -9358,6 +9720,119 @@
   position: relative;
   padding-top: 10px;
   font-style: italic;
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid .RelatedTeacherCard {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  transition: 0.3s;
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid .RelatedTeacherCard:hover {
+  border-color: var(--primaryColor);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+  transform: translateY(-3px);
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid .RelatedTeacherCard .RelImage {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  margin: 0 auto 15px;
+  border: 2px solid #f1f5f9;
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid .RelatedTeacherCard h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 5px;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid .RelatedTeacherCard .RelSpec {
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 10px;
+  font-family: myFont1;
+  font-weight: 500;
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid .RelatedTeacherCard .RelRating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 15px;
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid .RelatedTeacherCard .RelRating .star-icon {
+  color: #f59e0b;
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid .RelatedTeacherCard .ViewProfileBtn {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .RelatedTeachersSection .RelatedTeachersGrid .RelatedTeacherCard .ViewProfileBtn:hover {
+  background: var(--primaryColor);
+  color: #fff;
+  border-color: var(--primaryColor);
+}
+#TeacherDetails .ProfileContent .BottomCTA {
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border-radius: 24px;
+  padding: 50px 40px;
+  text-align: center;
+  color: #fff;
+  margin-top: 20px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+}
+#TeacherDetails .ProfileContent .BottomCTA h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff !important;
+  margin-bottom: 25px;
+  line-height: 1.4;
+  padding-bottom: 0 !important;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .BottomCTA h2::after {
+  display: none !important;
+}
+@media (max-width: 768px) {
+  #TeacherDetails .ProfileContent .BottomCTA h2 {
+    font-size: 24px;
+  }
+}
+#TeacherDetails .ProfileContent .BottomCTA .ExploreBtn {
+  padding: 15px 35px;
+  background: var(--primaryColor);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .BottomCTA .ExploreBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(var(--primaryColor), 0.4);
 }
 
 #Cart {
