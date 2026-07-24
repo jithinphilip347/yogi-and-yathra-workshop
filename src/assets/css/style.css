@@ -8826,12 +8826,12 @@
 
 #TeacherDetails {
   width: 100%;
-  padding: 100px 0;
+  padding: 60px 0;
   background-color: #fff;
 }
 @media (max-width: 1024px) {
   #TeacherDetails {
-    padding: 60px 0px;
+    padding: 50px 0px;
   }
 }
 @media (max-width: 768px) {
@@ -8844,25 +8844,49 @@
     padding: 30px 0px;
   }
 }
+@media (max-width: 420px) {
+  #TeacherDetails {
+    padding: 25px 0px;
+  }
+}
 #TeacherDetails .TeacherProfileWrapper {
   display: flex;
   align-items: flex-start;
-  gap: 40px;
+  gap: 20px;
+}
+@media (max-width: 1024px) {
+  #TeacherDetails .TeacherProfileWrapper {
+    gap: 20px;
+  }
 }
 @media (max-width: 992px) {
   #TeacherDetails .TeacherProfileWrapper {
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
+  }
+}
+@media (max-width: 768px) {
+  #TeacherDetails .TeacherProfileWrapper {
+    gap: 15px;
+  }
+}
+@media (max-width: 480px) {
+  #TeacherDetails .TeacherProfileWrapper {
+    gap: 15px;
+  }
+}
+@media (max-width: 420px) {
+  #TeacherDetails .TeacherProfileWrapper {
+    gap: 10px;
   }
 }
 #TeacherDetails .ProfileSidebar {
-  width: 350px;
+  width: 310px;
   flex-shrink: 0;
   background: #fff;
-  border-radius: 24px;
-  padding: 40px 30px;
+  border-radius: 16px;
+  padding: 20px;
   border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
   position: sticky;
   top: 100px;
 }
@@ -8870,33 +8894,33 @@
   #TeacherDetails .ProfileSidebar {
     width: 100%;
     position: static;
-    padding: 25px 25px;
+    padding: 20px;
   }
 }
 @media (max-width: 768px) {
   #TeacherDetails .ProfileSidebar {
     width: 100%;
     position: static;
-    padding: 20px 20px;
+    padding: 15px;
   }
 }
 @media (max-width: 480px) {
   #TeacherDetails .ProfileSidebar {
     width: 100%;
     position: static;
-    padding: 15px 15px;
+    padding: 15px;
   }
 }
 @media (max-width: 420px) {
   #TeacherDetails .ProfileSidebar {
     width: 100%;
     position: static;
-    padding: 10px 10px;
+    padding: 10px;
   }
 }
 #TeacherDetails .ProfileSidebar .ProfileImageWrapper {
   width: 100%;
-  height: 320px;
+  height: 200px;
   border-radius: 20px;
   position: relative;
   overflow: hidden;
@@ -8919,8 +8943,8 @@
 }
 #TeacherDetails .ProfileSidebar .ProfileBasicInfo {
   text-align: center;
-  margin-bottom: 35px;
-  padding-bottom: 30px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
   border-bottom: 1px solid #f1f5f9;
 }
 #TeacherDetails .ProfileSidebar .ProfileBasicInfo .HeaderTrustBadge {
@@ -9108,81 +9132,22 @@
   background: var(--primaryColor);
   box-shadow: 0 8px 20px rgba(var(--primaryColor), 0.3);
 }
-#TeacherDetails .ProfileSidebar .ProfileStats {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-#TeacherDetails .ProfileSidebar .ProfileStats .StatBox {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  padding: 12px 15px;
-  border-radius: 16px;
-  background: #f8fafc;
-  border: 1px solid transparent;
-  transition: 0.3s;
-}
-#TeacherDetails .ProfileSidebar .ProfileStats .StatBox:hover {
-  background: #fff;
-  border-color: #e2e8f0;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-}
-#TeacherDetails .ProfileSidebar .ProfileStats .StatBox .StatIcon {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: #fff;
-  color: var(--primaryColor);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
-  transition: 0.3s;
-}
-#TeacherDetails .ProfileSidebar .ProfileStats .StatBox .StatInfo h4 {
-  font-size: 18px;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 4px;
-  font-family: myFont1;
-}
-#TeacherDetails .ProfileSidebar .ProfileStats .StatBox .StatInfo p {
-  font-size: 13px;
-  color: #64748b;
-  font-weight: 500;
-  margin: 0;
-  font-family: myFont1;
-}
-#TeacherDetails .ProfileSidebar .ProfileStats .StatBox:nth-child(2) .StatIcon {
-  color: #3b82f6;
-}
-#TeacherDetails .ProfileSidebar .ProfileStats .StatBox:nth-child(3) .StatIcon {
-  color: #d946ef;
-}
-#TeacherDetails .ProfileSidebar .ProfileStats .StatBox:nth-child(4) .StatIcon {
-  color: #e11d48;
-}
-#TeacherDetails .ProfileSidebar .ProfileStats .StatBox:hover .StatIcon {
-  transform: scale(1.1);
-}
 #TeacherDetails .ProfileContent {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 15px;
+  min-width: 0;
 }
 #TeacherDetails .ProfileContent .ContentSection {
   background: #fff;
-  border-radius: 24px;
-  padding: 45px;
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.03);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 @media (max-width: 768px) {
   #TeacherDetails .ProfileContent .ContentSection {
-    padding: 20px;
+    padding: 15px;
   }
 }
 @media (max-width: 480px) {
@@ -9193,7 +9158,7 @@
 #TeacherDetails .ProfileContent .ContentSection.QuoteSection {
   background: #f8f6f5;
   border: none;
-  padding: 40px;
+  padding: 30px;
   text-align: center;
   border-left: 5px solid var(--primaryColor);
   border-radius: 15px;
@@ -9265,10 +9230,10 @@
 }
 #TeacherDetails .ProfileContent .AboutSection .TeachingPhilosophy {
   background: #f8fafc;
-  padding: 25px;
+  padding: 20px;
   border-radius: 12px;
   border-left: 4px solid var(--primaryColor);
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 #TeacherDetails .ProfileContent .AboutSection .TeachingPhilosophy h4 {
   font-size: 16px;
@@ -9285,8 +9250,48 @@
   line-height: 1.6;
   font-family: myFont1;
 }
+#TeacherDetails .ProfileContent .AboutSection .ProfileStatsRight {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+  margin-bottom: 25px;
+}
+#TeacherDetails .ProfileContent .AboutSection .ProfileStatsRight .StatBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+#TeacherDetails .ProfileContent .AboutSection .ProfileStatsRight .StatBox .StatIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--primaryColor);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+#TeacherDetails .ProfileContent .AboutSection .ProfileStatsRight .StatBox .StatInfo h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+  font-family: myFont1;
+}
+#TeacherDetails .ProfileContent .AboutSection .ProfileStatsRight .StatBox .StatInfo p {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  font-family: myFont1;
+  margin: 0;
+}
 #TeacherDetails .ProfileContent .AboutSection .ExpertiseArea {
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 #TeacherDetails .ProfileContent .AboutSection .ExpertiseArea h4 {
   font-size: 18px;
@@ -9367,7 +9372,7 @@
 #TeacherDetails .ProfileContent .CoursesSection .TeacherCoursesGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 25px;
+  gap: 20px;
 }
 @media (max-width: 1024px) {
   #TeacherDetails .ProfileContent .CoursesSection .TeacherCoursesGrid {
@@ -9445,7 +9450,7 @@
 }
 #TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
 }
 #TeacherDetails .ProfileContent .WorkshopsSection .WorkshopsGrid .WorkshopCard {
@@ -9646,7 +9651,7 @@
   padding: 30px;
   border: 1px solid #f1f5f9;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  box-shadow: none;
 }
 @media (max-width: 1024px) {
   #TeacherDetails .ProfileContent .ReviewsSection .ReviewsList .ReviewCard {
@@ -9833,6 +9838,90 @@
 #TeacherDetails .ProfileContent .BottomCTA .ExploreBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(var(--primaryColor), 0.4);
+}
+#TeacherDetails .RelatedTeachersFullWidth {
+  width: 100%;
+  margin-top: 30px;
+  padding-top: 30px;
+  border-top: 1px solid #f1f5f9;
+}
+#TeacherDetails .RelatedTeachersFullWidth h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+  font-family: myFont1;
+  margin-bottom: 30px;
+}
+@media (max-width: 1024px) {
+  #TeacherDetails .RelatedTeachersFullWidth h2 {
+    font-size: 18px;
+    margin-bottom: 25px;
+  }
+}
+@media (max-width: 768px) {
+  #TeacherDetails .RelatedTeachersFullWidth h2 {
+    font-size: 17px;
+    margin-bottom: 25px;
+  }
+}
+@media (max-width: 480px) {
+  #TeacherDetails .RelatedTeachersFullWidth h2 {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+}
+@media (max-width: 420px) {
+  #TeacherDetails .RelatedTeachersFullWidth h2 {
+    font-size: 15px;
+    margin-bottom: 20px;
+  }
+}
+#TeacherDetails .RelatedTeachersFullWidth .RelatedTeachersGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+@media (max-width: 1200px) {
+  #TeacherDetails .RelatedTeachersFullWidth .RelatedTeachersGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+@media (max-width: 1024px) {
+  #TeacherDetails .RelatedTeachersFullWidth .RelatedTeachersGrid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+  }
+}
+@media (max-width: 992px) {
+  #TeacherDetails .RelatedTeachersFullWidth .RelatedTeachersGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+@media (max-width: 768px) {
+  #TeacherDetails .RelatedTeachersFullWidth .RelatedTeachersGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+@media (max-width: 600px) {
+  #TeacherDetails .RelatedTeachersFullWidth .RelatedTeachersGrid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+@media (max-width: 480px) {
+  #TeacherDetails .RelatedTeachersFullWidth .RelatedTeachersGrid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}
+@media (max-width: 420px) {
+  #TeacherDetails .RelatedTeachersFullWidth .RelatedTeachersGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
 }
 
 #Cart {

@@ -162,18 +162,6 @@ const Page = () => {
                 </div>
               )}
             </div>
-
-            <div className="ProfileStats">
-              {teacher.stats.map((stat, index) => (
-                <div className="StatBox" key={index}>
-                  <div className="StatIcon">{stat.icon}</div>
-                  <div className="StatInfo">
-                    <h4>{stat.value}</h4>
-                    <p>{stat.label}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* RIGHT CONTENT */}
@@ -190,6 +178,18 @@ const Page = () => {
                   <blockquote>&quot;{teacher.philosophy}&quot;</blockquote>
                 </div>
               )}
+
+              <div className="ProfileStatsRight">
+                {teacher.stats.map((stat, index) => (
+                  <div className="StatBox" key={index}>
+                    <div className="StatIcon">{stat.icon}</div>
+                    <div className="StatInfo">
+                      <h4>{stat.value}</h4>
+                      <p>{stat.label}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
 
               <div className="ExpertiseArea">
                 <h4>Areas of Expertise</h4>
@@ -259,7 +259,7 @@ const Page = () => {
                           <span><FaUserGraduate /> {cls.level}</span>
                         </div>
                       </div>
-                      <button className="EnrollBtn">Enroll</button>
+                      <button className="EnrollBtn">View Details</button>
                     </div>
                   ))}
                 </div>
@@ -340,28 +340,29 @@ const Page = () => {
               </div>
             </div>
 
-            {/* RELATED TEACHERS */}
-            {teacher.relatedTeachers && teacher.relatedTeachers.length > 0 && (
-              <div className="ContentSection RelatedTeachersSection">
-                <h2>Meet More Instructors</h2>
-                <div className="RelatedTeachersGrid">
-                  {teacher.relatedTeachers.map((rel) => (
-                    <TeacherBox
-                      key={rel.id}
-                      image={rel.image}
-                      name={rel.name}
-                      position={rel.specialization}
-                      twitter="#"
-                      instagram="#"
-                      profileLink="/teacher-list/teacher-details"
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
           </div>
         </div>
+
+        {/* RELATED TEACHERS - FULL WIDTH */}
+        {teacher.relatedTeachers && teacher.relatedTeachers.length > 0 && (
+          <div className="RelatedTeachersFullWidth">
+            <h2>Meet More Instructors</h2>
+            <div className="RelatedTeachersGrid">
+              {teacher.relatedTeachers.map((rel) => (
+                <TeacherBox
+                  key={rel.id}
+                  image={rel.image}
+                  name={rel.name}
+                  position={rel.specialization}
+                  twitter="#"
+                  instagram="#"
+                  profileLink="/teacher-list/teacher-details"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
