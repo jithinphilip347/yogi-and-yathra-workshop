@@ -139,7 +139,7 @@ const LiveStream = () => {
             </section>
           </div>
 
-          <div className="DetailsRight">
+          {/* <div className="DetailsRight">
             <section className="DetailSection AgendaSection">
               <h2 className="SectionTitle">Session Agenda</h2>
               <div className="SimpleAgendaList">
@@ -173,7 +173,7 @@ const LiveStream = () => {
                 </div>
               </div>
             </section>
-          </div>
+          </div> */}
           
         </div>
       </div>

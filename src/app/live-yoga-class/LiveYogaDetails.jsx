@@ -255,7 +255,7 @@ const LiveYogaDetails = () => {
           </div>
 
           
-          <section className="AgendaSection card">
+          {/* <section className="AgendaSection card">
             <h2>Session Agenda</h2>
             <div className="SimpleAgendaList">
               {sessionData.agenda.map((step, i) => (
@@ -265,7 +265,7 @@ const LiveYogaDetails = () => {
                 </div>
               ))}
             </div>
-          </section>
+          </section> */}
 
          
           <section className="FeaturesGridSection card">
