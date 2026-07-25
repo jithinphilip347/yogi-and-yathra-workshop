@@ -28,7 +28,7 @@ const Page = () => {
         name: inst.name,
         role: inst.professional_title || "Instructor",
         img: inst.avatar_url
-          ? MEDIA_BASE_URL + inst.avatar_url
+          ?  inst.avatar_url
           : "/images/placeholder-avatar.jpg",
         twitter: inst.linkdin ? "#" : undefined,
         instagram: inst.instagram ? "#" : undefined,

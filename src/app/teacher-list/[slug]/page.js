@@ -319,8 +319,8 @@ const Page = () => {
                           )}
                           <span><FaRegClock /> {cls.human_class_time || cls.class_time || "TBD"}</span>
                           <span><FaVideo /> {cls.duration || "N/A"}</span>
-                          {cls.short_description && (
-                            <span><FaUserGraduate /> {cls.short_description}</span>
+                          {(
+                            <span><FaUserGraduate />100</span>
                           )}
                         </div>
                       </div>

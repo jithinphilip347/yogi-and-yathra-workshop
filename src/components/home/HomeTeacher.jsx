@@ -19,9 +19,7 @@ const HomeTeacher = () => {
             id: inst.id,
             name: inst.name,
             role: inst.professional_title || "Instructor",
-            img: inst.avatar_url
-              ? MEDIA_BASE_URL + inst.avatar_url
-              : "/images/placeholder-avatar.jpg",
+            img: inst.avatar_url,
             twitter: inst.linkdin ? "#" : undefined,
             instagram: inst.instagram ? "#" : undefined,
             link: `/teacher-list/${inst.slug || inst.id}`,

@@ -14,6 +14,8 @@ const TeacherBox = ({
   loading = false,
 }) => {
 
+  
+
   if (loading) {
     return (
       <div className="TeacherBox skeleton">
@@ -35,6 +37,7 @@ const TeacherBox = ({
   }
 
   return (
+    
     <div className="TeacherBox">
       <div className="TeacherImage">
         <Image src={image} alt={name} fill className="img" />
