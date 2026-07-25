@@ -1,75 +1,100 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import Team1 from "../../assets/images/team-1.webp";
-import Team2 from "../../assets/images/team-2.webp";
-import Team3 from "../../assets/images/team-3.webp";
-import Team4 from "../../assets/images/instructor-1.webp";
+import React, { useState, useEffect, useCallback } from "react";
 import TeacherBox from "../../components/teachersBox/TeacherBox";
-
-const teacherData = [
-  ...Array.from({ length: 12 }).map((_, i) => ({
-    id: i + 1,
-    name: [
-      "Alice Johnson",
-      "Carter Botosh",
-      "Phillip Ekstrom",
-      "Abram Culhane",
-      "Eleanor Pena",
-      "Darrell Steward",
-      "Wade Warren",
-      "Bessie Cooper",
-      "Courtney Henry",
-      "Cody Fisher",
-      "Ralph Edwards",
-      "Theresa Webb",
-    ][i],
-    role: [
-      "CEO & Founder",
-      "Chief Financial Officer",
-      "Head of Technology",
-      "Lead Developer",
-      "Marketing Head",
-      "UI/UX Designer",
-      "Product Manager",
-      "HR Manager",
-      "Software Engineer",
-      "QA Engineer",
-      "DevOps Engineer",
-      "Content Writer",
-    ][i],
-    img: [
-      Team1,
-      Team2,
-      Team3,
-      Team4,
-      Team1,
-      Team2,
-      Team3,
-      Team4,
-      Team1,
-      Team2,
-      Team3,
-      Team4,
-    ][i],
-    twitter: "#",
-    instagram: "#",
-    link: "/teacher-list/teacher-details",
-  })),
-];
+import { fetchInstructors } from "@/libs/course";
+import { MEDIA_BASE_URL } from "@/utils/constants";
 
 const Page = () => {
-  const [visibleCount, setVisibleCount] = useState(8);
+  const [instructors, setInstructors] = useState([]);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
+  const loadInstructors = useCallback(async (pageNum, append = false) => {
+    try {
+      if (append) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+
+      const res = await fetchInstructors({ page: pageNum, perPage: 12 });
+      const data = res?.data || [];
+      const meta = res?.meta || {};
+
+      const mapped = data.map((inst) => ({
+        id: inst.id,
+        name: inst.name,
+        role: inst.professional_title || "Instructor",
+        img: inst.avatar_url
+          ? MEDIA_BASE_URL + inst.avatar_url
+          : "/images/placeholder-avatar.jpg",
+        twitter: inst.linkdin ? "#" : undefined,
+        instagram: inst.instagram ? "#" : undefined,
+        link: `/teacher-list/${inst.slug || inst.id}`,
+      }));
+
+      if (append) {
+        setInstructors((prev) => [...prev, ...mapped]);
+      } else {
+        setInstructors(mapped);
+      }
+
+      setHasMore(pageNum < (meta.last_page || 1));
+    } catch (err) {
+      console.error("Failed to load instructors:", err);
+    } finally {
       setLoading(false);
-    }, 1000);
-    return () => clearTimeout(timer);
+      setLoadingMore(false);
+    }
   }, []);
 
+  useEffect(() => {
+    loadInstructors(1);
+  }, [loadInstructors]);
+
   const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 4);
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadInstructors(nextPage, true);
+  };
+
+  const renderGridContent = () => {
+    if (loading) {
+      return Array(8)
+        .fill(0)
+        .map((_, i) => <TeacherBox key={i} loading={true} />);
+    }
+
+    if (instructors.length === 0) {
+      return (
+        <div
+          className="empty-state"
+          style={{
+            gridColumn: '1 / -1',
+            textAlign: 'center',
+            padding: '60px 20px',
+            color: '#888',
+          }}
+        >
+          <h3 style={{ fontSize: '1.2rem', marginBottom: 8 }}>No Instructors Found</h3>
+          <p>There are no instructors available at the moment. Please check back later.</p>
+        </div>
+      );
+    }
+
+    return instructors.map((member) => (
+      <TeacherBox
+        key={member.id}
+        image={member.img}
+        name={member.name}
+        position={member.role}
+        twitter={member.twitter}
+        instagram={member.instagram}
+        profileLink={member.link}
+      />
+    ));
   };
 
   return (
@@ -86,29 +111,17 @@ const Page = () => {
 
         <div className="TeacherListMain">
           <div className="TeacherGrid">
-            {loading
-              ? Array(8)
-                  .fill(0)
-                  .map((_, i) => <TeacherBox key={i} loading={true} />)
-              : teacherData
-                  .slice(0, visibleCount)
-                  .map((member) => (
-                    <TeacherBox
-                      key={member.id}
-                      image={member.img}
-                      name={member.name}
-                      position={member.role}
-                      twitter={member.twitter}
-                      instagram={member.instagram}
-                      profileLink={member.link}
-                    />
-                  ))}
+            {renderGridContent()}
           </div>
 
-          {visibleCount < teacherData.length && !loading && (
+          {hasMore && !loading && (
             <div className="loadMoreContainer">
-              <button onClick={handleLoadMore} className="loadMoreBtn">
-                Load More Teachers
+              <button
+                onClick={handleLoadMore}
+                className="loadMoreBtn"
+                disabled={loadingMore}
+              >
+                {loadingMore ? "Loading..." : "Load More Teachers"}
               </button>
             </div>
           )}

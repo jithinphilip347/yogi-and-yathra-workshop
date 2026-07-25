@@ -1,60 +1,39 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import TeacherBox from "../teachersBox/TeacherBox";
-
-import Team1 from "../../assets/images/team-1.webp";
-import Team2 from "../../assets/images/team-2.webp";
-import Team3 from "../../assets/images/team-3.webp";
-import Team4 from "../../assets/images/instructor-1.webp";
 import Link from "next/link";
+import { fetchFeaturedInstructors } from "@/libs/course";
+import { MEDIA_BASE_URL } from "@/utils/constants";
 
 const HomeTeacher = () => {
   const [loading, setLoading] = useState(true);
-  const [teamMembers, setTeamMembers] = useState([]);
+  const [instructors, setInstructors] = useState([]);
 
   useEffect(() => {
-    setTimeout(() => {
-      setTeamMembers([
-        {
-          id: 1,
-          name: "Alice Johnson",
-          role: "CEO & Founder",
-          img: Team1,
-          twitter: "#",
-          instagram: "#",
-          link: "/teacher-list/teacher-details",
-        },
-        {
-          id: 2,
-          name: "Carter Botosh",
-          role: "Chief Financial Officer",
-          img: Team2,
-          twitter: "#",
-          instagram: "#",
-          link: "/teacher-list/teacher-details",
-        },
-        {
-          id: 3,
-          name: "Phillip Ekstrom",
-          role: "Head of Technology",
-          img: Team3,
-          twitter: "#",
-          instagram: "#",
-          link: "/teacher-list/teacher-details",
-        },
-        {
-          id: 4,
-          name: "Abram Culhane",
-          role: "Lead Developer",
-          img: Team4,
-          twitter: "#",
-          instagram: "#",
-          link: "/teacher-list/teacher-details",
-        },
-      ]);
-
-      setLoading(false);
-    }, 1500);
+    const loadInstructors = async () => {
+      try {
+        const res = await fetchFeaturedInstructors();
+        const data = res?.data || [];
+        setInstructors(
+          data.map((inst) => ({
+            id: inst.id,
+            name: inst.name,
+            role: inst.professional_title || "Instructor",
+            img: inst.avatar_url
+              ? MEDIA_BASE_URL + inst.avatar_url
+              : "/images/placeholder-avatar.jpg",
+            twitter: inst.linkdin ? "#" : undefined,
+            instagram: inst.instagram ? "#" : undefined,
+            link: `/teacher-list/${inst.slug || inst.id}`,
+          }))
+        );
+      } catch (err) {
+        console.error("Failed to load featured instructors:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadInstructors();
   }, []);
 
   return (
@@ -80,7 +59,7 @@ const HomeTeacher = () => {
               ? Array(4)
                   .fill(0)
                   .map((_, i) => <TeacherBox key={i} loading />)
-              : teamMembers
+              : instructors
                   .slice(0, 4)
                   .map((member) => (
                     <TeacherBox
