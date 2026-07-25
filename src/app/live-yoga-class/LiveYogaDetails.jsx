@@ -12,145 +12,85 @@ import {
   MdOutlineOndemandVideo,
   MdCheckCircle,
   MdOutlineKeyboardArrowDown,
-  MdEventSeat,
   MdTrendingUp,
-  MdOutlineLocationOn,
-  MdShare,
   MdLock
 } from 'react-icons/md';
 import { FiUsers, FiAward, FiClock, FiPlayCircle, FiCheck, FiXCircle } from 'react-icons/fi';
-import { FaChalkboardTeacher, FaWhatsapp, FaFacebook, FaRegCalendarAlt, FaCopy } from 'react-icons/fa';
+import { FaChalkboardTeacher, FaRegCalendarAlt } from 'react-icons/fa';
+import { MEDIA_BASE_URL } from '@/utils/constants';
 import '../../assets/css/live-yoga-details.css';
 
-// Expanded Mock Data
-const sessionData = {
-  title: "Advanced Vinyasa Flow for Core Strength",
-  category: "Vinyasa Yoga",
-  rating: 4.9,
-  reviews: 128,
-  date: "25 Oct 2026",
-  time: "07:00 AM (IST)",
-  duration: "90 Minutes",
-  price: 499,
-  originalPrice: 999,
-  discount: "50% OFF",
-  totalSeats: 50,
-  bookedSeats: 35,
-  remainingSeats: 15,
-  language: "English",
-  level: "Beginner / Intermediate",
-  format: "Live Online",
-  targetDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000).getTime(), // 2 days from now
-  about: "Join us for an invigorating 90-minute Advanced Vinyasa Flow designed to build heat, endurance, and deep core strength. This session will guide you through complex transitions, arm balances, and deep stretches, leaving you feeling energized and centered.",
-  
-  whatYouWillLearn: [
-    "Sun Salutation Variations",
-    "Breath Synchronization",
-    "Hip Opening Techniques",
-    "Shoulder Mobility",
-    "Deep Core Strength",
-    "Guided Meditation"
-  ],
+const LiveYogaDetails = ({ liveSection }) => {
+  const data = liveSection || {};
+  const instructor = data.instructor || {};
 
-  perfectFor: [
-    "Beginners looking for basics",
-    "Office Employees with back pain",
-    "Students needing focus",
-    "Stress & Anxiety Relief",
-    "Weight Loss Goals",
-    "Improving Flexibility"
-  ],
+  const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
+  const [openFaq, setOpenFaq] = useState(null);
 
-  notRecommendedFor: [
-    "Recent Surgery Recovery",
-    "High Fever or Illness",
-    "Pregnancy (unless doctor approved)",
-    "Serious Joint Injuries"
-  ],
+  // ─── Compute derived values ──────────────────────────────────────────
 
-  agenda: [
-    { time: "07:00 AM", task: "Introduction & Intention Setting" },
-    { time: "07:10 AM", task: "Gentle Warm Up & Breathing" },
-    { time: "07:25 AM", task: "Main Vinyasa Core Flow" },
-    { time: "08:00 AM", task: "Cool Down & Deep Stretches" },
-    { time: "08:15 AM", task: "Guided Meditation (Savasana)" },
-    { time: "08:20 AM", task: "Live Q&A Session" },
-    { time: "08:30 AM", task: "Closing & Gratitude" }
-  ],
+  const categoryName = data.category?.name || "Live Yoga";
+  const averageRating = data.average_rating || 0;
+  const reviewCount = data.review_count || 0;
+  const humanDate = data.human_date || "";
+  const humanStartTime = data.human_start_time || "";
+  const timezone = data.timezone || "";
+  const timeDisplay = timezone ? `${humanStartTime} (${timezone})` : humanStartTime;
+  const duration = data.duration ? `${data.duration} Minutes` : "";
+  const capacity = data.capacity || 0;
+  const bookedSeats = data.booked_seats ?? 0;
+  const availableSeats = data.available_seats ?? 0;
+  const price = data.effective_price || data.discount_price || data.price || 0;
+  const originalPrice = data.price || 0;
+  const discountPercentage = data.discount_percentage;
+  const discountLabel = discountPercentage ? `${discountPercentage}% OFF` : "";
+  const hasDiscount = discountPercentage > 0 && originalPrice > price;
 
-  objectives: [
-    "Master advanced Vinyasa transitions and breath synchronization.",
-    "Build profound core stability and upper body strength.",
-    "Learn proper alignment for intermediate to advanced arm balances."
-  ],
-  requirements: [
-    "Basic understanding of foundational yoga poses.",
-    "A yoga mat, water bottle, and towel."
-  ],
-  instructor: {
-    name: "Sarah Jenkins",
-    profession: "E-RYT 500 Yoga Instructor",
-    rating: 4.95,
-    sessions: 320,
-    experience: "8+ Years",
-    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&auto=format&fit=crop&q=60",
-    specialization: ["Hatha Yoga", "Vinyasa", "Meditation", "Weight Loss"],
-    languages: ["English", "Malayalam", "Hindi"]
-  },
-  
-  studentReviews: [
-    { name: "Anjali M.", rating: 5, text: "Amazing session! I feel so much lighter and relaxed. Highly recommend for office workers." },
-    { name: "Rahul S.", rating: 5, text: "Instructor explained every pose very well. The Q&A at the end was super helpful." }
-  ],
+  // Learning content
+  const whatYoullLearn = Array.isArray(data.what_youll_learn) ? data.what_youll_learn : [];
+  const perfectFor = Array.isArray(data.perfect_for) ? data.perfect_for : [];
+  const notRecommendedFor = Array.isArray(data.not_recommended_for) ? data.not_recommended_for : [];
 
-  joiningGuide: [
+  // Instructor
+  const instructorName = instructor.name || "Instructor";
+  const instructorTitle = instructor.professional_title || "Yoga Instructor";
+  const instructorRating = instructor.average_rating || 0;
+  const instructorExperience = instructor.years_of_experience
+    ? `${instructor.years_of_experience}+ Years`
+    : "";
+  const instructorImage = instructor.avatar
+    ? `${MEDIA_BASE_URL}${instructor.avatar}`
+    : null;
+  const instructorExpertise = Array.isArray(instructor.expertise)
+    ? instructor.expertise
+    : typeof instructor.expertise === "string"
+      ? instructor.expertise.split(",").map((s) => s.trim())
+      : [];
+
+  // Reviews
+  const reviews = Array.isArray(data.reviews) ? data.reviews : [];
+
+  // FAQs
+  const faqs = Array.isArray(data.faqs) ? data.faqs : [];
+
+  // Static content
+  const joiningGuide = [
     "Join the meeting 10 mins early.",
     "Ensure a stable internet connection.",
     "Laptop/Tablet preferred over mobile.",
     "Keep a water bottle nearby."
-  ],
-  refundPolicy: "Cancellation is allowed up to 24 hours before the session starts for a full refund.",
+  ];
+  const refundPolicy = "Cancellation is allowed up to 24 hours before the session starts for a full refund.";
 
-  faqs: [
-    {
-      q: "Will I get access to the recording?",
-      a: "Yes, all registered participants will receive access to the full recording for 30 days after the live session."
-    },
-    {
-      q: "What platform will be used for the live stream?",
-      a: "We use a high-quality Zoom integration directly embedded within our platform for a seamless experience."
-    }
-  ],
-  tags: ["Meditation", "Core", "Strength", "Morning", "Live Yoga", "Flexibility"],
-  related: [
-    {
-      id: 1,
-      title: "Morning Hatha Yoga & Meditation",
-      instructor: "David Chen",
-      date: "28 Oct 2026",
-      price: 299,
-      level: "Beginner",
-      image: "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?w=500&auto=format&fit=crop&q=60"
-    },
-    {
-      id: 2,
-      title: "Yin Yoga for Deep Tissue Release",
-      instructor: "Maya Patel",
-      date: "30 Oct 2026",
-      price: 399,
-      level: "Intermediate",
-      image: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500&auto=format&fit=crop&q=60"
-    }
-  ]
-};
-
-const LiveYogaDetails = () => {
-  const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
-  const [openFaq, setOpenFaq] = useState(0);
+  // ─── Countdown ───────────────────────────────────────────────────────
 
   useEffect(() => {
+    if (!data.class_date_time) return;
+
+    const targetTime = new Date(data.class_date_time).getTime();
+
     const calcTimeLeft = () => {
-      const distance = sessionData.targetDate - Date.now();
+      const distance = targetTime - Date.now();
       if (distance <= 0) return { days: "00", hours: "00", minutes: "00", seconds: "00" };
       return {
         days: String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, "0"),
@@ -160,44 +100,90 @@ const LiveYogaDetails = () => {
       };
     };
 
+    setTimeLeft(calcTimeLeft());
     const timer = setInterval(() => setTimeLeft(calcTimeLeft()), 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [data.class_date_time]);
+
+  // ─── Empty state ─────────────────────────────────────────────────────
+
+  if (!liveSection) {
+    return (
+      <div id="LiveYogaDetails">
+        <div className="container" style={{ textAlign: "center", padding: "100px 20px" }}>
+          <h2>No Live Session Available</h2>
+          <p style={{ color: "#636e72", marginTop: 10 }}>
+            There are no upcoming live sessions right now. Please check back later.
+          </p>
+          <Link href="/" style={{ textDecoration: "none" }}>
+            <button
+              style={{
+                marginTop: 20,
+                padding: "12px 30px",
+                background: "var(--primaryColor)",
+                color: "#fff",
+                border: "none",
+                borderRadius: 8,
+                cursor: "pointer",
+                fontSize: 15,
+              }}
+            >
+              Back to Home
+            </button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div id='LiveYogaDetails'>
       {/* Breadcrumb */}
       <div className="container BreadcrumbWrap">
-        <span>Home</span> &gt; <span>Live Sessions</span> &gt; <span className="CurrentPath">{sessionData.title}</span>
+        <span>Home</span> &gt; <span>Live Sessions</span> &gt; <span className="CurrentPath">{data.title}</span>
       </div>
 
-      {/* 1 & 15. Hero Banner */}
-      <section className="HeroBanner">
+      {/* Hero Banner */}
+      <section
+        className="HeroBanner"
+        style={data.banner_image ? {
+          backgroundImage: `url(${MEDIA_BASE_URL}${data.banner_image})`,
+        } : undefined}
+      >
         <div className="HeroOverlay"></div>
         <div className="container">
           <div className="HeroContent fadeUp">
             <div className="BadgesWrap">
               <span className="LiveBadge"><span className="Pulse"></span>Upcoming in {timeLeft.days} Days</span>
-              <span className="CategoryBadge">{sessionData.category}</span>
+              <span className="CategoryBadge">{categoryName}</span>
             </div>
             
-            <h1>{sessionData.title}</h1>
+            <h1>{data.title}</h1>
             
-            <div className="RatingBox">
-              <MdStar className="StarIcon" />
-              <span>{sessionData.rating}</span>
-              <span className="ReviewCount">({sessionData.reviews} Reviews)</span>
-            </div>
+            {averageRating > 0 && (
+              <div className="RatingBox">
+                <MdStar className="StarIcon" />
+                <span>{averageRating}</span>
+                <span className="ReviewCount">({reviewCount} Reviews)</span>
+              </div>
+            )}
             
-            {/* Expanded Hero Summary */}
+            {/* Hero Summary */}
             <div className="HeroSummaryGrid">
-              <div className="SumItem"><MdOutlineDateRange /> {sessionData.date}</div>
-              <div className="SumItem"><MdOutlineAccessTime /> {sessionData.time}</div>
-              <div className="SumItem"><FiClock /> {sessionData.duration}</div>
-              <div className="SumItem"><FiUsers /> {sessionData.bookedSeats} / {sessionData.totalSeats} Filled</div>
-              <div className="SumItem"><MdOutlineLanguage /> {sessionData.language}</div>
-              <div className="SumItem"><MdStar /> {sessionData.level}</div>
-              <div className="SumItem"><MdOutlineOndemandVideo /> {sessionData.format}</div>
+              {humanDate && (
+                <div className="SumItem"><MdOutlineDateRange /> {humanDate}</div>
+              )}
+              {timeDisplay && (
+                <div className="SumItem"><MdOutlineAccessTime /> {timeDisplay}</div>
+              )}
+              {duration && (
+                <div className="SumItem"><FiClock /> {duration}</div>
+              )}
+              {capacity > 0 && (
+                <div className="SumItem"><FiUsers /> {bookedSeats} / {capacity} Filled</div>
+              )}
+              <div className="SumItem"><MdOutlineLanguage /> {data.language || "English"}</div>
+              <div className="SumItem"><MdOutlineOndemandVideo /> Live Online</div>
             </div>
           </div>
         </div>
@@ -206,10 +192,10 @@ const LiveYogaDetails = () => {
       <div className="container ContentLayout">
         <div className="LeftColumn">
           
-     
+          {/* About Section */}
           <section className="AboutSection card">
             <h2>About This Live Session</h2>
-            <p>{sessionData.about}</p>
+            <p>{data.description || "No description available."}</p>
 
             <div className="QuickHighlights">
               <div className="HighlightItem"><MdOutlineOndemandVideo /> <span>Live Session</span></div>
@@ -221,53 +207,48 @@ const LiveYogaDetails = () => {
             </div>
           </section>
 
-         
-          <section className="WhatYouLearnSection card">
-            <h2>What You&apos;ll Learn</h2>
-            <div className="LearnGrid">
-              {sessionData.whatYouWillLearn.map((item, i) => (
-                <div className="LearnItem" key={i}>
-                  <MdCheckCircle className="CheckIcon" /> {item}
-                </div>
-              ))}
-            </div>
-          </section>
-
-         
-          <div className="AudienceGrid">
-            <section className="AudienceCard PerfectFor">
-              <h3><MdTrendingUp className="Icon" /> Perfect For</h3>
-              <ul>
-                {sessionData.perfectFor.map((item, i) => (
-                  <li key={i}><FiCheck className="ListIcon" /> {item}</li>
+          {/* What You'll Learn */}
+          {whatYoullLearn.length > 0 && (
+            <section className="WhatYouLearnSection card">
+              <h2>What You&apos;ll Learn</h2>
+              <div className="LearnGrid">
+                {whatYoullLearn.map((item, i) => (
+                  <div className="LearnItem" key={i}>
+                    <MdCheckCircle className="CheckIcon" /> {item}
+                  </div>
                 ))}
-              </ul>
+              </div>
             </section>
-            
-            <section className="AudienceCard AvoidFor">
-              <h3><FiXCircle className="Icon" /> Not Recommended For</h3>
-              <ul>
-                {sessionData.notRecommendedFor.map((item, i) => (
-                  <li key={i}><FiXCircle className="ListIcon" /> {item}</li>
-                ))}
-              </ul>
-            </section>
-          </div>
+          )}
 
-          
-          {/* <section className="AgendaSection card">
-            <h2>Session Agenda</h2>
-            <div className="SimpleAgendaList">
-              {sessionData.agenda.map((step, i) => (
-                <div className="SimpleAgendaItem" key={i}>
-                  <span className="AgendaTime">{step.time}</span>
-                  <span className="AgendaDesc">{step.task}</span>
-                </div>
-              ))}
+          {/* Perfect For / Not Recommended For */}
+          {(perfectFor.length > 0 || notRecommendedFor.length > 0) && (
+            <div className="AudienceGrid">
+              {perfectFor.length > 0 && (
+                <section className="AudienceCard PerfectFor">
+                  <h3><MdTrendingUp className="Icon" /> Perfect For</h3>
+                  <ul>
+                    {perfectFor.map((item, i) => (
+                      <li key={i}><FiCheck className="ListIcon" /> {item}</li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+              
+              {notRecommendedFor.length > 0 && (
+                <section className="AudienceCard AvoidFor">
+                  <h3><FiXCircle className="Icon" /> Not Recommended For</h3>
+                  <ul>
+                    {notRecommendedFor.map((item, i) => (
+                      <li key={i}><FiXCircle className="ListIcon" /> {item}</li>
+                    ))}
+                  </ul>
+                </section>
+              )}
             </div>
-          </section> */}
+          )}
 
-         
+          {/* Features Included (static) */}
           <section className="FeaturesGridSection card">
             <h2>Features Included</h2>
             <div className="FeaturesGrid">
@@ -280,148 +261,178 @@ const LiveYogaDetails = () => {
             </div>
           </section>
 
-          
-          <section className="InstructorSection card">
-            <h2>Meet Your Instructor</h2>
-            <div className="InstructorProfile">
-              <div className="InstImage">
-                <Image src={sessionData.instructor.image} alt={sessionData.instructor.name} fill />
-              </div>
-              <div className="InstDetails">
-                <h3>{sessionData.instructor.name}</h3>
-                <p className="Profession">{sessionData.instructor.profession}</p>
-                <div className="InstStats">
-                  <div className="Stat"><MdStar className="Icon" /> {sessionData.instructor.rating} Rating</div>
-                  <div className="Stat"><MdPlayLesson className="Icon" /> {sessionData.instructor.sessions} Sessions</div>
-                  <div className="Stat"><FiAward className="Icon" /> {sessionData.instructor.experience} Exp.</div>
-                </div>
-                
-                <div className="InstExtraInfo">
-                  <div className="InfoBlock">
-                    <strong>Specialization:</strong>
-                    <div className="ChipWrap">
-                      {sessionData.instructor.specialization.map((spec, i) => <span key={i} className="Chip">{spec}</span>)}
+          {/* Instructor Section */}
+          {instructorName && (
+            <section className="InstructorSection card">
+              <h2>Meet Your Instructor</h2>
+              <div className="InstructorProfile">
+                <div className="InstImage">
+                  {instructorImage ? (
+                    <Image src={instructorImage} alt={instructorName} fill />
+                  ) : (
+                    <div
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        background: "#eee",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: 32,
+                        color: "#999",
+                      }}
+                    >
+                      {instructorName.charAt(0)}
                     </div>
+                  )}
+                </div>
+                <div className="InstDetails">
+                  <h3>{instructorName}</h3>
+                  <p className="Profession">{instructorTitle}</p>
+                  <div className="InstStats">
+                    {instructorRating > 0 && (
+                      <div className="Stat"><MdStar className="Icon" /> {instructorRating} Rating</div>
+                    )}
+                    {instructorExperience && (
+                      <div className="Stat"><FiAward className="Icon" /> {instructorExperience} Exp.</div>
+                    )}
                   </div>
-                  <div className="InfoBlock">
-                    <strong>Languages:</strong>
-                    <div className="ChipWrap">
-                      {sessionData.instructor.languages.map((lang, i) => <span key={i} className="Chip">{lang}</span>)}
+                  
+                  {instructorExpertise.length > 0 && (
+                    <div className="InstExtraInfo">
+                      <div className="InfoBlock">
+                        <strong>Specialization:</strong>
+                        <div className="ChipWrap">
+                          {instructorExpertise.map((spec, i) => (
+                            <span key={i} className="Chip">{spec}</span>
+                          ))}
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
-          
+          {/* Joining Guide & Refund Policy (STATIC) */}
           <div className="InfoSplitGrid">
             <section className="JoiningGuide card">
               <h3>Joining Guide</h3>
               <ul className="SimpleList">
-                {sessionData.joiningGuide.map((g, i) => <li key={i}>{g}</li>)}
+                {joiningGuide.map((g, i) => <li key={i}>{g}</li>)}
               </ul>
             </section>
             
             <section className="RefundPolicy card">
               <h3>Refund Policy</h3>
-              <p>{sessionData.refundPolicy}</p>
+              <p>{refundPolicy}</p>
             </section>
           </div>
 
-         
-          <section className="ReviewsSection card">
-            <h2>Student Reviews</h2>
-            <div className="ReviewGrid">
-              {sessionData.studentReviews.map((rev, i) => (
-                <div className="ReviewCard" key={i}>
-                  <div className="Stars">
-                    {[...Array(rev.rating)].map((_, idx) => <MdStar key={idx} className="StarFill" />)}
+          {/* Reviews */}
+          {reviews.length > 0 && (
+            <section className="ReviewsSection card">
+              <h2>Student Reviews</h2>
+              <div className="ReviewGrid">
+                {reviews.map((rev, i) => (
+                  <div className="ReviewCard" key={rev.id || i}>
+                    <div className="Stars">
+                      {[...Array(Math.min(rev.rating, 5))].map((_, idx) => (
+                        <MdStar key={idx} className="StarFill" />
+                      ))}
+                    </div>
+                    <p>&quot;{rev.content || rev.text || rev.comment}&quot;</p>
+                    <h4>- {rev.user_name || rev.name || "Anonymous"}</h4>
                   </div>
-                  <p>&quot;{rev.text}&quot;</p>
-                  <h4>- {rev.name}</h4>
-                </div>
-              ))}
-            </div>
-          </section>
+                ))}
+              </div>
+            </section>
+          )}
 
-        
-          <section className="FAQSection card">
-            <h2>Frequently Asked Questions</h2>
-            <div className="FAQList">
-              {sessionData.faqs.map((faq, i) => (
-                <div className={`FAQItem ${openFaq === i ? 'active' : ''}`} key={i}>
-                  <div className="FAQHead" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
-                    <h4>{faq.q}</h4>
-                    <MdOutlineKeyboardArrowDown className="Arrow" />
+          {/* FAQ Section */}
+          {faqs.length > 0 && (
+            <section className="FAQSection card">
+              <h2>Frequently Asked Questions</h2>
+              <div className="FAQList">
+                {faqs.map((faq, i) => (
+                  <div className={`FAQItem ${openFaq === i ? 'active' : ''}`} key={faq.id || i}>
+                    <div className="FAQHead" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                      <h4>{faq.question || faq.q}</h4>
+                      <MdOutlineKeyboardArrowDown className="Arrow" />
+                    </div>
+                    <div className="FAQBody">
+                      <p>{faq.answer || faq.a}</p>
+                    </div>
                   </div>
-                  <div className="FAQBody">
-                    <p>{faq.a}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* Removed Tags, Share, and Related Sections based on feedback */}
+                ))}
+              </div>
+            </section>
+          )}
 
         </div>
 
-        {/* Right Sticky Column */}
+        {/* Right Sticky Column - Pricing Sidebar */}
         <div className="RightColumn">
           <div className="StickySidebar">
             
             <div className="PricingCard SidebarCard">
-            <div className="CardHeaderBadge">Next Live • {sessionData.date}</div>
-            
-            <div className="PriceHeader">
-              <h2>₹{sessionData.price}</h2>
-              <span className="OriginalPrice">₹{sessionData.originalPrice}</span>
-              <span className="DiscountBadge">{sessionData.discount}</span>
-            </div>
+              <div className="CardHeaderBadge">Next Live • {humanDate}</div>
+              
+              <div className="PriceHeader">
+                <h2>₹{price}</h2>
+                {hasDiscount && (
+                  <>
+                    <span className="OriginalPrice">₹{originalPrice}</span>
+                    <span className="DiscountBadge">{discountLabel}</span>
+                  </>
+                )}
+              </div>
 
-            {/* 3. Countdown Inside Card */}
-            <div className="CountdownBlock">
-              <p>Starts In</p>
-              <div className="CountdownGrid">
-                {['days', 'hours', 'minutes', 'seconds'].map((label) => (
-                  <div className="TimeBox" key={label}>
-                    <span className="TimeVal">{timeLeft[label]}</span>
-                    <span className="TimeLabel">{label.toUpperCase()}</span>
+              {/* Countdown inside card */}
+              <div className="CountdownBlock">
+                <p>Starts In</p>
+                <div className="CountdownGrid">
+                  {['days', 'hours', 'minutes', 'seconds'].map((label) => (
+                    <div className="TimeBox" key={label}>
+                      <span className="TimeVal">{timeLeft[label]}</span>
+                      <span className="TimeLabel">{label.toUpperCase()}</span>
+                    </div>
+                  ))}
+                </div>
+                <button className="CalendarBtn"><FaRegCalendarAlt /> Add to Calendar</button>
+              </div>
+              
+              {/* Seats Visualization */}
+              {capacity > 0 && (
+                <div className="SeatsVisualBlock">
+                  <div className="SeatHeader">
+                    <span><strong>{capacity}</strong> Total Seats</span>
                   </div>
-                ))}
-              </div>
-              {/* 11. Add to calendar */}
-              <button className="CalendarBtn"><FaRegCalendarAlt /> Add to Calendar</button>
-            </div>
-            
-            {/* 16. Seats Visualization */}
-            <div className="SeatsVisualBlock">
-              <div className="SeatHeader">
-                <span><strong>{sessionData.totalSeats}</strong> Total Seats</span>
-              </div>
-              <div className="ProgressBar">
-                <div className="ProgressFill" style={{ width: `${(sessionData.bookedSeats / sessionData.totalSeats) * 100}%` }}></div>
-              </div>
-              <div className="SeatFooter">
-                <span>{sessionData.bookedSeats} Booked</span>
-                <span className="HurryText"><strong>{sessionData.remainingSeats}</strong> Remaining</span>
-              </div>
-            </div>
+                  <div className="ProgressBar">
+                    <div
+                      className="ProgressFill"
+                      style={{ width: `${capacity > 0 ? (bookedSeats / capacity) * 100 : 0}%` }}
+                    ></div>
+                  </div>
+                  <div className="SeatFooter">
+                    <span>{bookedSeats} Booked</span>
+                    <span className="HurryText"><strong>{availableSeats}</strong> Remaining</span>
+                  </div>
+                </div>
+              )}
 
-            <Link href="/checkout" style={{ textDecoration: 'none' }}>
-              <button className="BookBtnSidebar">
-                Pre Book Now <MdKeyboardArrowRight className="ArrowAnim" />
-              </button>
-            </Link>
-            <p className="SecureCheckout"><MdLock /> Secure Checkout</p>
-          </div>
+              <Link href="/checkout" style={{ textDecoration: 'none' }}>
+                <button className="BookBtnSidebar">
+                  Pre Book Now <MdKeyboardArrowRight className="ArrowAnim" />
+                </button>
+              </Link>
+              <p className="SecureCheckout"><MdLock /> Secure Checkout</p>
+            </div>
             
           </div>
         </div>
       </div>
-
-
 
     </div>
   )

@@ -53,7 +53,7 @@ const EventSlide = ({ event }) => {
   }, [targetDate]);
 
   const handleCardClick = () => {
-    router.push('/live-yoga-class');
+    router.push(`/live-yoga-class?id=${event.id}`);
   };
 
   const handleButtonClick = (e) => {

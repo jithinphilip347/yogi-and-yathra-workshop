@@ -55,6 +55,20 @@ const fetchDailyClassDetails = async (id) => {
   return data;
 };
 
+/**
+ * Fetch a single live section detail by ID.
+ */
+const fetchLiveSectionDetail = async (id) => {
+  const res = await fetch(API_BASE_URL + "home/live-sections/" + id, {
+    method: "GET",
+    next: {
+      revalidate: 600,
+    },
+  });
+  const data = await res.json();
+  return data;
+};
+
 // ─── Instructor Endpoints ─────────────────────────────────────────────
 
 /**
@@ -109,6 +123,7 @@ export {
   fetchCategories,
   fetchCourseDetails,
   fetchDailyClassDetails,
+  fetchLiveSectionDetail,
   fetchFeaturedInstructors,
   fetchInstructors,
   fetchInstructorDetails,

@@ -113,7 +113,7 @@ const LiveClasses = () => {
   }, [dropdownRef]);
 
   const handleViewDetails = (id) => {
-    router.push(`/live-class/live-class/${id}`);
+    router.push(`/daily-class/${id}/live-class`);
   };
 
   const handleActionBtnClick = (course) => {

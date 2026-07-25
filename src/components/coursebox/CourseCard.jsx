@@ -117,7 +117,7 @@ const CourseCard = ({
               </div>
             </div>
 
-            <Link className="viewBtn"  href={type === "course" ? `/course/${slug}/${id}` : `/live-class/${slug}/${id}`}>
+            <Link className="viewBtn"  href={type === "course" ? `/course/${slug}/${id}` : `/daily-class/${id}/${slug}`}>
               {btnLoading ? <div className="spinner"></div> : buttonText}
             </Link>
           </div>
