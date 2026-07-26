@@ -97,7 +97,7 @@ const HomeLiveClass = ({ dailyClasses }) => {
                   tutorImageSize="medium"
                   id={course.id}
                   type="daily_class"
-                  slug={course.slug || course.title.trim().replace(/\s+/g, "-").toLowerCase()}
+                  slug={course.slug || course?.title?.trim().replace(/\s+/g, "-").toLowerCase()}
                 />
               </SwiperSlide>
             ))}

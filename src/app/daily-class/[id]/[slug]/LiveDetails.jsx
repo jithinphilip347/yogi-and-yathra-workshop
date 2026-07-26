@@ -345,35 +345,20 @@ const LiveDetails = ({ id, classDetails }) => {
                       <span className="Period">/month</span>
                     </div>
                     <div className="PlanDesc">{plan.description || plan.descriptions || ""}</div>
-
                     <ul className="PlanFeatures">
-                      {(plan.features || []).length > 0
-                        ? plan.features.map((feat, i) => (
-                            <li key={i}>
-                              {feat.available !== false ? (
-                                <FiCheck className="Check" />
-                              ) : (
-                                <FiXCircle className="Cross" />
-                              )}
-                              {feat.name}
-                            </li>
-                          ))
-                        : [
-                            { name: "Live Access to Classes", available: true },
-                            { name: "Community Access", available: plan.plan_type !== "basic" },
-                            { name: "Session Recordings", available: plan.plan_type === "premium" || plan.plan_type === "vip" },
-                            { name: "Certificate", available: plan.plan_type === "vip" },
-                            { name: "Private Q&A", available: plan.plan_type === "vip" },
-                          ].map((feat, i) => (
-                            <li key={i}>
-                              {feat.available ? (
-                                <FiCheck className="Check" />
-                              ) : (
-                                <FiXCircle className="Cross" />
-                              )}
-                              {feat.name}
-                            </li>
-                          ))}
+                      {[
+                        ...(plan.included_features || []).map((feat) => ({ name: feat, included: true })),
+                        ...(plan.excluded_features || []).map((feat) => ({ name: feat, included: false })),
+                      ].map((feat, i) => (
+                        <li key={i}>
+                          {feat.included ? (
+                            <FiCheck className="Check" />
+                          ) : (
+                            <FiXCircle className="Cross" />
+                          )}
+                          {feat.name}
+                        </li>
+                      ))}
                     </ul>
 
                     <button
