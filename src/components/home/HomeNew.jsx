@@ -77,8 +77,10 @@ const HomeNew = () => {
                 <CourseCard
                   loading={isLoading}
                   image={
-                    course.thumbnail
-                      ? `${MEDIA_BASE_URL}${course.thumbnail}`
+                    course?.thumbnail
+                      ? course.thumbnail.includes('http')
+                        ? course.thumbnail
+                        : `${MEDIA_BASE_URL}${course.thumbnail}`
                       : null
                   }
                   title={course.title}

@@ -72,9 +72,12 @@ const HomeLiveClass = ({ dailyClasses }) => {
                   loading={loading}
                   image={
                     course?.thumbnail
-                      ? `${MEDIA_BASE_URL}${course.thumbnail}`
+                      ? course.thumbnail.includes('http')
+                        ? course.thumbnail
+                        : `${MEDIA_BASE_URL}${course.thumbnail}`
                       : null
                   }
+
                   title={course?.title}
                   wishlistIcon={findWishlistIcon(course.id, "daily_class")}
                   dateIcon={<MdDateRange />}
@@ -94,7 +97,7 @@ const HomeLiveClass = ({ dailyClasses }) => {
                   tutorImageSize="medium"
                   id={course.id}
                   type="daily_class"
-                  slug={course.slug || "live-class"}
+                  slug={course.slug || course.title.trim().replace(/\s+/g, "-").toLowerCase()}
                 />
               </SwiperSlide>
             ))}

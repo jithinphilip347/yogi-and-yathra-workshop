@@ -75,7 +75,7 @@ const fetchLiveSectionDetail = async (id) => {
  * Fetch featured instructors for the home page.
  */
 const fetchFeaturedInstructors = async () => {
-  const res = await fetch(API_BASE_URL + "instructors/public/featured?limit=4", {
+  const res = await fetch(API_BASE_URL + "home/instructors?limit=4", {
     method: "GET",
     next: {
       revalidate: 600,

@@ -490,7 +490,7 @@ const LiveDetails = ({ id, classDetails }) => {
                       </span>
                     </div>
                     {activeFaq === i && (
-                      <div className="FAQBody">{faq.answer || faq.a}</div>
+                      <div className="FAQBody" dangerouslySetInnerHTML={{ __html: faq.answer || faq.a }}></div>
                     )}
                   </div>
                 ))}

@@ -18,7 +18,7 @@ import {
 import { FiUsers, FiAward, FiClock, FiPlayCircle, FiCheck, FiXCircle } from 'react-icons/fi';
 import { FaChalkboardTeacher, FaRegCalendarAlt } from 'react-icons/fa';
 import { MEDIA_BASE_URL } from '@/utils/constants';
-import '../../assets/css/live-yoga-details.css';
+import '../../../../assets/css/live-yoga-details.css';
 
 const LiveYogaDetails = ({ liveSection }) => {
   const data = liveSection || {};
@@ -58,9 +58,9 @@ const LiveYogaDetails = ({ liveSection }) => {
   const instructorExperience = instructor.years_of_experience
     ? `${instructor.years_of_experience}+ Years`
     : "";
-  const instructorImage = instructor.avatar
-    ? `${MEDIA_BASE_URL}${instructor.avatar}`
-    : null;
+  const instructorImage = instructor.avatar.includes("http")
+    ? `${instructor.avatar}`
+    : instructor.avatar ? `${MEDIA_BASE_URL}${instructor.avatar}` : null;
   const instructorExpertise = Array.isArray(instructor.expertise)
     ? instructor.expertise
     : typeof instructor.expertise === "string"
@@ -105,6 +105,30 @@ const LiveYogaDetails = ({ liveSection }) => {
     return () => clearInterval(timer);
   }, [data.class_date_time]);
 
+  // ─── Add to Google Calendar ─────────────────────────────────────────
+
+  const handleAddToGoogleCalendar = () => {
+    if (!data.class_date_time) return;
+
+    const startDate = new Date(data.class_date_time);
+    const durationMins = data.duration ? parseInt(data.duration, 10) : 60;
+    const endDate = new Date(startDate.getTime() + durationMins * 60 * 1000);
+
+    const formatCalendarDate = (date) =>
+      date.toISOString().replace(/-|:|\.\d\d\d/g, "");
+
+    const title = encodeURIComponent(data.title || "Live Yoga Class");
+    const details = encodeURIComponent(
+      `Join the live session hosted by ${instructorName}.\n\nCategory: ${categoryName}\nDuration: ${duration}`
+    );
+    const location = encodeURIComponent("Online / Live Stream");
+    const dates = `${formatCalendarDate(startDate)}/${formatCalendarDate(endDate)}`;
+
+    const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${dates}&details=${details}&location=${location}`;
+
+    window.open(calendarUrl, "_blank", "noopener,noreferrer");
+  };
+
   // ─── Empty state ─────────────────────────────────────────────────────
 
   if (!liveSection) {
@@ -146,7 +170,9 @@ const LiveYogaDetails = ({ liveSection }) => {
       {/* Hero Banner */}
       <section
         className="HeroBanner"
-        style={data.banner_image ? {
+        style={data.banner_image.includes("http") ? {
+          backgroundImage: `url(${data.banner_image})`,
+        } : data.banner_image  ? {
           backgroundImage: `url(${MEDIA_BASE_URL}${data.banner_image})`,
         } : undefined}
       >
@@ -195,7 +221,7 @@ const LiveYogaDetails = ({ liveSection }) => {
           {/* About Section */}
           <section className="AboutSection card">
             <h2>About This Live Session</h2>
-            <p>{data.description || "No description available."}</p>
+            <p dangerouslySetInnerHTML={{ __html: data.description || "" }} />
 
             <div className="QuickHighlights">
               <div className="HighlightItem"><MdOutlineOndemandVideo /> <span>Live Session</span></div>
@@ -362,7 +388,7 @@ const LiveYogaDetails = ({ liveSection }) => {
                       <MdOutlineKeyboardArrowDown className="Arrow" />
                     </div>
                     <div className="FAQBody">
-                      <p>{faq.answer || faq.a}</p>
+                      <p dangerouslySetInnerHTML={{ __html: faq.answer || faq.a || "" }} />
                     </div>
                   </div>
                 ))}
@@ -400,7 +426,7 @@ const LiveYogaDetails = ({ liveSection }) => {
                     </div>
                   ))}
                 </div>
-                <button className="CalendarBtn"><FaRegCalendarAlt /> Add to Calendar</button>
+                <button className="CalendarBtn" onClick={handleAddToGoogleCalendar}><FaRegCalendarAlt /> Add to Calendar</button>
               </div>
               
               {/* Seats Visualization */}

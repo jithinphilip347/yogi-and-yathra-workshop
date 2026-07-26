@@ -4,13 +4,16 @@ import LiveYogaDetails from "./LiveYogaDetails";
 
 export const revalidate = 600;
 
-export async function generateMetadata({ searchParams }) {
-  const params = await searchParams;
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  
   let liveSection = null;
 
-  if (params?.id) {
-    const res = await fetchLiveSectionDetail(params.id);
+  if (id) {
+    const res = await fetchLiveSectionDetail(id);
+    
     liveSection = res?.data;
+   
   } else {
     const listRes = await fetchLiveSections();
     const sections = listRes?.data || [];
@@ -50,12 +53,12 @@ export async function generateMetadata({ searchParams }) {
   };
 }
 
-export default async function Page({ searchParams }) {
-  const params = await searchParams;
+export default async function Page({ params }) {
+  const {id } = await params ;
   let liveSection = null;
 
-  if (params?.id) {
-    const res = await fetchLiveSectionDetail(params.id);
+  if (id) {
+    const res = await fetchLiveSectionDetail(id);
     liveSection = res?.data;
   } else {
     const listRes = await fetchLiveSections();

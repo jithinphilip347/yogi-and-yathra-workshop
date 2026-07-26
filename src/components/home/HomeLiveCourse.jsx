@@ -53,7 +53,7 @@ const EventSlide = ({ event }) => {
   }, [targetDate]);
 
   const handleCardClick = () => {
-    router.push(`/live-yoga-class?id=${event.id}`);
+    router.push(`/live-section/${event.id}/${event.slug || event.title.toLowerCase().replace(" ", "-")}`);
   };
 
   const handleButtonClick = (e) => {
@@ -70,9 +70,11 @@ const EventSlide = ({ event }) => {
         
         <h2>{event?.title}</h2>
         
-        <p className="desc">
-          {event?.description || `Join our exclusive ${event?.title} session with ${event?.instructor?.name}. Explore the fundamentals of wellness and start your journey today with our expert guidance.`}
-        </p>
+        <p
+          className="desc"
+          dangerouslySetInnerHTML={{ __html: event?.description || `Join our exclusive ${event?.title} session.` }}
+        />
+
 
         <div className="MetaRow1">
            <div className="Badge"><AiFillStar className="icon star" /> {event?.rating || "4.9"} ({event?.reviews || "128"} Reviews)</div>
@@ -164,8 +166,10 @@ const HomeLiveCourse = ({ liveSections }) => {
                     event={{
                       ...event,
                       image: event.thumbnail
-                        ? `${MEDIA_BASE_URL}${event.thumbnail}`
-                        : LiveBg1
+                        ? event.thumbnail.includes('http')
+                          ? event.thumbnail
+                          : `${MEDIA_BASE_URL}${event.thumbnail}`
+                        : null
                     }}
                   />
                 </SwiperSlide>

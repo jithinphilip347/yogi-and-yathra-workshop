@@ -54,9 +54,9 @@ const HomeCourse = () => {
                 <CourseCard
                   loading={isLoading}
                   image={
-                    course.thumbnail
-                      ? `${MEDIA_BASE_URL}${course.thumbnail}`
-                      : null
+                    course.thumbnail.includes('http')
+                      ? course.thumbnail
+                      : `${MEDIA_BASE_URL}${course.thumbnail}`
                   }
                   title={course.title}
                   lessons={course?.lessons_count}
