@@ -231,19 +231,19 @@ const Dashboard = ({ courses = [], continueCourses = [], user }) => {
           <p>Access your complete library of courses.</p>
         </div>
         <div className="CourseGrid">
-          {displayCourses.map((course, i) => (
-            <div className="CourseItem" key={i}>
+          {displayCourses.filter(Boolean).map((course, i) => (
+            <div className="CourseItem" key={course?.id || i}>
               <CourseCard
-                image={course.staticImage || (course.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : null)}
-                title={course.title}
+                image={course?.staticImage || (course?.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : null)}
+                title={course?.title}
                 lessons={course?.lessons_count}
-                duration={(course.duration || 0) + " hrs"}
-                price={Number(course.price)}
-                oldPrice={Number(course.discount_price)}
+                duration={(course?.duration || 0) + " hrs"}
+                price={Number(course?.price || 0)}
+                oldPrice={Number(course?.discount_price || 0)}
                 rating="4.5" 
-                students={course.enrollments_count}
+                students={course?.enrollments_count}
                 instructorName={course?.instructor?.name}
-                wishlistIcon={findWishlistIcon(course.id, "course")}
+                wishlistIcon={findWishlistIcon(course?.id, "course")}
                 lessonsIcon={<FiBookOpen />}
                 clockIcon={<FiClock />}
                 priceIcon="₹"
@@ -254,9 +254,9 @@ const Dashboard = ({ courses = [], continueCourses = [], user }) => {
                 buttonText="Continue Learning"
                 instructorImg={course?.instructor?.avatar ? `${MEDIA_BASE_URL}${course.instructor.avatar}` : null}
                 instructorLabel={course?.instructor?.role}
-                id={course.id}
+                id={course?.id}
                 type="course"
-                slug={course.slug}
+                slug={course?.slug}
               />
             </div>
           ))}

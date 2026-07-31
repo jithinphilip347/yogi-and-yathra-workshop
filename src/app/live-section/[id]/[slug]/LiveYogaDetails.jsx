@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
+import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
@@ -21,6 +23,8 @@ import { MEDIA_BASE_URL } from '@/utils/constants';
 import '../../../../assets/css/live-yoga-details.css';
 
 const LiveYogaDetails = ({ liveSection }) => {
+  const router = useRouter();
+  const { addItem } = useCart();
   const data = liveSection || {};
   const instructor = data.instructor || {};
 
@@ -448,11 +452,15 @@ const LiveYogaDetails = ({ liveSection }) => {
                 </div>
               )}
 
-              <Link href="/checkout" style={{ textDecoration: 'none' }}>
-                <button className="BookBtnSidebar">
-                  Pre Book Now <MdKeyboardArrowRight className="ArrowAnim" />
-                </button>
-              </Link>
+              <button
+                className="BookBtnSidebar"
+                onClick={() => {
+                  addItem(data, 'LiveSection');
+                  router.push('/checkout');
+                }}
+              >
+                Pre Book Now <MdKeyboardArrowRight className="ArrowAnim" />
+              </button>
               <p className="SecureCheckout"><MdLock /> Secure Checkout</p>
             </div>
             

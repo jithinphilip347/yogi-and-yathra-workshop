@@ -2,6 +2,7 @@
   background: #fff;
   min-height: 100vh;
   padding: 100px 20px 40px;
+
   @media (max-width: 1024px) {
     padding: 80px 10px 20px;
   }
@@ -13,6 +14,65 @@
   }
   @media (max-width: 425px) {
     padding: 20px 10px 20px;
+  }
+
+  /* ─── Stepper Component ─── */
+  .CheckoutStepper {
+    max-width: 1200px;
+    margin: 0 auto 30px auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #ffffff;
+    padding: 16px 24px;
+    border-radius: 8px;
+    border: 1px solid #d1d7dc;
+
+    .StepItem {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #6a6f73;
+      font-family: myFont1;
+
+      .StepNum {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: #f7f9fa;
+        border: 1px solid #d1d7dc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: 700;
+        color: #1c1d1f;
+        font-family: myFont1;
+      }
+
+      &.active {
+        color: var(--primaryColor);
+
+        .StepNum {
+          background: #fff;
+          border-color: var(--primaryColor);
+          color: var(--primaryColor);
+        }
+      }
+    }
+
+    .StepLine {
+      flex: 1;
+      height: 2px;
+      background: #d1d7dc;
+      margin: 0 16px;
+
+      @media (max-width: 600px) {
+        display: none;
+      }
+    }
   }
 
   .CheckoutContainer {
@@ -52,6 +112,7 @@
         color: #1c1d1f;
         margin: 0 0 20px 0;
         font-family: myFont1;
+
         .Subtext {
           font-weight: 400;
           color: #6a6f73;
@@ -252,6 +313,45 @@
         color: #1c1d1f;
         margin: 0 0 20px 0;
         font-family: myFont1;
+      }
+
+      .CouponBox {
+        margin-bottom: 20px;
+
+        .CouponForm {
+          display: flex;
+          gap: 8px;
+
+          input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #d1d7dc;
+            border-radius: 6px;
+            font-size: 13px;
+            font-family: myFont1;
+            outline: none;
+
+            &:focus {
+              border-color: var(--primaryColor);
+            }
+          }
+
+          button {
+            padding: 10px 16px;
+            background: #1c1d1f;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            font-family: myFont1;
+            cursor: pointer;
+
+            &:hover {
+              background: #000;
+            }
+          }
+        }
       }
 
       .SummaryRow {
