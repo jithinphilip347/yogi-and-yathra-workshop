@@ -27,6 +27,7 @@ import { RiLoginCircleLine, RiUserLine } from "react-icons/ri";
 import { IoPeopleOutline, IoCartOutline } from "react-icons/io5";
 import NavSearchOverlay from "./NavSearchOverlay";
 import { useSelector } from "react-redux";
+import { selectCartItemCount } from "@/features/commerce/selectors/commerceSelectors";
 
 const Nav = () => {
   const [openDropdown, setOpenDropdown] = useState(false);
@@ -40,6 +41,7 @@ const Nav = () => {
   const [isSideNavOpen, setIsSideNavOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const itemCount = useSelector(selectCartItemCount);
 
   const [mounted, setMounted] = useState(false);
 
@@ -148,8 +150,13 @@ const Nav = () => {
                   <BiSearch />
                 </div>
 
-                <Link href="/cart" className="CartIcon">
+                <Link href="/cart" className="CartIcon relative flex items-center">
                   <IoCartOutline />
+                  {itemCount > 0 && (
+                    <span className="absolute -top-1 -right-2 bg-amber-700 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                      {itemCount}
+                    </span>
+                  )}
                 </Link>
 
                 <Link href="/wishlist" className="WishlistIcon">

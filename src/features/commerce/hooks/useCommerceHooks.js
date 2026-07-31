@@ -41,6 +41,16 @@ export function useCart() {
     }
   };
 
+  const buyNow = (rawEntity, type, router) => {
+    const normalizedProduct = CommerceAdapter.normalize(rawEntity, type);
+    if (normalizedProduct) {
+      dispatch(addToCart(normalizedProduct));
+      if (router && typeof router.push === 'function') {
+        router.push('/checkout');
+      }
+    }
+  };
+
   const removeItem = (productable_type, productable_id) => {
     dispatch(removeFromCart({ productable_type, productable_id }));
   };
@@ -61,6 +71,7 @@ export function useCart() {
     isDrawerOpen,
     appliedCoupon,
     addItem,
+    buyNow,
     removeItem,
     setItemQuantity,
     emptyCart,

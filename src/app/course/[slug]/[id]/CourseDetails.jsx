@@ -1,5 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import {
   FiPlayCircle,
   FiClock,
@@ -33,6 +35,8 @@ const CourseDetails = ({ courseDetails }) => {
   const [showPreviewPopup, setShowPreviewPopup] = useState(false);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const router = useRouter();
+  const { addItem, buyNow } = useCart();
   const [cartItems, setCartItems] = useState([]);
 
   const toggleCartItem = (id) => {
@@ -407,8 +411,18 @@ const CourseDetails = ({ courseDetails }) => {
                 </div>
               </div>
               <div className="ActionBtns">
-                <button className="AddToCart">Add to Cart</button>
-                <button className="BuyNow">Buy Now</button>
+                <button
+                  className="AddToCart"
+                  onClick={() => addItem(course, 'Course')}
+                >
+                  Add to Cart
+                </button>
+                <button
+                  className="BuyNow"
+                  onClick={() => buyNow(course, 'Course', router)}
+                >
+                  Buy Now
+                </button>
               </div>
             </div>
           </aside>
@@ -445,7 +459,7 @@ const CourseDetails = ({ courseDetails }) => {
               >
                 <FiChevronUp className={showCartDrawer ? "rotate" : ""} />
               </div>
-              <button className="GoToCartBtn">
+              <button className="GoToCartBtn" onClick={() => router.push('/cart')}>
                 Go To Cart <FiShoppingCart />
               </button>
             </div>

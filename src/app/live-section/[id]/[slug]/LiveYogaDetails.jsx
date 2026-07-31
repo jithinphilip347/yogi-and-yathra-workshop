@@ -24,7 +24,7 @@ import '../../../../assets/css/live-yoga-details.css';
 
 const LiveYogaDetails = ({ liveSection }) => {
   const router = useRouter();
-  const { addItem } = useCart();
+  const { addItem, buyNow } = useCart();
   const data = liveSection || {};
   const instructor = data.instructor || {};
 
@@ -454,10 +454,7 @@ const LiveYogaDetails = ({ liveSection }) => {
 
               <button
                 className="BookBtnSidebar"
-                onClick={() => {
-                  addItem(data, 'LiveSection');
-                  router.push('/checkout');
-                }}
+                onClick={() => buyNow(data, 'LiveSection', router)}
               >
                 Pre Book Now <MdKeyboardArrowRight className="ArrowAnim" />
               </button>

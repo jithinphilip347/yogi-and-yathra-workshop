@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { FaCalendar, FaClock, FaCheckCircle, FaTag, FaCreditCard, FaLock } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
 import { useCheckout } from '@/features/commerce/hooks/useCheckout';
 import { usePayment } from '@/features/commerce/hooks/usePayment';
 import '@/assets/css/checkout.css';
@@ -43,6 +44,17 @@ export default function Checkout() {
     state: billingAddress.state || '',
     zip: billingAddress.zip || '',
   });
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (items.length === 0) {
+      const timer = setTimeout(() => {
+        router.push('/');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [items, router]);
 
   useEffect(() => {
     if (user) {

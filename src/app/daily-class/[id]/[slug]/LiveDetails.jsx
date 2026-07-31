@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import {
   FiClock,
   FiCalendar,
@@ -61,6 +62,7 @@ const LiveDetails = ({ id, classDetails }) => {
   const [activeFaq, setActiveFaq] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const router = useRouter();
+  const { addItem, buyNow } = useCart();
   const [cartItems, setCartItems] = useState([]);
 
   const toggleFaq = (idx) => {
@@ -554,13 +556,9 @@ const LiveDetails = ({ id, classDetails }) => {
 
               <button
                 className="EnrollSidebarBtn"
-                onClick={
-                  selectedPlan
-                    ? () => router.push("/checkout")
-                    : handleScrollToPricing
-                }
+                onClick={() => buyNow(dailyClass, 'DailyClass', router)}
               >
-                {selectedPlan ? "Enroll Now" : "Choose Plan"}
+                {selectedPlan ? "Enroll Now" : "Choose Plan & Enroll"}
               </button>
             </div>
           </div>
