@@ -17,14 +17,14 @@ import {
   MdTrendingUp,
   MdLock
 } from 'react-icons/md';
-import { FiUsers, FiAward, FiClock, FiPlayCircle, FiCheck, FiXCircle } from 'react-icons/fi';
+import { FiUsers, FiAward, FiClock, FiPlayCircle, FiCheck, FiXCircle, FiShoppingCart } from 'react-icons/fi';
 import { FaChalkboardTeacher, FaRegCalendarAlt } from 'react-icons/fa';
 import { MEDIA_BASE_URL } from '@/utils/constants';
 import '../../../../assets/css/live-yoga-details.css';
 
 const LiveYogaDetails = ({ liveSection }) => {
   const router = useRouter();
-  const { addItem, buyNow } = useCart();
+  const { addItem, buyNow, isInCart } = useCart();
   const data = liveSection || {};
   const instructor = data.instructor || {};
 
@@ -104,7 +104,6 @@ const LiveYogaDetails = ({ liveSection }) => {
       };
     };
 
-    setTimeLeft(calcTimeLeft());
     const timer = setInterval(() => setTimeLeft(calcTimeLeft()), 1000);
     return () => clearInterval(timer);
   }, [data.class_date_time]);
@@ -452,12 +451,29 @@ const LiveYogaDetails = ({ liveSection }) => {
                 </div>
               )}
 
-              <button
-                className="BookBtnSidebar"
-                onClick={() => buyNow(data, 'LiveSection', router)}
-              >
-                Pre Book Now <MdKeyboardArrowRight className="ArrowAnim" />
-              </button>
+              {isInCart(data?.id, 'LiveSection') ? (
+                <button
+                  className="BookBtnSidebar"
+                  onClick={() => router.push('/cart')}
+                >
+                  Go to Cart <MdKeyboardArrowRight className="ArrowAnim" />
+                </button>
+              ) : (
+                <>
+                  <button
+                    className="AddToCartBtnSidebar"
+                    onClick={() => addItem(data, 'LiveSection')}
+                  >
+                    <FiShoppingCart /> Add to Cart
+                  </button>
+                  <button
+                    className="BookBtnSidebar"
+                    onClick={() => buyNow(data, 'LiveSection', router)}
+                  >
+                    Pre Book Now <MdKeyboardArrowRight className="ArrowAnim" />
+                  </button>
+                </>
+              )}
               <p className="SecureCheckout"><MdLock /> Secure Checkout</p>
             </div>
             

@@ -36,13 +36,19 @@ const CourseDetails = ({ courseDetails }) => {
   const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const router = useRouter();
-  const { addItem, buyNow } = useCart();
-  const [cartItems, setCartItems] = useState([]);
+  const { items: cartItems, addItem, buyNow, removeItem, isInCart } = useCart();
 
-  const toggleCartItem = (id) => {
-    setCartItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
-    );
+  const toggleCartItem = (value) => {
+    // Resolve the full product (from the list, or the popup's selected product)
+    // so both the popup and the inline buttons normalize identically.
+    const prod =
+      products.find((p) => String(p.value) === String(value)) || selectedProduct;
+    const key = prod?.value ?? value;
+    if (isInCart(key, 'Product')) {
+      removeItem('Product', key);
+    } else if (prod) {
+      addItem(prod, 'Product');
+    }
   };
 
   const products = course?.products || [];
@@ -133,8 +139,18 @@ const CourseDetails = ({ courseDetails }) => {
                 </div>
               </div>
               <div className="ActionBtns">
-                <button className="AddToCart">Add to Cart</button>
-                <button className="BuyNow">Buy Now</button>
+                {isInCart(course?.id, 'Course') ? (
+                  <button className="AddToCart added" onClick={() => router.push('/cart')}>
+                    Go to Cart
+                  </button>
+                ) : (
+                  <button className="AddToCart" onClick={() => addItem(course, 'Course')}>
+                    Add to Cart
+                  </button>
+                )}
+                <button className="BuyNow" onClick={() => buyNow(course, 'Course', router)}>
+                  Buy Now
+                </button>
               </div>
             </div>
           </div>
@@ -216,10 +232,14 @@ const CourseDetails = ({ courseDetails }) => {
                         View Details
                       </button>
                       <button
-                        className={`AddToCartBtn ${cartItems.includes(prod.value) ? "added" : ""}`}
-                        onClick={() => toggleCartItem(prod.value)}
+                        className={`AddToCartBtn ${isInCart(prod.value, 'Product') ? "added" : ""}`}
+                        onClick={() =>
+                          isInCart(prod.value, 'Product')
+                            ? removeItem('Product', prod.value)
+                            : addItem(prod, 'Product')
+                        }
                       >
-                        {cartItems.includes(prod.value)
+                        {isInCart(prod.value, 'Product')
                           ? "Remove from Cart"
                           : "Add to Cart"}
                       </button>
@@ -411,12 +431,21 @@ const CourseDetails = ({ courseDetails }) => {
                 </div>
               </div>
               <div className="ActionBtns">
-                <button
-                  className="AddToCart"
-                  onClick={() => addItem(course, 'Course')}
-                >
-                  Add to Cart
-                </button>
+                {isInCart(course?.id, 'Course') ? (
+                  <button
+                    className="AddToCart added"
+                    onClick={() => router.push('/cart')}
+                  >
+                    Go to Cart
+                  </button>
+                ) : (
+                  <button
+                    className="AddToCart"
+                    onClick={() => addItem(course, 'Course')}
+                  >
+                    Add to Cart
+                  </button>
+                )}
                 <button
                   className="BuyNow"
                   onClick={() => buyNow(course, 'Course', router)}
@@ -469,18 +498,18 @@ const CourseDetails = ({ courseDetails }) => {
         {/* Drawer Logic */}
         <div className={`CartDrawerPopup ${showCartDrawer ? "active" : ""}`}>
           <h4>Items in your cart</h4>
-          <div className="DrawerItem">
-            <p>{course?.title || "Course"} (Course)</p>
-            <span>₹{course?.discount_price || course?.price || "0"}</span>
-          </div>
-          {products
-            .filter((p) => cartItems.includes(p.value))
-            .map((prod, idx) => (
+          {cartItems.length === 0 ? (
+            <div className="DrawerItem">
+              <p>Your cart is empty</p>
+            </div>
+          ) : (
+            cartItems.map((item, idx) => (
               <div className="DrawerItem" key={idx}>
-                <p>{prod.label}</p>
-                <span>₹{prod.price}</span>
+                <p>{item.title}</p>
+                <span>₹{item.price}</span>
               </div>
-            ))}
+            ))
+          )}
         </div>
       </div>
       {selectedProduct && (
@@ -488,7 +517,7 @@ const CourseDetails = ({ courseDetails }) => {
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
           onToggleCart={toggleCartItem}
-          isAdded={cartItems.includes(selectedProduct.value)}
+          isAdded={isInCart(selectedProduct.value, 'Product')}
         />
       )}
       {showReviewPopup && (

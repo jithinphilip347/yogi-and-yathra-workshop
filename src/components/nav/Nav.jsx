@@ -150,10 +150,10 @@ const Nav = () => {
                   <BiSearch />
                 </div>
 
-                <Link href="/cart" className="CartIcon relative flex items-center">
+                <Link href="/cart" className="CartIcon">
                   <IoCartOutline />
                   {itemCount > 0 && (
-                    <span className="absolute -top-1 -right-2 bg-amber-700 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                    <span className="cartBadge">
                       {itemCount}
                     </span>
                   )}

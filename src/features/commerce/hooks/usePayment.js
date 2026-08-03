@@ -1,5 +1,12 @@
 /**
  * Custom hook for Razorpay SDK Execution & Payment Signature Verification
+ *
+ * IMPORTANT: This hook NEVER constructs Razorpay payloads from scratch.
+ * The backend returns the authoritative checkout payload
+ *   { order: {...}, payment: {...}, razorpay: { id, amount, currency, ... }, key_id }
+ * after creating the order. This hook simply passes those values to the
+ * Razorpay Checkout SDK, and forwards the callback response to the backend
+ * /payments/verify endpoint for server-side signature verification.
  */
 
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,6 +19,7 @@ import {
   resetPaymentState,
 } from '../slices/paymentSlice';
 import { clearCart } from '../slices/cartSlice';
+import { clearCheckoutItems } from '../slices/checkoutSlice';
 import { commerceApi } from '../services/commerceApi';
 
 export function usePayment() {
@@ -43,9 +51,26 @@ export function usePayment() {
 
   /**
    * Execute Razorpay PSP Checkout Modal
+   *
+   * @param {object} orderData  The full checkout payload returned by the
+   *                            backend createOrder endpoint:
+   *                            { order, payment, razorpay, key_id }
+   * @param {object} userProfile The logged-in user profile for prefill.
    */
   const executeRazorpay = async (orderData, userProfile) => {
     dispatch(startPayment());
+
+    // Backend is the single source of truth for the Razorpay payload.
+    const razorpayOrder = orderData?.razorpay;
+    const keyId = orderData?.key_id || process.env.NEXT_PUBLIC_RAZORPAY_KEY;
+    const paymentId = orderData?.payment?.id;
+    const orderNumber = orderData?.order?.order_number || orderData?.order?.id;
+
+    if (!razorpayOrder?.id || !keyId || !paymentId) {
+      const msg = 'Missing Razorpay checkout details. Please retry the order.';
+      dispatch(paymentFailure(msg));
+      throw new Error(msg);
+    }
 
     const isLoaded = await loadRazorpayScript();
     if (!isLoaded) {
@@ -55,12 +80,14 @@ export function usePayment() {
     }
 
     const options = {
-      key: process.env.NEXT_PUBLIC_RAZORPAY_KEY || 'rzp_test_yogify_key',
-      amount: Math.round(Number(orderData.total_amount || orderData.amount) * 100),
-      currency: orderData.currency || 'INR',
+      // key_id is returned by the backend (never hardcoded in source)
+      key: keyId,
+      // amount is already in paise, as returned by Razorpay order creation
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency || 'INR',
       name: 'Yogify Workshop',
-      description: `Order #${orderData.order_number || orderData.id}`,
-      order_id: orderData.gateway_order_id || orderData.order_number,
+      description: orderNumber ? `Order #${orderNumber}` : 'Yogify Workshop',
+      order_id: razorpayOrder.id,
       prefill: {
         name: userProfile?.name || '',
         email: userProfile?.email || '',
@@ -72,11 +99,14 @@ export function usePayment() {
       handler: async function (response) {
         dispatch(startVerification());
         try {
+          // Server-side verification — never trust the frontend alone.
+          // The backend validates the HMAC signature and fetches the
+          // payment from Razorpay to confirm it was captured.
           const verificationPayload = {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
-            order_id: orderData.id,
+            payment_id: paymentId,
           };
 
           const verifyRes = await commerceApi.verifyPayment(verificationPayload);
@@ -84,6 +114,7 @@ export function usePayment() {
           if (verifyRes.success || verifyRes.status === 'success') {
             dispatch(paymentSuccess(verifyRes.data || verifyRes));
             dispatch(clearCart());
+            dispatch(clearCheckoutItems());
             router.push('/checkout/success');
           } else {
             throw new Error(verifyRes.message || 'Payment signature verification failed.');
@@ -102,6 +133,13 @@ export function usePayment() {
     };
 
     const rzp = new window.Razorpay(options);
+
+    // Surface payment failures reported by the SDK (e.g. bank declined)
+    rzp.on('payment.failed', function (response) {
+      const description = response?.error?.description || 'Payment failed. Please try again.';
+      dispatch(paymentFailure(description));
+    });
+
     rzp.open();
   };
 

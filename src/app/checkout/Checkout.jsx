@@ -10,6 +10,7 @@ import '@/assets/css/checkout.css';
 export default function Checkout() {
   const {
     items,
+    itemCount,
     subtotal,
     originalTotal,
     discountTotal,
@@ -47,24 +48,41 @@ export default function Checkout() {
 
   const router = useRouter();
 
+  // Checkout must NEVER render without a checkout session.
+  // Redirect to /cart (where items live) instead of rendering an empty page.
   useEffect(() => {
     if (items.length === 0) {
-      const timer = setTimeout(() => {
-        router.push('/');
-      }, 3000);
-      return () => clearTimeout(timer);
+      router.replace('/cart');
     }
   }, [items, router]);
 
-  useEffect(() => {
-    if (user) {
-      setForm((prev) => ({
-        ...prev,
-        name: prev.name || user.name || '',
-        email: prev.email || user.email || '',
-      }));
-    }
-  }, [user]);
+  // Adjust form state when the logged-in user becomes available (React's
+  // documented "adjust state during render" pattern — avoids cascading renders).
+  const [prevUser, setPrevUser] = useState(user);
+  if (prevUser !== user) {
+    setPrevUser(user);
+    setForm((prev) => ({
+      ...prev,
+      name: prev.name || user?.name || '',
+      email: prev.email || user?.email || '',
+    }));
+  }
+
+  // Early return AFTER all hooks — keeps rules-of-hooks satisfied
+  if (items.length === 0) {
+    return (
+      <div
+        style={{
+          padding: '80px 20px',
+          textAlign: 'center',
+          color: '#6a6f73',
+        }}
+      >
+        <h2 style={{ marginBottom: 8 }}>Redirecting to your cart…</h2>
+        <p>No checkout session found. Please review your items and try again.</p>
+      </div>
+    );
+  }
 
   const handleCouponSubmit = async (e) => {
     e.preventDefault();
@@ -89,8 +107,8 @@ export default function Checkout() {
 
   const handleProceedToPayment = async () => {
     try {
-      const order = await initiateOrder();
-      alert(`Order #${order.order_number || order.id} created successfully! Proceeding to Payment PSP...`);
+      await initiateOrder();
+      // createOrderSuccess() advances the stepper to the Payment step.
     } catch (err) {
       console.error(err);
     }
@@ -128,7 +146,7 @@ export default function Checkout() {
           {/* STEP 1: ORDER REVIEW */}
           {activeStep === 1 && (
             <section className="CheckoutSection CourseReviewSection">
-              <h2 className="SectionTitle">Order Items ({items.length})</h2>
+              <h2 className="SectionTitle">Order Items ({itemCount})</h2>
               <div className="CourseList">
                 {items.length === 0 ? (
                   <div style={{ padding: '40px', textAlign: 'center', color: '#6a6f73', background: '#f7f9fa', borderRadius: '8px' }}>
@@ -146,9 +164,13 @@ export default function Checkout() {
                         <p className="Instructor">{item.subtitle}</p>
                       </div>
                       <div className="CoursePrice">
-                        <span className="CurrentPrice">₹{(item.price * item.quantity).toLocaleString()}</span>
-                        {item.original_price > item.price && (
-                          <span className="OriginalPrice">₹{(item.original_price * item.quantity).toLocaleString()}</span>
+                        <span className="CurrentPrice">
+                          ₹{(Number(item.price || 0) * Number(item.quantity || 1)).toLocaleString()}
+                        </span>
+                        {Number(item.original_price || 0) > Number(item.price || 0) && (
+                          <span className="OriginalPrice">
+                            ₹{(Number(item.original_price || 0) * Number(item.quantity || 1)).toLocaleString()}
+                          </span>
                         )}
                       </div>
                     </div>
@@ -165,54 +187,58 @@ export default function Checkout() {
 
           {/* STEP 2: STUDENT DETAILS & BILLING */}
           {activeStep === 2 && (
-            <section className="CheckoutSection bg-white p-6 rounded-xl border border-gray-200 space-y-4">
+            <section className="CheckoutSection">
               <h2 className="SectionTitle">Student & Billing Details</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Full Name *</label>
+              <div className="FormGrid">
+                <div className="FormGroup">
+                  <label className="FormLabel">Full Name *</label>
                   <input
                     type="text"
                     required
                     value={form.name}
                     onChange={(e) => handleFormChange('name', e.target.value)}
-                    className="w-full p-2.5 border rounded-lg text-sm"
+                    className="FormInput"
+                    placeholder="Enter your full name"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Email Address *</label>
+                <div className="FormGroup">
+                  <label className="FormLabel">Email Address *</label>
                   <input
                     type="email"
                     required
                     value={form.email}
                     onChange={(e) => handleFormChange('email', e.target.value)}
-                    className="w-full p-2.5 border rounded-lg text-sm"
+                    className="FormInput"
+                    placeholder="Enter your email address"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">Phone Number</label>
+                <div className="FormGroup">
+                  <label className="FormLabel">Phone Number</label>
                   <input
                     type="text"
                     value={form.phone}
                     onChange={(e) => handleFormChange('phone', e.target.value)}
-                    className="w-full p-2.5 border rounded-lg text-sm"
+                    className="FormInput"
+                    placeholder="Enter phone number"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold text-gray-600 uppercase mb-1">State / Province</label>
+                <div className="FormGroup">
+                  <label className="FormLabel">State / Province</label>
                   <input
                     type="text"
                     value={form.state}
                     onChange={(e) => handleFormChange('state', e.target.value)}
-                    className="w-full p-2.5 border rounded-lg text-sm"
+                    className="FormInput"
+                    placeholder="Enter state or province"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-between pt-4">
-                <button onClick={() => changeStep(1)} className="px-4 py-2 border rounded-lg text-sm font-medium">
+              <div className="FormActions">
+                <button onClick={() => changeStep(1)} className="BackBtn">
                   ← Back to Review
                 </button>
-                <button onClick={handleProceedToPayment} disabled={isProcessing} className="ProceedBtn">
+                <button onClick={handleProceedToPayment} disabled={isProcessing} className="ProceedBtn" style={{ margin: 0, width: 'auto' }}>
                   {isProcessing ? 'Initiating Order...' : 'Proceed to Payment →'}
                 </button>
               </div>
@@ -249,11 +275,11 @@ export default function Checkout() {
               </div>
 
               <button
-                onClick={() => executeRazorpay(activeOrder || { id: 'ORD-DEMO', total_amount: subtotal }, user)}
-                disabled={paymentStatus === 'initiating' || paymentStatus === 'verifying'}
+                onClick={() => executeRazorpay(activeOrder, user)}
+                disabled={!activeOrder || paymentStatus === 'initiating' || paymentStatus === 'verifying'}
                 className="ProceedBtn flex items-center justify-center gap-2"
               >
-                <FaLock /> {paymentStatus === 'verifying' ? 'Verifying Payment Signature...' : `Pay ₹${subtotal.toLocaleString()} via Razorpay`}
+                <FaLock /> {paymentStatus === 'verifying' ? 'Verifying Payment Signature...' : `Pay ₹${(Number(activeOrder?.order?.amount) || subtotal).toLocaleString()} via Razorpay`}
               </button>
             </section>
           )}
@@ -319,7 +345,7 @@ export default function Checkout() {
 
             <div className="SummaryRow TotalRow">
               <span>Total Payable:</span>
-              <span>₹{subtotal.toLocaleString()}</span>
+              <span>₹{Math.max(0, subtotal - (Number(appliedCoupon?.discount) || 0)).toLocaleString()}</span>
             </div>
           </div>
         </div>

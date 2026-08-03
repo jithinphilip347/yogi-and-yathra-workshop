@@ -22,6 +22,7 @@ import {
   selectIsCartDrawerOpen,
   selectAppliedCoupon,
 } from '../selectors/commerceSelectors';
+import { createCheckout } from '../slices/checkoutSlice';
 import { commerceApi } from '../services/commerceApi';
 
 export function useCart() {
@@ -45,9 +46,22 @@ export function useCart() {
     const normalizedProduct = CommerceAdapter.normalize(rawEntity, type);
     if (normalizedProduct) {
       dispatch(addToCart(normalizedProduct));
+      // Create a checkout session so /checkout always has Order Review data
+      dispatch(createCheckout([normalizedProduct]));
       if (router && typeof router.push === 'function') {
         router.push('/checkout');
       }
+    }
+  };
+
+  /**
+   * Snapshot the current cart into a checkout session and navigate.
+   */
+  const proceedToCheckout = (router) => {
+    if (items.length === 0) return;
+    dispatch(createCheckout(items));
+    if (router && typeof router.push === 'function') {
+      router.push('/checkout');
     }
   };
 
@@ -62,6 +76,14 @@ export function useCart() {
   const emptyCart = () => dispatch(clearCart());
   const toggleDrawer = (isOpen) => dispatch(toggleCartDrawer(isOpen));
 
+  const isInCart = (productable_id, productable_type = 'Course') => {
+    return items.some(
+      (item) =>
+        String(item.productable_id) === String(productable_id) &&
+        (!productable_type || item.productable_type === productable_type)
+    );
+  };
+
   return {
     items,
     itemCount,
@@ -72,10 +94,12 @@ export function useCart() {
     appliedCoupon,
     addItem,
     buyNow,
+    proceedToCheckout,
     removeItem,
     setItemQuantity,
     emptyCart,
     toggleDrawer,
+    isInCart,
   };
 }
 
@@ -84,9 +108,9 @@ export function useCoupon() {
   const appliedCoupon = useSelector(selectAppliedCoupon);
   const subtotal = useSelector(selectCartSubtotal);
 
-  const validateAndApply = async (code) => {
+  const validateAndApply = async (code, amount = subtotal) => {
     try {
-      const response = await commerceApi.validateCoupon(code, subtotal);
+      const response = await commerceApi.validateCoupon(code, amount);
       if (response.success && response.data) {
         dispatch(setAppliedCoupon(response.data));
         return { success: true, coupon: response.data };

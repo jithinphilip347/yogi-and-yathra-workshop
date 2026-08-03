@@ -14,9 +14,11 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { MEDIA_BASE_URL } from "@/utils/constants";
+import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 
 const EventSlide = ({ event }) => {
   const router = useRouter();
+  const { buyNow } = useCart();
   const [timeLeft, setTimeLeft] = useState({
     days: "00",
     hours: "00",
@@ -26,25 +28,25 @@ const EventSlide = ({ event }) => {
 
   const targetDate = new Date(event.date).getTime();
 
-  const format = (v) => String(v).padStart(2, "0");
-
-  const calcTimeLeft = () => {
-    const now = Date.now();
-    const distance = targetDate - now;
-
-    if (distance <= 0) {
-      return { days: "00", hours: "00", minutes: "00", seconds: "00" };
-    }
-
-    return {
-      days: format(Math.floor(distance / (1000 * 60 * 60 * 24))),
-      hours: format(Math.floor((distance / (1000 * 60 * 60)) % 24)),
-      minutes: format(Math.floor((distance / (1000 * 60)) % 60)),
-      seconds: format(Math.floor((distance / 1000) % 60)),
-    };
-  };
-
   useEffect(() => {
+    const format = (v) => String(v).padStart(2, "0");
+
+    const calcTimeLeft = () => {
+      const now = Date.now();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        return { days: "00", hours: "00", minutes: "00", seconds: "00" };
+      }
+
+      return {
+        days: format(Math.floor(distance / (1000 * 60 * 60 * 24))),
+        hours: format(Math.floor((distance / (1000 * 60 * 60)) % 24)),
+        minutes: format(Math.floor((distance / (1000 * 60)) % 60)),
+        seconds: format(Math.floor((distance / 1000) % 60)),
+      };
+    };
+
     const timer = setInterval(() => {
       setTimeLeft(calcTimeLeft());
     }, 1000);
@@ -58,7 +60,8 @@ const EventSlide = ({ event }) => {
 
   const handleButtonClick = (e) => {
     e.stopPropagation();
-    router.push('/checkout');
+    // Create a checkout session (Buy Now) instead of navigating with an empty store
+    buyNow(event, 'LiveSection', router);
   };
 
   return (

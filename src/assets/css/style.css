@@ -903,6 +903,8 @@
   color: #000;
   cursor: pointer;
   display: flex;
+  align-items: center;
+  position: relative;
   transition: 0.3s;
 }
 @media (max-width: 1024px) {
@@ -912,6 +914,24 @@
 }
 #Nav .NavMain .NavRightBox .searchCartWishlistBox .CartIcon:hover {
   color: var(--primaryColor);
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .CartIcon .cartBadge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: var(--primaryColor);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  line-height: 1;
+  pointer-events: none;
 }
 #Nav .NavMain .NavRightBox .searchCartWishlistBox .WishlistIcon {
   font-size: 22px;

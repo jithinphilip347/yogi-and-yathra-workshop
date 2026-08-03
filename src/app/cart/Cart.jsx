@@ -2,11 +2,13 @@
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { FaStar, FaBookOpen, FaClock } from "react-icons/fa";
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import CourseImg1 from "../../assets/images/courseImg-1.webp";
 
 const Cart = () => {
+  const router = useRouter();
   const {
     items,
     itemCount,
@@ -14,6 +16,7 @@ const Cart = () => {
     originalTotal,
     discountTotal,
     removeItem,
+    proceedToCheckout,
   } = useCart();
 
   return (
@@ -118,11 +121,12 @@ const Cart = () => {
                   </div>
                 </div>
 
-                <Link href="/checkout" style={{ textDecoration: 'none' }}>
-                  <button className="checkoutBtn">
-                    Proceed to Checkout
-                  </button>
-                </Link>
+                <button
+                  className="checkoutBtn"
+                  onClick={() => proceedToCheckout(router)}
+                >
+                  Proceed to Checkout
+                </button>
               </div>
             </div>
           </div>

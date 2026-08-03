@@ -62,17 +62,10 @@ const LiveDetails = ({ id, classDetails }) => {
   const [activeFaq, setActiveFaq] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const router = useRouter();
-  const { addItem, buyNow } = useCart();
-  const [cartItems, setCartItems] = useState([]);
+  const { addItem, buyNow, removeItem, isInCart } = useCart();
 
   const toggleFaq = (idx) => {
     setActiveFaq(activeFaq === idx ? null : idx);
-  };
-
-  const toggleCartItem = (val) => {
-    setCartItems((prev) =>
-      prev.includes(val) ? prev.filter((item) => item !== val) : [...prev, val],
-    );
   };
 
   const handleScrollToPricing = () => {
@@ -405,17 +398,21 @@ const LiveDetails = ({ id, classDetails }) => {
                         <button className="ViewDetailsBtn">View Details</button>
                         <button
                           className="AddToCartBtn"
-                          onClick={() => toggleCartItem(prod.value || prod.id)}
+                          onClick={() =>
+                            isInCart(prod.value || prod.id, 'Product')
+                              ? removeItem('Product', prod.value || prod.id)
+                              : addItem(prod, 'Product')
+                          }
                           style={{
-                            background: cartItems.includes(prod.value || prod.id)
+                            background: isInCart(prod.value || prod.id, 'Product')
                               ? "var(--primaryColor)"
                               : "transparent",
-                            color: cartItems.includes(prod.value || prod.id)
+                            color: isInCart(prod.value || prod.id, 'Product')
                               ? "#fff"
                               : "var(--primaryColor)",
                           }}
                         >
-                          {cartItems.includes(prod.value || prod.id) ? "Added" : "Add to Cart"}
+                          {isInCart(prod.value || prod.id, 'Product') ? "Added" : "Add to Cart"}
                         </button>
                       </div>
                     </div>
@@ -554,12 +551,21 @@ const LiveDetails = ({ id, classDetails }) => {
                 </span>
               </div>
 
-              <button
-                className="EnrollSidebarBtn"
-                onClick={() => buyNow(dailyClass, 'DailyClass', router)}
-              >
-                {selectedPlan ? "Enroll Now" : "Choose Plan & Enroll"}
-              </button>
+              {isInCart(dailyClass?.id, 'DailyClass') ? (
+                <button
+                  className="EnrollSidebarBtn"
+                  onClick={() => router.push('/cart')}
+                >
+                  Go to Cart
+                </button>
+              ) : (
+                <button
+                  className="EnrollSidebarBtn"
+                  onClick={() => buyNow(dailyClass, 'DailyClass', router)}
+                >
+                  {selectedPlan ? "Enroll Now" : "Choose Plan & Enroll"}
+                </button>
+              )}
             </div>
           </div>
         </div>

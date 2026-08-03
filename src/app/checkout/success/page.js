@@ -10,7 +10,7 @@ export default function CheckoutSuccessPage() {
   const activeOrder = useSelector((state) => state.checkout?.activeOrder);
 
   const transactionId = paymentState.activeTransactionId || 'TXN-9982341';
-  const orderNumber = activeOrder?.order_number || activeOrder?.id || 'ORD-10294';
+  const orderNumber = activeOrder?.order?.order_number || activeOrder?.order_number || activeOrder?.id || 'ORD-10294';
 
   return (
     <div id="Checkout" className="py-12">

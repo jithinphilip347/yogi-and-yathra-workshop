@@ -9,6 +9,7 @@ export const PRODUCT_TYPES = {
   FEE_COLLECTION: 'FeeCollection',
   MEMBERSHIP: 'Membership',
   WORKSHOP: 'Workshop',
+  PRODUCT: 'Product',
 };
 
 export const PAYMENT_GATEWAYS = {

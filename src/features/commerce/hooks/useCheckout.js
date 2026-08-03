@@ -1,9 +1,13 @@
 /**
  * Custom hook for Checkout Flow & Backend Order Engine integration
+ *
+ * Reads Order Review items from the checkout session (checkout.items),
+ * which is created via createCheckout() when the user proceeds to checkout
+ * (from the cart) or clicks Buy Now.
  */
 
 import { useDispatch, useSelector } from 'react-redux';
-import { useCart, useCoupon } from './useCommerceHooks';
+import { useCoupon } from './useCommerceHooks';
 import {
   setBillingAddress,
   setPaymentMethod,
@@ -13,15 +17,28 @@ import {
   createOrderFailure,
   resetCheckout,
 } from '../slices/checkoutSlice';
+import {
+  selectCheckoutItems,
+  selectCheckoutItemCount,
+  selectCheckoutSubtotal,
+  selectCheckoutOriginalTotal,
+  selectCheckoutDiscounts,
+} from '../selectors/commerceSelectors';
 import { commerceApi } from '../services/commerceApi';
 
 export function useCheckout() {
   const dispatch = useDispatch();
-  const { items, subtotal, originalTotal, discountTotal, appliedCoupon, emptyCart } = useCart();
-  const { validateAndApply, detachCoupon } = useCoupon();
+  const { appliedCoupon, validateAndApply, detachCoupon } = useCoupon();
 
   const checkoutState = useSelector((state) => state.checkout || {});
   const authState = useSelector((state) => state.auth || {});
+
+  // Order Review items come from the checkout session (not the live cart)
+  const items = useSelector(selectCheckoutItems);
+  const itemCount = useSelector(selectCheckoutItemCount);
+  const subtotal = useSelector(selectCheckoutSubtotal);
+  const originalTotal = useSelector(selectCheckoutOriginalTotal);
+  const discountTotal = useSelector(selectCheckoutDiscounts);
 
   const activeStep = checkoutState.activeStep || 1;
   const billingAddress = checkoutState.billingAddress || {};
@@ -49,10 +66,18 @@ export function useCheckout() {
     try {
       // Primary item or polymorphic payload
       const primaryItem = items[0];
+      
+      // Map frontend normalized type to backend expected product_type enum (course, daily_class, live_section)
+      let productType = (primaryItem.productable_type || 'course').toLowerCase();
+      if (productType === 'coursedetails' || productType === 'course') productType = 'course';
+      if (productType === 'dailyclass' || productType === 'daily_class') productType = 'daily_class';
+      if (productType === 'livesection' || productType === 'live_section') productType = 'live_section';
+
       const payload = {
-        orderable_type: primaryItem.productable_type,
-        orderable_id: primaryItem.productable_id,
-        amount: subtotal,
+        product_type: productType,
+        product_id: Number(primaryItem.productable_id),
+        user_id: user?.id || undefined, // Backend falls back to the authenticated user
+        pricing_plan_id: primaryItem.meta?.pricing_plan_id || null,
         coupon_code: appliedCoupon?.code || null,
         billing_address: billingAddress,
         payment_method: paymentMethod,
@@ -75,6 +100,7 @@ export function useCheckout() {
 
   return {
     items,
+    itemCount,
     subtotal,
     originalTotal,
     discountTotal,
@@ -90,7 +116,7 @@ export function useCheckout() {
     changeStep,
     changePaymentMethod,
     initiateOrder,
-    validateAndApplyCoupon: validateAndApply,
+    validateAndApplyCoupon: (code) => validateAndApply(code, subtotal),
     removeCoupon: detachCoupon,
     reset: () => dispatch(resetCheckout()),
   };
