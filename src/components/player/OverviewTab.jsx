@@ -1,10 +1,44 @@
 "use client";
 
-import React from 'react';
-import { FiCheckCircle } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
+import { FiCheckCircle, FiAward, FiDownload, FiLock } from 'react-icons/fi';
 import { MEDIA_BASE_URL } from '@/utils/constants';
+import courseApi from '@/libs/courseApi';
+import toast from 'react-hot-toast';
 
-export default function OverviewTab({ course, currentLesson }) {
+export default function OverviewTab({ course, currentLesson, completionSummary }) {
+  const [eligibility, setEligibility] = useState(null);
+  const [isClaiming, setIsClaiming] = useState(false);
+
+  useEffect(() => {
+    if (!course?.id) return;
+    courseApi.getCertificateEligibility(course.id)
+      .then((res) => {
+        const data = res.data?.data || res.data;
+        setEligibility(data);
+      })
+      .catch(() => {});
+  }, [course?.id, completionSummary?.percentage]);
+
+  const handleClaim = async () => {
+    if (!course?.id) return;
+    try {
+      setIsClaiming(true);
+      const res = await courseApi.claimCertificate(course.id);
+      const data = res.data?.data || res.data;
+      toast.success("Certificate claimed!");
+      setEligibility(prev => ({
+        ...prev,
+        is_claimed: true,
+        certificate: data
+      }));
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to claim certificate");
+    } finally {
+      setIsClaiming(false);
+    }
+  };
+
   if (!course) return null;
 
   const instructorAvatar = course.instructor?.avatar
@@ -13,8 +47,115 @@ export default function OverviewTab({ course, currentLesson }) {
         : `${MEDIA_BASE_URL.replace(/\/+$/, '')}/${course.instructor.avatar.replace(/^\/+/, '')}`)
     : '/images/avatar-placeholder.webp';
 
+  const percentage = completionSummary?.percentage ?? 0;
+  const isCompleted = percentage >= 100;
+
   return (
-    <div className="OverviewTab">
+    <div className="OverviewTab" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* Certificate Status Card */}
+      <div style={{
+        backgroundColor: isCompleted ? '#fff7ed' : '#ffffff',
+        border: isCompleted ? '1px solid rgba(135, 68, 41, 0.3)' : '1px solid #e2e8f0',
+        borderRadius: '12px',
+        padding: '18px 20px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '16px',
+        flexWrap: 'wrap'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+          <div style={{
+            width: '46px',
+            height: '46px',
+            borderRadius: '50%',
+            backgroundColor: isCompleted ? 'var(--primaryColor, #874429)' : '#f1f5f9',
+            color: isCompleted ? '#ffffff' : '#94a3b8',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '22px'
+          }}>
+            <FiAward />
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>
+              Course Completion Certificate
+            </span>
+            <span style={{ fontSize: '12.5px', color: '#64748b' }}>
+              {eligibility?.is_claimed
+                ? `Issued Certificate #${eligibility.certificate?.certificate_number || ''}`
+                : isCompleted
+                ? 'Congratulations! Course 100% completed.'
+                : `Complete all lessons to earn certificate (${percentage}% finished)`}
+            </span>
+          </div>
+        </div>
+
+        <div>
+          {eligibility?.is_claimed && eligibility?.certificate?.download_url ? (
+            <a
+              href={eligibility.certificate.download_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              download
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                fontSize: '13px',
+                fontWeight: '600',
+                borderRadius: '8px',
+                backgroundColor: 'var(--primaryColor, #874429)',
+                color: '#ffffff',
+                textDecoration: 'none'
+              }}
+            >
+              <FiDownload />
+              <span>Download PDF</span>
+            </a>
+          ) : isCompleted ? (
+            <button
+              onClick={handleClaim}
+              disabled={isClaiming}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                fontSize: '13px',
+                fontWeight: '600',
+                borderRadius: '8px',
+                border: 'none',
+                backgroundColor: 'var(--primaryColor, #874429)',
+                color: '#ffffff',
+                cursor: 'pointer'
+              }}
+            >
+              <FiAward />
+              <span>{isClaiming ? 'Claiming...' : 'Claim Certificate'}</span>
+            </button>
+          ) : (
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              fontSize: '12px',
+              fontWeight: '500',
+              borderRadius: '6px',
+              backgroundColor: '#f1f5f9',
+              color: '#64748b'
+            }}>
+              <FiLock />
+              <span>Locked ({percentage}%)</span>
+            </span>
+          )}
+        </div>
+      </div>
+
       {/* Current Lesson Description */}
       {currentLesson && (
         <div className="SectionBlock">
@@ -59,9 +200,9 @@ export default function OverviewTab({ course, currentLesson }) {
               alt={course.instructor.name}
               className="Avatar"
             />
-            <div className="Info">
-              <h5>{course.instructor.name}</h5>
-              <p>{course.instructor.bio || "Certified Yoga & Wellness Master Instructor"}</p>
+            <div className="InstructorInfo">
+              <span className="Name">{course.instructor.name}</span>
+              <span className="Bio">{course.instructor.bio || "Certified Yoga & Wellness Instructor"}</span>
             </div>
           </div>
         </div>

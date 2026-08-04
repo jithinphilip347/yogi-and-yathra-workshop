@@ -1,19 +1,7 @@
 "use client";
-import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import CourseCard from "@/components/coursebox/CourseCard";
-import { FiBookOpen, FiClock, FiUsers, FiCalendar, FiPlayCircle, FiMoreVertical } from "react-icons/fi";
-import { AiFillStar } from "react-icons/ai";
-import { MdEvent, MdAccessTime, MdMoreVert, MdLiveTv } from 'react-icons/md';
-import { FaChalkboardTeacher } from 'react-icons/fa';
-import { MEDIA_BASE_URL } from "@/utils/constants";
-import useWishlist from "@/hooks/useWishlist";
-
-import CourseImg1 from "@/assets/images/courseImg-1.webp";
-import CourseImg2 from "@/assets/images/courseImg-2.webp";
-import LiveImg1 from "@/assets/images/live1.webp";
-import LiveThumb1 from "@/assets/images/live2.webp";
+import { useEffect, useState } from "react";
+import { FiBookOpen, FiClock, FiUsers, FiCalendar, FiPlayCircle, FiMoreVertical, FiZap, FiAward } from "react-icons/fi";
+import courseApi from "@/libs/courseApi";
 
 const Dashboard = ({
   courses = [],
@@ -23,12 +11,126 @@ const Dashboard = ({
   user,
 }) => {
   const { findWishlistIcon } = useWishlist();
+  const [analytics, setAnalytics] = useState(null);
+
+  useEffect(() => {
+    courseApi.getStudentAnalytics()
+      .then((res) => {
+        setAnalytics(res.data?.data || res.data);
+      })
+      .catch(() => {});
+  }, []);
 
   const activeDailyClass = liveClasses && liveClasses.length > 0 ? liveClasses[0] : null;
   const activeLiveSession = liveSessions && liveSessions.length > 0 ? liveSessions[0] : null;
 
   return (
     <div className="DashBoard">
+      {/* Learning Intelligence KPI Summary Cards */}
+      {analytics && (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: '16px',
+          marginBottom: '24px'
+        }}>
+          <div style={{
+            backgroundColor: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px'
+          }}>
+            <div style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(135, 68, 41, 0.1)',
+              color: 'var(--primaryColor, #874429)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px'
+            }}>
+              <FiClock />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '20px', fontWeight: '700', color: '#0f172a' }}>
+                {analytics.total_watch_hours || 0} hrs
+              </span>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>
+                Total Watch Time
+              </span>
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px'
+          }}>
+            <div style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(234, 179, 8, 0.1)',
+              color: '#d97706',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px'
+            }}>
+              <FiZap />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '20px', fontWeight: '700', color: '#0f172a' }}>
+                {analytics.learning_streak_days || 0} Days
+              </span>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>
+                Learning Streak
+              </span>
+            </div>
+          </div>
+
+          <div style={{
+            backgroundColor: '#ffffff',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '16px 20px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px'
+          }}>
+            <div style={{
+              width: '42px',
+              height: '42px',
+              borderRadius: '10px',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              color: '#059669',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '20px'
+            }}>
+              <FiAward />
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ fontSize: '20px', fontWeight: '700', color: '#0f172a' }}>
+                {analytics.completed_lessons || 0}
+              </span>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '500' }}>
+                Lessons Finished
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Continue Learning */}
       <div className="ContinueWatchBox">

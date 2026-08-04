@@ -190,6 +190,7 @@ export default function VideoEngine({
     if (videoRef.current) {
       videoRef.current.playbackRate = speed;
     }
+    courseApi.logPlayerEvent('speed_change', lesson?.id, { speed }).catch(() => {});
   };
 
   // Fullscreen Toggle

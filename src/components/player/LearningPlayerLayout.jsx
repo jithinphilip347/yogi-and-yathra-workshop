@@ -11,10 +11,14 @@ import courseApi from '@/libs/courseApi';
 import toast from 'react-hot-toast';
 import '@/assets/css/learning-player.scss';
 
+import CompletionModal from './CompletionModal';
+
 export default function LearningPlayerLayout({ playerSession: initialSession }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sessionData, setSessionData] = useState(initialSession);
   const [isBookmarked, setIsBookmarked] = useState(initialSession?.current_lesson?.is_bookmarked ?? false);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [modalDismissed, setModalDismissed] = useState(false);
   const playerCallbacksRef = useRef(null);
 
   useEffect(() => {
@@ -24,7 +28,11 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     if (initialSession?.current_lesson?.id) {
       courseApi.recordRecentView(initialSession.current_lesson.id).catch(() => {});
     }
-  }, [initialSession]);
+
+    if (initialSession?.completion_summary?.percentage >= 100 && !modalDismissed) {
+      setShowCompletionModal(true);
+    }
+  }, [initialSession, modalDismissed]);
 
   if (!sessionData) return null;
 
@@ -100,6 +108,10 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
 
       const percentage = total > 0 ? Math.min(100, Math.round((completed / total) * 100)) : 0;
 
+      if (percentage >= 100 && !modalDismissed) {
+        setShowCompletionModal(true);
+      }
+
       return {
         ...prev,
         sections: updatedSections,
@@ -123,6 +135,17 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
 
   return (
     <div className="LearningPlayerRoot">
+      {/* Celebration Modal when Course is 100% Completed */}
+      {showCompletionModal && (
+        <CompletionModal
+          course={course}
+          onClose={() => {
+            setShowCompletionModal(false);
+            setModalDismissed(true);
+          }}
+        />
+      )}
+
       {/* 1. Top Header with Prev/Next Navigation & Bookmark */}
       <LearningHeader
         courseTitle={course?.title}
@@ -157,6 +180,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
             currentLesson={current_lesson}
             getCurrentTime={handleGetCurrentTime}
             onSeek={handleSeek}
+            completionSummary={completion_summary}
           />
         </main>
 

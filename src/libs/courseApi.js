@@ -61,6 +61,22 @@ const courseApi = {
 
   getRecentLessons: () => apiClient.get("student/recent-lessons"),
   recordRecentView: (lessonId) => apiClient.post(`lesson/${lessonId}/recent-view`),
+
+  // Sprint P5: Assessment & Certificate Integration
+  getCertificateEligibility: (courseId) => apiClient.get(`course/${courseId}/certificate-eligibility`),
+  claimCertificate: (courseId) => apiClient.post(`course/${courseId}/claim-certificate`),
+  getAssessmentStatus: (lessonId) => apiClient.get(`lesson/${lessonId}/assessment-status`),
+
+  // Sprint P6: Learning Intelligence, Analytics & Telemetry
+  getStudentAnalytics: () => apiClient.get("student/analytics"),
+  getLessonAnalytics: (lessonId) => apiClient.get(`lesson/${lessonId}/analytics`),
+  getSystemMetrics: () => apiClient.get("system/player-metrics"),
+  logPlayerEvent: (eventType, lessonId = null, eventData = null) =>
+    apiClient.post("player/event", {
+      event_type: eventType,
+      lesson_id: lessonId,
+      event_data: eventData,
+    }),
 };
 
 export default courseApi;
