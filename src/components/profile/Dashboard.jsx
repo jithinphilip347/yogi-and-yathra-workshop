@@ -77,7 +77,7 @@ const Dashboard = ({
                       )}
                       <span>{item.instructorName}</span>
                     </div>
-                    <Link href={`/course/${item.slug || ""}`}>
+                    <Link href={item.current_lesson_id ? `/course/${item.slug}/learn/${item.current_lesson_id}` : `/course/${item.slug || ""}`}>
                       <button className="ContinueBtn">Continue</button>
                     </Link>
                   </div>

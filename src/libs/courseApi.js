@@ -19,6 +19,28 @@ const courseApi = {
   liveSections: () => apiClient.get("home/live-sections"),
 
   upcomingEvents: () => apiClient.get("dashboard/upcoming-events"),
+
+  getCoursePlayer: (courseId, lessonId) => {
+    const params = {};
+    if (lessonId) params.lesson_id = lessonId;
+    return apiClient.get(`course/${courseId}/player`, { params });
+  },
+
+  getLessonPlayer: (lessonId) => apiClient.get(`lesson/${lessonId}/player`),
+
+  saveLessonProgress: (lessonId, positionSeconds, durationSeconds) =>
+    apiClient.post(`lesson/${lessonId}/progress`, {
+      position_seconds: Math.floor(positionSeconds),
+      duration_seconds: durationSeconds ? Math.floor(durationSeconds) : null,
+    }),
+
+  getLessonResume: (lessonId) => apiClient.post(`lesson/${lessonId}/resume`),
+
+  getCourseProgress: (courseId) => apiClient.get(`course/${courseId}/progress`),
+
+  continueLearning: () => apiClient.get("student/continue-learning"),
+
+  getLessonStream: (lessonId) => apiClient.get(`lesson/${lessonId}/stream`),
 };
 
 export default courseApi;

@@ -1,0 +1,60 @@
+"use client";
+
+import React from 'react';
+import { FiLock } from 'react-icons/fi';
+import { useRouter } from 'next/navigation';
+import VideoEngine from './VideoEngine';
+
+export default function PlayerContainer({
+  lesson,
+  nextLesson,
+  permissions,
+  courseSlug,
+  onProgressUpdated
+}) {
+  const router = useRouter();
+
+  if (!lesson) {
+    return (
+      <div className="PlayerContainer">
+        <div className="LockedOverlay">
+          <h3>No Lesson Selected</h3>
+          <p>Please select a lesson from the course sidebar to begin viewing.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Access check
+  const hasAccess = permissions?.has_access;
+
+  if (!hasAccess) {
+    return (
+      <div className="PlayerContainer">
+        <div className="LockedOverlay">
+          <FiLock className="LockIcon" />
+          <h3>Lesson Locked</h3>
+          <p>You need an active enrollment to access this lesson. Enroll now to unlock the full course!</p>
+          <button
+            className="EnrollBtn"
+            onClick={() => router.push(`/course/${courseSlug || ''}`)}
+          >
+            Enroll in Course
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="PlayerContainer">
+      <VideoEngine
+        lesson={lesson}
+        nextLesson={nextLesson}
+        courseSlug={courseSlug}
+        permissions={permissions}
+        onProgressUpdated={onProgressUpdated}
+      />
+    </div>
+  );
+}

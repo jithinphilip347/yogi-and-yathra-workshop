@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { FaReceipt, FaDownload, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
 import { API_BASE_URL } from '@/utils/constants';
+import apiClient from '@/services/apiClient';
 
 export default function StudentBilling() {
   const { token, user } = useSelector((state) => state.auth);
@@ -17,12 +17,11 @@ export default function StudentBilling() {
     const fetchBillingHistory = async () => {
       try {
         setLoading(true);
-        const headers = { Authorization: `Bearer ${token}` };
 
-        // Fetch User Orders & Invoices in parallel
+        // Fetch User Orders & Invoices in parallel using apiClient
         const [ordersRes, invoicesRes] = await Promise.all([
-          axios.get(`${API_BASE_URL}/billing/orders?user_id=${user?.id}`, { headers }),
-          axios.get(`${API_BASE_URL}/billing/invoices?user_id=${user?.id}`, { headers }),
+          apiClient.get(`billing/orders?user_id=${user?.id}`),
+          apiClient.get(`billing/invoices?user_id=${user?.id}`),
         ]);
 
         setOrders(ordersRes.data?.data?.data || ordersRes.data?.data || []);
@@ -38,10 +37,11 @@ export default function StudentBilling() {
     if (user?.id) {
       fetchBillingHistory();
     }
-  }, [user, token]);
+  }, [user]);
 
   const handleDownloadInvoice = (invoiceId, invoiceNumber) => {
-    window.open(`${API_BASE_URL}/billing/invoices/${invoiceId}/download`, '_blank');
+    const cleanBaseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+    window.open(`${cleanBaseUrl}/billing/invoices/${invoiceId}/download`, '_blank');
   };
 
   if (loading) {

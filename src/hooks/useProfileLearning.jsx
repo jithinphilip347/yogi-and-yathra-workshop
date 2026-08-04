@@ -37,7 +37,18 @@ export const useProfileLearning = () => {
     refetchOnWindowFocus: false,
   });
 
-  // 4. Fetch dashboard upcoming events
+  // 4. Fetch student continue learning feed
+  const continueLearningQuery = useQuery({
+    queryKey: ["student-continue-learning", userId],
+    queryFn: async () => {
+      const res = await courseApi.continueLearning();
+      return res.data?.data || res.data || [];
+    },
+    enabled: !!userId,
+    refetchOnWindowFocus: false,
+  });
+
+  // 5. Fetch dashboard upcoming events
   const upcomingEventsQuery = useQuery({
     queryKey: ["dashboard-upcoming-events"],
     queryFn: async () => {
@@ -71,18 +82,31 @@ export const useProfileLearning = () => {
     })
     .filter((c) => c && (c.id || c.title));
 
-  // Parse Continue Learning
-  const continueCourses = enrolledCourses
-    .filter((c) => (c.progress_percentage > 0 || c.enrollment_status === "active"))
-    .map((c) => ({
-      id: c.id,
-      title: c.title,
-      image: c.thumbnail ? c.thumbnail : null,
-      instructorName: c.instructor?.name || "Yogify Instructor",
-      instructorImg: c.instructor?.avatar || null,
-      progress: typeof c.progress_percentage === "number" ? c.progress_percentage : 25,
-      slug: c.slug,
-    }));
+  // Parse Continue Learning Feed
+  const rawContinue = Array.isArray(continueLearningQuery.data) ? continueLearningQuery.data : [];
+  const continueCourses = rawContinue.length > 0
+    ? rawContinue.map((c) => ({
+        id: c.id,
+        title: c.title,
+        image: c.thumbnail ? c.thumbnail : null,
+        instructorName: c.instructorName || "Yogify Instructor",
+        instructorImg: c.instructorImg || null,
+        progress: typeof c.progress === "number" ? c.progress : 0,
+        slug: c.slug,
+        current_lesson_id: c.current_lesson_id,
+        current_lesson_title: c.current_lesson_title,
+      }))
+    : enrolledCourses
+        .filter((c) => (c.progress_percentage > 0 || c.enrollment_status === "active"))
+        .map((c) => ({
+          id: c.id,
+          title: c.title,
+          image: c.thumbnail ? c.thumbnail : null,
+          instructorName: c.instructor?.name || "Yogify Instructor",
+          instructorImg: c.instructor?.avatar || null,
+          progress: typeof c.progress_percentage === "number" ? c.progress_percentage : 0,
+          slug: c.slug,
+        }));
 
   // Parse Daily Classes
   const rawDailyClasses = rawEnrollments
