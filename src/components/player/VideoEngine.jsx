@@ -29,7 +29,8 @@ export default function VideoEngine({
   nextLesson,
   courseSlug,
   permissions,
-  onProgressUpdated
+  onProgressUpdated,
+  onRegisterPlayerCallbacks
 }) {
   const router = useRouter();
   const playerContainerRef = useRef(null);
@@ -108,6 +109,21 @@ export default function VideoEngine({
 
     return () => { isMounted = false; };
   }, [lesson?.id, lesson?.video_url]);
+
+  useEffect(() => {
+    if (typeof onRegisterPlayerCallbacks === 'function') {
+      onRegisterPlayerCallbacks({
+        getCurrentTime: () => currentTime,
+        seekTo: (seconds) => {
+          if (videoRef.current) {
+            videoRef.current.currentTime = seconds;
+            setCurrentTime(seconds);
+            videoRef.current.play().catch(() => {});
+          }
+        }
+      });
+    }
+  }, [currentTime, onRegisterPlayerCallbacks]);
 
   const rawUrl = activeStreamUrl || resolveStreamUrl(lesson?.video_url);
   const lessonType = strtolower(lesson?.type || '');

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight, FiBookmark } from 'react-icons/fi';
 
 export default function LearningHeader({
   courseTitle,
@@ -13,7 +13,9 @@ export default function LearningHeader({
   onNavigate,
   completionSummary,
   onToggleSidebar,
-  sidebarOpen
+  sidebarOpen,
+  isBookmarked,
+  onToggleBookmark
 }) {
   const router = useRouter();
 
@@ -51,6 +53,28 @@ export default function LearningHeader({
       </div>
 
       <div className="HeaderRight" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Bookmark Toggle Button */}
+        <button
+          onClick={onToggleBookmark}
+          title={isBookmarked ? "Remove Bookmark" : "Bookmark Lesson"}
+          style={{
+            width: '38px',
+            height: '38px',
+            borderRadius: '8px',
+            border: isBookmarked ? '1px solid var(--primaryColor, #874429)' : '1px solid #cbd5e1',
+            backgroundColor: isBookmarked ? 'rgba(135, 68, 41, 0.1)' : '#ffffff',
+            color: isBookmarked ? 'var(--primaryColor, #874429)' : '#64748b',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontSize: '17px',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          <FiBookmark style={{ fill: isBookmarked ? 'currentColor' : 'none' }} />
+        </button>
+
         {/* Previous & Next Icon Navigation */}
         <div className="HeaderLessonNav" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <button

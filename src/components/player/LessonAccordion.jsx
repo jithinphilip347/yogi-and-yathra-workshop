@@ -21,15 +21,27 @@ export default function LessonAccordion({
     }
   };
 
+  const completedInSec = lessons.filter(l => l.is_completed).length;
+  const secTotal = lessons.length;
+  const secPercent = secTotal > 0 ? Math.round((completedInSec / secTotal) * 100) : 0;
+
   return (
     <div className="ChapterAccordion">
       <button
         className="AccordionHeader"
         onClick={() => setIsOpen(!isOpen)}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
       >
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
           <span className="TitleText">{section.title}</span>
-          <span className="MetaText">({lessons.length} lessons)</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}>
+            <span>{completedInSec}/{secTotal} Completed</span>
+            {secPercent > 0 && (
+              <span style={{ fontWeight: '600', color: 'var(--primaryColor, #874429)' }}>
+                ({secPercent}%)
+              </span>
+            )}
+          </div>
         </div>
         {isOpen ? <FiChevronUp /> : <FiChevronDown />}
       </button>

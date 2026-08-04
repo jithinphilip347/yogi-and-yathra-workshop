@@ -10,7 +10,8 @@ export default function PlayerContainer({
   nextLesson,
   permissions,
   courseSlug,
-  onProgressUpdated
+  onProgressUpdated,
+  onRegisterPlayerCallbacks
 }) {
   const router = useRouter();
 
@@ -54,6 +55,7 @@ export default function PlayerContainer({
         courseSlug={courseSlug}
         permissions={permissions}
         onProgressUpdated={onProgressUpdated}
+        onRegisterPlayerCallbacks={onRegisterPlayerCallbacks}
       />
     </div>
   );

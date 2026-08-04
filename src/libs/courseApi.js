@@ -41,6 +41,26 @@ const courseApi = {
   continueLearning: () => apiClient.get("student/continue-learning"),
 
   getLessonStream: (lessonId) => apiClient.get(`lesson/${lessonId}/stream`),
+
+  // Sprint P4: Notes, Bookmarks, Recent Views
+  getLessonNotes: (lessonId, params) => apiClient.get(`lesson/${lessonId}/notes`, { params }),
+  createLessonNote: (lessonId, content, timestampSeconds) =>
+    apiClient.post(`lesson/${lessonId}/notes`, {
+      content,
+      timestamp_seconds: timestampSeconds !== null && timestampSeconds !== undefined ? Math.floor(timestampSeconds) : null,
+    }),
+  updateLessonNote: (noteId, content, timestampSeconds) =>
+    apiClient.put(`lesson-notes/${noteId}`, {
+      content,
+      timestamp_seconds: timestampSeconds !== null && timestampSeconds !== undefined ? Math.floor(timestampSeconds) : null,
+    }),
+  deleteLessonNote: (noteId) => apiClient.delete(`lesson-notes/${noteId}`),
+
+  toggleBookmark: (lessonId) => apiClient.post(`lesson/${lessonId}/bookmark`),
+  getBookmarks: () => apiClient.get("student/bookmarks"),
+
+  getRecentLessons: () => apiClient.get("student/recent-lessons"),
+  recordRecentView: (lessonId) => apiClient.post(`lesson/${lessonId}/recent-view`),
 };
 
 export default courseApi;
