@@ -2,94 +2,138 @@
 #Checkout {
   background: #fff;
   min-height: 100vh;
-  padding: 100px 20px 40px;
+  padding: 50px 20px 60px;
 }
 @media (max-width: 1024px) {
   #Checkout {
-    padding: 80px 10px 20px;
+    padding: 40px 16px 40px;
   }
 }
 @media (max-width: 768px) {
   #Checkout {
-    padding: 60px 10px 20px;
+    padding: 30px 12px 30px;
   }
 }
-@media (max-width: 600px) {
-  #Checkout {
-    padding: 40px 10px 20px;
-  }
+#Checkout .CheckoutEmptyState {
+  padding: 80px 20px;
+  text-align: center;
+  color: #6a6f73;
+  background: #ffffff;
+  max-width: 600px;
+  margin: 60px auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
-@media (max-width: 425px) {
-  #Checkout {
-    padding: 20px 10px 20px;
-  }
+#Checkout .CheckoutEmptyState h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1c1d1f;
+  margin-bottom: 10px;
+}
+#Checkout .CheckoutEmptyState p {
+  font-size: 15px;
+  color: #6a6f73;
+}
+#Checkout .CheckoutErrorMessage {
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
 }
 #Checkout {
   /* ─── Stepper Component ─── */
 }
 #Checkout .CheckoutStepper {
-  max-width: 1200px;
-  margin: 0 auto 30px auto;
+  max-width: 1100px;
+  margin: 0 auto 36px auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: #ffffff;
-  padding: 16px 24px;
-  border-radius: 8px;
-  border: 1px solid #d1d7dc;
+  padding: 20px 32px;
+  border-radius: 16px;
+  border: 1px solid #f0e6e0;
+  box-shadow: 0 4px 15px rgba(135, 68, 41, 0.04);
+}
+@media (max-width: 600px) {
+  #Checkout .CheckoutStepper {
+    padding: 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
 }
 #Checkout .CheckoutStepper .StepItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
+  gap: 12px;
+  font-size: 15px;
   font-weight: 600;
-  color: #6a6f73;
-  font-family: myFont1;
+  color: #8c8f94;
 }
 #Checkout .CheckoutStepper .StepItem .StepNum {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: #f7f9fa;
-  border: 1px solid #d1d7dc;
+  border: 2px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  color: #1c1d1f;
-  font-family: myFont1;
+  color: #64748b;
+  transition: all 0.3s ease;
 }
 #Checkout .CheckoutStepper .StepItem.active {
-  color: var(--primaryColor);
+  color: var(--primaryColor, #874429);
 }
 #Checkout .CheckoutStepper .StepItem.active .StepNum {
-  background: #fff;
-  border-color: var(--primaryColor);
-  color: var(--primaryColor);
+  background: var(--primaryColor, #874429);
+  border-color: var(--primaryColor, #874429);
+  color: #ffffff;
+  box-shadow: 0 3px 10px rgba(135, 68, 41, 0.25);
+}
+#Checkout .CheckoutStepper .StepItem.completed {
+  color: #2e7d32;
+}
+#Checkout .CheckoutStepper .StepItem.completed .StepNum {
+  background: #e8f5e9;
+  border-color: #2e7d32;
+  color: #2e7d32;
 }
 #Checkout .CheckoutStepper .StepLine {
   flex: 1;
   height: 2px;
-  background: #d1d7dc;
-  margin: 0 16px;
+  background: #e2e8f0;
+  margin: 0 20px;
+  transition: background 0.3s ease;
+}
+#Checkout .CheckoutStepper .StepLine.active {
+  background: var(--primaryColor, #874429);
 }
 @media (max-width: 600px) {
   #Checkout .CheckoutStepper .StepLine {
     display: none;
   }
 }
+#Checkout {
+  /* ─── Main Checkout Grid ─── */
+}
 #Checkout .CheckoutContainer {
-  max-width: 1200px;
+  max-width: 1100px;
   margin: 0 auto;
   display: flex;
-  gap: 60px;
+  gap: 40px;
   align-items: flex-start;
 }
 @media (max-width: 1024px) {
   #Checkout .CheckoutContainer {
-    gap: 30px;
+    gap: 24px;
   }
 }
 @media (max-width: 768px) {
@@ -102,106 +146,24 @@
   width: 100%;
 }
 #Checkout .CheckoutLeft .CheckoutSection {
-  margin-bottom: 40px;
-}
-@media (max-width: 1024px) {
-  #Checkout .CheckoutLeft .CheckoutSection {
-    margin-bottom: 30px;
-  }
-}
-@media (max-width: 768px) {
-  #Checkout .CheckoutLeft .CheckoutSection {
-    margin-bottom: 20px;
-  }
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 16px;
+  border: 1px solid #f0e6e0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  margin-bottom: 24px;
 }
 @media (max-width: 600px) {
   #Checkout .CheckoutLeft .CheckoutSection {
-    margin-bottom: 10px;
+    padding: 20px;
   }
 }
 #Checkout .CheckoutLeft .CheckoutSection .SectionTitle {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: #1c1d1f;
-  margin: 0 0 20px 0;
-  font-family: myFont1;
-}
-#Checkout .CheckoutLeft .CheckoutSection .SectionTitle .Subtext {
-  font-weight: 400;
-  color: #6a6f73;
-  font-size: 16px;
-  font-family: myFont1;
-}
-#Checkout .CheckoutLeft .CheckoutSection .FormGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  margin-bottom: 25px;
-}
-@media (max-width: 600px) {
-  #Checkout .CheckoutLeft .CheckoutSection .FormGrid {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-}
-#Checkout .CheckoutLeft .CheckoutSection .FormGroup {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-#Checkout .CheckoutLeft .CheckoutSection .FormGroup .FormLabel {
-  font-size: 12px;
-  font-weight: 600;
-  color: #1c1d1f;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-family: myFont1;
-}
-#Checkout .CheckoutLeft .CheckoutSection .FormGroup .FormInput {
-  width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #d1d7dc;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #1c1d1f;
-  font-family: myFont1;
-  outline: none;
-  background: #fff;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-#Checkout .CheckoutLeft .CheckoutSection .FormGroup .FormInput:focus {
-  border-color: var(--primaryColor);
-  box-shadow: 0 0 0 3px rgba(135, 68, 41, 0.12);
-}
-#Checkout .CheckoutLeft .CheckoutSection .FormActions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 25px;
-  padding-top: 20px;
-  border-top: 1px solid #e2e8f0;
-  gap: 15px;
-}
-@media (max-width: 480px) {
-  #Checkout .CheckoutLeft .CheckoutSection .FormActions {
-    flex-direction: column-reverse;
-    align-items: stretch;
-  }
-}
-#Checkout .CheckoutLeft .CheckoutSection .FormActions .BackBtn {
-  padding: 12px 20px;
-  background: #f7f9fa;
-  border: 1px solid #d1d7dc;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #1c1d1f;
-  font-family: myFont1;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-#Checkout .CheckoutLeft .CheckoutSection .FormActions .BackBtn:hover {
-  background: #e2e8f0;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.3px;
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseList {
   display: flex;
@@ -210,40 +172,27 @@
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard {
   display: flex;
-  gap: 24px;
-  padding: 24px;
-  border: 1px solid #d1d7dc;
-  border-radius: 8px;
+  gap: 20px;
+  padding: 20px;
+  border: 1px solid #f0e6e0;
+  border-radius: 12px;
   background: #fff;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-@media (max-width: 1024px) {
-  #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard {
-    gap: 20px;
-    padding: 20px;
-  }
+#Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
 }
-@media (max-width: 768px) {
-  #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard {
-    gap: 16px;
-    padding: 16px;
-  }
-}
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard {
     flex-direction: column;
-    gap: 16px;
-  }
-}
-@media (max-width: 420px) {
-  #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard {
-    padding: 12px;
+    gap: 14px;
   }
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseThumb {
   flex-shrink: 0;
-  width: 160px;
-  height: 100px;
-  border-radius: 8px;
+  width: 140px;
+  height: 90px;
+  border-radius: 10px;
   overflow: hidden;
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseThumb .Img {
@@ -255,8 +204,7 @@
 @media (max-width: 600px) {
   #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseThumb {
     width: 100%;
-    height: auto;
-    aspect-ratio: 16/9;
+    height: 160px;
   }
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo {
@@ -268,54 +216,22 @@
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo .Category {
   font-size: 11px;
   font-weight: 700;
-  color: var(--primaryColor);
+  color: var(--primaryColor, #874429);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-  font-family: myFont1;
+  letter-spacing: 0.6px;
+  margin-bottom: 4px;
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo h3 {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 700;
   color: #1c1d1f;
   margin: 0 0 6px 0;
-  font-family: myFont1;
-}
-@media (max-width: 768px) {
-  #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo h3 {
-    font-size: 16px;
-  }
+  line-height: 1.3;
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo .Instructor {
   font-size: 13px;
   color: #6a6f73;
-  margin: 0 0 12px 0;
-  font-family: myFont1;
-}
-#Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo .Instructor span {
-  font-weight: 500;
-  color: #1c1d1f;
-}
-#Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo .Meta {
-  display: flex;
-  gap: 20px;
-}
-@media (max-width: 420px) {
-  #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo .Meta {
-    flex-direction: column;
-    gap: 8px;
-  }
-}
-#Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo .Meta .MetaItem {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #6a6f73;
-  font-family: myFont1;
-}
-#Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CourseInfo .Meta .MetaItem .Icon {
-  color: var(--primaryColor);
+  margin: 0;
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CoursePrice {
   display: flex;
@@ -327,34 +243,233 @@
 @media (max-width: 600px) {
   #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CoursePrice {
     align-items: flex-start;
+    flex-direction: row;
+    gap: 10px;
   }
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CoursePrice .CurrentPrice {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: #1c1d1f;
-  font-family: myFont1;
 }
 #Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CoursePrice .OriginalPrice {
-  font-size: 14px;
-  color: #6a6f73;
-  text-decoration: line-through;
-  font-family: myFont1;
-}
-#Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CoursePrice .RemoveBtn {
-  background: transparent;
-  border: none;
-  color: #ef4444;
   font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  margin-top: 8px;
-  text-decoration: underline;
-  font-family: myFont1;
-  padding: 0;
+  color: #94a3b8;
+  text-decoration: line-through;
 }
-#Checkout .CheckoutLeft .CheckoutSection .CourseReviewCard .CoursePrice .RemoveBtn:hover {
-  color: #dc2626;
+#Checkout .CheckoutLeft .CheckoutSection {
+  /* Form Grid */
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+@media (max-width: 600px) {
+  #Checkout .CheckoutLeft .CheckoutSection .FormGrid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormGroup .FormLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormGroup .FormInput {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #1f2937;
+  background: #ffffff;
+  outline: none;
+  transition: all 0.2s ease;
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormGroup .FormInput:focus {
+  border-color: var(--primaryColor, #874429);
+  box-shadow: 0 0 0 3px rgba(135, 68, 41, 0.15);
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormGroup .FormInput::-moz-placeholder {
+  color: #9ca3af;
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormGroup .FormInput::placeholder {
+  color: #9ca3af;
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid #f0e6e0;
+  gap: 16px;
+}
+@media (max-width: 480px) {
+  #Checkout .CheckoutLeft .CheckoutSection .FormActions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormActions .BackBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+#Checkout .CheckoutLeft .CheckoutSection .FormActions .BackBtn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+#Checkout .CheckoutLeft .CheckoutSection {
+  /* Step 3: Payment Section */
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .OrderAlertBox {
+  padding: 18px 20px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+  margin-bottom: 24px;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .OrderAlertBox .OrderAlertHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #065f46;
+  margin-bottom: 4px;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .OrderAlertBox .OrderAlertHeader .AlertIcon {
+  color: #059669;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .OrderAlertBox .OrderAlertText {
+  font-size: 13px;
+  color: #047857;
+  margin: 0;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .PaymentOptionsList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .PaymentOptionCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .PaymentOptionCard:hover {
+  border-color: #cbd5e1;
+  background: #fafafa;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .PaymentOptionCard.selected {
+  border-color: var(--primaryColor, #874429);
+  background: #fdf6f0;
+  box-shadow: 0 4px 12px rgba(135, 68, 41, 0.08);
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .PaymentOptionCard .PaymentRadio {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--primaryColor, #874429);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .PaymentOptionCard .PaymentOptionContent {
+  flex: 1;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .PaymentOptionCard .PaymentOptionContent .PaymentTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .PaymentOptionCard .PaymentOptionContent .PaymentTitle .PaymentIcon {
+  color: var(--primaryColor, #874429);
+  font-size: 16px;
+}
+#Checkout .CheckoutLeft .CheckoutSection.PaymentSection .PaymentOptionCard .PaymentOptionContent .PaymentSubtext {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+#Checkout {
+  /* Shared Action Button */
+}
+#Checkout .ProceedBtn {
+  width: 100%;
+  background: var(--primaryColor, #874429) !important;
+  color: #ffffff !important;
+  border: none;
+  padding: 15px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 14px rgba(135, 68, 41, 0.25);
+}
+#Checkout .ProceedBtn:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(135, 68, 41, 0.35);
+}
+#Checkout .ProceedBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+#Checkout .ProceedBtn.StepBtn {
+  width: auto;
+  min-width: 200px;
+  margin-top: 20px;
+}
+@media (max-width: 480px) {
+  #Checkout .ProceedBtn.StepBtn {
+    width: 100%;
+  }
+}
+#Checkout .ProceedBtn.PayButton {
+  width: 100%;
+  padding: 16px 24px;
+  font-size: 16px;
+  margin-top: 10px;
+}
+#Checkout {
+  /* ─── Right Column: Order Summary Card ─── */
 }
 #Checkout .CheckoutRight {
   width: 380px;
@@ -362,7 +477,7 @@
 }
 @media (max-width: 1024px) {
   #Checkout .CheckoutRight {
-    width: 320px;
+    width: 340px;
   }
 }
 @media (max-width: 768px) {
@@ -373,10 +488,11 @@
 #Checkout .CheckoutRight .SummaryCard {
   position: sticky;
   top: 30px;
-  background: #f7f9fa;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: none;
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 16px;
+  border: 1px solid #f0e6e0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
 }
 @media (max-width: 480px) {
   #Checkout .CheckoutRight .SummaryCard {
@@ -384,158 +500,134 @@
   }
 }
 #Checkout .CheckoutRight .SummaryCard .SummaryTitle {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   color: #1c1d1f;
   margin: 0 0 20px 0;
-  font-family: myFont1;
+  letter-spacing: -0.3px;
 }
 #Checkout .CheckoutRight .SummaryCard .CouponBox {
   margin-bottom: 20px;
 }
 #Checkout .CheckoutRight .SummaryCard .CouponBox .CouponForm {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 #Checkout .CheckoutRight .SummaryCard .CouponBox .CouponForm input {
   flex: 1;
-  padding: 10px 12px;
-  border: 1px solid #d1d7dc;
-  border-radius: 6px;
-  font-size: 13px;
-  font-family: myFont1;
-  outline: none;
-}
-#Checkout .CheckoutRight .SummaryCard .CouponBox .CouponForm input:focus {
-  border-color: var(--primaryColor);
-}
-#Checkout .CheckoutRight .SummaryCard .CouponBox .CouponForm button {
-  padding: 10px 16px;
-  background: #1c1d1f;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
+  padding: 10px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
   font-size: 13px;
   font-weight: 600;
-  font-family: myFont1;
-  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
 }
-#Checkout .CheckoutRight .SummaryCard .CouponBox .CouponForm button:hover {
-  background: #000;
+#Checkout .CheckoutRight .SummaryCard .CouponBox .CouponForm input:focus {
+  border-color: var(--primaryColor, #874429);
+}
+#Checkout .CheckoutRight .SummaryCard .CouponBox .CouponForm button {
+  padding: 10px 18px;
+  background: #1c1d1f;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#Checkout .CheckoutRight .SummaryCard .CouponBox .CouponForm button:hover:not(:disabled) {
+  background: var(--primaryColor, #874429);
+}
+#Checkout .CheckoutRight .SummaryCard .CouponBox .CouponForm button:disabled {
+  opacity: 0.6;
+}
+#Checkout .CheckoutRight .SummaryCard .CouponBox .AppliedCouponBadge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 10px;
+}
+#Checkout .CheckoutRight .SummaryCard .CouponBox .AppliedCouponBadge .CouponCodeText {
+  font-size: 13px;
+  font-weight: 700;
+  color: #065f46;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+#Checkout .CheckoutRight .SummaryCard .CouponBox .AppliedCouponBadge .DiscountValueText {
+  font-size: 12px;
+  font-family: monospace;
+  color: #047857;
+  margin: 2px 0 0 0;
+}
+#Checkout .CheckoutRight .SummaryCard .CouponBox .AppliedCouponBadge .RemoveCouponBtn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+#Checkout .CheckoutRight .SummaryCard .CouponBox .AppliedCouponBadge .RemoveCouponBtn:hover {
+  background: #fee2e2;
+}
+#Checkout .CheckoutRight .SummaryCard .CouponBox .CouponErrorText {
+  font-size: 12px;
+  color: #ef4444;
+  margin-top: 6px;
+}
+#Checkout .CheckoutRight .SummaryCard .Divider {
+  border: 0;
+  border-top: 1px solid #f0e6e0;
+  margin: 16px 0;
 }
 #Checkout .CheckoutRight .SummaryCard .SummaryRow {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   font-size: 14px;
-  color: #1c1d1f;
+  color: #4b5563;
   margin-bottom: 12px;
-  font-family: myFont1;
 }
 #Checkout .CheckoutRight .SummaryCard .SummaryRow span:last-child {
-  font-weight: 500;
+  font-weight: 600;
+  color: #1f2937;
+}
+#Checkout .CheckoutRight .SummaryCard .SummaryRow.DiscountRow {
+  color: #059669;
+}
+#Checkout .CheckoutRight .SummaryCard .SummaryRow.DiscountRow span:last-child {
+  color: #059669;
 }
 #Checkout .CheckoutRight .SummaryCard .SummaryRow.TotalRow {
-  font-size: 20px;
-  font-weight: 700;
-  align-items: center;
-  margin-bottom: 30px;
-  font-family: myFont1;
-}
-#Checkout .CheckoutRight .SummaryCard .SummaryRow.TotalRow span:last-child {
-  font-weight: 800;
-}
-#Checkout .CheckoutRight .SummaryCard .SummaryRow.TotalRow small {
-  font-size: 14px;
-  font-weight: 400;
-  color: #6a6f73;
-  margin-left: 5px;
-  font-family: myFont1;
-}
-#Checkout .CheckoutRight .SummaryCard .Divider {
-  border: 0;
-  border-top: 1px solid #d1d7dc;
-  margin: 15px 0;
-}
-#Checkout .CheckoutRight .SummaryCard .TaxNote {
-  font-size: 12px;
-  color: #6a6f73;
-  margin: 0 0 20px 0;
-  font-family: myFont1;
-}
-#Checkout .CheckoutRight .SummaryCard .TermsText {
-  font-size: 11px;
-  color: #6a6f73;
-  line-height: 1.5;
-  margin: 0 0 20px 0;
-  font-family: myFont1;
-}
-#Checkout .CheckoutRight .SummaryCard .TermsText a {
-  color: var(--primaryColor);
-  text-decoration: none;
-  font-weight: 600;
-}
-#Checkout .CheckoutRight .SummaryCard .TermsText a:hover {
-  text-decoration: underline;
-}
-#Checkout .CheckoutRight .SummaryCard .ProceedBtn {
-  width: 100%;
-  background: var(--primaryColor) !important;
-  color: #fff !important;
-  border: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  transition: 0.3s;
-  margin-top: 16px;
-  font-family: myFont1;
-}
-#Checkout .CheckoutRight .SummaryCard .ProceedBtn:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
-}
-#Checkout .CheckoutRight .SummaryCard .GuaranteeBlock {
-  text-align: center;
-}
-#Checkout .CheckoutRight .SummaryCard .GuaranteeBlock h4 {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
   color: #1c1d1f;
-  margin: 0 0 8px 0;
-  font-family: myFont1;
+  margin-bottom: 20px;
+}
+#Checkout .CheckoutRight .SummaryCard .SummaryRow.TotalRow span:last-child {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primaryColor, #874429);
+}
+#Checkout .CheckoutRight .SummaryCard .GuaranteeBlock {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed #e2e8f0;
+  text-align: center;
 }
 #Checkout .CheckoutRight .SummaryCard .GuaranteeBlock p {
   font-size: 12px;
-  color: #6a6f73;
-  margin: 0;
-  line-height: 1.5;
-  font-family: myFont1;
-}
-#Checkout .ProceedBtn {
-  width: 100%;
-  max-width: 280px;
-  background: var(--primaryColor) !important;
-  color: #fff !important;
-  border: none;
-  padding: 14px 24px;
-  border-radius: 8px;
-  font-size: 16px;
   font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  transition: 0.3s;
-  margin-top: 20px;
-  font-family: myFont1;
-}
-#Checkout .ProceedBtn:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
+  color: #64748b;
+  margin: 0;
 }/*# sourceMappingURL=checkout.css.map */

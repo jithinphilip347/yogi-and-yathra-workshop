@@ -38,10 +38,12 @@ const MOCK_SESSIONS = [
 
 const TABS = ['Upcoming', 'Live Now', 'Completed', 'Cancelled'];
 
-const LiveYoga = () => {
+const LiveYoga = ({ sessionsData = [] }) => {
   const [activeTab, setActiveTab] = useState('Upcoming');
 
-  const filteredSessions = MOCK_SESSIONS.filter(session => {
+  const sessionsList = Array.isArray(sessionsData) ? sessionsData : [];
+
+  const filteredSessions = sessionsList.filter(session => {
     // Filter by Tab
     if (activeTab === 'Upcoming' && !['upcoming', 'ready'].includes(session.status)) return false;
     if (activeTab === 'Live Now' && session.status !== 'live') return false;
@@ -59,19 +61,20 @@ const LiveYoga = () => {
       case 'completed': return { text: 'Completed', className: 'status-completed' };
       case 'expired': return { text: 'Recording Expired', className: 'status-expired' };
       case 'cancelled': return { text: 'Cancelled', className: 'status-cancelled' };
-      default: return { text: '', className: '' };
+      default: return { text: 'Upcoming', className: 'status-upcoming' };
     }
   };
 
   const getActionButton = (session) => {
+    const meetingUrl = session.meeting_link || '/live-stream';
     switch(session.status) {
-      case 'upcoming': return <Link href={`/live-stream`} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
-      case 'ready': return <button className="ActionBtn primary">Join Waiting Room</button>;
-      case 'live': return <Link href={`/live-stream`} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
+      case 'upcoming': return <Link href={meetingUrl} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
+      case 'ready': return <Link href={meetingUrl} passHref><button className="ActionBtn primary">Join Waiting Room</button></Link>;
+      case 'live': return <Link href={meetingUrl} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
       case 'completed': return <button className="ActionBtn primary outline">Watch Recording</button>;
       case 'expired': return <button className="ActionBtn secondary">View Details</button>;
       case 'cancelled': return <button className="ActionBtn disabled" disabled>Cancelled</button>;
-      default: return null;
+      default: return <Link href={meetingUrl} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
     }
   };
 
@@ -82,7 +85,7 @@ const LiveYoga = () => {
       <div className="LiveDashboardHeader">
         <div className="TabsContainer">
           {TABS.map(tab => {
-            const count = MOCK_SESSIONS.filter(s => {
+            const count = sessionsList.filter(s => {
               if (tab === 'Upcoming') return ['upcoming', 'ready'].includes(s.status);
               if (tab === 'Live Now') return s.status === 'live';
               if (tab === 'Completed') return ['completed', 'expired'].includes(s.status);

@@ -133,6 +133,48 @@ export class CommerceAdapter {
   }
 
   /**
+   * Normalize Membership model into CommerceProduct
+   */
+  static fromMembership(membership) {
+    if (!membership) return null;
+    return {
+      id: `membership_${membership.id}`,
+      productable_type: PRODUCT_TYPES.MEMBERSHIP,
+      productable_id: membership.id,
+      title: membership.title || membership.name || 'Platform Membership Plan',
+      subtitle: membership.description || 'Full Access Pass',
+      image: membership.image ? (membership.image.startsWith('http') ? membership.image : `${MEDIA_BASE_URL}${membership.image}`) : null,
+      price: Number(membership.price || 0),
+      original_price: Number(membership.original_price || membership.price || 0),
+      currency: 'INR',
+      meta: {
+        billing_interval: membership.billing_interval || 'monthly',
+      },
+    };
+  }
+
+  /**
+   * Normalize Workshop model into CommerceProduct
+   */
+  static fromWorkshop(workshop) {
+    if (!workshop) return null;
+    return {
+      id: `workshop_${workshop.id}`,
+      productable_type: PRODUCT_TYPES.WORKSHOP,
+      productable_id: workshop.id,
+      title: workshop.title || 'Interactive Workshop',
+      subtitle: workshop.instructor?.name ? `Instructor: ${workshop.instructor.name}` : '',
+      image: workshop.image || (workshop.thumbnail ? `${MEDIA_BASE_URL}${workshop.thumbnail}` : null),
+      price: Number(workshop.price || 0),
+      original_price: Number(workshop.original_price || workshop.price || 0),
+      currency: 'INR',
+      meta: {
+        schedule: workshop.schedule,
+      },
+    };
+  }
+
+  /**
    * Generic normalize fallback
    */
   static normalize(item, type = PRODUCT_TYPES.COURSE) {
@@ -145,6 +187,10 @@ export class CommerceAdapter {
         return this.fromDailyClass(item);
       case PRODUCT_TYPES.FEE_COLLECTION:
         return this.fromFeeDemand(item);
+      case PRODUCT_TYPES.MEMBERSHIP:
+        return this.fromMembership(item);
+      case PRODUCT_TYPES.WORKSHOP:
+        return this.fromWorkshop(item);
       case PRODUCT_TYPES.PRODUCT:
         return this.fromProduct(item);
       default:

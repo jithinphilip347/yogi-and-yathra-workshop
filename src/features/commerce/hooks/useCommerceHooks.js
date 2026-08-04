@@ -37,16 +37,23 @@ export function useCart() {
 
   const addItem = (rawEntity, type) => {
     const normalizedProduct = CommerceAdapter.normalize(rawEntity, type);
-    if (normalizedProduct) {
+    if (normalizedProduct && normalizedProduct.productable_id) {
       dispatch(addToCart(normalizedProduct));
     }
   };
 
+  /**
+   * Buy Now Flow:
+   * Validate Product -> Normalize Product -> Create Checkout Session -> Store Checkout State -> Navigate to Checkout
+   * Never creates or opens an empty checkout session.
+   */
   const buyNow = (rawEntity, type, router) => {
+    if (!rawEntity) return;
     const normalizedProduct = CommerceAdapter.normalize(rawEntity, type);
-    if (normalizedProduct) {
+    if (normalizedProduct && normalizedProduct.productable_id) {
+      // Add/ensure product is present in cart
       dispatch(addToCart(normalizedProduct));
-      // Create a checkout session so /checkout always has Order Review data
+      // Create explicit checkout session snapshot containing this product
       dispatch(createCheckout([normalizedProduct]));
       if (router && typeof router.push === 'function') {
         router.push('/checkout');
@@ -55,10 +62,10 @@ export function useCart() {
   };
 
   /**
-   * Snapshot the current cart into a checkout session and navigate.
+   * Snapshot current cart items into a checkout session and navigate to checkout.
    */
   const proceedToCheckout = (router) => {
-    if (items.length === 0) return;
+    if (!items || items.length === 0) return;
     dispatch(createCheckout(items));
     if (router && typeof router.push === 'function') {
       router.push('/checkout');

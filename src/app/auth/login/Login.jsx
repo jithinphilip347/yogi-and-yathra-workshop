@@ -48,8 +48,19 @@ const Login = () => {
         const res = await authApi.login(formData);
         dispatch(setLogin(res.data));
         toast.success("Login Successfully!");
+        
         setTimeout(() => {
-          router.push("/");
+          // Guest Cart Sync & Checkout Session Restoration
+          // If items exist in checkout/cart, redirect straight to /checkout
+          const state = window.__REDUX_STORE__?.getState?.() || {};
+          const checkoutItems = state.checkout?.items || [];
+          const cartItems = state.cart?.items || [];
+
+          if (checkoutItems.length > 0 || cartItems.length > 0) {
+            router.push("/checkout");
+          } else {
+            router.push("/");
+          }
         }, 1500);
       } catch (error) {
         console.error("Login Error:", error);

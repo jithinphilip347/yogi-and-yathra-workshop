@@ -1,11 +1,11 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { FaCalendar, FaClock, FaCheckCircle, FaTag, FaCreditCard, FaLock } from 'react-icons/fa';
+import { FaCheckCircle, FaTag, FaCreditCard, FaLock, FaArrowLeft, FaArrowRight, FaShieldAlt } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useCheckout } from '@/features/commerce/hooks/useCheckout';
 import { usePayment } from '@/features/commerce/hooks/usePayment';
-import '@/assets/css/checkout.css';
+import '@/assets/css/checkout.scss';
 
 export default function Checkout() {
   const {
@@ -48,16 +48,12 @@ export default function Checkout() {
 
   const router = useRouter();
 
-  // Checkout must NEVER render without a checkout session.
-  // Redirect to /cart (where items live) instead of rendering an empty page.
   useEffect(() => {
     if (items.length === 0) {
       router.replace('/cart');
     }
   }, [items, router]);
 
-  // Adjust form state when the logged-in user becomes available (React's
-  // documented "adjust state during render" pattern — avoids cascading renders).
   const [prevUser, setPrevUser] = useState(user);
   if (prevUser !== user) {
     setPrevUser(user);
@@ -68,17 +64,10 @@ export default function Checkout() {
     }));
   }
 
-  // Early return AFTER all hooks — keeps rules-of-hooks satisfied
   if (items.length === 0) {
     return (
-      <div
-        style={{
-          padding: '80px 20px',
-          textAlign: 'center',
-          color: '#6a6f73',
-        }}
-      >
-        <h2 style={{ marginBottom: 8 }}>Redirecting to your cart…</h2>
+      <div className="CheckoutEmptyState">
+        <h2>Redirecting to your cart…</h2>
         <p>No checkout session found. Please review your items and try again.</p>
       </div>
     );
@@ -108,26 +97,28 @@ export default function Checkout() {
   const handleProceedToPayment = async () => {
     try {
       await initiateOrder();
-      // createOrderSuccess() advances the stepper to the Payment step.
     } catch (err) {
       console.error(err);
     }
   };
 
+  const orderNum = activeOrder?.order_number || activeOrder?.id || activeOrder?.order?.order_number || activeOrder?.order?.id;
+  const finalPayable = Math.max(0, subtotal - (Number(appliedCoupon?.discount) || 0));
+
   return (
     <div id="Checkout">
       {/* Stepper Navigation */}
       <div className="CheckoutStepper">
-        <div className={`StepItem ${activeStep >= 1 ? 'active' : ''}`}>
+        <div className={`StepItem ${activeStep >= 1 ? 'active' : ''} ${activeStep > 1 ? 'completed' : ''}`}>
           <span className="StepNum">1</span>
           <span className="StepTitle">Order Review</span>
         </div>
-        <div className="StepLine" />
-        <div className={`StepItem ${activeStep >= 2 ? 'active' : ''}`}>
+        <div className={`StepLine ${activeStep > 1 ? 'active' : ''}`} />
+        <div className={`StepItem ${activeStep >= 2 ? 'active' : ''} ${activeStep > 2 ? 'completed' : ''}`}>
           <span className="StepNum">2</span>
           <span className="StepTitle">Student Details & Billing</span>
         </div>
-        <div className="StepLine" />
+        <div className={`StepLine ${activeStep > 2 ? 'active' : ''}`} />
         <div className={`StepItem ${activeStep >= 3 ? 'active' : ''}`}>
           <span className="StepNum">3</span>
           <span className="StepTitle">Payment Gateway</span>
@@ -135,10 +126,10 @@ export default function Checkout() {
       </div>
 
       <div className="CheckoutContainer">
-        {/* Left Column: Details */}
+        {/* Left Column: Form & Options */}
         <div className="CheckoutLeft">
           {error && (
-            <div className="p-4 mb-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm">
+            <div className="CheckoutErrorMessage">
               {error}
             </div>
           )}
@@ -148,40 +139,32 @@ export default function Checkout() {
             <section className="CheckoutSection CourseReviewSection">
               <h2 className="SectionTitle">Order Items ({itemCount})</h2>
               <div className="CourseList">
-                {items.length === 0 ? (
-                  <div style={{ padding: '40px', textAlign: 'center', color: '#6a6f73', background: '#f7f9fa', borderRadius: '8px' }}>
-                    Your cart is empty. Please add courses or classes before checkout.
-                  </div>
-                ) : (
-                  items.map((item) => (
-                    <div className="CourseReviewCard" key={item.id}>
-                      <div className="CourseThumb">
-                        {item.image && <Image src={item.image} alt={item.title} width={140} height={90} className="Img" />}
-                      </div>
-                      <div className="CourseInfo">
-                        <span className="Category">{item.productable_type}</span>
-                        <h3>{item.title}</h3>
-                        <p className="Instructor">{item.subtitle}</p>
-                      </div>
-                      <div className="CoursePrice">
-                        <span className="CurrentPrice">
-                          ₹{(Number(item.price || 0) * Number(item.quantity || 1)).toLocaleString()}
-                        </span>
-                        {Number(item.original_price || 0) > Number(item.price || 0) && (
-                          <span className="OriginalPrice">
-                            ₹{(Number(item.original_price || 0) * Number(item.quantity || 1)).toLocaleString()}
-                          </span>
-                        )}
-                      </div>
+                {items.map((item) => (
+                  <div className="CourseReviewCard" key={item.id}>
+                    <div className="CourseThumb">
+                      {item.image && <Image src={item.image} alt={item.title} width={140} height={90} className="Img" />}
                     </div>
-                  ))
-                )}
+                    <div className="CourseInfo">
+                      <span className="Category">{item.productable_type || 'Course'}</span>
+                      <h3>{item.title}</h3>
+                      <p className="Instructor">{item.subtitle}</p>
+                    </div>
+                    <div className="CoursePrice">
+                      <span className="CurrentPrice">
+                        ₹{(Number(item.price || 0) * Number(item.quantity || 1)).toLocaleString()}
+                      </span>
+                      {Number(item.original_price || 0) > Number(item.price || 0) && (
+                        <span className="OriginalPrice">
+                          ₹{(Number(item.original_price || 0) * Number(item.quantity || 1)).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
               </div>
-              {items.length > 0 && (
-                <button onClick={() => changeStep(2)} className="ProceedBtn mt-4">
-                  Next: Student Details →
-                </button>
-              )}
+              <button onClick={() => changeStep(2)} className="ProceedBtn StepBtn">
+                Next: Student Details <FaArrowRight />
+              </button>
             </section>
           )}
 
@@ -236,9 +219,9 @@ export default function Checkout() {
 
               <div className="FormActions">
                 <button onClick={() => changeStep(1)} className="BackBtn">
-                  ← Back to Review
+                  <FaArrowLeft /> Back to Review
                 </button>
-                <button onClick={handleProceedToPayment} disabled={isProcessing} className="ProceedBtn" style={{ margin: 0, width: 'auto' }}>
+                <button onClick={handleProceedToPayment} disabled={isProcessing} className="ProceedBtn StepBtn">
                   {isProcessing ? 'Initiating Order...' : 'Proceed to Payment →'}
                 </button>
               </div>
@@ -247,29 +230,32 @@ export default function Checkout() {
 
           {/* STEP 3: PAYMENT SELECTION */}
           {activeStep === 3 && (
-            <section className="CheckoutSection bg-white p-6 rounded-xl border border-gray-200 space-y-4">
+            <section className="CheckoutSection PaymentSection">
               <h2 className="SectionTitle">Payment Execution</h2>
-              <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl space-y-2">
-                <div className="flex items-center gap-2 font-bold">
-                  <FaCheckCircle size={18} /> Order Created #{activeOrder?.order_number || activeOrder?.id}
+              
+              <div className="OrderAlertBox">
+                <div className="OrderAlertHeader">
+                  <FaCheckCircle className="AlertIcon" />
+                  <span>Order Created {orderNum ? `#${orderNum}` : ''}</span>
                 </div>
-                <p className="text-xs">Your billing order has been initiated in the Payment Domain.</p>
+                <p className="OrderAlertText">Your billing order has been successfully initiated in the Payment Domain.</p>
               </div>
 
-              <div className="space-y-3 pt-2">
-                <label className="flex items-center gap-3 p-4 border rounded-xl cursor-pointer bg-gray-50">
+              <div className="PaymentOptionsList">
+                <label className={`PaymentOptionCard ${paymentMethod === 'razorpay' ? 'selected' : ''}`}>
                   <input
                     type="radio"
                     name="gateway"
                     value="razorpay"
                     checked={paymentMethod === 'razorpay'}
                     onChange={() => changePaymentMethod('razorpay')}
+                    className="PaymentRadio"
                   />
-                  <div>
-                    <p className="font-bold text-gray-900 flex items-center gap-2">
-                      <FaCreditCard /> Razorpay Secure Gateway (Cards, UPI, Netbanking)
-                    </p>
-                    <p className="text-xs text-gray-500">256-Bit SSL Encrypted Online Payment</p>
+                  <div className="PaymentOptionContent">
+                    <div className="PaymentTitle">
+                      <FaCreditCard className="PaymentIcon" /> Razorpay Secure Gateway (Cards, UPI, Netbanking)
+                    </div>
+                    <p className="PaymentSubtext">256-Bit SSL Encrypted Online Payment</p>
                   </div>
                 </label>
               </div>
@@ -277,9 +263,9 @@ export default function Checkout() {
               <button
                 onClick={() => executeRazorpay(activeOrder, user)}
                 disabled={!activeOrder || paymentStatus === 'initiating' || paymentStatus === 'verifying'}
-                className="ProceedBtn flex items-center justify-center gap-2"
+                className="ProceedBtn PayButton"
               >
-                <FaLock /> {paymentStatus === 'verifying' ? 'Verifying Payment Signature...' : `Pay ₹${(Number(activeOrder?.order?.amount) || subtotal).toLocaleString()} via Razorpay`}
+                <FaLock /> {paymentStatus === 'verifying' ? 'Verifying Payment Signature...' : `Pay ₹${(Number(activeOrder?.order?.amount) || finalPayable).toLocaleString()} via Razorpay`}
               </button>
             </section>
           )}
@@ -287,22 +273,22 @@ export default function Checkout() {
 
         {/* Right Column: Order Summary & Coupon Panel */}
         <div className="CheckoutRight">
-          <div className="SummaryCard space-y-4">
+          <div className="SummaryCard">
             <h2 className="SummaryTitle">Order Summary</h2>
 
             {/* Coupon Application Box */}
             <div className="CouponBox">
               {appliedCoupon ? (
-                <div className="flex justify-between items-center p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs">
+                <div className="AppliedCouponBadge">
                   <div>
-                    <p className="font-bold text-emerald-800 flex items-center gap-1">
+                    <p className="CouponCodeText">
                       <FaTag /> {appliedCoupon.code}
                     </p>
-                    <p className="text-emerald-600 font-mono">
+                    <p className="DiscountValueText">
                       {appliedCoupon.discount_type === 'percentage' ? `${appliedCoupon.discount_value}% OFF` : `₹${appliedCoupon.discount_value} OFF`}
                     </p>
                   </div>
-                  <button onClick={removeCoupon} className="text-red-500 font-bold hover:underline">
+                  <button onClick={removeCoupon} className="RemoveCouponBtn">
                     Remove
                   </button>
                 </div>
@@ -319,7 +305,7 @@ export default function Checkout() {
                   </button>
                 </form>
               )}
-              {couponError && <p className="text-xs text-red-500 mt-1">{couponError}</p>}
+              {couponError && <p className="CouponErrorText">{couponError}</p>}
             </div>
 
             <hr className="Divider" />
@@ -329,13 +315,13 @@ export default function Checkout() {
               <span>₹{originalTotal.toLocaleString()}</span>
             </div>
             {discountTotal > 0 && (
-              <div className="SummaryRow text-emerald-600">
+              <div className="SummaryRow DiscountRow">
                 <span>Catalogue Discount:</span>
                 <span>-₹{discountTotal.toLocaleString()}</span>
               </div>
             )}
             {appliedCoupon && (
-              <div className="SummaryRow text-emerald-600">
+              <div className="SummaryRow DiscountRow">
                 <span>Coupon ({appliedCoupon.code}):</span>
                 <span>Applied</span>
               </div>
@@ -345,7 +331,11 @@ export default function Checkout() {
 
             <div className="SummaryRow TotalRow">
               <span>Total Payable:</span>
-              <span>₹{Math.max(0, subtotal - (Number(appliedCoupon?.discount) || 0)).toLocaleString()}</span>
+              <span>₹{finalPayable.toLocaleString()}</span>
+            </div>
+
+            <div className="GuaranteeBlock">
+              <p><FaShieldAlt style={{ display: 'inline', marginRight: 4, color: 'var(--primaryColor)' }} /> 100% Secure Checkout</p>
             </div>
           </div>
         </div>

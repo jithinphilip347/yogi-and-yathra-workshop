@@ -88,13 +88,14 @@ const MOCK_CLASSES = [
 const WEEK_DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
 const FULL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
-const LiveClasses = () => {
+const LiveClasses = ({ classesData = [] }) => {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("active");
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const dropdownRef = useRef(null);
 
-  const filteredClasses = MOCK_CLASSES.filter(c => c.status === activeTab);
+  const classesList = Array.isArray(classesData) ? classesData : [];
+  const filteredClasses = classesList.filter(c => c.status === activeTab);
 
   const toggleDropdown = (id) => {
     setDropdownOpen(dropdownOpen === id ? null : id);
@@ -117,8 +118,9 @@ const LiveClasses = () => {
   };
 
   const handleActionBtnClick = (course) => {
-    if (course.todayStatus.actionType === "primary" || course.todayStatus.actionType === "secondary") {
-      router.push("/live-stream");
+    const actionType = course.todayStatus?.actionType || "primary";
+    if (actionType === "primary" || actionType === "secondary") {
+      router.push(course.meeting_link || "/live-stream");
     }
   };
 
@@ -130,19 +132,19 @@ const LiveClasses = () => {
           className={`TabBtn ${activeTab === "active" ? "Active" : ""}`}
           onClick={() => setActiveTab("active")}
         >
-          Current Classes ({MOCK_CLASSES.filter(c => c.status === "active").length})
+          Current Classes ({classesList.filter(c => c.status === "active").length})
         </button>
         <button 
           className={`TabBtn ${activeTab === "completed" ? "Active" : ""}`}
           onClick={() => setActiveTab("completed")}
         >
-          Completed ({MOCK_CLASSES.filter(c => c.status === "completed").length})
+          Completed ({classesList.filter(c => c.status === "completed").length})
         </button>
         <button 
           className={`TabBtn ${activeTab === "cancelled" ? "Active" : ""}`}
           onClick={() => setActiveTab("cancelled")}
         >
-          Cancelled ({MOCK_CLASSES.filter(c => c.status === "cancelled").length})
+          Cancelled ({classesList.filter(c => c.status === "cancelled").length})
         </button>
       </div>
 
@@ -157,111 +159,130 @@ const LiveClasses = () => {
             <p>You haven&apos;t enrolled in any classes for this category yet. Explore our courses to start your journey!</p>
           </div>
         ) : (
-          filteredClasses.map(course => (
-            <div className={`ProgramCard ${course.status}`} key={course.id}>
-              
-              {/* Badge for Active Courses */}
-              {course.status === "active" && (
-                <div className="ActiveBadge">ACTIVE</div>
-              )}
+          filteredClasses.map(course => {
+            const todayStatus = course.todayStatus || {
+              hasSession: true,
+              isLive: false,
+              isCompleted: false,
+              message: "Starts Soon",
+              helper: "Join opens 15 mins before",
+              actionText: "Join Today's Class",
+              actionType: "primary"
+            };
+            const progress = course.progress || { currentDay: 1, totalDays: 10, percentage: 10 };
 
-              {/* More Options Dropdown */}
-              <div className="MoreOptions" ref={dropdownRef}>
-                <button className="MoreBtn" onClick={() => toggleDropdown(course.id)}>
-                  <FiMoreVertical />
-                </button>
-                {dropdownOpen === course.id && (
-                  <div className="DropdownMenu">
-                    <button onClick={() => handleViewDetails(course.id)}>View Details</button>
-                    <button>View Schedule</button>
-                    <button>Download Invoice</button>
-                    <button>Need Help</button>
-                    {course.status === "active" && (
-                      <button className="CancelBtn">Cancel Enrollment</button>
-                    )}
-                  </div>
+            return (
+              <div className={`ProgramCard ${course.status}`} key={course.id}>
+                
+                {/* Badge for Active Courses */}
+                {course.status === "active" && (
+                  <div className="ActiveBadge">ACTIVE</div>
                 )}
-              </div>
 
-              {/* Left Column: Details */}
-              <div className="CardLeft">
-                <div className="Header">
-                  <div className="Thumb">
-                    <Image src={ThumbNail} alt={course.title} width={100} height={70} className="Img" />
-                    <span className="Category">{course.category}</span>
-                  </div>
-                  <div className="TitleInfo">
-                    <h3>{course.title}</h3>
-                    <p className="Instructor">Instructor: <span>{course.instructor}</span></p>
-                  </div>
-                </div>
-
-                <div className="ScheduleMeta">
-                  <div className="MetaItem">
-                    <FiCalendar className="Icon" />
-                    <span>{course.dateRange}</span>
-                  </div>
-                  <div className="MetaItem">
-                    <FiClock className="Icon" />
-                    <span>{course.time}</span>
-                  </div>
-                </div>
-
-                <div className="WeeklyChips">
-                  {FULL_DAYS.map((fullDay, idx) => {
-                    const isActive = course.days.includes(fullDay);
-                    return (
-                      <span key={idx} className={`Chip ${isActive ? 'Active' : ''}`}>
-                        {WEEK_DAYS[idx]}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Right Column: Progress & Action */}
-              <div className="CardRight">
-                <div className="ProgressHero">
-                  <div className="ProgressHeader">
-                    <span className="Label">PROGRESS</span>
-                    <span className="Value">Day {course.progress.currentDay} / {course.progress.totalDays}</span>
-                  </div>
-                  <div className="ProgressBar">
-                    <div className="Fill" style={{ width: `${course.progress.percentage}%` }}></div>
-                  </div>
-                </div>
-
-                <div className="TodayStatusBox">
-                  <div className="StatusHeader">
-                    {course.todayStatus.hasSession ? (
-                      <span className="Title">Today&apos;s Class</span>
-                    ) : (
-                      <span className="Title">
-                        {course.status === "cancelled" ? "Cancelled" : course.todayStatus.isCompleted ? "Course Completed" : "No Live Class Today"}
-                      </span>
-                    )}
-                  </div>
-                  <div className="StatusMessage">
-                    {course.todayStatus.message}
-                  </div>
-                  {course.todayStatus.helper && (
-                    <div className="HelperText">{course.todayStatus.helper}</div>
+                {/* More Options Dropdown */}
+                <div className="MoreOptions" ref={dropdownRef}>
+                  <button className="MoreBtn" onClick={() => toggleDropdown(course.id)}>
+                    <FiMoreVertical />
+                  </button>
+                  {dropdownOpen === course.id && (
+                    <div className="DropdownMenu">
+                      <button onClick={() => handleViewDetails(course.id)}>View Details</button>
+                      <button>View Schedule</button>
+                      <button>Download Invoice</button>
+                      <button>Need Help</button>
+                      {course.status === "active" && (
+                        <button className="CancelBtn">Cancel Enrollment</button>
+                      )}
+                    </div>
                   )}
                 </div>
 
-                <button 
-                  className={`ActionBtn ${course.todayStatus.actionType}`}
-                  disabled={course.todayStatus.actionType === "disabled"}
-                  onClick={() => handleActionBtnClick(course)}
-                >
-                  {course.todayStatus.actionType === "primary" && <FiPlayCircle className="BtnIcon" />}
-                  {course.todayStatus.actionType === "success" && <FiFileText className="BtnIcon" />}
-                  {course.todayStatus.actionType === "disabled" && <FiXCircle className="BtnIcon" />}
-                  {course.todayStatus.actionText}
-                </button>
+                {/* Left Column: Details */}
+                <div className="CardLeft">
+                  <div className="Header">
+                    <div className="Thumb">
+                      <Image
+                        src={course.instructorImg ? (typeof course.instructorImg === 'string' ? (course.instructorImg.startsWith('http') ? course.instructorImg : `${MEDIA_BASE_URL}${course.instructorImg}`) : course.instructorImg) : ThumbNail}
+                        alt={course.title}
+                        width={100}
+                        height={70}
+                        className="Img"
+                      />
+                      <span className="Category">{course.category || "POWER YOGA"}</span>
+                    </div>
+                    <div className="TitleInfo">
+                      <h3>{course.title}</h3>
+                      <p className="Instructor">Instructor: <span>{course.instructor}</span></p>
+                    </div>
+                  </div>
+
+                  <div className="ScheduleMeta">
+                    <div className="MetaItem">
+                      <FiCalendar className="Icon" />
+                      <span>{course.dateRange}</span>
+                    </div>
+                    <div className="MetaItem">
+                      <FiClock className="Icon" />
+                      <span>{course.time}</span>
+                    </div>
+                  </div>
+
+                  <div className="WeeklyChips">
+                    {FULL_DAYS.map((fullDay, idx) => {
+                      const isActive = Array.isArray(course.days) && (course.days.includes(fullDay) || course.days.includes(WEEK_DAYS[idx]));
+                      return (
+                        <span key={idx} className={`Chip ${isActive ? 'Active' : ''}`}>
+                          {WEEK_DAYS[idx]}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Right Column: Progress & Action */}
+                <div className="CardRight">
+                  <div className="ProgressHero">
+                    <div className="ProgressHeader">
+                      <span className="Label">PROGRESS</span>
+                      <span className="Value">Day {progress.currentDay} / {progress.totalDays}</span>
+                    </div>
+                    <div className="ProgressBar">
+                      <div className="Fill" style={{ width: `${progress.percentage}%` }}></div>
+                    </div>
+                  </div>
+
+                  <div className="TodayStatusBox">
+                    <div className="StatusHeader">
+                      {todayStatus.hasSession ? (
+                        <span className="Title">Today&apos;s Class</span>
+                      ) : (
+                        <span className="Title">
+                          {course.status === "cancelled" ? "Cancelled" : todayStatus.isCompleted ? "Course Completed" : "No Live Class Today"}
+                        </span>
+                      )}
+                    </div>
+                    <div className="StatusMessage">
+                      {todayStatus.message}
+                    </div>
+                    {todayStatus.helper && (
+                      <div className="HelperText">{todayStatus.helper}</div>
+                    )}
+                  </div>
+
+                  <button 
+                    className={`ActionBtn ${todayStatus.actionType}`}
+                    disabled={todayStatus.actionType === "disabled"}
+                    onClick={() => handleActionBtnClick(course)}
+                  >
+                    {todayStatus.actionType === "primary" && <FiPlayCircle className="BtnIcon" />}
+                    {todayStatus.actionType === "success" && <FiFileText className="BtnIcon" />}
+                    {todayStatus.actionType === "disabled" && <FiXCircle className="BtnIcon" />}
+                    {todayStatus.actionText}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>

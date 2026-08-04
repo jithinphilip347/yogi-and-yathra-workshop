@@ -28,7 +28,7 @@ const ProfileSidebar = ({
     { name: "My Courses", icon: <MdMenuBook /> },
     { name: "Live Classes", icon: <MdVideoCameraFront /> },
     { name: "Live Sessions", icon: <MdVideoCameraFront /> },
-    // { name: "Events", icon: <MdEvent /> },
+    { name: "Billing & Invoices", icon: <MdEvent /> },
   ];
 
   const bottomNavItems = [

@@ -27,6 +27,7 @@ import { useSelector } from "react-redux";
 import { MEDIA_BASE_URL } from "@/utils/constants";
 import useCourse from "@/hooks/useCourse";
 import LiveYoga from "@/components/profile/LiveYoga";
+import StudentBilling from "@/components/profile/StudentBilling";
 
 // const courses = [
 //   {
@@ -147,29 +148,21 @@ const upcomingEvents = [
   },
 ];
 
+import useProfileLearning from "@/hooks/useProfileLearning";
+
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("Dashboard");
   const [mobileView, setMobileView] = useState("menu");
   const [profileImg, setProfileImg] = useState(UserProfileImg);
-  const [prevUserAvatar, setPrevUserAvatar] = useState(null);
   const { user } = useSelector((state) => state.auth);
 
-  if (user?.avatar !== prevUserAvatar) {
-    setPrevUserAvatar(user?.avatar);
+  useEffect(() => {
     if (user?.avatar) {
       setProfileImg(user.avatar);
     }
-  }
+  }, [user?.avatar]);
 
-  //  useEffect(() => {
-  //   if (user?.avatar) {
-  //     setProfileImg(user.avatar);
-  //   }
-  // }, [user]);
-
-  const { enrollmentsQuery } = useCourse({});
-  const { data: data, isLoading, error } = enrollmentsQuery;
-  const enrollments = data?.data.courses;
+  const { courses, continueCourses, liveClasses, liveSessions, upcomingEvents } = useProfileLearning();
 
   const handleTabChange = (tab) => {
     setActiveTab(tab);
@@ -181,8 +174,10 @@ const Profile = () => {
       case "Dashboard":
         return (
           <Dashboard
-            courses={enrollments?.map((course) => course.course)}
+            courses={courses}
             continueCourses={continueCourses}
+            liveClasses={liveClasses}
+            liveSessions={liveSessions}
             upcomingEvents={upcomingEvents}
             user={user}
           />
@@ -197,19 +192,16 @@ const Profile = () => {
         );
       case "My Courses":
         return (
-          <MyCourses courses={enrollments?.map((course) => course.course)} />
+          <MyCourses courses={courses} />
         );
       case "Live Classes":
-        return <LiveClasses />;
+        return <LiveClasses classesData={liveClasses} />;
       case "Live Sessions":
-        return <LiveYoga />;
-
-      // case "Events":
-      //   return <Events upcomingEvents={upcomingEvents} />;
+        return <LiveYoga sessionsData={liveSessions} />;
+      case "Billing & Invoices":
+        return <StudentBilling />;
       case "Settings":
         return <Settings />;
-      // case "Help & Support":
-      //   return <HelpSupport />;
       default:
         return <div>Select an option from the menu</div>;
     }

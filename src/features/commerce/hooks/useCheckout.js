@@ -33,12 +33,16 @@ export function useCheckout() {
   const checkoutState = useSelector((state) => state.checkout || {});
   const authState = useSelector((state) => state.auth || {});
 
-  // Order Review items come from the checkout session (not the live cart)
-  const items = useSelector(selectCheckoutItems);
-  const itemCount = useSelector(selectCheckoutItemCount);
-  const subtotal = useSelector(selectCheckoutSubtotal);
-  const originalTotal = useSelector(selectCheckoutOriginalTotal);
-  const discountTotal = useSelector(selectCheckoutDiscounts);
+  const checkoutSessionItems = useSelector(selectCheckoutItems);
+  const cartItems = useSelector((state) => state.cart?.items || []);
+
+  // Use active checkout session items snapshot; if missing but cart has items, fallback to cart items
+  const items = checkoutSessionItems.length > 0 ? checkoutSessionItems : cartItems;
+
+  const itemCount = items.reduce((total, item) => total + (item.quantity || 1), 0);
+  const subtotal = items.reduce((total, item) => total + (Number(item.price) || 0) * (item.quantity || 1), 0);
+  const originalTotal = items.reduce((total, item) => total + (Number(item.original_price || item.price) || 0) * (item.quantity || 1), 0);
+  const discountTotal = Math.max(0, originalTotal - subtotal);
 
   const activeStep = checkoutState.activeStep || 1;
   const billingAddress = checkoutState.billingAddress || {};

@@ -15,35 +15,17 @@ import CourseImg2 from "@/assets/images/courseImg-2.webp";
 import LiveImg1 from "@/assets/images/live1.webp";
 import LiveThumb1 from "@/assets/images/live2.webp";
 
-const Dashboard = ({ courses = [], continueCourses = [], user }) => {
+const Dashboard = ({
+  courses = [],
+  continueCourses = [],
+  liveClasses = [],
+  liveSessions = [],
+  user,
+}) => {
   const { findWishlistIcon } = useWishlist();
 
-  const displayCourses = courses.length > 0 ? courses : [
-    {
-      id: 101,
-      title: "Mindful Meditation for Beginners",
-      lessons_count: 25,
-      duration: 20,
-      price: 499,
-      discount_price: 899,
-      enrollments_count: 780,
-      instructor: { name: "Maya Krishna", role: "Instructor" },
-      staticImage: CourseImg1,
-      slug: "mindful-meditation"
-    },
-    {
-      id: 102,
-      title: "Full-Body Yoga Masterclass",
-      lessons_count: 35,
-      duration: 45,
-      price: 899,
-      discount_price: 1299,
-      enrollments_count: 1260,
-      instructor: { name: "Anil Dev", role: "Instructor" },
-      staticImage: CourseImg2,
-      slug: "full-body-yoga"
-    }
-  ];
+  const activeDailyClass = liveClasses && liveClasses.length > 0 ? liveClasses[0] : null;
+  const activeLiveSession = liveSessions && liveSessions.length > 0 ? liveSessions[0] : null;
 
   return (
     <div className="DashBoard">
@@ -55,39 +37,54 @@ const Dashboard = ({ courses = [], continueCourses = [], user }) => {
           <p>Pick up right where you left off.</p>
         </div>
         <div className="ContinueGrid">
-          {continueCourses.map((item, index) => (
-            <div className="ContinueCard" key={index}>
-              <div className="Thumb">
-                <Image src={item.image} alt={item.title} />
-              </div>
-              <div className="Details">
-                <h4>{item.title}</h4>
-
-                <div className="ProgressContainer">
-                  <div className="Bar">
-                    <div
-                      className="Fill"
-                      style={{ width: `${item.progress}%` }}
-                    ></div>
-                  </div>
-                  <p>{item.progress}% Complete</p>
-                </div>
-
-                <div className="CardFooter">
-                  <div className="Instructor">
-                    <Image
-                      src={item.instructorImg}
-                      alt={item.instructorName}
-                      width={30}
-                      height={30}
-                    />
-                    <span>{item.instructorName}</span>
-                  </div>
-                  <button className="ContinueBtn">Continue</button>
-                </div>
-              </div>
+          {continueCourses.length === 0 ? (
+            <div className="EmptyState" style={{ padding: "20px", textAlign: "center", color: "#aaa", gridColumn: "1 / -1" }}>
+              <p>No active courses to continue.</p>
             </div>
-          ))}
+          ) : (
+            continueCourses.map((item, index) => (
+              <div className="ContinueCard" key={index}>
+                <div className="Thumb">
+                  <Image
+                    src={item.image ? (typeof item.image === "string" ? `${MEDIA_BASE_URL}${item.image}` : item.image) : CourseImg1}
+                    alt={item.title || "Course"}
+                    width={200}
+                    height={120}
+                  />
+                </div>
+                <div className="Details">
+                  <h4>{item.title}</h4>
+
+                  <div className="ProgressContainer">
+                    <div className="Bar">
+                      <div
+                        className="Fill"
+                        style={{ width: `${item.progress}%` }}
+                      ></div>
+                    </div>
+                    <p>{item.progress}% Complete</p>
+                  </div>
+
+                  <div className="CardFooter">
+                    <div className="Instructor">
+                      {item.instructorImg && (
+                        <Image
+                          src={typeof item.instructorImg === "string" ? `${MEDIA_BASE_URL}${item.instructorImg}` : item.instructorImg}
+                          alt={item.instructorName || "Instructor"}
+                          width={30}
+                          height={30}
+                        />
+                      )}
+                      <span>{item.instructorName}</span>
+                    </div>
+                    <Link href={`/course/${item.slug || ""}`}>
+                      <button className="ContinueBtn">Continue</button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
 
@@ -100,68 +97,82 @@ const Dashboard = ({ courses = [], continueCourses = [], user }) => {
         
         <div className="LiveClasses">
           <div className="ClassList">
-            <div className="ProgramCard active">
-              <div className="ActiveBadge">ACTIVE</div>
-              <div className="MoreOptions">
-                <button className="MoreBtn"><FiMoreVertical /></button>
+            {activeDailyClass ? (
+              <div className="ProgramCard active">
+                <div className="ActiveBadge">ACTIVE</div>
+                <div className="MoreOptions">
+                  <button className="MoreBtn"><FiMoreVertical /></button>
+                </div>
+
+                <div className="CardLeft">
+                  <div className="Header">
+                    <div className="Thumb">
+                      <Image
+                        src={activeDailyClass.instructorImg ? (typeof activeDailyClass.instructorImg === 'string' ? `${MEDIA_BASE_URL}${activeDailyClass.instructorImg}` : activeDailyClass.instructorImg) : LiveThumb1}
+                        alt={activeDailyClass.title}
+                        width={100}
+                        height={70}
+                        className="Img"
+                      />
+                      <span className="Category">{activeDailyClass.category}</span>
+                    </div>
+                    <div className="TitleInfo">
+                      <h3>{activeDailyClass.title}</h3>
+                      <p className="Instructor">Instructor: <span>{activeDailyClass.instructor}</span></p>
+                    </div>
+                  </div>
+
+                  <div className="ScheduleMeta">
+                    <div className="MetaItem">
+                      <FiCalendar className="Icon" />
+                      <span>{activeDailyClass.dateRange}</span>
+                    </div>
+                    <div className="MetaItem">
+                      <FiClock className="Icon" />
+                      <span>{activeDailyClass.time}</span>
+                    </div>
+                  </div>
+
+                  <div className="WeeklyChips">
+                    {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day, idx) => (
+                      <span key={idx} className={`Chip ${activeDailyClass.days?.includes(day) || ['Tu', 'We'].includes(day) ? "Active" : ""}`}>
+                        {day}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="CardRight">
+                  <div className="ProgressHero">
+                    <div className="ProgressHeader">
+                      <span className="Label">PROGRESS</span>
+                      <span className="Value">Day {activeDailyClass.progress?.currentDay || 1} / {activeDailyClass.progress?.totalDays || 10}</span>
+                    </div>
+                    <div className="ProgressBar">
+                      <div className="Fill" style={{ width: `${activeDailyClass.progress?.percentage || 0}%` }}></div>
+                    </div>
+                  </div>
+
+                  <div className="TodayStatusBox">
+                    <div className="StatusHeader">
+                      <span className="Title">Today&apos;s Class</span>
+                    </div>
+                    <div className="StatusMessage">{activeDailyClass.todayStatus?.message || "Starts Soon"}</div>
+                    <div className="HelperText">{activeDailyClass.todayStatus?.helper || "Join opens 15 mins before"}</div>
+                  </div>
+
+                  <Link href={activeDailyClass.meeting_link || "/live-stream"} passHref>
+                    <button className="ActionBtn primary">
+                      <FiPlayCircle className="BtnIcon" /> Join Today&apos;s Class
+                    </button>
+                  </Link>
+                </div>
               </div>
-
-              <div className="CardLeft">
-                <div className="Header">
-                  <div className="Thumb">
-                    <Image src={LiveThumb1} alt="Advanced Meditation" width={100} height={70} className="Img" />
-                    <span className="Category">POWER YOGA</span>
-                  </div>
-                  <div className="TitleInfo">
-                    <h3>Advanced Meditation</h3>
-                    <p className="Instructor">Instructor: <span>Achu Sivadasan</span></p>
-                  </div>
-                </div>
-
-                <div className="ScheduleMeta">
-                  <div className="MetaItem">
-                    <FiCalendar className="Icon" />
-                    <span>14 Jan - 24 Jan</span>
-                  </div>
-                  <div className="MetaItem">
-                    <FiClock className="Icon" />
-                    <span>07:00 PM</span>
-                  </div>
-                </div>
-
-                <div className="WeeklyChips">
-                  {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day, idx) => (
-                    <span key={idx} className={`Chip ${['Tu', 'We'].includes(day) ? "Active" : ""}`}>
-                      {day}
-                    </span>
-                  ))}
-                </div>
+            ) : (
+              <div className="EmptyState" style={{ padding: "30px", textAlign: "center", background: "rgba(255,255,255,0.02)", borderRadius: "12px" }}>
+                <p style={{ color: "#aaa" }}>No live classes scheduled for today.</p>
               </div>
-
-              <div className="CardRight">
-                <div className="ProgressHero">
-                  <div className="ProgressHeader">
-                    <span className="Label">PROGRESS</span>
-                    <span className="Value">Day 4 / 10</span>
-                  </div>
-                  <div className="ProgressBar">
-                    <div className="Fill" style={{ width: "40%" }}></div>
-                  </div>
-                </div>
-
-                <div className="TodayStatusBox">
-                  <div className="StatusHeader">
-                    <span className="Title">Today&apos;s Class</span>
-                  </div>
-                  <div className="StatusMessage">Starts in 01:22:10</div>
-                  <div className="HelperText">Join opens 15 mins before</div>
-                </div>
-
-                <button className="ActionBtn primary">
-                  <FiPlayCircle className="BtnIcon" /> Join Today&apos;s Class
-                </button>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
@@ -175,51 +186,63 @@ const Dashboard = ({ courses = [], continueCourses = [], user }) => {
         
         <div className="LiveYoga">
           <div className="SessionsList">
-            <div className="SessionCard">
-              <div className="ThumbnailWrapper">
-                <Image src={LiveImg1} alt="Advanced Vinyasa Flow" width={150} height={150} className="Thumbnail" />
-              </div>
+            {activeLiveSession ? (
+              <div className="SessionCard">
+                <div className="ThumbnailWrapper">
+                  <Image
+                    src={activeLiveSession.image ? (typeof activeLiveSession.image === 'string' ? `${MEDIA_BASE_URL}${activeLiveSession.image}` : activeLiveSession.image) : LiveImg1}
+                    alt={activeLiveSession.title}
+                    width={150}
+                    height={150}
+                    className="Thumbnail"
+                  />
+                </div>
 
-              <div className="SessionDetails">
-                <div className="CardHeader">
-                  <div className="TitleArea">
-                    <span className="StatusBadge status-upcoming">
-                      Upcoming • Starts in 2 Days
+                <div className="SessionDetails">
+                  <div className="CardHeader">
+                    <div className="TitleArea">
+                      <span className="StatusBadge status-upcoming">
+                        {activeLiveSession.countdown || "Upcoming"}
+                      </span>
+                      <h3 className="Title">{activeLiveSession.title}</h3>
+                    </div>
+                    
+                    <div className="MoreMenuWrapper">
+                      <MdMoreVert className="MoreIcon" />
+                    </div>
+                  </div>
+
+                  <div className="InfoGrid">
+                    <span className="InfoItem">
+                      <MdEvent className="Icon" /> {activeLiveSession.date}
                     </span>
-                    <h3 className="Title">Advanced Vinyasa Flow</h3>
+                    <span className="InfoItem">
+                      <MdAccessTime className="Icon" /> {activeLiveSession.time}
+                    </span>
+                    <span className="InfoItem">
+                      <FaChalkboardTeacher className="Icon" /> {activeLiveSession.instructor}
+                    </span>
                   </div>
-                  
-                  <div className="MoreMenuWrapper">
-                    <MdMoreVert className="MoreIcon" />
-                  </div>
-                </div>
 
-                <div className="InfoGrid">
-                  <span className="InfoItem">
-                    <MdEvent className="Icon" /> 25 Oct 2026
-                  </span>
-                  <span className="InfoItem">
-                    <MdAccessTime className="Icon" /> 07:00 AM - 08:30 AM
-                  </span>
-                  <span className="InfoItem">
-                    <FaChalkboardTeacher className="Icon" /> Sarah Jenkins
-                  </span>
-                </div>
-
-                <div className="CardFooter">
-                  <div className="FooterLeft">
-                    <div className="BookingId">ID: #LS1024</div>
-                  </div>
-                  <div className="FooterRight">
-                    <Link href="/live-stream" passHref>
-                      <button className="ActionBtn primary live-btn">
-                        <MdLiveTv style={{ marginRight: '6px' }} /> Join Live
-                      </button>
-                    </Link>
+                  <div className="CardFooter">
+                    <div className="FooterLeft">
+                      <div className="BookingId">ID: #{activeLiveSession.id}</div>
+                    </div>
+                    <div className="FooterRight">
+                      <Link href={activeLiveSession.meeting_link || "/live-stream"} passHref>
+                        <button className="ActionBtn primary live-btn">
+                          <MdLiveTv style={{ marginRight: '6px' }} /> Join Live
+                        </button>
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            ) : (
+              <div className="EmptyState" style={{ padding: "30px", textAlign: "center", background: "rgba(255,255,255,0.02)", borderRadius: "12px" }}>
+                <p style={{ color: "#aaa" }}>No upcoming live sessions booked.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -230,37 +253,46 @@ const Dashboard = ({ courses = [], continueCourses = [], user }) => {
           <h2>Purchased Courses</h2>
           <p>Access your complete library of courses.</p>
         </div>
-        <div className="CourseGrid">
-          {displayCourses.filter(Boolean).map((course, i) => (
-            <div className="CourseItem" key={course?.id || i}>
-              <CourseCard
-                image={course?.staticImage || (course?.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : null)}
-                title={course?.title}
-                lessons={course?.lessons_count}
-                duration={(course?.duration || 0) + " hrs"}
-                price={Number(course?.price || 0)}
-                oldPrice={Number(course?.discount_price || 0)}
-                rating="4.5" 
-                students={course?.enrollments_count}
-                instructorName={course?.instructor?.name}
-                wishlistIcon={findWishlistIcon(course?.id, "course")}
-                lessonsIcon={<FiBookOpen />}
-                clockIcon={<FiClock />}
-                priceIcon="₹"
-                oldPriceIcon="₹"
-                lessonsLabel="Lessons"
-                ratingIcon={<AiFillStar />}
-                userIcon={<FiUsers />}
-                buttonText="Continue Learning"
-                instructorImg={course?.instructor?.avatar ? `${MEDIA_BASE_URL}${course.instructor.avatar}` : null}
-                instructorLabel={course?.instructor?.role}
-                id={course?.id}
-                type="course"
-                slug={course?.slug}
-              />
-            </div>
-          ))}
-        </div>
+        {courses.length === 0 ? (
+          <div className="EmptyState" style={{ padding: "30px", textAlign: "center", background: "rgba(255,255,255,0.02)", borderRadius: "12px" }}>
+            <p style={{ color: "#aaa", marginBottom: "15px" }}>You haven&apos;t purchased any courses yet.</p>
+            <Link href="/course">
+              <button className="ExploreBtn" style={{ padding: "8px 20px", background: "var(--primary-color, #ff6b6b)", color: "#fff", borderRadius: "6px", border: "none", cursor: "pointer" }}>Explore Courses</button>
+            </Link>
+          </div>
+        ) : (
+          <div className="CourseGrid">
+            {courses.filter(Boolean).map((course, i) => (
+              <div className="CourseItem" key={course?.id || i}>
+                <CourseCard
+                  image={course?.staticImage || (course?.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : null)}
+                  title={course?.title}
+                  lessons={course?.lessons_count}
+                  duration={(course?.duration || 0) + " hrs"}
+                  price={Number(course?.price || 0)}
+                  oldPrice={Number(course?.discount_price || 0)}
+                  rating="4.5" 
+                  students={course?.enrollments_count}
+                  instructorName={course?.instructor?.name}
+                  wishlistIcon={findWishlistIcon(course?.id, "course")}
+                  lessonsIcon={<FiBookOpen />}
+                  clockIcon={<FiClock />}
+                  priceIcon="₹"
+                  oldPriceIcon="₹"
+                  lessonsLabel="Lessons"
+                  ratingIcon={<AiFillStar />}
+                  userIcon={<FiUsers />}
+                  buttonText="Continue Learning"
+                  instructorImg={course?.instructor?.avatar ? `${MEDIA_BASE_URL}${course.instructor.avatar}` : null}
+                  instructorLabel={course?.instructor?.role}
+                  id={course?.id}
+                  type="course"
+                  slug={course?.slug}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
     </div>
