@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import LearningHeader from './LearningHeader';
 import PlayerContainer from './PlayerContainer';
 import LessonNavigation from './LessonNavigation';
@@ -76,13 +77,24 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     });
   };
 
+  const router = useRouter();
+
+  const handleNavigate = (targetLesson) => {
+    if (targetLesson && course?.slug) {
+      router.push(`/course/${course.slug}/learn/${targetLesson.id}`);
+    }
+  };
+
   return (
     <div className="LearningPlayerRoot">
-      {/* 1. Top Header */}
+      {/* 1. Top Header with Prev/Next Navigation */}
       <LearningHeader
         courseTitle={course?.title}
         lessonTitle={current_lesson?.title}
         courseSlug={course?.slug}
+        previousLesson={previous_lesson}
+        nextLesson={next_lesson}
+        onNavigate={handleNavigate}
         completionSummary={completion_summary}
         onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
         sidebarOpen={sidebarOpen}
@@ -98,13 +110,6 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
             permissions={permissions}
             courseSlug={course?.slug}
             onProgressUpdated={handleProgressUpdated}
-          />
-
-          {/* Lesson Navigation Bar */}
-          <LessonNavigation
-            previousLesson={previous_lesson}
-            nextLesson={next_lesson}
-            courseSlug={course?.slug}
           />
 
           {/* Overview & Resources Tabs */}

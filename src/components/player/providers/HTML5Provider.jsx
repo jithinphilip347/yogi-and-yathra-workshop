@@ -14,10 +14,12 @@ export default function HTML5Provider({
   onError
 }) {
   useEffect(() => {
-    if (videoRef.current) {
+    if (videoRef.current && src) {
       videoRef.current.load();
     }
   }, [src, videoRef]);
+
+  if (!src) return null;
 
   return (
     <video
@@ -32,9 +34,6 @@ export default function HTML5Provider({
       onPause={onPause}
       onEnded={onEnded}
       onError={onError}
-    >
-      <source src={src} type={format === 'mov' ? 'video/quicktime' : format === 'webm' ? 'video/webm' : 'video/mp4'} />
-      Your browser does not support video playback.
-    </video>
+    />
   );
 }

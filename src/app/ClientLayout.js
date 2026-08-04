@@ -10,16 +10,18 @@ export default function ClientLayout({ children }) {
   const pathname = usePathname();
   
   const isAuthPage = pathname === "/auth/login" || pathname === "/auth/signup" || pathname === "/auth/forgetpassword" || pathname === "/auth/otp" || pathname === "/auth/changepassword";
+  const isPlayerPage = pathname?.includes("/learn/");
+  const hideHeaderFooter = isAuthPage || isPlayerPage;
 
   return (
     <SmoothScrollProvider>
       <Providers>
-        {!isAuthPage && <Nav />}
-        {!isAuthPage && <SubNav />}
+        {!hideHeaderFooter && <Nav />}
+        {!hideHeaderFooter && <SubNav />}
         
         <main>{children}</main>
         
-        {!isAuthPage && <Footer />}
+        {!hideHeaderFooter && <Footer />}
       </Providers>
     </SmoothScrollProvider>
   );

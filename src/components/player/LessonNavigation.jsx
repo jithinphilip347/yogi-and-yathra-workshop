@@ -18,34 +18,46 @@ export default function LessonNavigation({
   };
 
   return (
-    <div className="LessonNavigation">
+    <div className="LessonNavigation" style={{ justifyContent: 'space-between', padding: '12px 28px' }}>
       <button
-        className="NavBtn"
+        className="NavBtn IconNavBtn"
         disabled={!previousLesson}
         onClick={() => handleNavigate(previousLesson)}
         title={previousLesson ? `Previous: ${previousLesson.title}` : 'No Previous Lesson'}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          fontSize: '13px',
+          fontWeight: '600'
+        }}
       >
-        <FiChevronLeft />
-        <span>{previousLesson ? `Prev: ${previousLesson.title}` : 'Previous Lesson'}</span>
+        <FiChevronLeft style={{ fontSize: '18px' }} />
+        <span>Prev</span>
       </button>
 
       <button
-        className="NavBtn"
-        onClick={() => router.push(`/course/${courseSlug || ''}`)}
-      >
-        <FiGrid />
-        <span>Course Overview</span>
-      </button>
-
-      <button
-        className="NavBtn PrimaryNavBtn"
+        className="NavBtn PrimaryNavBtn IconNavBtn"
         disabled={!nextLesson}
         onClick={() => handleNavigate(nextLesson)}
         title={nextLesson ? `Next: ${nextLesson.title}` : 'No Next Lesson'}
-        style={{ backgroundColor: nextLesson ? '#ff7a1a' : undefined, borderColor: nextLesson ? '#ff7a1a' : undefined, color: nextLesson ? '#fff' : undefined }}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          padding: '8px 18px',
+          borderRadius: '20px',
+          fontSize: '13px',
+          fontWeight: '600',
+          backgroundColor: nextLesson ? 'var(--primaryColor, #874429)' : undefined,
+          borderColor: nextLesson ? 'var(--primaryColor, #874429)' : undefined,
+          color: nextLesson ? '#ffffff' : undefined
+        }}
       >
-        <span>{nextLesson ? `Next: ${nextLesson.title}` : 'Next Lesson'}</span>
-        <FiChevronRight />
+        <span>Next</span>
+        <FiChevronRight style={{ fontSize: '18px' }} />
       </button>
     </div>
   );

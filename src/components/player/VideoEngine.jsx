@@ -16,6 +16,7 @@ import {
   FiRefreshCw 
 } from 'react-icons/fi';
 
+import courseApi from '@/libs/courseApi';
 import HTML5Provider from './providers/HTML5Provider';
 import HLSProvider from './providers/HLSProvider';
 import YouTubeProvider from './providers/YouTubeProvider';
@@ -45,20 +46,73 @@ export default function VideoEngine({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
 
+  const [activeStreamUrl, setActiveStreamUrl] = useState('');
+  const [activeProvider, setActiveProvider] = useState('html5');
+  const [activeFormat, setActiveFormat] = useState('mp4');
+
   // Auto-Next Countdown
   const [autoNextCountdown, setAutoNextCountdown] = useState(null);
   const countdownTimerRef = useRef(null);
 
-  // Determine provider type
-  const rawUrl = lesson?.video_url || '';
-  const lessonType = strtolower(lesson?.type || '');
+  const resolveStreamUrl = (url) => {
+    if (!url || typeof url !== 'string') return '';
+    if (url.startsWith('http://') || url.startsWith('https://')) return url;
+    const cleanPath = url.startsWith('/') ? url.substring(1) : url;
+    if (cleanPath.startsWith('storage/')) {
+      return `http://localhost:8000/${cleanPath}`;
+    }
+    return `http://localhost:8000/storage/${cleanPath}`;
+  };
 
   function strtolower(str) {
     return typeof str === 'string' ? str.toLowerCase() : '';
   }
 
-  let providerType = 'html5';
-  let formatType = 'mp4';
+  // Fetch signed stream payload or resolve direct URL on lesson change
+  useEffect(() => {
+    if (!lesson?.id) return;
+    let isMounted = true;
+    setIsLoading(true);
+    setHasError(false);
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setAutoNextCountdown(null);
+    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+
+    courseApi.getLessonStream(lesson.id)
+      .then((res) => {
+        const data = res.data?.data || res.data;
+        if (isMounted && data?.stream_url) {
+          setActiveStreamUrl(resolveStreamUrl(data.stream_url));
+          setActiveProvider(data.provider || 'html5');
+          setActiveFormat(data.format || 'mp4');
+          setIsLoading(false);
+        } else if (isMounted) {
+          const direct = resolveStreamUrl(lesson.video_url);
+          setActiveStreamUrl(direct);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        console.warn("Stream endpoint fallback to direct URL:", err);
+        if (isMounted) {
+          if (lesson?.video_url) {
+            setActiveStreamUrl(resolveStreamUrl(lesson.video_url));
+            setIsLoading(false);
+          } else {
+            setHasError(true);
+            setIsLoading(false);
+          }
+        }
+      });
+
+    return () => { isMounted = false; };
+  }, [lesson?.id, lesson?.video_url]);
+
+  const rawUrl = activeStreamUrl || resolveStreamUrl(lesson?.video_url);
+  const lessonType = strtolower(lesson?.type || '');
+  let providerType = activeProvider || 'html5';
+  let formatType = activeFormat || 'mp4';
 
   if (rawUrl.includes('.m3u8') || lessonType === 'hls') {
     providerType = 'hls';
@@ -76,16 +130,6 @@ export default function VideoEngine({
     providerType = 'html5';
     formatType = 'webm';
   }
-
-  // Reset states on lesson change
-  useEffect(() => {
-    setIsLoading(true);
-    setHasError(false);
-    setIsPlaying(false);
-    setCurrentTime(0);
-    setAutoNextCountdown(null);
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-  }, [lesson?.id]);
 
   // Unified Play / Pause
   const togglePlay = useCallback(() => {
@@ -289,7 +333,7 @@ export default function VideoEngine({
           justifyContent: 'center',
           color: '#ffffff'
         }}>
-          <h4 style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px', color: '#10b981', marginBottom: '8px' }}>
+          <h4 style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primaryColor, #874429)', marginBottom: '8px' }}>
             Up Next in {autoNextCountdown}s
           </h4>
           <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '20px', textAlign: 'center', padding: '0 20px' }}>
@@ -299,7 +343,7 @@ export default function VideoEngine({
             <button
               onClick={handlePlayNextImmediately}
               style={{
-                backgroundColor: '#10b981',
+                backgroundColor: 'var(--primaryColor, #874429)',
                 color: '#fff',
                 border: 'none',
                 padding: '10px 20px',
@@ -355,9 +399,9 @@ export default function VideoEngine({
           <button
             onClick={handleRetry}
             style={{
-              backgroundColor: '#1f2937',
-              color: '#10b981',
-              border: '1px solid #374151',
+              backgroundColor: 'var(--primaryColor, #874429)',
+              color: '#ffffff',
+              border: 'none',
               padding: '8px 18px',
               borderRadius: '6px',
               fontWeight: '600',
@@ -423,7 +467,7 @@ export default function VideoEngine({
             max={duration || 100}
             value={currentTime}
             onChange={handleSeek}
-            style={{ width: '100%', accentColor: '#10b981', cursor: 'pointer' }}
+            style={{ width: '100%', accentColor: 'var(--primaryColor, #874429)', cursor: 'pointer' }}
           />
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#e5e7eb' }}>
@@ -444,7 +488,7 @@ export default function VideoEngine({
                 step={0.05}
                 value={isMuted ? 0 : volume}
                 onChange={handleVolumeChange}
-                style={{ width: '60px', accentColor: '#10b981', cursor: 'pointer' }}
+                style={{ width: '60px', accentColor: 'var(--primaryColor, #874429)', cursor: 'pointer' }}
               />
 
               {/* Time Display */}
