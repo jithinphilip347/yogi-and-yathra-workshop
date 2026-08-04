@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { FiArrowLeft, FiSidebar } from 'react-icons/fi';
+import { FiArrowLeft, FiSidebar, FiChevronRight } from 'react-icons/fi';
 
 export default function LearningHeader({
   courseTitle,
@@ -33,19 +33,27 @@ export default function LearningHeader({
           <FiArrowLeft />
           <span>Back to Course</span>
         </button>
-        <div className="CourseTitleGroup">
-          <h1 className="CourseName">{courseTitle || 'Course Player'}</h1>
-          <p className="LessonName">{lessonTitle || 'Select a Lesson'}</p>
+        
+        <div className="BreadcrumbsNav" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', color: '#9ca3af' }}>
+          <span style={{ cursor: 'pointer', hover: { color: '#fff' } }} onClick={() => router.push('/course')}>Courses</span>
+          <FiChevronRight style={{ fontSize: '12px', color: '#4b5563' }} />
+          <span style={{ color: '#d1d5db', fontWeight: '500' }}>{courseTitle || 'Course'}</span>
+          {lessonTitle && (
+            <>
+              <FiChevronRight style={{ fontSize: '12px', color: '#4b5563' }} />
+              <span style={{ color: '#ff7a1a', fontWeight: '600' }}>{lessonTitle}</span>
+            </>
+          )}
         </div>
       </div>
 
       <div className="HeaderRight">
-        <div className="ProgressPlaceholder" style={{ minWidth: '180px', display: 'flex', flexDirection: 'column', gap: '4px', padding: '6px 14px' }}>
+        <div className="ProgressPlaceholder" style={{ minWidth: '200px', display: 'flex', flexDirection: 'column', gap: '4px', padding: '6px 14px', backgroundColor: '#161b22', borderRadius: '8px', border: '1px solid #21262d' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '12px', fontWeight: '600', color: '#10b981' }}>
-            <span>{percentage}% Complete</span>
-            <span style={{ color: '#9ca3af' }}>{completedCount}/{totalLessons} Lessons</span>
+            <span>{percentage}% Completed</span>
+            <span style={{ color: '#8b949e' }}>{completedCount}/{totalLessons} Lessons</span>
           </div>
-          <div style={{ width: '100%', height: '4px', backgroundColor: '#1f2937', borderRadius: '2px', overflow: 'hidden' }}>
+          <div style={{ width: '100%', height: '5px', backgroundColor: '#21262d', borderRadius: '3px', overflow: 'hidden' }}>
             <div style={{ width: `${percentage}%`, height: '100%', backgroundColor: '#10b981', transition: 'width 0.3s ease' }} />
           </div>
         </div>

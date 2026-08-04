@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import LearningHeader from './LearningHeader';
 import PlayerContainer from './PlayerContainer';
 import LessonNavigation from './LessonNavigation';

@@ -478,10 +478,10 @@
               }
 
               &.Active {
-                background: rgba(16, 185, 129, 0.1);
-                color: #10b981;
+                background: rgba(255, 122, 26, 0.1) !important;
+                color: #ff7a1a !important;
                 font-weight: 600;
-                border-left: 3px solid #10b981;
+                border-left: 3px solid #ff7a1a !important;
               }
 
               .ItemLeft {
@@ -512,8 +512,8 @@
                   text-transform: uppercase;
 
                   &.Preview {
-                    background: rgba(59, 130, 246, 0.15);
-                    color: #60a5fa;
+                    background: rgba(255, 122, 26, 0.15);
+                    color: #ff7a1a;
                   }
 
                   &.Locked {
@@ -542,10 +542,15 @@
       flex-direction: column;
 
       .LessonSidebar {
-        width: 100% !important;
-        border-left: none;
-        border-top: 1px solid #1f2937;
-        max-height: 400px;
+        position: fixed;
+        right: 0;
+        top: 64px;
+        bottom: 0;
+        width: 320px !important;
+        z-index: 40;
+        box-shadow: -4px 0 20px rgba(0,0,0,0.5);
+        background-color: #161b22;
+        border-left: 1px solid #21262d;
       }
     }
   }

@@ -23,9 +23,10 @@ export default function LessonNavigation({
         className="NavBtn"
         disabled={!previousLesson}
         onClick={() => handleNavigate(previousLesson)}
+        title={previousLesson ? `Previous: ${previousLesson.title}` : 'No Previous Lesson'}
       >
         <FiChevronLeft />
-        <span>Previous Lesson</span>
+        <span>{previousLesson ? `Prev: ${previousLesson.title}` : 'Previous Lesson'}</span>
       </button>
 
       <button
@@ -37,11 +38,13 @@ export default function LessonNavigation({
       </button>
 
       <button
-        className="NavBtn"
+        className="NavBtn PrimaryNavBtn"
         disabled={!nextLesson}
         onClick={() => handleNavigate(nextLesson)}
+        title={nextLesson ? `Next: ${nextLesson.title}` : 'No Next Lesson'}
+        style={{ backgroundColor: nextLesson ? '#ff7a1a' : undefined, borderColor: nextLesson ? '#ff7a1a' : undefined, color: nextLesson ? '#fff' : undefined }}
       >
-        <span>Next Lesson</span>
+        <span>{nextLesson ? `Next: ${nextLesson.title}` : 'Next Lesson'}</span>
         <FiChevronRight />
       </button>
     </div>

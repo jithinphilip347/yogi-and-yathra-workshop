@@ -47,6 +47,10 @@ export default function LessonAccordion({
                 key={lesson.id}
                 className={`LessonItem ${isActive ? 'Active' : ''}`}
                 onClick={() => handleLessonClick(lesson)}
+                style={{
+                  borderLeft: isActive ? '3px solid #ff7a1a' : '3px solid transparent',
+                  backgroundColor: isActive ? 'rgba(255, 122, 26, 0.08)' : 'transparent'
+                }}
               >
                 <div className="ItemLeft">
                   {isCompleted ? (
