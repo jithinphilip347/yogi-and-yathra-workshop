@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { FiBookOpen, FiClock, FiUsers, FiCalendar, FiPlayCircle, FiMoreVertical, FiZap, FiAward } from "react-icons/fi";
 import courseApi from "@/libs/courseApi";
+import useWishlist from "@/hooks/useWishlist";
 
 const Dashboard = ({
   courses = [],

@@ -28,8 +28,10 @@ import { IoPeopleOutline, IoCartOutline } from "react-icons/io5";
 import NavSearchOverlay from "./NavSearchOverlay";
 import { useSelector } from "react-redux";
 import { selectCartItemCount } from "@/features/commerce/selectors/commerceSelectors";
+import useProfile from "@/hooks/useProfile";
 
 const Nav = () => {
+  const { handleLogout } = useProfile();
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openNotification, setOpenNotification] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
@@ -236,7 +238,13 @@ const Nav = () => {
                       <MdNotifications /> Notifications
                     </div>
 
-                    <div className="DropItem">
+                    <div 
+                      className="DropItem"
+                      onClick={() => {
+                        handleLogout();
+                        setOpenDropdown(false);
+                      }}
+                    >
                       <MdLogout /> Logout
                     </div>
                   </div>
