@@ -1,8 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { FiBookOpen, FiClock, FiUsers, FiCalendar, FiPlayCircle, FiMoreVertical, FiZap, FiAward } from "react-icons/fi";
+import { AiFillStar } from "react-icons/ai";
 import courseApi from "@/libs/courseApi";
 import useWishlist from "@/hooks/useWishlist";
+import { MEDIA_BASE_URL } from "@/utils/constants";
+import CourseCard from "@/components/coursebox/CourseCard";
 
 const Dashboard = ({
   courses = [],
@@ -26,13 +31,14 @@ const Dashboard = ({
   const activeLiveSession = liveSessions && liveSessions.length > 0 ? liveSessions[0] : null;
 
   return (
-    <div className="DashBoard">
+    <div className="DashBoard" style={{ width: '100%' }}>
       {/* Learning Intelligence KPI Summary Cards */}
       {analytics && (
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
           gap: '16px',
+          width: '100%',
           marginBottom: '24px'
         }}>
           <div style={{
@@ -146,10 +152,10 @@ const Dashboard = ({
             </div>
           ) : (
             continueCourses.map((item, index) => (
-              <div className="ContinueCard" key={index}>
+              <div className="ContinueCard" key={index} style={{ width: "100%", maxWidth: "550px" }}>
                 <div className="Thumb">
                   <Image
-                    src={item.image ? (typeof item.image === "string" ? `${MEDIA_BASE_URL}${item.image}` : item.image) : CourseImg1}
+                    src={item.image && item.image}
                     alt={item.title || "Course"}
                     width={200}
                     height={120}

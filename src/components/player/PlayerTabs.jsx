@@ -61,7 +61,12 @@ export default function PlayerTabs({ course, currentLesson, getCurrentTime, onSe
         )}
 
         {activeTab === 'discussion' && (
-          <DiscussionTab />
+          <DiscussionTab
+            course={course}
+            currentLesson={currentLesson}
+            getCurrentTime={getCurrentTime}
+            onSeek={onSeek}
+          />
         )}
       </div>
     </div>
