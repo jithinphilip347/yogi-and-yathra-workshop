@@ -259,6 +259,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
             courseSlug={course?.slug}
             isEnrolled={enrollment?.is_enrolled}
             isOpen={sidebarOpen}
+            onToggleSidebar={handleToggleSidebar}
           />
         </div>
       </div>

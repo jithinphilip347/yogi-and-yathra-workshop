@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight, FiBookmark, FiCheckCircle } from 'react-icons/fi';
+import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight, FiBookmark, FiCheckCircle, FiShare2, FiStar, FiMoreVertical } from 'react-icons/fi';
 
 export default React.memo(function LearningHeader({
   courseTitle,
@@ -39,139 +39,110 @@ export default React.memo(function LearningHeader({
   return (
     <header className="LearningHeader">
       <div className="HeaderLeft">
-        <button className="BackBtn" onClick={handleBack} title="Back to Course">
-          <FiArrowLeft />
-          <span>Back to Course</span>
-        </button>
-        
-        <div className="BreadcrumbsNav" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px', color: '#64748b' }}>
-          <span className="BreadcrumbLink" onClick={() => router.push('/course')}>Courses</span>
-          <FiChevronRight style={{ fontSize: '12px', color: '#94a3b8' }} />
-          <span className="BreadcrumbCurrent">{courseTitle || 'Course'}</span>
-          {lessonTitle && (
-            <>
-              <FiChevronRight style={{ fontSize: '12px', color: '#94a3b8' }} />
-              <span className="BreadcrumbActiveLesson">{lessonTitle}</span>
-            </>
-          )}
+        <div className="Branding" onClick={handleBack} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <span className="LogoText" style={{ fontSize: '20px', fontWeight: '800', letterSpacing: '-0.5px', color: '#ffffff' }}>Yogify</span>
         </div>
+        <div className="Divider" style={{ width: '1px', height: '24px', backgroundColor: '#3e4143', margin: '0 8px' }} />
+        <h1 className="CourseTitleHeader" style={{ fontSize: '15px', fontWeight: '500', color: '#ffffff', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '400px' }}>
+          {courseTitle}
+        </h1>
       </div>
 
-      <div className="HeaderRight" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        {/* Manual Mark Complete Button */}
-        {showManualButton && (
-          <button
-            onClick={onToggleCompletion}
-            title={isLessonCompleted ? "Lesson Completed (Click to reset)" : "Mark Lesson as Complete"}
-            style={{
-              padding: '7px 14px',
-              borderRadius: '8px',
-              border: isLessonCompleted ? '1px solid #10b981' : '1px solid #cbd5e1',
-              backgroundColor: isLessonCompleted ? 'rgba(16, 185, 129, 0.12)' : '#ffffff',
-              color: isLessonCompleted ? '#059669' : '#475569',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              fontSize: '12.5px',
-              fontWeight: '600',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            <FiCheckCircle style={{ fontSize: '15px', color: isLessonCompleted ? '#10b981' : '#94a3b8' }} />
-            <span>{isLessonCompleted ? "Completed" : "Mark as Complete"}</span>
-          </button>
-        )}
+      <div className="HeaderRight">
+        {/* Rating Link / Button */}
+        <button className="HeaderLinkBtn" onClick={() => router.push(`/course/${courseSlug || ''}#reviews`)}>
+          <FiStar style={{ marginRight: '6px' }} />
+          <span>Leave a rating</span>
+        </button>
+
+        {/* Your Progress circular/percentage widget */}
+        <div className="ProgressIndicator">
+          <div className="ProgressCircle">
+            <svg width="32" height="32" viewBox="0 0 36 36">
+              <path
+                className="circle-bg"
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="#3e4143"
+                strokeWidth="3"
+              />
+              <path
+                className="circle"
+                strokeDasharray={`${percentage}, 100`}
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                fill="none"
+                stroke="var(--primaryColor, #874429)"
+                strokeWidth="3"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+          <div className="ProgressText">
+            <span className="ProgressLabel">Your progress</span>
+            <span className="ProgressPercent">{completedCount}/{totalLessons} ({percentage}%)</span>
+          </div>
+        </div>
+
+        {/* Share Button */}
+        <button className="ShareBtn" title="Share Course">
+          <FiShare2 />
+          <span>Share</span>
+        </button>
 
         {/* Bookmark Toggle Button */}
         <button
           onClick={onToggleBookmark}
           title={isBookmarked ? "Remove Bookmark" : "Bookmark Lesson"}
-          style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: '8px',
-            border: isBookmarked ? '1px solid var(--primaryColor, #874429)' : '1px solid #cbd5e1',
-            backgroundColor: isBookmarked ? 'rgba(135, 68, 41, 0.1)' : '#ffffff',
-            color: isBookmarked ? 'var(--primaryColor, #874429)' : '#64748b',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            fontSize: '17px',
-            transition: 'all 0.2s ease'
-          }}
+          className={`BookmarkBtn ${isBookmarked ? 'Active' : ''}`}
         >
           <FiBookmark style={{ fill: isBookmarked ? 'currentColor' : 'none' }} />
         </button>
 
+        {/* Mark Complete Button */}
+        {showManualButton && (
+          <button
+            onClick={onToggleCompletion}
+            title={isLessonCompleted ? "Lesson Completed" : "Mark as Complete"}
+            className={`CompleteBtn ${isLessonCompleted ? 'Completed' : ''}`}
+          >
+            <FiCheckCircle />
+            <span>{isLessonCompleted ? "Completed" : "Complete"}</span>
+          </button>
+        )}
+
         {/* Previous & Next Icon Navigation */}
-        <div className="HeaderLessonNav" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+        <div className="HeaderLessonNav">
           <button
             className="NavIconHeaderBtn"
             disabled={!previousLesson}
             onClick={() => onNavigate && onNavigate(previousLesson)}
             title={previousLesson ? `Previous: ${previousLesson.title}` : 'No Previous Lesson'}
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              backgroundColor: '#ffffff',
-              color: previousLesson ? '#334155' : '#cbd5e1',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: previousLesson ? 'pointer' : 'not-allowed',
-              transition: 'all 0.2s ease',
-              fontSize: '18px'
-            }}
           >
             <FiChevronLeft />
           </button>
 
           <button
-            className="NavIconHeaderBtn Primary"
+            className="NavIconHeaderBtn"
             disabled={!nextLesson}
             onClick={() => onNavigate && onNavigate(nextLesson)}
             title={nextLesson ? `Next: ${nextLesson.title}` : 'No Next Lesson'}
-            style={{
-              width: '38px',
-              height: '38px',
-              borderRadius: '8px',
-              border: nextLesson ? '1px solid var(--primaryColor, #874429)' : '1px solid #cbd5e1',
-              backgroundColor: nextLesson ? 'var(--primaryColor, #874429)' : '#f8fafc',
-              color: nextLesson ? '#ffffff' : '#cbd5e1',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: nextLesson ? 'pointer' : 'not-allowed',
-              transition: 'all 0.2s ease',
-              fontSize: '18px',
-              boxShadow: nextLesson ? '0 2px 6px rgba(135, 68, 41, 0.2)' : 'none'
-            }}
           >
             <FiChevronRight />
           </button>
         </div>
 
-        {/* Progress summary pill */}
-        <div className="ProgressPlaceholder" style={{ minWidth: '190px', display: 'flex', flexDirection: 'column', gap: '4px', padding: '6px 14px', backgroundColor: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', fontSize: '12px', fontWeight: '600', color: 'var(--primaryColor, #874429)' }}>
-            <span>{percentage}% Completed</span>
-            <span style={{ color: '#64748b' }}>{completedCount}/{totalLessons} Lessons</span>
-          </div>
-          <div style={{ width: '100%', height: '5px', backgroundColor: '#e2e8f0', borderRadius: '3px', overflow: 'hidden' }}>
-            <div style={{ width: `${percentage}%`, height: '100%', backgroundColor: 'var(--primaryColor, #874429)', transition: 'width 0.3s ease' }} />
-          </div>
-        </div>
-
+        {/* Sidebar Toggle Toggle */}
         <button
-          className="SidebarToggleBtn"
+          className={`SidebarToggleBtn ${sidebarOpen ? 'Open' : ''}`}
           onClick={onToggleSidebar}
-          title={sidebarOpen ? "Hide Sidebar" : "Show Sidebar"}
+          title={sidebarOpen ? "Close Course Content" : "Open Course Content"}
         >
           <FiSidebar />
+        </button>
+
+        {/* Options Menu */}
+        <button className="HeaderMoreBtn">
+          <FiMoreVertical />
         </button>
       </div>
     </header>

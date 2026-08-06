@@ -118,6 +118,7 @@ export default React.memo(function VideoEngine({
     applySeek,
     requestSeek,
     applyPendingSeek,
+    retryPendingSeekFromBuffer,
     handleSeekStart,
     handleSeeking,
     handleSeeked,
@@ -239,7 +240,7 @@ export default React.memo(function VideoEngine({
 
   // Video Media Events
   const handleLoadedMetadata = useCallback(() => {
-    
+
     playerDebug.mediaEvent({ name: 'loadedmetadata', video: videoRef.current });
     attemptResume({
       lesson,
@@ -319,12 +320,20 @@ export default React.memo(function VideoEngine({
   }, [videoRef]);
 
   const handleProgress = useCallback(() => {
+    // Retry any queued seek that failed due to missing buffer (e.g. server
+    // returned 200 instead of 206 — no range support). As data downloads
+    // from position 0, this keeps attempting the seek once the target
+    // position is within the buffered range.
+    retryPendingSeekFromBuffer();
+
     const nowMs = Date.now();
     if (nowMs - lastProgressDebugRef.current > 2000) {
       lastProgressDebugRef.current = nowMs;
       playerDebug.mediaEvent({ name: 'progress', video: videoRef.current });
     }
-  }, [videoRef]);
+  }, [videoRef, retryPendingSeekFromBuffer]);
+
+  const handleError = useCallback(() => setHasError(true), [setHasError]);
 
   const handleRetry = useCallback(() => {
     setHasError(false);
@@ -496,7 +505,7 @@ export default React.memo(function VideoEngine({
         onSeeked={handleSeeked}
         onPause={handlePause}
         onEnded={handleEnded}
-        onError={() => setHasError(true)}
+        onError={handleError}
       />
 
       {/* Custom Control Bar for Direct & HLS Streams */}

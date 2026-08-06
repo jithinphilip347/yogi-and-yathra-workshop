@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiChevronDown, FiChevronUp, FiPlayCircle, FiTv, FiLock, FiCheckCircle } from 'react-icons/fi';
+import { FiChevronDown, FiChevronUp, FiPlay, FiFolder, FiLock, FiCheck } from 'react-icons/fi';
 
 export default function LessonAccordion({
   section,
@@ -23,27 +23,33 @@ export default function LessonAccordion({
 
   const completedInSec = lessons.filter(l => l.is_completed).length;
   const secTotal = lessons.length;
-  const secPercent = secTotal > 0 ? Math.round((completedInSec / secTotal) * 100) : 0;
+
+  // Calculate approximate total section duration
+  const totalMinutes = lessons.reduce((acc, l) => {
+    if (!l.duration) return acc;
+    const clean = l.duration.toLowerCase().replace('min', '').trim();
+    const parsed = parseInt(clean);
+    return acc + (isNaN(parsed) ? 10 : parsed);
+  }, 0);
 
   return (
     <div className="ChapterAccordion">
       <button
-        className="AccordionHeader"
+        className={`AccordionHeader ${isOpen ? 'Expanded' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
         style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}
       >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', textAlign: 'left' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', textAlign: 'left', paddingRight: '12px' }}>
           <span className="TitleText">{section.title}</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: '#64748b' }}>
-            <span>{completedInSec}/{secTotal} Completed</span>
-            {secPercent > 0 && (
-              <span style={{ fontWeight: '600', color: 'var(--primaryColor, #874429)' }}>
-                ({secPercent}%)
-              </span>
-            )}
+          <div className="AccordionMeta">
+            <span>{completedInSec} / {secTotal}</span>
+            <span className="MetaSeparator">|</span>
+            <span>{totalMinutes}min</span>
           </div>
         </div>
-        {isOpen ? <FiChevronUp /> : <FiChevronDown />}
+        <span className="AccordionChevron">
+          {isOpen ? <FiChevronUp /> : <FiChevronDown />}
+        </span>
       </button>
 
       {isOpen && (
@@ -52,47 +58,46 @@ export default function LessonAccordion({
             const isActive = Number(currentLessonId) === Number(lesson.id);
             const isLocked = lesson.is_locked;
             const isCompleted = lesson.is_completed;
-            const isYouTube = lesson.type === 'youtube';
 
             return (
               <div
                 key={lesson.id}
                 className={`LessonItem ${isActive ? 'Active' : ''}`}
                 onClick={() => handleLessonClick(lesson)}
-                style={{
-                  borderLeft: isActive ? '3px solid var(--primaryColor, #874429)' : '3px solid transparent',
-                  backgroundColor: isActive ? 'rgba(135, 68, 41, 0.08)' : 'transparent'
-                }}
               >
-                <div className="ItemLeft">
-                  {isCompleted ? (
-                    <FiCheckCircle className="TypeIcon" style={{ color: '#10b981' }} title="Completed" />
-                  ) : isYouTube ? (
-                    <FiTv className="TypeIcon" />
-                  ) : (
-                    <FiPlayCircle className="TypeIcon" />
-                  )}
-                  <span className="LessonTitle" style={{ textDecoration: isCompleted ? 'line-through' : 'none', opacity: isCompleted ? 0.8 : 1 }}>
-                    {lesson.title}
-                  </span>
+                {/* Square checkbox styling exactly like Udemy */}
+                <div className="LessonCheckboxContainer">
+                  <div className={`CustomCheckbox ${isCompleted ? 'Checked' : ''}`}>
+                    {isCompleted && <FiCheck className="CheckMark" />}
+                  </div>
                 </div>
 
-                <div className="ItemRight">
-                  {isCompleted && (
-                    <span className="Badge Completed" style={{ backgroundColor: 'rgba(16,185,129,0.15)', color: '#10b981' }}>
-                      Completed
-                    </span>
-                  )}
-                  {lesson.is_preview && !isCompleted && (
-                    <span className="Badge Preview">Preview</span>
+                <div className="LessonInfoCol">
+                  <span className="LessonTitle">
+                    {lesson.title}
+                  </span>
+                  
+                  <div className="LessonMetaRow">
+                    <FiPlay className="MetaIcon" />
+                    <span>{lesson.duration || '10min'}</span>
+                  </div>
+                </div>
+
+                <div className="LessonItemRight">
+                  {lesson.resources && lesson.resources.length > 0 && (
+                    <button className="ResourcesPill" onClick={(e) => {
+                      e.stopPropagation();
+                      // Navigate to resources tab or toggle sub-dropdown
+                      router.push(`/course/${courseSlug}/learn/${lesson.id}?tab=resources`);
+                    }}>
+                      <FiFolder style={{ marginRight: '4px' }} />
+                      Resources
+                    </button>
                   )}
                   {isLocked && !isCompleted && (
-                    <span className="Badge Locked" title="Locked - Enrollment Required">
+                    <span className="LockIcon" title="Locked">
                       <FiLock />
                     </span>
-                  )}
-                  {lesson.duration && (
-                    <span className="Duration">{lesson.duration}</span>
                   )}
                 </div>
               </div>

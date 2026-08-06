@@ -1,76 +1,56 @@
-/* Learning Player Styles - Light Theme (Course Details Design Alignment) */
+/* Learning Player Styles - Redesigned like Udemy */
 
 .LearningPlayerRoot {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f9fbfd;
-  color: #2d3436;
-  font-family: var(--myFont1), "Inter", sans-serif;
+  background-color: #ffffff;
+  color: #1c1d1f;
+  font-family: var(--myFont1), "SF Pro Display", -apple-system, BlinkMacSystemFont, Roboto, "Segoe UI", Helvetica, Arial, sans-serif;
 
-  /* Header */
+  /* ------------------------------------------------------------- */
+  /* Redesigned Udemy Dark Theme Header                            */
+  /* ------------------------------------------------------------- */
   .LearningHeader {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 68px;
-    padding: 0 28px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e5e7eb;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    height: 56px;
+    padding: 0 16px;
+    background-color: #1c1d1f;
+    border-bottom: 1px solid #3e4143;
     z-index: 50;
 
     .HeaderLeft {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 12px;
 
-      .BackBtn {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        background: #f3f4f6;
-        border: 1px solid #e5e7eb;
-        color: #4b5563;
-        padding: 8px 16px;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &:hover {
+      .LogoText {
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: #ffffff;
+        text-transform: lowercase;
+        
+        &::first-letter {
+          text-transform: uppercase;
           color: var(--primaryColor, #874429);
-          border-color: var(--primaryColor, #874429);
-          background: rgba(135, 68, 41, 0.06);
         }
       }
 
-      .BreadcrumbsNav {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+      .CourseTitleHeader {
         font-size: 14px;
-        color: #6b7280;
+        font-weight: 600;
+        color: #ffffff;
+        margin: 0;
+        max-width: 350px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
 
-        .BreadcrumbLink {
-          cursor: pointer;
-          color: #4b5563;
-          transition: color 0.2s;
-
-          &:hover {
-            color: #ff7a1a;
-          }
-        }
-
-        .BreadcrumbCurrent {
-          color: #111827;
-          font-weight: 600;
-        }
-
-        .BreadcrumbActiveLesson {
-          color: #ff7a1a;
-          font-weight: 700;
+        @media (max-width: 768px) {
+          display: none;
         }
       }
     }
@@ -80,72 +60,178 @@
       align-items: center;
       gap: 16px;
 
-      .ProgressPlaceholder {
-        min-width: 210px;
+      /* Action link/buttons */
+      .HeaderLinkBtn,
+      .ShareBtn,
+      .BookmarkBtn,
+      .CompleteBtn {
         display: flex;
-        flex-direction: column;
-        gap: 4px;
-        padding: 8px 16px;
-        background-color: #ffffff;
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        align-items: center;
+        background: transparent;
+        border: none;
+        color: #d1d7dc;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 6px 10px;
+        border-radius: 4px;
+        transition: color 0.2s, background-color 0.2s;
+
+        &:hover {
+          color: #ffffff;
+          background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        svg {
+          font-size: 16px;
+        }
       }
 
+      .BookmarkBtn.Active {
+        color: var(--primaryColor, #874429);
+      }
+
+      .CompleteBtn.Completed {
+        color: #2e7d32;
+        background-color: rgba(46, 125, 50, 0.15);
+
+        &:hover {
+          color: #4caf50;
+        }
+      }
+
+      /* Circular Progress Widget */
+      .ProgressIndicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #ffffff;
+
+        .ProgressCircle {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          svg {
+            transform: rotate(-90deg);
+          }
+        }
+
+        .ProgressText {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.2;
+
+          .ProgressLabel {
+            font-size: 11px;
+            color: #b4c9e0;
+            font-weight: 500;
+          }
+
+          .ProgressPercent {
+            font-size: 12px;
+            font-weight: 700;
+          }
+        }
+      }
+
+      /* Integrated Lesson Nav Indicators */
+      .HeaderLessonNav {
+        display: flex;
+        align-items: center;
+        border: 1px solid #3e4143;
+        border-radius: 4px;
+        overflow: hidden;
+
+        .NavIconHeaderBtn {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: transparent;
+          border: none;
+          color: #ffffff;
+          width: 36px;
+          height: 36px;
+          font-size: 18px;
+          cursor: pointer;
+          transition: background-color 0.2s;
+
+          &:hover:not(:disabled) {
+            background-color: rgba(255, 255, 255, 0.08);
+          }
+
+          &:disabled {
+            color: #4e5153;
+            cursor: not-allowed;
+          }
+
+          &:first-child {
+            border-right: 1px solid #3e4143;
+          }
+        }
+      }
+
+      /* Sidebar toggle style */
       .SidebarToggleBtn {
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #ffffff;
-        border: 1px solid #e5e7eb;
-        color: #4b5563;
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
+        background-color: transparent;
+        border: 1px solid #3e4143;
+        color: #ffffff;
+        width: 36px;
+        height: 36px;
+        border-radius: 4px;
         cursor: pointer;
-        transition: all 0.2s ease;
+        font-size: 16px;
+        transition: background-color 0.2s, border-color 0.2s;
 
         &:hover {
-          color: var(--primaryColor, #874429);
-          border-color: var(--primaryColor, #874429);
-          background: rgba(135, 68, 41, 0.06);
+          background-color: rgba(255, 255, 255, 0.08);
         }
+
+        &.Open {
+          border-color: var(--primaryColor, #874429);
+          background-color: rgba(135, 68, 41, 0.15);
+        }
+      }
+
+      .HeaderMoreBtn {
+        background: transparent;
+        border: none;
+        color: #ffffff;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px;
+        display: flex;
+        align-items: center;
       }
     }
   }
 
-  /* Main 2-Column Body */
+  /* ------------------------------------------------------------- */
+  /* Main Workspace Layout (Sidebar on Right, Player on Left)      */
+  /* ------------------------------------------------------------- */
   .PlayerBody {
     display: flex;
     flex: 1;
     overflow: hidden;
     position: relative;
+    height: calc(100vh - 56px);
 
     .MainContentArea {
       flex: 1;
       display: flex;
       flex-direction: column;
       overflow-y: auto;
-      background-color: #f9fbfd;
-      padding-bottom: 40px;
+      background-color: #ffffff;
 
-      /* Video Player Container */
       .PlayerContainer {
-        position: relative;
         width: 100%;
         background-color: #000000;
+        position: relative;
         aspect-ratio: 16 / 9;
         max-height: 70vh;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-
-        .MediaElement,
-        .EngineMediaElement {
-          width: 100%;
-          height: 100%;
-          object-fit: contain !important;
-          background-color: #000000;
-          border: none;
-        }
 
         .LockedOverlay {
           position: absolute;
@@ -154,331 +240,111 @@
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          background: #ffffff;
-          color: #2d3436;
+          background: #1c1d1f;
+          color: #ffffff;
           text-align: center;
           padding: 24px;
           z-index: 10;
 
           .LockIcon {
-            font-size: 48px;
+            font-size: 40px;
             color: #ef4444;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
           }
 
           h3 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            color: #111827;
             margin-bottom: 8px;
           }
 
           p {
-            font-size: 14px;
-            color: #6b7280;
-            max-width: 440px;
-            margin-bottom: 24px;
+            font-size: 13.5px;
+            color: #d1d7dc;
+            max-width: 400px;
+            margin-bottom: 20px;
           }
 
           .EnrollBtn {
             background: var(--primaryColor, #874429);
             color: #ffffff;
             border: none;
-            padding: 12px 28px;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 14px rgba(135, 68, 41, 0.25);
-            transition: transform 0.2s, opacity 0.2s;
+            transition: background-color 0.2s;
 
             &:hover {
-              transform: translateY(-1px);
-              opacity: 0.95;
-            }
-          }
-        }
-      }
-
-      /* Lesson Navigation Bar */
-      .LessonNavigation {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px 28px;
-        background-color: #ffffff;
-        border-bottom: 1px solid #e5e7eb;
-        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.02);
-
-        .NavBtn {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          background: #f8fafc;
-          color: #334155;
-          border: 1px solid #cbd5e1;
-          padding: 10px 20px;
-          border-radius: 8px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.2s ease;
-
-          &:hover:not(:disabled) {
-            background: #ffffff;
-            color: var(--primaryColor, #874429);
-            border-color: var(--primaryColor, #874429);
-            box-shadow: 0 2px 8px rgba(135, 68, 41, 0.12);
-          }
-
-          &:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-          }
-
-          &.PrimaryNavBtn {
-            background: var(--primaryColor, #874429);
-            color: #ffffff;
-            border-color: var(--primaryColor, #874429);
-
-            &:hover:not(:disabled) {
               background: #6d3620;
-              color: #ffffff;
-              box-shadow: 0 4px 12px rgba(135, 68, 41, 0.25);
             }
           }
         }
       }
 
-      /* Learning Tabs Area */
+      /* Tabs Area (Overview, Notes, Discussions...) */
       .PlayerTabsSection {
-        padding: 30px 28px;
-        flex: 1;
+        padding: 24px 32px;
 
         .TabsNav {
           display: flex;
-          gap: 8px;
-          border-bottom: 1px solid #e5e7eb;
-          margin-bottom: 28px;
+          gap: 16px;
+          border-bottom: 1px solid #d1d7dc;
+          margin-bottom: 24px;
 
           .TabButton {
             background: transparent;
             border: none;
-            color: #64748b;
-            padding: 14px 20px;
+            color: #6a6f73;
+            padding: 12px 0;
             font-size: 15px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
+            border-bottom: 2px solid transparent;
+            transition: color 0.2s, border-color 0.2s;
 
             &:hover {
-              color: #1e293b;
+              color: #1c1d1f;
             }
 
             &.Active {
-              color: var(--primaryColor, #874429);
-              border-bottom-color: var(--primaryColor, #874429);
-            }
-          }
-        }
-
-        .TabContent {
-          /* Overview Tab */
-          .OverviewTab {
-            .SectionBlock {
-              background: #ffffff;
-              border-radius: 12px;
-              padding: 28px;
-              border: 1px solid #e2e8f0;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-              margin-bottom: 24px;
-
-              h4 {
-                font-size: 18px;
-                font-weight: 700;
-                color: #1e293b;
-                margin-bottom: 14px;
-                position: relative;
-                padding-bottom: 8px;
-
-                &::after {
-                  content: "";
-                  position: absolute;
-                  bottom: 0;
-                  left: 0;
-                  width: 36px;
-                  height: 3px;
-                  background: var(--primaryColor, #874429);
-                  border-radius: 2px;
-                }
-              }
-
-              p {
-                font-size: 15px;
-                line-height: 1.7;
-                color: #475569;
-                margin: 0;
-              }
-
-              .OutcomesList {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-                gap: 14px;
-                padding: 0;
-                margin-top: 16px;
-                list-style: none;
-
-                li {
-                  display: flex;
-                  align-items: flex-start;
-                  gap: 12px;
-                  font-size: 14px;
-                  color: #334155;
-                  background: #f8fafc;
-                  padding: 12px 16px;
-                  border-radius: 8px;
-                  border: 1px solid #e2e8f0;
-
-                  .CheckIcon {
-                    color: #10b981;
-                    flex-shrink: 0;
-                    margin-top: 3px;
-                  }
-                }
-              }
-            }
-
-            .InstructorCard {
-              display: flex;
-              align-items: center;
-              gap: 20px;
-              background: #ffffff;
-              padding: 20px 24px;
-              border-radius: 12px;
-              border: 1px solid #e2e8f0;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-
-              .Avatar {
-                width: 60px;
-                height: 60px;
-                border-radius: 50%;
-                object-fit: cover;
-                border: 2px solid var(--primaryColor, #874429);
-              }
-
-              .Info {
-                h5 {
-                  font-size: 16px;
-                  font-weight: 700;
-                  color: #1e293b;
-                  margin: 0 0 4px 0;
-                }
-
-                p {
-                  font-size: 14px;
-                  color: #64748b;
-                  margin: 0;
-                }
-              }
-            }
-          }
-
-          /* Resources Tab */
-          .ResourcesTab {
-            .ResourceItem {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              background: #ffffff;
-              padding: 16px 22px;
-              border-radius: 10px;
-              border: 1px solid #e2e8f0;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
-              margin-bottom: 14px;
-
-              .LeftInfo {
-                display: flex;
-                align-items: center;
-                gap: 14px;
-
-                .FileIcon {
-                  font-size: 22px;
-                  color: var(--primaryColor, #874429);
-                }
-
-                .FileName {
-                  font-size: 15px;
-                  font-weight: 600;
-                  color: #1e293b;
-                }
-              }
-
-              .DownloadBtn {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                background: #f8fafc;
-                color: var(--primaryColor, #874429);
-                border: 1px solid var(--primaryColor, #874429);
-                padding: 8px 18px;
-                border-radius: 8px;
-                font-size: 14px;
-                font-weight: 600;
-                text-decoration: none;
-                transition: all 0.2s;
-
-                &:hover {
-                  background: var(--primaryColor, #874429);
-                  color: #ffffff;
-                }
-              }
-            }
-
-            .EmptyResources {
-              text-align: center;
-              padding: 48px 20px;
-              color: #94a3b8;
-              font-size: 15px;
-              background: #ffffff;
-              border-radius: 12px;
-              border: 1px solid #e2e8f0;
+              color: #1c1d1f;
+              border-bottom: 2px solid var(--primaryColor, #874429);
             }
           }
         }
       }
     }
 
-    /* Course Sidebar */
+    /* ------------------------------------------------------------- */
+    /* Course Content Sidebar (Right Column)                         */
+    /* ------------------------------------------------------------- */
     .LessonSidebar {
-      width: 380px;
+      width: 350px;
       background-color: #ffffff;
-      border-left: 1px solid #e5e7eb;
+      border-left: 1px solid #d1d7dc;
       display: flex;
       flex-direction: column;
-      box-shadow: -2px 0 10px rgba(0, 0, 0, 0.02);
-      transition: width 0.3s ease;
+      transition: width 0.2s ease, opacity 0.2s ease;
+      flex-shrink: 0;
 
       &.Collapsed {
         width: 0;
-        overflow: hidden;
+        opacity: 0;
+        pointer-events: none;
+        border-left: none;
       }
 
       .SidebarHeader {
-        padding: 20px 24px;
-        border-bottom: 1px solid #e5e7eb;
-        background-color: #f8fafc;
+        padding: 16px 20px;
+        border-bottom: 1px solid #d1d7dc;
+        background-color: #ffffff;
 
         h3 {
           font-size: 16px;
           font-weight: 700;
-          color: #1e293b;
-          margin: 0 0 4px 0;
-        }
-
-        p {
-          font-size: 13px;
-          color: #64748b;
+          color: #1c1d1f;
           margin: 0;
         }
       }
@@ -487,112 +353,155 @@
         flex: 1;
         overflow-y: auto;
 
+        /* Accordion Chapter Styling */
         .ChapterAccordion {
-          border-bottom: 1px solid #e5e7eb;
+          border-bottom: 1px solid #d1d7dc;
 
           .AccordionHeader {
             display: flex;
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            padding: 16px 24px;
-            background: #ffffff;
+            padding: 16px 20px;
+            background: #f7f9fa;
             border: none;
-            color: #1e293b;
+            color: #1c1d1f;
             cursor: pointer;
-            text-align: left;
             transition: background 0.2s;
 
             &:hover {
-              background: #f8fafc;
+              background: #ebedee;
             }
 
             .TitleText {
               font-size: 15px;
               font-weight: 700;
+              line-height: 1.35;
             }
 
-            .MetaText {
-              font-size: 13px;
-              color: #64748b;
-              margin-left: 8px;
+            .AccordionMeta {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              font-size: 12px;
+              color: #6a6f73;
+              margin-top: 4px;
+
+              .MetaSeparator {
+                color: #d1d7dc;
+              }
+            }
+
+            .AccordionChevron {
+              font-size: 16px;
+              color: #1c1d1f;
+              display: flex;
+              align-items: center;
             }
           }
 
           .LessonList {
-            background-color: #f8fafc;
+            background-color: #ffffff;
 
+            /* Lesson Listing item */
             .LessonItem {
               display: flex;
-              align-items: center;
-              justify-content: space-between;
-              padding: 14px 24px 14px 32px;
-              border-bottom: 1px solid #f1f5f9;
-              color: #475569;
-              text-decoration: none;
-              font-size: 14px;
+              align-items: flex-start;
+              gap: 12px;
+              padding: 12px 20px;
               cursor: pointer;
-              transition: all 0.2s;
+              transition: background-color 0.2s;
+              border-bottom: 1px solid #f1f5f9;
 
               &:hover {
-                background: #ffffff;
-                color: var(--primaryColor, #874429);
+                background-color: #f7f9fa;
               }
 
               &.Active {
-                background: #ffffff !important;
-                color: var(--primaryColor, #874429) !important;
-                font-weight: 700;
-                border-left: 4px solid var(--primaryColor, #874429) !important;
-                box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+                background-color: #ebedee !important;
               }
 
-              .ItemLeft {
-                display: flex;
-                align-items: center;
-                gap: 12px;
+              /* Squares checkbox indicator (Udemy style) */
+              .LessonCheckboxContainer {
+                padding-top: 2px;
 
-                .TypeIcon {
-                  font-size: 18px;
-                  flex-shrink: 0;
+                .CustomCheckbox {
+                  width: 16px;
+                  height: 16px;
+                  border: 2px solid #1c1d1f;
+                  border-radius: 2px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  transition: background-color 0.2s, border-color 0.2s;
+
+                  &.Checked {
+                    background-color: var(--primaryColor, #874429);
+                    border-color: var(--primaryColor, #874429);
+                  }
+
+                  .CheckMark {
+                    color: #ffffff;
+                    font-size: 11px;
+                    stroke-width: 3px;
+                  }
                 }
+              }
+
+              /* Info column */
+              .LessonInfoCol {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                flex: 1;
 
                 .LessonTitle {
+                  font-size: 13.5px;
+                  font-weight: 500;
+                  color: #1c1d1f;
                   line-height: 1.4;
+                }
+
+                .LessonMetaRow {
+                  display: flex;
+                  align-items: center;
+                  gap: 6px;
+                  font-size: 12px;
+                  color: #6a6f73;
+
+                  .MetaIcon {
+                    font-size: 12px;
+                  }
                 }
               }
 
-              .ItemRight {
+              /* Right resources / Lock indicators */
+              .LessonItemRight {
                 display: flex;
                 align-items: center;
                 gap: 8px;
 
-                .Badge {
-                  font-size: 11px;
-                  padding: 3px 8px;
-                  border-radius: 6px;
-                  font-weight: 700;
-                  text-transform: uppercase;
-
-                  &.Preview {
-                    background: rgba(135, 68, 41, 0.12);
-                    color: var(--primaryColor, #874429);
-                  }
-
-                  &.Locked {
-                    background: rgba(239, 68, 68, 0.12);
-                    color: #ef4444;
-                  }
-
-                  &.Completed {
-                    background: rgba(16, 185, 129, 0.12);
-                    color: #10b981;
-                  }
+                .LockIcon {
+                  color: #6a6f73;
+                  font-size: 12px;
                 }
 
-                .Duration {
-                  font-size: 13px;
-                  color: #94a3b8;
+                .ResourcesPill {
+                  display: flex;
+                  align-items: center;
+                  background: transparent;
+                  border: 1px solid #6a6f73;
+                  color: #1c1d1f;
+                  padding: 4px 8px;
+                  border-radius: 4px;
+                  font-size: 11px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  transition: background-color 0.2s;
+
+                  &:hover {
+                    background-color: rgba(28, 29, 31, 0.04);
+                  }
                 }
               }
             }
@@ -603,22 +512,85 @@
   }
 }
 
-/* Responsive Styles */
-@media (max-width: 992px) {
+/* Tab contents (Overview, Notes, etc.) */
+.OverviewTab {
+  .SectionBlock {
+    margin-bottom: 24px;
+
+    h4 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1c1d1f;
+      margin-bottom: 8px;
+    }
+
+    p {
+      font-size: 14.5px;
+      line-height: 1.6;
+      color: #1c1d1f;
+    }
+  }
+}
+
+/* Resources list tab view */
+.ResourcesTab {
+  .ResourceItem {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    border: 1px solid #d1d7dc;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    background-color: #ffffff;
+
+    .LeftInfo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .FileIcon {
+        font-size: 20px;
+        color: #1c1d1f;
+      }
+
+      .FileName {
+        font-size: 14px;
+        font-weight: 600;
+      }
+    }
+
+    .DownloadBtn {
+      background-color: transparent;
+      border: 1px solid #1c1d1f;
+      color: #1c1d1f;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: rgba(28, 29, 31, 0.04);
+      }
+    }
+  }
+}
+
+/* Mobile responsive layout */
+@media (max-width: 768px) {
   .LearningPlayerRoot {
     .PlayerBody {
       flex-direction: column;
+      height: auto;
+      overflow-y: auto;
 
       .LessonSidebar {
-        position: fixed;
-        right: 0;
-        top: 68px;
-        bottom: 0;
-        width: 340px !important;
-        z-index: 40;
-        box-shadow: -4px 0 25px rgba(0,0,0,0.1);
-        background-color: #ffffff;
-        border-left: 1px solid #e5e7eb;
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #d1d7dc;
+        height: auto;
       }
     }
   }
