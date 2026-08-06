@@ -247,6 +247,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
             {/* Overview, Notes, Resources & Discussion Tabs */}
             <PlayerTabs
               course={course}
+              sections={sections}
               currentLesson={current_lesson}
               getCurrentTime={handleGetCurrentTime}
               onSeek={handleSeek}

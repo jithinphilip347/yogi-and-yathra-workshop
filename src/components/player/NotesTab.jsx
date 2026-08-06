@@ -3,23 +3,23 @@
 import React, { useState, useEffect } from 'react';
 import { 
   FiClock, 
-  FiPlus, 
   FiTrash2, 
   FiEdit2, 
-  FiSearch, 
-  FiCheck, 
-  FiX,
-  FiFileText,
-  FiPlayCircle
+  FiChevronDown,
+  FiBold,
+  FiItalic,
+  FiList,
+  FiCode,
+  FiImage
 } from 'react-icons/fi';
 import courseApi from '@/libs/courseApi';
 import toast from 'react-hot-toast';
 
-export default function NotesTab({ currentLesson, getCurrentTime, onSeek }) {
+export default function NotesTab({ sections = [], currentLesson, getCurrentTime, onSeek }) {
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('timestamp'); // 'timestamp' or 'date'
+  const [filterLecture, setFilterLecture] = useState('current'); // 'current' or 'all'
 
   // New Note Form State
   const [newContent, setNewContent] = useState('');
@@ -34,7 +34,6 @@ export default function NotesTab({ currentLesson, getCurrentTime, onSeek }) {
     try {
       setIsLoading(true);
       const res = await courseApi.getLessonNotes(currentLesson.id, {
-        search: searchQuery,
         sort: sortBy,
       });
       const data = res.data?.data || res.data || [];
@@ -48,39 +47,41 @@ export default function NotesTab({ currentLesson, getCurrentTime, onSeek }) {
 
   useEffect(() => {
     fetchNotes();
-  }, [currentLesson?.id, searchQuery, sortBy]);
+    // Capture time automatically when tab opens
+    if (typeof getCurrentTime === 'function') {
+      const time = getCurrentTime();
+      setCapturedTime(Math.floor(time || 0));
+    }
+  }, [currentLesson?.id, sortBy]);
 
   const formatSeconds = (secs) => {
-    if (secs === null || secs === undefined || isNaN(secs)) return null;
+    if (secs === null || secs === undefined || isNaN(secs)) return '00:00';
     const m = Math.floor(secs / 60);
     const s = Math.floor(secs % 60);
     return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  const handleCaptureTime = () => {
-    if (typeof getCurrentTime === 'function') {
-      const time = getCurrentTime();
-      setCapturedTime(Math.floor(time || 0));
-    }
-  };
-
   const handleCreateNote = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!newContent.trim()) {
       toast.error("Please enter note text");
       return;
     }
 
     try {
-      const res = await courseApi.createLessonNote(
+      await courseApi.createLessonNote(
         currentLesson.id,
         newContent,
         capturedTime
       );
-      const created = res.data?.data || res.data;
       toast.success("Note saved");
       setNewContent('');
-      setCapturedTime(null);
+      // Reset captured time to current playback position
+      if (typeof getCurrentTime === 'function') {
+        setCapturedTime(Math.floor(getCurrentTime() || 0));
+      } else {
+        setCapturedTime(null);
+      }
       fetchNotes();
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to save note");
@@ -110,147 +111,193 @@ export default function NotesTab({ currentLesson, getCurrentTime, onSeek }) {
     }
   };
 
-  return (
-    <div className="NotesTabContainer" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Create Note Input Box */}
-      <div className="CreateNoteCard" style={{
-        backgroundColor: '#ffffff',
-        border: '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '16px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.04)'
-      }}>
-        <form onSubmit={handleCreateNote} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '13px', fontWeight: '600', color: '#334155', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <FiFileText style={{ color: 'var(--primaryColor, #874429)' }} />
-              <span>Add Personal Note</span>
-            </span>
+  // Find Section Title for the current lesson from the sections list
+  const getSectionTitle = () => {
+    if (!sections || !currentLesson) return '';
+    const section = sections.find(s => s.id === currentLesson.section_id);
+    return section ? section.title : 'Course content';
+  };
 
+  const currentSectionTitle = getSectionTitle();
+  const charsLeft = 1000 - newContent.length;
+
+  return (
+    <div className="NotesTabContainer" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      
+      {/* ─── 1. Create Note Input Area (Udemy Style) ────────────────────── */}
+      <div className="CreateNoteArea" style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+        
+        {/* Left Timestamp Capsule */}
+        <button 
+          className="TimestampCapsuleBtn"
+          onClick={() => {
+            if (typeof getCurrentTime === 'function') {
+              setCapturedTime(Math.floor(getCurrentTime() || 0));
+            }
+          }}
+          title="Click to capture current playback time"
+          style={{
+            backgroundColor: '#1c1d1f',
+            color: '#ffffff',
+            border: 'none',
+            borderRadius: '16px',
+            padding: '6px 14px',
+            fontSize: '12px',
+            fontWeight: '700',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            flexShrink: 0
+          }}
+        >
+          <FiClock style={{ fontSize: '11px' }} />
+          <span>{formatSeconds(capturedTime)}</span>
+        </button>
+
+        {/* Note input container */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          
+          <div className="EditorBox" style={{
+            border: '1px solid #d1d7dc',
+            borderRadius: '4px',
+            overflow: 'hidden',
+            backgroundColor: '#ffffff',
+            transition: 'border-color 0.2s'
+          }}>
+            {/* Editor Text Toolbar */}
+            <div className="EditorToolbar" style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '6px 12px',
+              borderBottom: '1px solid #d1d7dc',
+              backgroundColor: '#f7f9fa'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '14px', color: '#6a6f73' }}>
+                <span style={{ fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+                  Styles <FiChevronDown />
+                </span>
+                <FiBold style={{ cursor: 'pointer' }} />
+                <FiItalic style={{ cursor: 'pointer' }} />
+                <FiList style={{ cursor: 'pointer' }} />
+                <FiCode style={{ cursor: 'pointer' }} />
+                <FiImage style={{ cursor: 'pointer' }} />
+              </div>
+              <span style={{ fontSize: '12px', color: '#6a6f73', fontWeight: '500' }}>
+                {charsLeft}
+              </span>
+            </div>
+
+            <textarea
+              rows={3}
+              value={newContent}
+              onChange={(e) => {
+                if (e.target.value.length <= 1000) {
+                  setNewContent(e.target.value);
+                }
+              }}
+              placeholder="Type your note here..."
+              style={{
+                width: '100%',
+                padding: '12px',
+                fontSize: '14px',
+                border: 'none',
+                outline: 'none',
+                resize: 'vertical',
+                color: '#1c1d1f',
+                fontFamily: 'inherit'
+              }}
+            />
+          </div>
+
+          {/* Action Row */}
+          <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '16px' }}>
             <button
               type="button"
-              onClick={handleCaptureTime}
+              onClick={() => {
+                setNewContent('');
+                setCapturedTime(null);
+              }}
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '5px 10px',
-                fontSize: '12px',
-                fontWeight: '600',
-                borderRadius: '6px',
-                border: '1px solid #cbd5e1',
-                backgroundColor: capturedTime !== null ? '#fff7ed' : '#f8fafc',
-                color: capturedTime !== null ? 'var(--primaryColor, #874429)' : '#475569',
-                cursor: 'pointer',
-                transition: 'all 0.2s'
+                background: 'none',
+                border: 'none',
+                color: '#1c1d1f',
+                fontSize: '14px',
+                fontWeight: '700',
+                cursor: 'pointer'
               }}
             >
-              <FiClock />
-              <span>{capturedTime !== null ? `Timestamp: ${formatSeconds(capturedTime)}` : 'Capture Current Time'}</span>
+              Cancel
             </button>
-          </div>
-
-          <textarea
-            rows={3}
-            value={newContent}
-            onChange={(e) => setNewContent(e.target.value)}
-            placeholder="Type your notes here... (e.g., Key takeaway, pose alignment cue, or reminder)"
-            style={{
-              width: '100%',
-              padding: '10px 12px',
-              fontSize: '13.5px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              outline: 'none',
-              resize: 'vertical',
-              fontFamily: 'inherit'
-            }}
-          />
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-            {capturedTime !== null && (
-              <button
-                type="button"
-                onClick={() => setCapturedTime(null)}
-                style={{
-                  fontSize: '12px',
-                  color: '#64748b',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer'
-                }}
-              >
-                Clear Timestamp
-              </button>
-            )}
             <button
-              type="submit"
+              onClick={handleCreateNote}
               style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '8px 16px',
-                fontSize: '13px',
-                fontWeight: '600',
-                borderRadius: '8px',
-                border: 'none',
                 backgroundColor: 'var(--primaryColor, #874429)',
                 color: '#ffffff',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '4px',
+                fontSize: '14px',
+                fontWeight: '700',
                 cursor: 'pointer',
-                boxShadow: '0 2px 4px rgba(135, 68, 41, 0.2)'
+                transition: 'background-color 0.2s'
               }}
             >
-              <FiPlus />
-              <span>Save Note</span>
+              Save note
             </button>
           </div>
-        </form>
-      </div>
-
-      {/* Filter & Search Toolbar */}
-      <div className="NotesToolbar" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
-        <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
-          <FiSearch style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search notes..."
-            style={{
-              width: '100%',
-              padding: '8px 12px 8px 34px',
-              fontSize: '13px',
-              borderRadius: '8px',
-              border: '1px solid #cbd5e1',
-              backgroundColor: '#ffffff'
-            }}
-          />
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '12px', color: '#64748b' }}>Sort by:</span>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            style={{
-              padding: '6px 12px',
-              fontSize: '12.5px',
-              borderRadius: '6px',
-              border: '1px solid #cbd5e1',
-              backgroundColor: '#ffffff',
-              cursor: 'pointer'
-            }}
-          >
-            <option value="timestamp">Video Timestamp</option>
-            <option value="date">Date Created</option>
-          </select>
         </div>
       </div>
 
-      {/* Notes List */}
-      <div className="NotesList" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {/* ─── 2. Filter & Sort Row (Udemy Style) ───────────────────────── */}
+      <div className="NotesFiltersRow" style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '8px' }}>
+        
+        {/* All Lectures Filter Dropdown */}
+        <div style={{ position: 'relative' }}>
+          <button style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'none',
+            border: '1px solid var(--primaryColor, #874429)',
+            color: 'var(--primaryColor, #874429)',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            fontSize: '13px',
+            fontWeight: '700',
+            cursor: 'pointer'
+          }}>
+            <span>All lectures</span>
+            <FiChevronDown />
+          </button>
+        </div>
+
+        {/* Sort by Dropdown */}
+        <div style={{ position: 'relative' }}>
+          <button style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'none',
+            border: '1px solid var(--primaryColor, #874429)',
+            color: 'var(--primaryColor, #874429)',
+            padding: '8px 16px',
+            borderRadius: '4px',
+            fontSize: '13px',
+            fontWeight: '700',
+            cursor: 'pointer'
+          }}>
+            <span>Sort by most recent</span>
+            <FiChevronDown />
+          </button>
+        </div>
+      </div>
+
+      {/* ─── 3. Notes Listing ─────────────────────────────────────────── */}
+      <div className="NotesList" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '8px' }}>
         {isLoading ? (
-          <div style={{ textAlign: 'center', padding: '30px', color: '#94a3b8', fontSize: '13px' }}>
+          <div style={{ textAlign: 'center', padding: '30px', color: '#6a6f73', fontSize: '13.5px' }}>
             Loading notes...
           </div>
         ) : notes.length === 0 ? (
@@ -258,119 +305,142 @@ export default function NotesTab({ currentLesson, getCurrentTime, onSeek }) {
             textAlign: 'center',
             padding: '40px 20px',
             backgroundColor: '#ffffff',
-            borderRadius: '12px',
-            border: '1px border-dashed #cbd5e1',
-            color: '#64748b'
+            borderRadius: '8px',
+            border: '1px dashed #d1d7dc',
+            color: '#6a6f73'
           }}>
-            <FiFileText style={{ fontSize: '32px', color: '#cbd5e1', marginBottom: '8px' }} />
-            <p style={{ fontSize: '14px', fontWeight: '500' }}>No notes taken yet for this lesson</p>
-            <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '4px' }}>
-              Use the box above to capture timestamped notes while watching!
+            <p style={{ fontSize: '14.5px', fontWeight: '700', color: '#1c1d1f' }}>No notes taken yet for this lesson</p>
+            <p style={{ fontSize: '13px', color: '#6a6f73', marginTop: '4px' }}>
+              Click "Capture Current Time" to save timestamped notes while watching!
             </p>
           </div>
         ) : (
           notes.map((note) => (
             <div
               key={note.id}
-              className="NoteItemCard"
+              className="NoteItemContainer"
               style={{
-                backgroundColor: '#ffffff',
-                border: '1px solid #e2e8f0',
-                borderRadius: '10px',
-                padding: '14px 16px',
                 display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
-                transition: 'all 0.2s'
+                gap: '16px',
+                alignItems: 'flex-start'
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                {note.timestamp_seconds !== null && (
-                  <button
-                    onClick={() => onSeek && onSeek(note.timestamp_seconds)}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '5px',
-                      padding: '4px 10px',
-                      fontSize: '12px',
-                      fontWeight: '600',
-                      borderRadius: '20px',
-                      backgroundColor: 'rgba(135, 68, 41, 0.08)',
-                      color: 'var(--primaryColor, #874429)',
-                      border: '1px solid rgba(135, 68, 41, 0.2)',
-                      cursor: 'pointer'
-                    }}
-                    title="Click to seek video to this timestamp"
-                  >
-                    <FiPlayCircle style={{ fontSize: '13px' }} />
-                    <span>{formatSeconds(note.timestamp_seconds)}</span>
-                  </button>
-                )}
+              {/* Left Timestamp Capsule */}
+              {note.timestamp_seconds !== null && (
+                <button
+                  onClick={() => onSeek && onSeek(note.timestamp_seconds)}
+                  style={{
+                    backgroundColor: '#1c1d1f',
+                    color: '#ffffff',
+                    border: 'none',
+                    borderRadius: '16px',
+                    padding: '6px 14px',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    flexShrink: 0
+                  }}
+                  title="Click to seek video"
+                >
+                  <FiClock style={{ fontSize: '11px' }} />
+                  <span>{formatSeconds(note.timestamp_seconds)}</span>
+                </button>
+              )}
 
-                <span style={{ fontSize: '11px', color: '#94a3b8', marginLeft: 'auto' }}>
-                  {new Date(note.created_at).toLocaleDateString()} {new Date(note.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
+              {/* Note Content Column */}
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                
+                {/* Header row with titles & icons */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '14px', fontWeight: '700', color: '#1c1d1f' }}>
+                      {currentSectionTitle}
+                    </span>
+                    <span style={{ fontSize: '13px', color: '#6a6f73' }}>
+                      {currentLesson?.title}
+                    </span>
+                  </div>
 
-                <div style={{ display: 'flex', gap: '6px', marginLeft: '12px' }}>
-                  <button
-                    onClick={() => {
-                      setEditingNoteId(note.id);
-                      setEditContent(note.content);
-                    }}
-                    style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', fontSize: '14px' }}
-                    title="Edit Note"
-                  >
-                    <FiEdit2 />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteNote(note.id)}
-                    style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer', fontSize: '14px' }}
-                    title="Delete Note"
-                  >
-                    <FiTrash2 />
-                  </button>
-                </div>
-              </div>
-
-              {editingNoteId === note.id ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '6px' }}>
-                  <textarea
-                    rows={2}
-                    value={editContent}
-                    onChange={(e) => setEditContent(e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '8px',
-                      fontSize: '13px',
-                      borderRadius: '6px',
-                      border: '1px solid #cbd5e1'
-                    }}
-                  />
-                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                    <button
-                      onClick={() => setEditingNoteId(null)}
-                      style={{ padding: '4px 10px', fontSize: '12px', borderRadius: '4px', border: '1px solid #cbd5e1', backgroundColor: '#ffffff' }}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => handleUpdateNote(note.id)}
-                      style={{ padding: '4px 10px', fontSize: '12px', borderRadius: '4px', border: 'none', backgroundColor: 'var(--primaryColor, #874429)', color: '#ffffff' }}
-                    >
-                      Save Changes
-                    </button>
+                  <div style={{ display: 'flex', gap: '12px', color: '#1c1d1f', fontSize: '16px' }}>
+                    <FiEdit2
+                      style={{ cursor: 'pointer' }}
+                      title="Edit note"
+                      onClick={() => {
+                        setEditingNoteId(note.id);
+                        setEditContent(note.content);
+                      }}
+                    />
+                    <FiTrash2
+                      style={{ cursor: 'pointer' }}
+                      title="Delete note"
+                      onClick={() => handleDeleteNote(note.id)}
+                    />
                   </div>
                 </div>
-              ) : (
-                <p style={{ fontSize: '13.5px', color: '#334155', lineHeight: '1.5', whiteSpace: 'pre-wrap', margin: 0 }}>
-                  {note.content}
-                </p>
-              )}
+
+                {/* Note content wrapper */}
+                {editingNoteId === note.id ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
+                    <textarea
+                      rows={2}
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      style={{
+                        width: '100%',
+                        padding: '10px',
+                        fontSize: '14px',
+                        borderRadius: '4px',
+                        border: '1px solid #d1d7dc',
+                        outline: 'none'
+                      }}
+                    />
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                      <button
+                        onClick={() => setEditingNoteId(null)}
+                        style={{ padding: '6px 12px', fontSize: '13px', fontWeight: '700', background: 'none', border: 'none', cursor: 'pointer' }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => handleUpdateNote(note.id)}
+                        style={{
+                          padding: '6px 14px',
+                          fontSize: '13px',
+                          fontWeight: '700',
+                          borderRadius: '4px',
+                          border: 'none',
+                          backgroundColor: 'var(--primaryColor, #874429)',
+                          color: '#ffffff',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="NoteBodyWrapper" style={{
+                    backgroundColor: '#f7f9fa',
+                    border: '1px solid #f1f5f9',
+                    borderRadius: '4px',
+                    padding: '16px 20px',
+                    marginTop: '4px'
+                  }}>
+                    <p style={{ fontSize: '14px', color: '#1c1d1f', lineHeight: '1.6', margin: 0, whiteSpace: 'pre-wrap' }}>
+                      {note.content}
+                    </p>
+                  </div>
+                )}
+              </div>
+
             </div>
           ))
         )}
       </div>
+
     </div>
   );
 }

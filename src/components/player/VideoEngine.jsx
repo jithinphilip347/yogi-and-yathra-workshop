@@ -3,14 +3,6 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
-  FiPlay, 
-  FiPause, 
-  FiVolume2, 
-  FiVolumeX, 
-  FiMaximize, 
-  FiMinimize, 
-  FiRotateCcw, 
-  FiAirplay, 
   FiChevronRight, 
   FiChevronLeft, 
   FiAlertCircle, 
@@ -37,7 +29,6 @@ export default React.memo(function VideoEngine({
   previousLesson,
   onNavigate,
   courseSlug,
-  permissions,
   onProgressUpdated,
   onRegisterPlayerCallbacks
 }) {
