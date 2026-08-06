@@ -1,16 +1,15 @@
 /**
  * playerDebug.js
  *
- * Lightweight, gated instrumentation for the Course Player playback-state audit.
+ * Lightweight, gated runtime instrumentation system for the Course Player.
  *
- * Enabled only when:
- *   - `window.__PLAYER_DEBUG__ === true` is set (e.g. from the browser console
- *     BEFORE the player mounts, or via a query flag), OR
+ * Enabled when:
+ *   - `window.__PLAYER_DEBUG__ === true` is set, OR
+ *   - URL parameter contains `?debug=1`, OR
+ *   - localStorage contains `PLAYER_DEBUG=true`, OR
  *   - NODE_ENV === 'development'.
  *
- * In production this is a no-op series of no-op functions, so it has zero
- * runtime cost when disabled. Each helper builds a labelled log entry so the
- * playback timeline can be reconstructed chronologically (Phases 2, 4, 5, 6, 7).
+ * In production this maintains zero runtime overhead when disabled.
  */
 
 const isBrowser = typeof window !== 'undefined';
@@ -18,11 +17,33 @@ const isBrowser = typeof window !== 'undefined';
 const isEnabled = () =>
   isBrowser &&
   (window.__PLAYER_DEBUG__ === true ||
+    (window.location && window.location.search.includes('debug=1')) ||
+    (window.localStorage && window.localStorage.getItem('PLAYER_DEBUG') === 'true') ||
     (typeof process !== 'undefined' &&
       process.env &&
       process.env.NODE_ENV === 'development'));
 
+// In-memory chronological timeline event buffer (max 200 items)
+const MAX_TIMELINE_EVENTS = 200;
+let timelineEvents = [];
+
+const recordEvent = (name, payload = {}) => {
+  const eventObj = {
+    id: `evt_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+    name,
+    timestamp: Date.now(),
+    timeStr: new Date().toLocaleTimeString(),
+    ...payload,
+  };
+  timelineEvents.push(eventObj);
+  if (timelineEvents.length > MAX_TIMELINE_EVENTS) {
+    timelineEvents.shift();
+  }
+  return eventObj;
+};
+
 const emit = (kind, payload) => {
+  recordEvent(kind, payload);
   if (!isEnabled()) return;
   console.log(
     `%c[PlayerDebug:${kind}]`,
@@ -35,25 +56,32 @@ const emit = (kind, payload) => {
 };
 
 export const playerDebug = {
-  /** Phase 2 — every POST /lesson/{id}/progress request. */
-  progressRequest({ lessonId, position, watchedSeconds, duration }) {
-    emit('progress.request', { lessonId, position, watchedSeconds, duration });
+  isEnabled,
+  getTimeline: () => [...timelineEvents],
+  clearTimeline: () => { timelineEvents = []; },
+
+  /** Record explicit timeline event */
+  record: (name, payload) => recordEvent(name, payload),
+
+  /** Phase 2 — progress request */
+  progressRequest({ lessonId, position, watchedSeconds, duration, version }) {
+    emit('progress.request', { lessonId, position, watchedSeconds, duration, version });
   },
 
-  /** Phase 2 — every progress response, incl. returned server position. */
-  progressResponse({ lessonId, returnedPosition, status, percentage, localPosition }) {
+  /** Phase 2 — progress response */
+  progressResponse({ lessonId, returnedPosition, status, percentage, localPosition, reqVersion }) {
     emit('progress.response', {
       lessonId,
       returnedPosition,
       status,
       percentage,
       localPosition,
-      // Comparison demanded by the audit: is the server echo older than local playback?
+      reqVersion,
       staleVsLocal: returnedPosition < localPosition,
     });
   },
 
-  /** Phase 3 — lesson object identity change (new object reference each update?). */
+  /** Phase 3 — lesson identity */
   lessonIdentity({ lessonId, prevRef, nextRef, changedFields }) {
     emit('lesson.identity', {
       lessonId,
@@ -62,34 +90,68 @@ export const playerDebug = {
     });
   },
 
-  /** Phase 4 — HTML5 <video> element identity change. */
+  /** Phase 4 — HTML5 video identity */
   videoIdentity({ lessonId, videoEl, elementChanged }) {
     emit('video.identity', { lessonId, elementChanged, videoEl: videoEl ? 'present' : 'null' });
   },
 
-  /** Phase 5 — EVERY assignment to video.currentTime with caller stack. */
+  /** Phase 5 — assignment to video.currentTime */
   currentTimeAssign({ prev, next, reason, lessonId }) {
-    const err = new Error('currentTime assignment');
-    const stack = err.stack
-      ? String(err.stack).split('\n').slice(1, 5).join(' | ')
-      : '(no stack)';
-    emit('currentTime.assign', { prev, next, reason, lessonId, stack });
+    emit('currentTime.assign', { prev, next, reason, lessonId });
   },
 
-  /** Phase 6 — HTML5 media event timeline with element state. */
+  /** Phase 6 — media events */
   mediaEvent({ name, video }) {
-    emit('media.event', {
-      name,
+    emit(`media.${name}`, {
       currentTime: video ? video.currentTime : null,
       readyState: video ? video.readyState : null,
-      networkState: video ? video.networkState : null,
       seeking: video ? video.seeking : null,
       paused: video ? video.paused : null,
     });
   },
 
-  /** Phase 10 — playback session state transitions. */
+  /** Phase 10 — session actions */
   session({ lessonId, action, session }) {
-    emit('session', { lessonId, action, session });
+    emit('session', { lessonId, action, sessionId: session?.sessionId });
   },
+
+  /** Phase 12 — export session diagnostics to downloadable JSON */
+  exportSessionDiagnostics({ session, metrics, renderCount, providerType, lessonId, videoEl }) {
+    if (!isBrowser) return;
+
+    const exportData = {
+      exportedAt: new Date().toISOString(),
+      lessonId: lessonId || 'N/A',
+      providerType: providerType || 'html5',
+      sessionInfo: session ? {
+        sessionId: session.sessionId,
+        lessonId: session.lessonId,
+        localPosition: session.localPosition,
+        lastSyncedPosition: session.lastSyncedPosition,
+        resumeState: session.resumeState,
+        resumePosition: session.resumePosition,
+        dirty: session.dirty,
+        syncVersion: session.syncVersion || session.version || 0,
+      } : null,
+      elementState: videoEl ? {
+        currentTime: videoEl.currentTime,
+        duration: videoEl.duration,
+        paused: videoEl.paused,
+        seeking: videoEl.seeking,
+        readyState: videoEl.readyState,
+        playbackRate: videoEl.playbackRate,
+      } : null,
+      metrics: metrics || {},
+      renderCount: renderCount || 1,
+      timelineEvents: [...timelineEvents],
+    };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute("href", dataStr);
+    downloadAnchor.setAttribute("download", `player-debug-session-${lessonId || 'audit'}-${Date.now()}.json`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  }
 };
