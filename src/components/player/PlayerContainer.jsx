@@ -8,6 +8,8 @@ import VideoEngine from './VideoEngine';
 export default React.memo(function PlayerContainer({
   lesson,
   nextLesson,
+  previousLesson,
+  onNavigate,
   permissions,
   courseSlug,
   onProgressUpdated,
@@ -52,6 +54,8 @@ export default React.memo(function PlayerContainer({
       <VideoEngine
         lesson={lesson}
         nextLesson={nextLesson}
+        previousLesson={previousLesson}
+        onNavigate={onNavigate}
         courseSlug={courseSlug}
         permissions={permissions}
         onProgressUpdated={onProgressUpdated}

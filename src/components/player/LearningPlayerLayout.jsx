@@ -236,6 +236,8 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
             <PlayerContainer
               lesson={current_lesson}
               nextLesson={next_lesson}
+              previousLesson={previous_lesson}
+              onNavigate={handleNavigate}
               permissions={permissions}
               courseSlug={course?.slug}
               onProgressUpdated={handleProgressUpdated}

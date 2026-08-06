@@ -50,14 +50,19 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
   const percentage = completionSummary?.percentage ?? 0;
   const isCompleted = percentage >= 100;
 
+  // Clean HTML from strings if we render as plain text, or render rich HTML safely
+  const courseDescriptionHtml = course.description || course.short_description || "Welcome to this comprehensive workshop course.";
+  const lessonDescriptionHtml = currentLesson?.description || currentLesson?.short_description || "";
+
   return (
-    <div className="OverviewTab" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      {/* Certificate Status Card */}
-      <div style={{
+    <div className="OverviewTab" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      
+      {/* 1. Certificate Status Card */}
+      <div className="CertificateStatusCard" style={{
         backgroundColor: isCompleted ? '#fff7ed' : '#ffffff',
-        border: isCompleted ? '1px solid rgba(135, 68, 41, 0.3)' : '1px solid #e2e8f0',
-        borderRadius: '12px',
-        padding: '18px 20px',
+        border: isCompleted ? '1px solid rgba(135, 68, 41, 0.3)' : '1px solid #d1d7dc',
+        borderRadius: '8px',
+        padding: '16px 20px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -65,25 +70,25 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
         flexWrap: 'wrap'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{
-            width: '46px',
-            height: '46px',
+          <div className="AwardIconWrapper" style={{
+            width: '44px',
+            height: '44px',
             borderRadius: '50%',
             backgroundColor: isCompleted ? 'var(--primaryColor, #874429)' : '#f1f5f9',
-            color: isCompleted ? '#ffffff' : '#94a3b8',
+            color: isCompleted ? '#ffffff' : '#6a6f73',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '22px'
+            fontSize: '20px'
           }}>
             <FiAward />
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            <span style={{ fontSize: '14px', fontWeight: '700', color: '#1e293b' }}>
+            <span style={{ fontSize: '15px', fontWeight: '700', color: '#1c1d1f' }}>
               Course Completion Certificate
             </span>
-            <span style={{ fontSize: '12.5px', color: '#64748b' }}>
+            <span style={{ fontSize: '13px', color: '#6a6f73' }}>
               {eligibility?.is_claimed
                 ? `Issued Certificate #${eligibility.certificate?.certificate_number || ''}`
                 : isCompleted
@@ -100,14 +105,15 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
               target="_blank"
               rel="noopener noreferrer"
               download
+              className="DownloadCertificateBtn"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                padding: '8px 16px',
+                padding: '10px 16px',
                 fontSize: '13px',
-                fontWeight: '600',
-                borderRadius: '8px',
+                fontWeight: '700',
+                borderRadius: '4px',
                 backgroundColor: 'var(--primaryColor, #874429)',
                 color: '#ffffff',
                 textDecoration: 'none'
@@ -124,10 +130,10 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '6px',
-                padding: '8px 16px',
+                padding: '10px 16px',
                 fontSize: '13px',
-                fontWeight: '600',
-                borderRadius: '8px',
+                fontWeight: '700',
+                borderRadius: '4px',
                 border: 'none',
                 backgroundColor: 'var(--primaryColor, #874429)',
                 color: '#ffffff',
@@ -144,10 +150,10 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
               gap: '6px',
               padding: '6px 12px',
               fontSize: '12px',
-              fontWeight: '500',
-              borderRadius: '6px',
+              fontWeight: '600',
+              borderRadius: '4px',
               backgroundColor: '#f1f5f9',
-              color: '#64748b'
+              color: '#6a6f73'
             }}>
               <FiLock />
               <span>Locked ({percentage}%)</span>
@@ -156,32 +162,48 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
         </div>
       </div>
 
-      {/* Current Lesson Description */}
+      {/* 2. Current Lesson Description (Rich Text Rendered Safely) */}
       {currentLesson && (
         <div className="SectionBlock">
-          <h4>About This Lesson: {currentLesson.title}</h4>
-          <p>
-            {currentLesson.short_description ||
-              currentLesson.description ||
-              `In this lesson, you will explore step-by-step guidance on ${currentLesson.title}. Practice along with the video to master key techniques.`}
-          </p>
+          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1d1f', marginBottom: '8px' }}>
+            About This Lesson: {currentLesson.title}
+          </h4>
+          {lessonDescriptionHtml ? (
+            <div 
+              className="RichDescriptionText" 
+              style={{ fontSize: '14.5px', color: '#1c1d1f', lineHeight: '1.6' }}
+              dangerouslySetInnerHTML={{ __html: lessonDescriptionHtml }} 
+            />
+          ) : (
+            <p style={{ fontSize: '14.5px', color: '#1c1d1f', lineHeight: '1.6', margin: 0 }}>
+              In this lesson, you will explore step-by-step guidance on {currentLesson.title}. Practice along with the video to master key techniques.
+            </p>
+          )}
         </div>
       )}
 
-      {/* Course Description */}
+      {/* 3. Course Description (Rich Text Rendered Safely) */}
       <div className="SectionBlock">
-        <h4>About The Course</h4>
-        <p>{course.description || course.short_description || "Welcome to this comprehensive workshop course."}</p>
+        <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1d1f', marginBottom: '8px' }}>
+          About The Course
+        </h4>
+        <div 
+          className="RichDescriptionText" 
+          style={{ fontSize: '14.5px', color: '#1c1d1f', lineHeight: '1.6' }}
+          dangerouslySetInnerHTML={{ __html: courseDescriptionHtml }} 
+        />
       </div>
 
-      {/* Learning Outcomes */}
+      {/* 4. Learning Outcomes */}
       {Array.isArray(course.learning_outcomes) && course.learning_outcomes.length > 0 && (
         <div className="SectionBlock">
-          <h4>What You&apos;ll Learn</h4>
-          <ul className="OutcomesList">
+          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1d1f', marginBottom: '8px' }}>
+            What You&apos;ll Learn
+          </h4>
+          <ul className="OutcomesList" style={{ listStyle: 'none', paddingLeft: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {course.learning_outcomes.map((outcome, idx) => (
-              <li key={idx}>
-                <FiCheckCircle className="CheckIcon" />
+              <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#1c1d1f' }}>
+                <FiCheckCircle style={{ color: 'var(--primaryColor, #874429)', flexShrink: 0, fontSize: '16px' }} />
                 <span>{outcome}</span>
               </li>
             ))}
@@ -189,20 +211,27 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
         </div>
       )}
 
-      {/* Instructor Section */}
+      {/* 5. Instructor Section */}
       {course.instructor && (
         <div className="SectionBlock">
-          <h4>Your Instructor</h4>
-          <div className="InstructorCard">
+          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1d1f', marginBottom: '8px' }}>
+            Your Instructor
+          </h4>
+          <div className="InstructorCard" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={instructorAvatar}
               alt={course.instructor.name}
               className="Avatar"
+              style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }}
             />
-            <div className="InstructorInfo">
-              <span className="Name">{course.instructor.name}</span>
-              <span className="Bio">{course.instructor.bio || "Certified Yoga & Wellness Instructor"}</span>
+            <div className="InstructorInfo" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+              <span className="Name" style={{ fontSize: '15px', fontWeight: '700', color: '#1c1d1f' }}>
+                {course.instructor.name}
+              </span>
+              <span className="Bio" style={{ fontSize: '13px', color: '#6a6f73' }}>
+                {course.instructor.bio || "Certified Yoga & Wellness Instructor"}
+              </span>
             </div>
           </div>
         </div>

@@ -12,6 +12,7 @@ import {
   FiRotateCcw, 
   FiAirplay, 
   FiChevronRight, 
+  FiChevronLeft, 
   FiAlertCircle, 
   FiRefreshCw 
 } from 'react-icons/fi';
@@ -33,6 +34,8 @@ import { useAnalyticsController } from './controllers/useAnalyticsController';
 export default React.memo(function VideoEngine({
   lesson,
   nextLesson,
+  previousLesson,
+  onNavigate,
   courseSlug,
   permissions,
   onProgressUpdated,
@@ -508,6 +511,26 @@ export default React.memo(function VideoEngine({
         onError={handleError}
       />
 
+      {/* Side Chevron Navigation overlay */}
+      {previousLesson && (
+        <button 
+          className="VideoSideChevron Left" 
+          onClick={() => onNavigate && onNavigate(previousLesson)}
+          title={`Previous: ${previousLesson.title}`}
+        >
+          <FiChevronLeft />
+        </button>
+      )}
+      {nextLesson && (
+        <button 
+          className="VideoSideChevron Right" 
+          onClick={() => onNavigate && onNavigate(nextLesson)}
+          title={`Next: ${nextLesson.title}`}
+        >
+          <FiChevronRight />
+        </button>
+      )}
+
       {/* Custom Control Bar for Direct & HLS Streams */}
       {['html5', 'hls'].includes(providerType) && !hasError && (
         <ControlBar
@@ -530,6 +553,11 @@ export default React.memo(function VideoEngine({
           handleSeekChange={handleSeekChange}
           handleSeekCommit={handleSeekCommit}
           handleSeekPreviewCommit={handleSeekPreviewCommit}
+          onRewind={() => {
+            if (videoRef.current) {
+              requestSeek(Math.max(0, videoRef.current.currentTime - 15), 'rewind-15s');
+            }
+          }}
         />
       )}
 
