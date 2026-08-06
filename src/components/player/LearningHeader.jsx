@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight, FiBookmark, FiCheckCircle } from 'react-icons/fi';
 
-export default function LearningHeader({
+export default React.memo(function LearningHeader({
   courseTitle,
   lessonTitle,
   courseSlug,
@@ -176,4 +176,4 @@ export default function LearningHeader({
       </div>
     </header>
   );
-}
+});

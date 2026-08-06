@@ -5,7 +5,7 @@ import { FiLock } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import VideoEngine from './VideoEngine';
 
-export default function PlayerContainer({
+export default React.memo(function PlayerContainer({
   lesson,
   nextLesson,
   permissions,
@@ -59,4 +59,4 @@ export default function PlayerContainer({
       />
     </div>
   );
-}
+});

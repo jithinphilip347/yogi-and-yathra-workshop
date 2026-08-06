@@ -3,7 +3,7 @@
 import React from 'react';
 import LessonAccordion from './LessonAccordion';
 
-export default function LessonSidebar({
+export default React.memo(function LessonSidebar({
   sections = [],
   currentLessonId,
   courseSlug,
@@ -35,4 +35,4 @@ export default function LessonSidebar({
       </div>
     </aside>
   );
-}
+});

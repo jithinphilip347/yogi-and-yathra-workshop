@@ -16,11 +16,8 @@ import {
   FiRefreshCw 
 } from 'react-icons/fi';
 
-import { playerDebug } from '@/libs/playbackSync';
-import HTML5Provider from './providers/HTML5Provider';
-import HLSProvider from './providers/HLSProvider';
-import YouTubeProvider from './providers/YouTubeProvider';
-import VimeoProvider from './providers/VimeoProvider';
+import { playerDebug } from '@/libs/playerDebug';
+import MediaProviderAdapter from './MediaProviderAdapter';
 import ControlBar from './ControlBar';
 import PlaybackDebugOverlay from './PlaybackDebugOverlay';
 
@@ -33,7 +30,7 @@ import { useProviderController } from './controllers/useProviderController';
 import { useAutoNextController } from './controllers/useAutoNextController';
 import { useAnalyticsController } from './controllers/useAnalyticsController';
 
-export default function VideoEngine({
+export default React.memo(function VideoEngine({
   lesson,
   nextLesson,
   courseSlug,
@@ -45,11 +42,13 @@ export default function VideoEngine({
   const playerContainerRef = useRef(null);
   const videoRef = useRef(null);
 
-  // Phase 4/6/7 instrumentation refs
+  // Phase 4/6/7/10 instrumentation refs
   const prevVideoElementRef = useRef(null);
   const prevLessonRef = useRef(null);
   const lastDebugSecondRef = useRef(-1);
   const lastProgressDebugRef = useRef(0);
+  const renderCountRef = useRef(0);
+  renderCountRef.current += 1;
 
   // 1. Session Controller
   const {
@@ -97,6 +96,8 @@ export default function VideoEngine({
     activeWatchedSecondsRef,
     lastTimeRef,
     progressTimerRef,
+    pendingProgressQueueRef,
+    syncMetricsRef,
     flushProgress,
   } = usePlaybackProgress({
     lesson,
@@ -474,49 +475,27 @@ export default function VideoEngine({
         </div>
       )}
 
-      {/* Render Selected Provider */}
-      {providerType === 'hls' ? (
-        <HLSProvider
-          videoRef={videoRef}
-          src={rawUrl}
-          onLoadedMetadata={handleLoadedMetadata}
-          onLoadedData={handleLoadedData}
-          onCanPlay={handleCanPlay}
-          onPlaying={handlePlaying}
-          onWaiting={handleWaiting}
-          onDurationChange={handleDurationChange}
-          onProgress={handleProgress}
-          onTimeUpdate={handleTimeUpdate}
-          onSeeking={handleSeeking}
-          onSeeked={handleSeeked}
-          onPause={handlePause}
-          onEnded={handleEnded}
-          onError={() => setHasError(true)}
-        />
-      ) : providerType === 'youtube' ? (
-        <YouTubeProvider src={rawUrl} title={lesson?.title} />
-      ) : providerType === 'vimeo' ? (
-        <VimeoProvider src={rawUrl} title={lesson?.title} />
-      ) : (
-        <HTML5Provider
-          videoRef={videoRef}
-          src={rawUrl}
-          format={formatType}
-          onLoadedMetadata={handleLoadedMetadata}
-          onLoadedData={handleLoadedData}
-          onCanPlay={handleCanPlay}
-          onPlaying={handlePlaying}
-          onWaiting={handleWaiting}
-          onDurationChange={handleDurationChange}
-          onProgress={handleProgress}
-          onTimeUpdate={handleTimeUpdate}
-          onSeeking={handleSeeking}
-          onSeeked={handleSeeked}
-          onPause={handlePause}
-          onEnded={handleEnded}
-          onError={() => setHasError(true)}
-        />
-      )}
+      {/* Render Selected Media Provider via Unified Adapter */}
+      <MediaProviderAdapter
+        videoRef={videoRef}
+        providerType={providerType}
+        formatType={formatType}
+        rawUrl={rawUrl}
+        title={lesson?.title}
+        onLoadedMetadata={handleLoadedMetadata}
+        onLoadedData={handleLoadedData}
+        onCanPlay={handleCanPlay}
+        onPlaying={handlePlaying}
+        onWaiting={handleWaiting}
+        onDurationChange={handleDurationChange}
+        onProgress={handleProgress}
+        onTimeUpdate={handleTimeUpdate}
+        onSeeking={handleSeeking}
+        onSeeked={handleSeeked}
+        onPause={handlePause}
+        onEnded={handleEnded}
+        onError={() => setHasError(true)}
+      />
 
       {/* Custom Control Bar for Direct & HLS Streams */}
       {['html5', 'hls'].includes(providerType) && !hasError && (
@@ -547,9 +526,16 @@ export default function VideoEngine({
       <PlaybackDebugOverlay
         videoRef={videoRef}
         playbackSessionRef={playbackSessionRef}
+        syncMetricsRef={syncMetricsRef}
+        pendingProgressQueueRef={pendingProgressQueueRef}
+        renderCountRef={renderCountRef}
         providerType={providerType}
         lessonId={lesson?.id}
       />
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  return prevProps.lesson?.id === nextProps.lesson?.id &&
+    prevProps.nextLesson?.id === nextProps.nextLesson?.id &&
+    prevProps.courseSlug === nextProps.courseSlug;
+});

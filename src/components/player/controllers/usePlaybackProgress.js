@@ -1,8 +1,8 @@
 "use client";
 
-import { useRef, useCallback, useEffect } from 'react';
+import { useRef, useCallback, useEffect, useState } from 'react';
 import courseApi from '@/libs/courseApi';
-import { playerDebug } from '@/libs/playbackSync';
+import { playerDebug } from '@/libs/playerDebug';
 
 export function usePlaybackProgress({
   lesson,
@@ -16,43 +16,133 @@ export function usePlaybackProgress({
   const activeWatchedSecondsRef = useRef(0);
   const lastTimeRef = useRef(0);
   const progressTimerRef = useRef(null);
+  const isOnlineRef = useRef(typeof navigator !== 'undefined' ? navigator.onLine : true);
+
+  // Error-tolerant retry queue for offline/failed progress flushes
+  const pendingProgressQueueRef = useRef([]);
+
+  // Telemetry sync metrics
+  const syncMetricsRef = useRef({
+    saveRequests: 0,
+    saveAcks: 0,
+    ignoredStale: 0,
+    retriesCount: 0,
+    isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
+  });
+
+  // Network recovery handler: automatically replay retry queue when back online
+  useEffect(() => {
+    const handleOnline = () => {
+      isOnlineRef.current = true;
+      syncMetricsRef.current.isOnline = true;
+      if (pendingProgressQueueRef.current.length > 0 && lesson?.id) {
+        const queued = pendingProgressQueueRef.current.shift();
+        syncMetricsRef.current.retriesCount += 1;
+        courseApi.saveLessonProgress(queued.lessonId, queued.currentPos, queued.vidDur, queued.realWatched)
+          .then((res) => {
+            syncMetricsRef.current.saveAcks += 1;
+            const record = res.data?.data || res.data;
+            if (typeof onProgressUpdated === 'function' && record) {
+              onProgressUpdated(record, queued.lessonId);
+            }
+          })
+          .catch(() => {});
+      }
+    };
+
+    const handleOffline = () => {
+      isOnlineRef.current = false;
+      syncMetricsRef.current.isOnline = false;
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [lesson?.id, onProgressUpdated]);
 
   // Flush progress update to backend
-  const flushProgress = useCallback((forcedPos = null) => {
+  const flushProgress = useCallback((forcedPos = null, { force = false } = {}) => {
     if (!lesson?.id || !videoRef.current) return;
     const currentPos = Math.floor(forcedPos !== null ? forcedPos : (videoRef.current.currentTime || 0));
     const vidDur = Math.floor(videoRef.current.duration || duration || 0);
 
     if (currentPos <= 0 && vidDur <= 0) return;
-    if (Math.abs(currentPos - lastSavedPosRef.current) < 2 && forcedPos === null) return;
+    if (Math.abs(currentPos - lastSavedPosRef.current) < 2 && forcedPos === null && !force) return;
 
     const session = playbackSessionRef.current;
     // Monotonic sync: never flush an unforced position older than last synced position
-    if (forcedPos === null && session && currentPos < session.lastSyncedPosition) return;
+    if (forcedPos === null && !force && session && currentPos < session.lastSyncedPosition) return;
 
     lastSavedPosRef.current = currentPos;
+    const reqVersion = session ? (session.syncVersion || session.version || 0) : 0;
     if (session) {
       session.lastSyncedPosition = currentPos;
-      session.lastSyncAt = Date.now();
+      session.lastSyncTimestamp = Date.now();
     }
     const realWatched = Math.floor(activeWatchedSecondsRef.current);
-    playerDebug.progressRequest({ lessonId: lesson.id, position: currentPos, watchedSeconds: realWatched, duration: vidDur });
+
+    syncMetricsRef.current.saveRequests += 1;
+    playerDebug.progressRequest({ lessonId: lesson.id, position: currentPos, watchedSeconds: realWatched, duration: vidDur, version: reqVersion });
+
+    // Process any queued items first if online
+    if (pendingProgressQueueRef.current.length > 0 && isOnlineRef.current) {
+      const queued = pendingProgressQueueRef.current.shift();
+      syncMetricsRef.current.retriesCount += 1;
+      courseApi.saveLessonProgress(queued.lessonId, queued.currentPos, queued.vidDur, queued.realWatched)
+        .catch(() => {}); // Retries are best-effort background
+    }
+
+    // Offline mode guard: buffer directly into queue without throwing error
+    if (!isOnlineRef.current) {
+      pendingProgressQueueRef.current.push({
+        lessonId: lesson.id,
+        currentPos,
+        vidDur,
+        realWatched,
+        reqVersion,
+        timestamp: Date.now(),
+      });
+      return;
+    }
 
     courseApi.saveLessonProgress(lesson.id, currentPos, vidDur, realWatched)
       .then((res) => {
+        syncMetricsRef.current.saveAcks += 1;
         const record = res.data?.data || res.data;
+        const currentSession = playbackSessionRef.current;
+        if (currentSession && reqVersion < (currentSession.syncVersion || currentSession.version || 0) - 10) {
+          syncMetricsRef.current.ignoredStale += 1;
+        }
+
         playerDebug.progressResponse({
           lessonId: lesson.id,
           returnedPosition: Number(record?.last_position_seconds ?? 0),
           status: record?.status,
           percentage: record?.percentage_watched,
           localPosition: currentPos,
+          reqVersion,
         });
+
+        // Unidirectional ACK update to parent layout state for passive observers ONLY
         if (typeof onProgressUpdated === 'function' && record) {
           onProgressUpdated(record, lesson.id);
         }
       })
-      .catch(() => {});
+      .catch((err) => {
+        // Error-tolerant fallback: push to retry queue, NEVER interrupt playback
+        console.warn("[CoursePlayer Sync] Progress save deferred (retry queued):", err?.message || err);
+        pendingProgressQueueRef.current.push({
+          lessonId: lesson.id,
+          currentPos,
+          vidDur,
+          realWatched,
+          reqVersion,
+          timestamp: Date.now(),
+        });
+      });
   }, [lesson?.id, duration, videoRef, playbackSessionRef, onProgressUpdated]);
 
   // Debounced 5-second interval progress sync during playback
@@ -74,7 +164,7 @@ export function usePlaybackProgress({
   useEffect(() => {
     return () => {
       if (videoRef.current && lesson?.id) {
-        flushProgress();
+        flushProgress(null, { force: true });
       }
     };
   }, [lesson?.id, flushProgress, videoRef]);
@@ -84,6 +174,8 @@ export function usePlaybackProgress({
     activeWatchedSecondsRef,
     lastTimeRef,
     progressTimerRef,
+    pendingProgressQueueRef,
+    syncMetricsRef,
     flushProgress,
   };
 }

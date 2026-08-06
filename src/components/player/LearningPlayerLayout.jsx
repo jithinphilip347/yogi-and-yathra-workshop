@@ -46,10 +46,11 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     }
   }, [initialSession, modalDismissed]);
 
-  const handleToggleBookmark = async () => {
-    if (!current_lesson?.id) return;
+  const handleToggleBookmark = useCallback(async () => {
+    const activeLessonId = sessionData?.current_lesson?.id;
+    if (!activeLessonId) return;
     try {
-      const res = await courseApi.toggleBookmark(current_lesson.id);
+      const res = await courseApi.toggleBookmark(activeLessonId);
       const data = res.data?.data || res.data;
       const newStatus = data?.is_bookmarked ?? !isBookmarked;
       setIsBookmarked(newStatus);
@@ -57,7 +58,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     } catch (err) {
       toast.error("Failed to update bookmark");
     }
-  };
+  }, [sessionData?.current_lesson?.id, isBookmarked]);
 
   const handleRegisterPlayerCallbacks = useCallback((callbacks) => {
     playerCallbacksRef.current = callbacks;
@@ -75,17 +76,17 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     }
   }, [sessionData?.current_lesson]);
 
-  const handleGetCurrentTime = () => {
+  const handleGetCurrentTime = useCallback(() => {
     return playerCallbacksRef.current?.getCurrentTime ? playerCallbacksRef.current.getCurrentTime() : 0;
-  };
+  }, []);
 
-  const handleSeek = (seconds) => {
+  const handleSeek = useCallback((seconds) => {
     if (playerCallbacksRef.current?.seekTo) {
       playerCallbacksRef.current.seekTo(seconds);
     }
-  };
+  }, []);
 
-  const handleProgressUpdated = (updatedProgressRecord, lessonId, forceStatus = false) => {
+  const handleProgressUpdated = useCallback((updatedProgressRecord, lessonId, forceStatus = false) => {
     if (!updatedProgressRecord) return;
 
     // Monotonic position validation (Phase 9): never allow stale server state to
@@ -154,34 +155,34 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
         },
       };
     });
-  };
+  }, [modalDismissed]);
 
-  const handleToggleManualCompletion = async () => {
-    if (!current_lesson?.id) return;
+  const handleToggleManualCompletion = useCallback(async () => {
+    const activeLessonId = sessionData?.current_lesson?.id;
+    if (!activeLessonId) return;
     try {
-      const res = await courseApi.toggleLessonCompletion(current_lesson.id);
+      const res = await courseApi.toggleLessonCompletion(activeLessonId);
       const record = res.data?.data || res.data;
       if (record) {
         // forceStatus: the toggle must be able to reset a lesson, so completion
         // status is applied exactly (not sticky) for this response.
-        handleProgressUpdated(record, current_lesson.id, true);
+        handleProgressUpdated(record, activeLessonId, true);
         const isComp = record.status === 'completed';
         toast.success(isComp ? "Marked lesson as completed!" : "Lesson completion reset");
       }
     } catch (err) {
       toast.error("Failed to toggle completion");
     }
-  };
+  }, [sessionData?.current_lesson?.id, handleProgressUpdated]);
 
-  const handleNavigate = (targetLesson) => {
-    if (targetLesson && course?.slug) {
-      router.push(`/course/${course.slug}/learn/${targetLesson.id}`);
+  const handleNavigate = useCallback((targetLesson) => {
+    const courseSlug = sessionData?.course?.slug;
+    if (targetLesson && courseSlug) {
+      router.push(`/course/${courseSlug}/learn/${targetLesson.id}`);
     }
-  };
+  }, [sessionData?.course?.slug, router]);
 
   // All hooks above must run unconditionally — this guard may only come after them.
-  if (!sessionData) return null;
-
   const {
     course,
     sections,
@@ -191,7 +192,11 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     permissions,
     enrollment,
     completion_summary
-  } = sessionData;
+  } = sessionData || {};
+
+  const handleToggleSidebar = useCallback(() => setSidebarOpen((prev) => !prev), []);
+
+  if (!sessionData) return null;
 
   return (
     <CommunicationProvider courseId={course?.id} lessonId={current_lesson?.id}>
@@ -216,7 +221,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
           nextLesson={next_lesson}
           onNavigate={handleNavigate}
           completionSummary={completion_summary}
-          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          onToggleSidebar={handleToggleSidebar}
           sidebarOpen={sidebarOpen}
           isBookmarked={isBookmarked}
           onToggleBookmark={handleToggleBookmark}

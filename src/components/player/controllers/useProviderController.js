@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import courseApi from '@/libs/courseApi';
-import { playerDebug } from '@/libs/playbackSync';
+import { playerDebug } from '@/libs/playerDebug';
 
 export function useProviderController({
   lesson,

@@ -12,6 +12,8 @@
  * These functions are pure so they can be unit-tested without React.
  */
 
+export { playerDebug } from './playerDebug';
+
 /**
  * Create a new in-memory playback session for a lesson.
  *

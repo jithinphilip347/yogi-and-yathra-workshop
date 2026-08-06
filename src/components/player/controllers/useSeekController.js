@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from 'react';
-import { playerDebug } from '@/libs/playbackSync';
+import { playerDebug } from '@/libs/playerDebug';
 
 export function useSeekController({
   videoRef,

@@ -1,13 +1,19 @@
 "use client";
 
-import { useRef, useCallback } from 'react';
-import { createPlaybackSession, playerDebug } from '@/libs/playbackSync';
+import { useRef, useCallback, useEffect } from 'react';
+import { PlaybackSession } from '@/libs/PlaybackSession';
+import { playerDebug } from '@/libs/playerDebug';
 
 export function usePlaybackSession() {
   const playbackSessionRef = useRef(null);
 
   const initSession = useCallback((lessonId, initialPos = 0) => {
-    const session = createPlaybackSession(lessonId, initialPos);
+    // Destroy previous session if active
+    if (playbackSessionRef.current) {
+      playbackSessionRef.current.destroy();
+    }
+
+    const session = new PlaybackSession(lessonId, initialPos);
     playbackSessionRef.current = session;
     playerDebug.session({ lessonId, action: 'init', session });
     return session;
@@ -23,22 +29,25 @@ export function usePlaybackSession() {
     if (!videoElement || !playbackSessionRef.current) return;
     const session = playbackSessionRef.current;
     const elPos = Math.max(0, Number(videoElement.currentTime) || 0);
-    session.localPosition = elPos;
-    session.version += 1;
-    session.playbackState = videoElement.seeking ? 'seeking' : videoElement.paused ? 'paused' : 'playing';
-    if (Math.abs(elPos - session.lastSyncedPosition) >= 2) {
-      session.dirty = true;
-    }
+    session.updatePosition(elPos);
+    session.setSeeking(Boolean(videoElement.seeking));
+    session.setPlaying(!videoElement.paused);
   }, []);
 
   const markSynced = useCallback((syncedPos) => {
     if (playbackSessionRef.current) {
-      const session = playbackSessionRef.current;
-      session.lastSyncedPosition = syncedPos;
-      session.lastSyncAt = Date.now();
-      session.dirty = false;
-      session.pendingSync = false;
+      playbackSessionRef.current.markSynced(syncedPos);
     }
+  }, []);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (playbackSessionRef.current) {
+        playbackSessionRef.current.destroy();
+        playbackSessionRef.current = null;
+      }
+    };
   }, []);
 
   return {

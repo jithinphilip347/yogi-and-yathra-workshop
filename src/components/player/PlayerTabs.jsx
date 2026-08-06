@@ -6,7 +6,7 @@ import NotesTab from './NotesTab';
 import ResourcesTab from './ResourcesTab';
 import DiscussionTab from './DiscussionTab';
 
-export default function PlayerTabs({ course, currentLesson, getCurrentTime, onSeek }) {
+export default React.memo(function PlayerTabs({ course, currentLesson, getCurrentTime, onSeek }) {
   const [activeTab, setActiveTab] = useState('overview');
 
   const resourceCount = (currentLesson?.attachment ? 1 : 0) + (Array.isArray(currentLesson?.resources) ? currentLesson.resources.length : 0);
@@ -71,4 +71,4 @@ export default function PlayerTabs({ course, currentLesson, getCurrentTime, onSe
       </div>
     </div>
   );
-}
+});
