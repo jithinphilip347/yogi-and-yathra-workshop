@@ -95,16 +95,18 @@ export function usePlaybackProgress({
         .catch(() => {}); // Retries are best-effort background
     }
 
-    // Offline mode guard: buffer directly into queue without throwing error
+    // Offline mode guard: buffer directly into queue (capped at max 50 items)
     if (!isOnlineRef.current) {
-      pendingProgressQueueRef.current.push({
-        lessonId: lesson.id,
-        currentPos,
-        vidDur,
-        realWatched,
-        reqVersion,
-        timestamp: Date.now(),
-      });
+      if (pendingProgressQueueRef.current.length < 50) {
+        pendingProgressQueueRef.current.push({
+          lessonId: lesson.id,
+          currentPos,
+          vidDur,
+          realWatched,
+          reqVersion,
+          timestamp: Date.now(),
+        });
+      }
       return;
     }
 
@@ -132,16 +134,18 @@ export function usePlaybackProgress({
         }
       })
       .catch((err) => {
-        // Error-tolerant fallback: push to retry queue, NEVER interrupt playback
+        // Error-tolerant fallback: push to retry queue (capped at max 50 items)
         console.warn("[CoursePlayer Sync] Progress save deferred (retry queued):", err?.message || err);
-        pendingProgressQueueRef.current.push({
-          lessonId: lesson.id,
-          currentPos,
-          vidDur,
-          realWatched,
-          reqVersion,
-          timestamp: Date.now(),
-        });
+        if (pendingProgressQueueRef.current.length < 50) {
+          pendingProgressQueueRef.current.push({
+            lessonId: lesson.id,
+            currentPos,
+            vidDur,
+            realWatched,
+            reqVersion,
+            timestamp: Date.now(),
+          });
+        }
       });
   }, [lesson?.id, duration, videoRef, playbackSessionRef, onProgressUpdated]);
 

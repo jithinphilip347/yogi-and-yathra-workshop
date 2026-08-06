@@ -46,6 +46,8 @@ export function useProviderController({
     prevLessonIdRef.current = lesson.id;
 
     let isMounted = true;
+    const abortController = new AbortController();
+
     setIsLoading(true);
     setHasError(false);
     setIsPlaying(false);
@@ -67,7 +69,7 @@ export function useProviderController({
       seekGuardTimerRef.current = null;
     }
 
-    courseApi.getLessonStream(lesson.id)
+    courseApi.getLessonStream(lesson.id, { signal: abortController.signal })
       .then((res) => {
         const data = res.data?.data || res.data;
         if (isMounted && data?.stream_url) {
@@ -83,7 +85,7 @@ export function useProviderController({
         }
       })
       .catch((err) => {
-        console.warn("Stream endpoint fallback to direct URL:", err);
+        if (err.name === 'CanceledError' || err.name === 'AbortError') return;
         if (isMounted) {
           if (lesson?.video_url) {
             const direct = resolveStreamUrl(lesson.video_url);
@@ -96,12 +98,13 @@ export function useProviderController({
         }
       });
 
-    return () => { isMounted = false; };
+    return () => {
+      isMounted = false;
+      abortController.abort();
+    };
   }, [
     lesson?.id,
     lesson?.video_url,
-    lesson?.last_position_seconds,
-    lesson?.watched_seconds,
     setIsLoading,
     setHasError,
     setIsPlaying,

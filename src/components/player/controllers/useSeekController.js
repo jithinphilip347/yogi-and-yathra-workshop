@@ -11,6 +11,7 @@ export function useSeekController({
   hasResumedLessonIdRef,
   flushProgress,
   logAnalytics,
+  lastTimeRef,
 }) {
   const isSeekingRef = useRef(false);
   const [seekingTime, setSeekingTime] = useState(null);
@@ -30,19 +31,22 @@ export function useSeekController({
       session.version += 1;
       session.resumed = true;
     }
+    if (lastTimeRef) {
+      lastTimeRef.current = next;
+    }
     if (Math.abs(prev - next) > 0.05) {
       playerDebug.currentTimeAssign({ prev, next, reason, lessonId });
     }
     el.currentTime = next;
+    setCurrentTime(next);
     return next;
-  }, [videoRef, playbackSessionRef, lessonId]);
+  }, [videoRef, playbackSessionRef, lessonId, lastTimeRef, setCurrentTime]);
 
   // Request seek with readyState validation & safety guard timer
   const requestSeek = useCallback((seconds, reason) => {
     const el = videoRef.current;
     const target = Math.max(0, Number(seconds) || 0);
     if (!el) return;
-    if (Math.abs((el.currentTime || 0) - target) < 0.05) return;
 
     setCurrentTime(target);
     setSeekingTime(target);
@@ -58,12 +62,11 @@ export function useSeekController({
     if (seekGuardTimerRef.current) clearTimeout(seekGuardTimerRef.current);
     seekGuardTimerRef.current = setTimeout(() => {
       seekGuardTimerRef.current = null;
+      isSeekingRef.current = false;
+      setSeekingTime(null);
+      committedSeekRef.current = null;
       const v = videoRef.current;
-      if (!v) return;
-      if (isSeekingRef.current && !v.seeking) {
-        isSeekingRef.current = false;
-        setSeekingTime(null);
-        committedSeekRef.current = null;
+      if (v) {
         setCurrentTime(v.currentTime || 0);
       }
     }, 1500);
@@ -92,6 +95,7 @@ export function useSeekController({
   }, [videoRef]);
 
   const handleSeeked = useCallback(() => {
+    isSeekingRef.current = false;
     if (seekGuardTimerRef.current) {
       clearTimeout(seekGuardTimerRef.current);
       seekGuardTimerRef.current = null;
@@ -122,10 +126,8 @@ export function useSeekController({
   const handleSeekCommit = useCallback((e) => {
     const targetTime = seekingTime !== null ? seekingTime : parseFloat(e.target.value);
     requestSeek(targetTime, 'seek-commit');
-    if (videoRef.current && Math.abs((videoRef.current.currentTime || 0) - targetTime) < 0.05) {
-      isSeekingRef.current = false;
-      setSeekingTime(null);
-    }
+    isSeekingRef.current = false;
+    setSeekingTime(null);
     if (lessonId && hasResumedLessonIdRef) {
       hasResumedLessonIdRef.current = lessonId;
     }
@@ -135,11 +137,15 @@ export function useSeekController({
     if (typeof flushProgress === 'function') {
       flushProgress(targetTime);
     }
-  }, [seekingTime, requestSeek, videoRef, lessonId, hasResumedLessonIdRef, logAnalytics, flushProgress]);
+  }, [seekingTime, requestSeek, lessonId, hasResumedLessonIdRef, logAnalytics, flushProgress]);
 
   const handleSeekPreviewCommit = useCallback((e) => {
-    if (!isSeekingRef.current && seekingTime === null) return;
-    handleSeekCommit(e);
+    isSeekingRef.current = false;
+    if (seekingTime !== null) {
+      handleSeekCommit(e);
+    } else {
+      setSeekingTime(null);
+    }
   }, [seekingTime, handleSeekCommit]);
 
   return {

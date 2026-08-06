@@ -132,6 +132,7 @@ export default React.memo(function VideoEngine({
     hasResumedLessonIdRef,
     flushProgress,
     logAnalytics,
+    lastTimeRef,
   });
 
   // 7. Auto Next Controller
@@ -238,6 +239,7 @@ export default React.memo(function VideoEngine({
 
   // Video Media Events
   const handleLoadedMetadata = useCallback(() => {
+    
     playerDebug.mediaEvent({ name: 'loadedmetadata', video: videoRef.current });
     attemptResume({
       lesson,
