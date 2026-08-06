@@ -8,18 +8,30 @@ import LessonNavigation from './LessonNavigation';
 import PlayerTabs from './PlayerTabs';
 import LessonSidebar from './LessonSidebar';
 import courseApi from '@/libs/courseApi';
+import { playerDebug } from '@/libs/playerDebug';
+import { mergeProgressRecord } from '@/libs/playbackSync';
 import toast from 'react-hot-toast';
 import '@/assets/css/learning-player.scss';
+import { CommunicationProvider } from '@/communication/CommunicationStore';
 
 import CompletionModal from './CompletionModal';
 
 export default function LearningPlayerLayout({ playerSession: initialSession }) {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sessionData, setSessionData] = useState(initialSession);
   const [isBookmarked, setIsBookmarked] = useState(initialSession?.current_lesson?.is_bookmarked ?? false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [modalDismissed, setModalDismissed] = useState(false);
   const playerCallbacksRef = useRef(null);
+
+  // Monotonic server-response protection (Phase 9): tracks the highest position
+  // applied per lesson so stale / out-of-order responses can never downgrade
+  // playback state. The player is authoritative locally; responses persist only.
+  const lastAppliedServerPosRef = useRef({});
+
+  // Phase 3 instrumentation
+  const prevLessonRef = useRef(null);
 
   useEffect(() => {
     setSessionData(initialSession);
@@ -33,19 +45,6 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
       setShowCompletionModal(true);
     }
   }, [initialSession, modalDismissed]);
-
-  if (!sessionData) return null;
-
-  const {
-    course,
-    sections,
-    current_lesson,
-    next_lesson,
-    previous_lesson,
-    permissions,
-    enrollment,
-    completion_summary
-  } = sessionData;
 
   const handleToggleBookmark = async () => {
     if (!current_lesson?.id) return;
@@ -64,6 +63,18 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     playerCallbacksRef.current = callbacks;
   }, []);
 
+  // Phase 3 — lesson object identity: log every recreation + changed fields.
+  useEffect(() => {
+    const lessonObj = sessionData?.current_lesson || null;
+    const prev = prevLessonRef.current;
+    prevLessonRef.current = lessonObj;
+    if (prev && lessonObj && prev !== lessonObj) {
+      const changedFields = ['id', 'title', 'last_position_seconds', 'percentage_watched', 'watched_seconds', 'status', 'is_completed']
+        .filter((f) => prev[f] !== lessonObj[f]);
+      playerDebug.lessonIdentity({ lessonId: lessonObj.id, prevRef: prev, nextRef: lessonObj, changedFields });
+    }
+  }, [sessionData?.current_lesson]);
+
   const handleGetCurrentTime = () => {
     return playerCallbacksRef.current?.getCurrentTime ? playerCallbacksRef.current.getCurrentTime() : 0;
   };
@@ -74,23 +85,37 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     }
   };
 
-  const handleProgressUpdated = (updatedProgressRecord, lessonId) => {
+  const handleProgressUpdated = (updatedProgressRecord, lessonId, forceStatus = false) => {
     if (!updatedProgressRecord) return;
+
+    // Monotonic position validation (Phase 9): never allow stale server state to
+    // move playback backward. Only newer progress is accepted; a stale response
+    // may still carry authoritative completion status but never a position.
+    const key = String(lessonId);
+    const prevApplied = lastAppliedServerPosRef.current[key] ?? 0;
+    const incomingPos = Math.max(0, Number(updatedProgressRecord?.last_position_seconds ?? 0));
+    const isStale = !forceStatus && incomingPos < prevApplied;
+    if (!isStale) {
+      lastAppliedServerPosRef.current[key] = Math.max(prevApplied, incomingPos);
+    }
+    playerDebug.progressResponse({
+      lessonId,
+      returnedPosition: incomingPos,
+      status: updatedProgressRecord?.status,
+      percentage: updatedProgressRecord?.percentage_watched,
+      incomingPosition: incomingPos,
+      stale: isStale,
+    });
 
     setSessionData((prev) => {
       if (!prev) return prev;
 
-      // Update lesson in sections array if completed
+      // Update lesson in sections array (monotonic merge per lesson)
       const updatedSections = (prev.sections || []).map((sec) => ({
         ...sec,
         lessons: (sec.lessons || []).map((l) => {
           if (Number(l.id) === Number(lessonId)) {
-            return {
-              ...l,
-              is_completed: updatedProgressRecord.status === 'completed' || l.is_completed,
-              status: updatedProgressRecord.status || l.status,
-              last_position_seconds: updatedProgressRecord.last_position_seconds ?? l.last_position_seconds,
-            };
+            return mergeProgressRecord(l, updatedProgressRecord, prevApplied, { forceStatus }).merged;
           }
           return l;
         }),
@@ -112,8 +137,14 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
         setShowCompletionModal(true);
       }
 
+      const isCurrentLessonTarget = Number(prev.current_lesson?.id) === Number(lessonId);
+      const updatedCurrentLesson = isCurrentLessonTarget
+        ? mergeProgressRecord(prev.current_lesson, updatedProgressRecord, prevApplied, { forceStatus }).merged
+        : prev.current_lesson;
+
       return {
         ...prev,
+        current_lesson: updatedCurrentLesson,
         sections: updatedSections,
         completion_summary: {
           ...prev.completion_summary,
@@ -125,7 +156,22 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     });
   };
 
-  const router = useRouter();
+  const handleToggleManualCompletion = async () => {
+    if (!current_lesson?.id) return;
+    try {
+      const res = await courseApi.toggleLessonCompletion(current_lesson.id);
+      const record = res.data?.data || res.data;
+      if (record) {
+        // forceStatus: the toggle must be able to reset a lesson, so completion
+        // status is applied exactly (not sticky) for this response.
+        handleProgressUpdated(record, current_lesson.id, true);
+        const isComp = record.status === 'completed';
+        toast.success(isComp ? "Marked lesson as completed!" : "Lesson completion reset");
+      }
+    } catch (err) {
+      toast.error("Failed to toggle completion");
+    }
+  };
 
   const handleNavigate = (targetLesson) => {
     if (targetLesson && course?.slug) {
@@ -133,66 +179,84 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
     }
   };
 
+  // All hooks above must run unconditionally — this guard may only come after them.
+  if (!sessionData) return null;
+
+  const {
+    course,
+    sections,
+    current_lesson,
+    next_lesson,
+    previous_lesson,
+    permissions,
+    enrollment,
+    completion_summary
+  } = sessionData;
+
   return (
-    <div className="LearningPlayerRoot">
-      {/* Celebration Modal when Course is 100% Completed */}
-      {showCompletionModal && (
-        <CompletionModal
-          course={course}
-          onClose={() => {
-            setShowCompletionModal(false);
-            setModalDismissed(true);
-          }}
-        />
-      )}
-
-      {/* 1. Top Header with Prev/Next Navigation & Bookmark */}
-      <LearningHeader
-        courseTitle={course?.title}
-        lessonTitle={current_lesson?.title}
-        courseSlug={course?.slug}
-        previousLesson={previous_lesson}
-        nextLesson={next_lesson}
-        onNavigate={handleNavigate}
-        completionSummary={completion_summary}
-        onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-        sidebarOpen={sidebarOpen}
-        isBookmarked={isBookmarked}
-        onToggleBookmark={handleToggleBookmark}
-      />
-
-      {/* 2. Main Player Body (Video + Tabs on Left, Course Sidebar on Right) */}
-      <div className="PlayerBody">
-        <main className="MainContentArea">
-          {/* Video Player Container */}
-          <PlayerContainer
-            lesson={current_lesson}
-            nextLesson={next_lesson}
-            permissions={permissions}
-            courseSlug={course?.slug}
-            onProgressUpdated={handleProgressUpdated}
-            onRegisterPlayerCallbacks={handleRegisterPlayerCallbacks}
-          />
-
-          {/* Overview, Notes, Resources & Discussion Tabs */}
-          <PlayerTabs
+    <CommunicationProvider courseId={course?.id} lessonId={current_lesson?.id}>
+      <div className="LearningPlayerRoot">
+        {/* Celebration Modal when Course is 100% Completed */}
+        {showCompletionModal && (
+          <CompletionModal
             course={course}
-            currentLesson={current_lesson}
-            getCurrentTime={handleGetCurrentTime}
-            onSeek={handleSeek}
-            completionSummary={completion_summary}
+            onClose={() => {
+              setShowCompletionModal(false);
+              setModalDismissed(true);
+            }}
           />
-        </main>
+        )}
 
-        {/* Course Chapter Sidebar */}
-        <LessonSidebar
-          sections={sections}
-          currentLessonId={current_lesson?.id}
+        {/* 1. Top Header with Prev/Next Navigation & Bookmark */}
+        <LearningHeader
+          courseTitle={course?.title}
+          lessonTitle={current_lesson?.title}
           courseSlug={course?.slug}
-          isEnrolled={enrollment?.is_enrolled}
-          isOpen={sidebarOpen}
+          previousLesson={previous_lesson}
+          nextLesson={next_lesson}
+          onNavigate={handleNavigate}
+          completionSummary={completion_summary}
+          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          sidebarOpen={sidebarOpen}
+          isBookmarked={isBookmarked}
+          onToggleBookmark={handleToggleBookmark}
+          isLessonCompleted={current_lesson?.is_completed}
+          onToggleCompletion={handleToggleManualCompletion}
         />
+
+        {/* 2. Main Player Body (Video + Tabs on Left, Course Sidebar on Right) */}
+        <div className="PlayerBody">
+          <main className="MainContentArea">
+            {/* Video Player Container */}
+            <PlayerContainer
+              lesson={current_lesson}
+              nextLesson={next_lesson}
+              permissions={permissions}
+              courseSlug={course?.slug}
+              onProgressUpdated={handleProgressUpdated}
+              onRegisterPlayerCallbacks={handleRegisterPlayerCallbacks}
+            />
+
+            {/* Overview, Notes, Resources & Discussion Tabs */}
+            <PlayerTabs
+              course={course}
+              currentLesson={current_lesson}
+              getCurrentTime={handleGetCurrentTime}
+              onSeek={handleSeek}
+              completionSummary={completion_summary}
+            />
+          </main>
+
+          {/* Course Chapter Sidebar */}
+          <LessonSidebar
+            sections={sections}
+            currentLessonId={current_lesson?.id}
+            courseSlug={course?.slug}
+            isEnrolled={enrollment?.is_enrolled}
+            isOpen={sidebarOpen}
+          />
+        </div>
       </div>
-    </div>
+    </CommunicationProvider>
   );
 }

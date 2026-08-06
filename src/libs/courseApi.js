@@ -28,11 +28,14 @@ const courseApi = {
 
   getLessonPlayer: (lessonId) => apiClient.get(`lesson/${lessonId}/player`),
 
-  saveLessonProgress: (lessonId, positionSeconds, durationSeconds) =>
+  saveLessonProgress: (lessonId, positionSeconds, durationSeconds, realWatchedSeconds = null) =>
     apiClient.post(`lesson/${lessonId}/progress`, {
       position_seconds: Math.floor(positionSeconds),
       duration_seconds: durationSeconds ? Math.floor(durationSeconds) : null,
+      real_watched_seconds: realWatchedSeconds ? Math.floor(realWatchedSeconds) : null,
     }),
+
+  toggleLessonCompletion: (lessonId) => apiClient.post(`lesson/${lessonId}/toggle-complete`),
 
   getLessonResume: (lessonId) => apiClient.post(`lesson/${lessonId}/resume`),
 

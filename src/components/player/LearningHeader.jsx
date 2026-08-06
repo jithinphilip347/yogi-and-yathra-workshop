@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight, FiBookmark } from 'react-icons/fi';
+import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight, FiBookmark, FiCheckCircle } from 'react-icons/fi';
 
 export default function LearningHeader({
   courseTitle,
@@ -15,7 +15,10 @@ export default function LearningHeader({
   onToggleSidebar,
   sidebarOpen,
   isBookmarked,
-  onToggleBookmark
+  onToggleBookmark,
+  isLessonCompleted,
+  onToggleCompletion,
+  completionMode = 'auto_and_manual'
 }) {
   const router = useRouter();
 
@@ -30,6 +33,8 @@ export default function LearningHeader({
   const percentage = completionSummary?.percentage ?? 0;
   const completedCount = completionSummary?.completed_count ?? 0;
   const totalLessons = completionSummary?.total_lessons ?? 0;
+
+  const showManualButton = onToggleCompletion && completionMode !== 'auto_only';
 
   return (
     <header className="LearningHeader">
@@ -53,6 +58,31 @@ export default function LearningHeader({
       </div>
 
       <div className="HeaderRight" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        {/* Manual Mark Complete Button */}
+        {showManualButton && (
+          <button
+            onClick={onToggleCompletion}
+            title={isLessonCompleted ? "Lesson Completed (Click to reset)" : "Mark Lesson as Complete"}
+            style={{
+              padding: '7px 14px',
+              borderRadius: '8px',
+              border: isLessonCompleted ? '1px solid #10b981' : '1px solid #cbd5e1',
+              backgroundColor: isLessonCompleted ? 'rgba(16, 185, 129, 0.12)' : '#ffffff',
+              color: isLessonCompleted ? '#059669' : '#475569',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              cursor: 'pointer',
+              fontSize: '12.5px',
+              fontWeight: '600',
+              transition: 'all 0.2s ease'
+            }}
+          >
+            <FiCheckCircle style={{ fontSize: '15px', color: isLessonCompleted ? '#10b981' : '#94a3b8' }} />
+            <span>{isLessonCompleted ? "Completed" : "Mark as Complete"}</span>
+          </button>
+        )}
+
         {/* Bookmark Toggle Button */}
         <button
           onClick={onToggleBookmark}

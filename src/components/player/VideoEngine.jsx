@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   FiPlay, 
@@ -16,13 +16,22 @@ import {
   FiRefreshCw 
 } from 'react-icons/fi';
 
-import courseApi from '@/libs/courseApi';
+import { playerDebug } from '@/libs/playbackSync';
 import HTML5Provider from './providers/HTML5Provider';
 import HLSProvider from './providers/HLSProvider';
 import YouTubeProvider from './providers/YouTubeProvider';
 import VimeoProvider from './providers/VimeoProvider';
+import ControlBar from './ControlBar';
+import PlaybackDebugOverlay from './PlaybackDebugOverlay';
 
-const SPEED_OPTIONS = [0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
+import { usePlaybackSession } from './controllers/usePlaybackSession';
+import { usePlaybackController } from './controllers/usePlaybackController';
+import { useSeekController } from './controllers/useSeekController';
+import { usePlaybackResume } from './controllers/usePlaybackResume';
+import { usePlaybackProgress } from './controllers/usePlaybackProgress';
+import { useProviderController } from './controllers/useProviderController';
+import { useAutoNextController } from './controllers/useAutoNextController';
+import { useAnalyticsController } from './controllers/useAnalyticsController';
 
 export default function VideoEngine({
   lesson,
@@ -36,199 +45,129 @@ export default function VideoEngine({
   const playerContainerRef = useRef(null);
   const videoRef = useRef(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
-  const [playbackSpeed, setPlaybackSpeed] = useState(1.0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [isPiPActive, setIsPiPActive] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
+  // Phase 4/6/7 instrumentation refs
+  const prevVideoElementRef = useRef(null);
+  const prevLessonRef = useRef(null);
+  const lastDebugSecondRef = useRef(-1);
+  const lastProgressDebugRef = useRef(0);
 
-  const [activeStreamUrl, setActiveStreamUrl] = useState('');
-  const [activeProvider, setActiveProvider] = useState('html5');
-  const [activeFormat, setActiveFormat] = useState('mp4');
+  // 1. Session Controller
+  const {
+    playbackSessionRef,
+    initSession,
+  } = usePlaybackSession();
 
-  // Auto-Next Countdown
-  const [autoNextCountdown, setAutoNextCountdown] = useState(null);
-  const countdownTimerRef = useRef(null);
+  // 2. Analytics Controller
+  const { logAnalytics } = useAnalyticsController({ lessonId: lesson?.id });
 
-  const resolveStreamUrl = (url) => {
-    if (!url || typeof url !== 'string') return '';
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    const cleanPath = url.startsWith('/') ? url.substring(1) : url;
-    if (cleanPath.startsWith('storage/')) {
-      return `http://localhost:8000/${cleanPath}`;
-    }
-    return `http://localhost:8000/storage/${cleanPath}`;
-  };
+  // 3. Playback Controller
+  const {
+    isPlaying,
+    setIsPlaying,
+    currentTime,
+    setCurrentTime,
+    duration,
+    setDuration,
+    volume,
+    isMuted,
+    playbackSpeed,
+    isFullscreen,
+    isPiPActive,
+    isLoading,
+    setIsLoading,
+    hasError,
+    setHasError,
+    togglePlay,
+    handleVolumeChange,
+    toggleMute,
+    handleSpeedChange,
+    toggleFullscreen,
+    togglePiP,
+  } = usePlaybackController({ videoRef, playerContainerRef, logAnalytics });
 
-  function strtolower(str) {
-    return typeof str === 'string' ? str.toLowerCase() : '';
-  }
+  // 4. Resume Controller
+  const {
+    hasResumedLessonIdRef,
+    attemptResume,
+  } = usePlaybackResume();
 
-  // Fetch signed stream payload or resolve direct URL on lesson change
-  useEffect(() => {
-    if (!lesson?.id) return;
-    let isMounted = true;
-    setIsLoading(true);
-    setHasError(false);
-    setIsPlaying(false);
-    setCurrentTime(0);
-    setAutoNextCountdown(null);
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+  // 5. Progress Controller
+  const {
+    lastSavedPosRef,
+    activeWatchedSecondsRef,
+    lastTimeRef,
+    progressTimerRef,
+    flushProgress,
+  } = usePlaybackProgress({
+    lesson,
+    duration,
+    isPlaying,
+    videoRef,
+    playbackSessionRef,
+    onProgressUpdated,
+  });
 
-    courseApi.getLessonStream(lesson.id)
-      .then((res) => {
-        const data = res.data?.data || res.data;
-        if (isMounted && data?.stream_url) {
-          setActiveStreamUrl(resolveStreamUrl(data.stream_url));
-          setActiveProvider(data.provider || 'html5');
-          setActiveFormat(data.format || 'mp4');
-          setIsLoading(false);
-        } else if (isMounted) {
-          const direct = resolveStreamUrl(lesson.video_url);
-          setActiveStreamUrl(direct);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        console.warn("Stream endpoint fallback to direct URL:", err);
-        if (isMounted) {
-          if (lesson?.video_url) {
-            setActiveStreamUrl(resolveStreamUrl(lesson.video_url));
-            setIsLoading(false);
-          } else {
-            setHasError(true);
-            setIsLoading(false);
-          }
-        }
-      });
+  // 6. Seek Controller
+  const {
+    isSeekingRef,
+    seekingTime,
+    pendingSeekRef,
+    committedSeekRef,
+    seekGuardTimerRef,
+    applySeek,
+    requestSeek,
+    applyPendingSeek,
+    handleSeekStart,
+    handleSeeking,
+    handleSeeked,
+    handleSeekChange,
+    handleSeekCommit,
+    handleSeekPreviewCommit,
+  } = useSeekController({
+    videoRef,
+    playbackSessionRef,
+    lessonId: lesson?.id,
+    setCurrentTime,
+    hasResumedLessonIdRef,
+    flushProgress,
+    logAnalytics,
+  });
 
-    return () => { isMounted = false; };
-  }, [lesson?.id, lesson?.video_url]);
+  // 7. Auto Next Controller
+  const {
+    autoNextCountdown,
+    setAutoNextCountdown,
+    countdownTimerRef,
+    triggerAutoNext,
+    cancelAutoNext,
+    handlePlayNextImmediately,
+  } = useAutoNextController({ nextLesson, courseSlug, router });
 
-  useEffect(() => {
-    if (typeof onRegisterPlayerCallbacks === 'function') {
-      onRegisterPlayerCallbacks({
-        getCurrentTime: () => currentTime,
-        seekTo: (seconds) => {
-          if (videoRef.current) {
-            videoRef.current.currentTime = seconds;
-            setCurrentTime(seconds);
-            videoRef.current.play().catch(() => {});
-          }
-        }
-      });
-    }
-  }, [currentTime, onRegisterPlayerCallbacks]);
-
-  const rawUrl = activeStreamUrl || resolveStreamUrl(lesson?.video_url);
-  const lessonType = strtolower(lesson?.type || '');
-  let providerType = activeProvider || 'html5';
-  let formatType = activeFormat || 'mp4';
-
-  if (rawUrl.includes('.m3u8') || lessonType === 'hls') {
-    providerType = 'hls';
-    formatType = 'm3u8';
-  } else if (rawUrl.includes('youtube.com') || rawUrl.includes('youtu.be') || lessonType === 'youtube') {
-    providerType = 'youtube';
-    formatType = 'youtube';
-  } else if (rawUrl.includes('vimeo.com') || lessonType === 'vimeo') {
-    providerType = 'vimeo';
-    formatType = 'vimeo';
-  } else if (rawUrl.includes('.mov')) {
-    providerType = 'html5';
-    formatType = 'mov';
-  } else if (rawUrl.includes('.webm')) {
-    providerType = 'html5';
-    formatType = 'webm';
-  }
-
-  // Unified Play / Pause
-  const togglePlay = useCallback(() => {
-    if (!videoRef.current) return;
-    if (isPlaying) {
-      videoRef.current.pause();
-    } else {
-      videoRef.current.play().catch(() => {});
-    }
-  }, [isPlaying]);
-
-  // Unified Seek
-  const handleSeek = (e) => {
-    const targetTime = parseFloat(e.target.value);
-    setCurrentTime(targetTime);
-    if (videoRef.current) {
-      videoRef.current.currentTime = targetTime;
-    }
-  };
-
-  // Unified Volume
-  const handleVolumeChange = (e) => {
-    const newVol = parseFloat(e.target.value);
-    setVolume(newVol);
-    setIsMuted(newVol === 0);
-    if (videoRef.current) {
-      videoRef.current.volume = newVol;
-      videoRef.current.muted = newVol === 0;
-    }
-  };
-
-  const toggleMute = () => {
-    if (!videoRef.current) return;
-    const nextMuted = !isMuted;
-    setIsMuted(nextMuted);
-    videoRef.current.muted = nextMuted;
-  };
-
-  // Unified Speed Selector
-  const handleSpeedChange = (speed) => {
-    setPlaybackSpeed(speed);
-    if (videoRef.current) {
-      videoRef.current.playbackRate = speed;
-    }
-    courseApi.logPlayerEvent('speed_change', lesson?.id, { speed }).catch(() => {});
-  };
-
-  // Fullscreen Toggle
-  const toggleFullscreen = () => {
-    if (!playerContainerRef.current) return;
-    if (!document.fullscreenElement) {
-      if (playerContainerRef.current.requestFullscreen) {
-        playerContainerRef.current.requestFullscreen();
-        setIsFullscreen(true);
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-        setIsFullscreen(false);
-      }
-    }
-  };
-
-  // Picture-in-Picture Toggle
-  const togglePiP = async () => {
-    if (!videoRef.current) return;
-    try {
-      if (document.pictureInPictureElement) {
-        await document.exitPictureInPicture();
-        setIsPiPActive(false);
-      } else if (document.pictureInPictureEnabled) {
-        await videoRef.current.requestPictureInPicture();
-        setIsPiPActive(true);
-      }
-    } catch (err) {
-      console.warn('PiP not supported or failed:', err);
-    }
-  };
+  // 8. Provider Controller
+  const {
+    rawUrl,
+    providerType,
+    formatType,
+  } = useProviderController({
+    lesson,
+    setIsLoading,
+    setHasError,
+    setIsPlaying,
+    setCurrentTime,
+    setAutoNextCountdown,
+    countdownTimerRef,
+    initSession,
+    lastSavedPosRef,
+    activeWatchedSecondsRef,
+    lastTimeRef,
+    pendingSeekRef,
+    committedSeekRef,
+    seekGuardTimerRef,
+  });
 
   // Keyboard Shortcuts Handler
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Ignore if user is typing in form inputs
       if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target?.tagName)) return;
 
       switch (e.code) {
@@ -239,11 +178,11 @@ export default function VideoEngine({
           break;
         case 'ArrowLeft':
           e.preventDefault();
-          if (videoRef.current) videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 5);
+          if (videoRef.current) requestSeek(Math.max(0, videoRef.current.currentTime - 5), 'keyboard-back');
           break;
         case 'ArrowRight':
           e.preventDefault();
-          if (videoRef.current) videoRef.current.currentTime = Math.min(duration, videoRef.current.currentTime + 5);
+          if (videoRef.current) requestSeek(Math.min(duration, videoRef.current.currentTime + 5), 'keyboard-forward');
           break;
         case 'KeyF':
           e.preventDefault();
@@ -260,89 +199,159 @@ export default function VideoEngine({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [togglePlay, duration]);
+  }, [togglePlay, duration, toggleFullscreen, toggleMute, requestSeek]);
 
-  // Video Events
-  const handleLoadedMetadata = () => {
-    setIsLoading(false);
-    if (videoRef.current) {
-      setDuration(videoRef.current.duration || 0);
-      videoRef.current.playbackRate = playbackSpeed;
+  // Callback registration
+  useEffect(() => {
+    if (typeof onRegisterPlayerCallbacks === 'function') {
+      onRegisterPlayerCallbacks({
+        getCurrentTime: () => (videoRef.current ? videoRef.current.currentTime || 0 : 0),
+        seekTo: (seconds) => {
+          requestSeek(seconds, 'tabs-seek');
+          if (videoRef.current) {
+            videoRef.current.play().catch(() => {});
+          }
+        }
+      });
     }
-  };
+  }, [onRegisterPlayerCallbacks, requestSeek]);
 
-  const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      setCurrentTime(videoRef.current.currentTime || 0);
+  // Phase 4 — video element identity
+  useEffect(() => {
+    const el = videoRef.current;
+    const changed = el !== prevVideoElementRef.current;
+    prevVideoElementRef.current = el;
+    playerDebug.videoIdentity({ lessonId: lesson?.id, videoEl: el, elementChanged: changed });
+  });
+
+  // Phase 3/7 — lesson object identity
+  useEffect(() => {
+    const prev = prevLessonRef.current;
+    prevLessonRef.current = lesson;
+    if (prev && lesson && prev !== lesson) {
+      const changedFields = ['id', 'title', 'last_position_seconds', 'percentage_watched', 'watched_seconds', 'status', 'is_completed']
+        .filter((f) => prev[f] !== lesson[f]);
+      playerDebug.lessonIdentity({ lessonId: lesson.id, prevRef: prev, nextRef: lesson, changedFields });
+    }
+  });
+
+  // Video Media Events
+  const handleLoadedMetadata = useCallback(() => {
+    playerDebug.mediaEvent({ name: 'loadedmetadata', video: videoRef.current });
+    attemptResume({
+      lesson,
+      videoRef,
+      playbackSessionRef,
+      applySeek,
+      applyPendingSeek,
+      setCurrentTime,
+      setDuration,
+      playbackSpeed,
+    });
+  }, [lesson, videoRef, playbackSessionRef, applySeek, applyPendingSeek, setCurrentTime, setDuration, playbackSpeed, attemptResume]);
+
+  const handleTimeUpdate = useCallback(() => {
+    const session = playbackSessionRef.current;
+    if (session) session.resumed = true;
+
+    if (videoRef.current && !isSeekingRef.current && !videoRef.current.seeking) {
+      const vTime = videoRef.current.currentTime || 0;
+      const prev = lastTimeRef.current;
+      const delta = vTime - prev;
+
+      if (delta > 0 && delta < 3 && !videoRef.current.paused) {
+        activeWatchedSecondsRef.current += delta;
+      }
+      lastTimeRef.current = vTime;
+
+      const dbgSec = Math.floor(vTime);
+      if (dbgSec !== lastDebugSecondRef.current) {
+        lastDebugSecondRef.current = dbgSec;
+        playerDebug.mediaEvent({ name: 'timeupdate', video: videoRef.current });
+      }
+
+      setCurrentTime(vTime);
       setIsPlaying(!videoRef.current.paused);
     }
-  };
+  }, [videoRef, isSeekingRef, playbackSessionRef, lastTimeRef, activeWatchedSecondsRef, setCurrentTime, setIsPlaying]);
 
-  const handlePause = () => {
+  const handlePause = useCallback(() => {
     setIsPlaying(false);
-  };
+    playerDebug.mediaEvent({ name: 'pause', video: videoRef.current });
+    flushProgress();
+    logAnalytics('pause', { time: currentTime });
+  }, [setIsPlaying, videoRef, flushProgress, logAnalytics, currentTime]);
 
-  const handleEnded = () => {
+  const handleEnded = useCallback(() => {
     setIsPlaying(false);
+    playerDebug.mediaEvent({ name: 'ended', video: videoRef.current });
+    const finalDur = Math.floor(videoRef.current?.duration || duration || 0);
+    flushProgress(finalDur);
+    logAnalytics('ended');
+    triggerAutoNext();
+  }, [setIsPlaying, videoRef, duration, flushProgress, logAnalytics, triggerAutoNext]);
 
-    // Auto Next Countdown
-    if (nextLesson && courseSlug) {
-      setAutoNextCountdown(5);
-      if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+  const handleLoadedData = useCallback(() => {
+    playerDebug.mediaEvent({ name: 'loadeddata', video: videoRef.current });
+  }, [videoRef]);
 
-      countdownTimerRef.current = setInterval(() => {
-        setAutoNextCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(countdownTimerRef.current);
-            router.push(`/course/${courseSlug}/learn/${nextLesson.id}`);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+  const handleCanPlay = useCallback(() => {
+    setIsLoading(false);
+    playerDebug.mediaEvent({ name: 'canplay', video: videoRef.current });
+    applyPendingSeek();
+  }, [videoRef, setIsLoading, applyPendingSeek]);
+
+  const handlePlaying = useCallback(() => {
+    setIsLoading(false);
+    setIsPlaying(true);
+    playerDebug.mediaEvent({ name: 'playing', video: videoRef.current });
+  }, [videoRef, setIsLoading, setIsPlaying]);
+
+  const handleWaiting = useCallback(() => {
+    playerDebug.mediaEvent({ name: 'waiting', video: videoRef.current });
+  }, [videoRef]);
+
+  const handleDurationChange = useCallback(() => {
+    playerDebug.mediaEvent({ name: 'durationchange', video: videoRef.current });
+  }, [videoRef]);
+
+  const handleProgress = useCallback(() => {
+    const nowMs = Date.now();
+    if (nowMs - lastProgressDebugRef.current > 2000) {
+      lastProgressDebugRef.current = nowMs;
+      playerDebug.mediaEvent({ name: 'progress', video: videoRef.current });
     }
-  };
+  }, [videoRef]);
 
-  const cancelAutoNext = () => {
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-    setAutoNextCountdown(null);
-  };
-
-  const handlePlayNextImmediately = () => {
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-    if (nextLesson && courseSlug) {
-      router.push(`/course/${courseSlug}/learn/${nextLesson.id}`);
-    }
-  };
-
-  const handleRetry = () => {
+  const handleRetry = useCallback(() => {
     setHasError(false);
     setIsLoading(true);
     if (videoRef.current) {
       videoRef.current.load();
     }
-  };
-
-  const formatTime = (secs) => {
-    if (!secs || isNaN(secs)) return '00:00';
-    const m = Math.floor(secs / 60);
-    const s = Math.floor(secs % 60);
-    return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
-  };
+  }, [setHasError, setIsLoading, videoRef]);
 
   return (
     <div
       ref={playerContainerRef}
-      className="VideoEngineContainer"
-      tabIndex={0}
-      style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', backgroundColor: '#000', overflow: 'hidden' }}
+      className={`VideoEngineRoot ${isFullscreen ? 'IsFullscreen' : ''}`}
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        backgroundColor: '#000000',
+        overflow: 'hidden',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
     >
-      {/* Auto Next Countdown Modal */}
-      {autoNextCountdown !== null && autoNextCountdown > 0 && (
-        <div className="AutoNextOverlay" style={{
+      {/* Loading Overlay */}
+      {isLoading && !hasError && (
+        <div className="EngineLoadingOverlay" style={{
           position: 'absolute',
           inset: 0,
-          backgroundColor: 'rgba(11, 15, 25, 0.92)',
+          backgroundColor: 'rgba(11, 15, 25, 0.7)',
           zIndex: 30,
           display: 'flex',
           flexDirection: 'column',
@@ -350,22 +359,51 @@ export default function VideoEngine({
           justifyContent: 'center',
           color: '#ffffff'
         }}>
-          <h4 style={{ fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px', color: 'var(--primaryColor, #874429)', marginBottom: '8px' }}>
-            Up Next in {autoNextCountdown}s
-          </h4>
-          <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '20px', textAlign: 'center', padding: '0 20px' }}>
+          <FiRefreshCw className="SpinIcon" style={{ fontSize: '32px', marginBottom: '12px' }} />
+          <span style={{ fontSize: '14px', fontWeight: '500' }}>Loading Video Stream...</span>
+        </div>
+      )}
+
+      {/* Auto-Next Countdown Overlay */}
+      {autoNextCountdown !== null && (
+        <div className="AutoNextOverlay" style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundColor: 'rgba(11, 15, 25, 0.92)',
+          zIndex: 40,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#ffffff',
+          textAlign: 'center',
+          padding: '24px'
+        }}>
+          <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '8px' }}>Up Next</h3>
+          <p style={{ fontSize: '15px', color: '#cbd5e1', marginBottom: '16px', maxWidth: '400px' }}>
             {nextLesson?.title || 'Next Lesson'}
-          </h3>
+          </p>
+
+          <div style={{
+            fontSize: '48px',
+            fontWeight: '700',
+            color: 'var(--primaryColor, #874429)',
+            marginBottom: '24px'
+          }}>
+            {autoNextCountdown}s
+          </div>
+
           <div style={{ display: 'flex', gap: '12px' }}>
             <button
               onClick={handlePlayNextImmediately}
               style={{
-                backgroundColor: 'var(--primaryColor, #874429)',
-                color: '#fff',
-                border: 'none',
                 padding: '10px 20px',
-                borderRadius: '6px',
+                backgroundColor: 'var(--primaryColor, #874429)',
+                color: '#ffffff',
+                border: 'none',
+                borderRadius: '8px',
                 fontWeight: '600',
+                fontSize: '14px',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
@@ -378,12 +416,13 @@ export default function VideoEngine({
             <button
               onClick={cancelAutoNext}
               style={{
+                padding: '10px 20px',
                 backgroundColor: 'transparent',
                 color: '#9ca3af',
-                border: '1px solid #374151',
-                padding: '10px 20px',
-                borderRadius: '6px',
+                border: '1px solid #4b5563',
+                borderRadius: '8px',
                 fontWeight: '500',
+                fontSize: '14px',
                 cursor: 'pointer'
               }}
             >
@@ -416,12 +455,13 @@ export default function VideoEngine({
           <button
             onClick={handleRetry}
             style={{
-              backgroundColor: 'var(--primaryColor, #874429)',
+              padding: '10px 20px',
+              backgroundColor: '#10b981',
               color: '#ffffff',
               border: 'none',
-              padding: '8px 18px',
               borderRadius: '6px',
               fontWeight: '600',
+              fontSize: '14px',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -440,7 +480,15 @@ export default function VideoEngine({
           videoRef={videoRef}
           src={rawUrl}
           onLoadedMetadata={handleLoadedMetadata}
+          onLoadedData={handleLoadedData}
+          onCanPlay={handleCanPlay}
+          onPlaying={handlePlaying}
+          onWaiting={handleWaiting}
+          onDurationChange={handleDurationChange}
+          onProgress={handleProgress}
           onTimeUpdate={handleTimeUpdate}
+          onSeeking={handleSeeking}
+          onSeeked={handleSeeked}
           onPause={handlePause}
           onEnded={handleEnded}
           onError={() => setHasError(true)}
@@ -455,7 +503,15 @@ export default function VideoEngine({
           src={rawUrl}
           format={formatType}
           onLoadedMetadata={handleLoadedMetadata}
+          onLoadedData={handleLoadedData}
+          onCanPlay={handleCanPlay}
+          onPlaying={handlePlaying}
+          onWaiting={handleWaiting}
+          onDurationChange={handleDurationChange}
+          onProgress={handleProgress}
           onTimeUpdate={handleTimeUpdate}
+          onSeeking={handleSeeking}
+          onSeeked={handleSeeked}
           onPause={handlePause}
           onEnded={handleEnded}
           onError={() => setHasError(true)}
@@ -464,91 +520,36 @@ export default function VideoEngine({
 
       {/* Custom Control Bar for Direct & HLS Streams */}
       {['html5', 'hls'].includes(providerType) && !hasError && (
-        <div className="CustomControlsBar" style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0))',
-          padding: '12px 18px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          zIndex: 25,
-          transition: 'opacity 0.2s'
-        }}>
-          {/* Progress Seek Bar */}
-          <input
-            type="range"
-            min={0}
-            max={duration || 100}
-            value={currentTime}
-            onChange={handleSeek}
-            style={{ width: '100%', accentColor: 'var(--primaryColor, #874429)', cursor: 'pointer' }}
-          />
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#e5e7eb' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-              {/* Play / Pause */}
-              <button onClick={togglePlay} style={{ background: 'none', border: 'none', color: '#fff', fontSize: '18px', cursor: 'pointer' }}>
-                {isPlaying ? <FiPause /> : <FiPlay />}
-              </button>
-
-              {/* Volume */}
-              <button onClick={toggleMute} style={{ background: 'none', border: 'none', color: '#fff', fontSize: '18px', cursor: 'pointer' }}>
-                {isMuted ? <FiVolumeX /> : <FiVolume2 />}
-              </button>
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.05}
-                value={isMuted ? 0 : volume}
-                onChange={handleVolumeChange}
-                style={{ width: '60px', accentColor: 'var(--primaryColor, #874429)', cursor: 'pointer' }}
-              />
-
-              {/* Time Display */}
-              <span style={{ fontSize: '12px', color: '#9ca3af', fontFamily: 'monospace' }}>
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-              {/* Speed Selector */}
-              <select
-                value={playbackSpeed}
-                onChange={(e) => handleSpeedChange(parseFloat(e.target.value))}
-                style={{
-                  backgroundColor: '#1f2937',
-                  color: '#fff',
-                  border: '1px solid #374151',
-                  borderRadius: '4px',
-                  padding: '2px 6px',
-                  fontSize: '12px',
-                  cursor: 'pointer'
-                }}
-              >
-                {SPEED_OPTIONS.map((speed) => (
-                  <option key={speed} value={speed}>
-                    {speed}x
-                  </option>
-                ))}
-              </select>
-
-              {/* PiP */}
-              <button onClick={togglePiP} title="Picture in Picture" style={{ background: 'none', border: 'none', color: '#fff', fontSize: '16px', cursor: 'pointer' }}>
-                <FiAirplay />
-              </button>
-
-              {/* Fullscreen */}
-              <button onClick={toggleFullscreen} title="Fullscreen" style={{ background: 'none', border: 'none', color: '#fff', fontSize: '16px', cursor: 'pointer' }}>
-                {isFullscreen ? <FiMinimize /> : <FiMaximize />}
-              </button>
-            </div>
-          </div>
-        </div>
+        <ControlBar
+          isPlaying={isPlaying}
+          currentTime={currentTime}
+          seekingTime={seekingTime}
+          duration={duration}
+          volume={volume}
+          isMuted={isMuted}
+          playbackSpeed={playbackSpeed}
+          isFullscreen={isFullscreen}
+          isPiPActive={isPiPActive}
+          togglePlay={togglePlay}
+          handleVolumeChange={handleVolumeChange}
+          toggleMute={toggleMute}
+          handleSpeedChange={handleSpeedChange}
+          toggleFullscreen={toggleFullscreen}
+          togglePiP={togglePiP}
+          handleSeekStart={handleSeekStart}
+          handleSeekChange={handleSeekChange}
+          handleSeekCommit={handleSeekCommit}
+          handleSeekPreviewCommit={handleSeekPreviewCommit}
+        />
       )}
+
+      {/* Development Single Source of Truth Debug Overlay (Ctrl+Shift+D to toggle) */}
+      <PlaybackDebugOverlay
+        videoRef={videoRef}
+        playbackSessionRef={playbackSessionRef}
+        providerType={providerType}
+        lessonId={lesson?.id}
+      />
     </div>
   );
 }

@@ -1,108 +1,68 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { 
-  FiMessageSquare, FiClock, FiSend, FiThumbsUp, FiSmile, FiUserCheck, FiUsers, FiPaperclip 
+  FiMessageSquare, FiClock, FiSend, FiThumbsUp, FiSmile, FiUserCheck, FiUsers 
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
-import communicationApi from '@/libs/communicationApi';
-import { subscribeToCourseChannel, getEcho } from '@/libs/echo';
-import { MEDIA_BASE_URL } from '@/utils/constants';
+import { useCommunication } from '@/communication/CommunicationStore';
+import { useCommunicationActions } from '@/communication/useCommunicationActions';
+import {
+  selectSortedMessages,
+  selectActiveThread,
+  selectTypingUsers,
+} from '@/communication/selectors';
 
+/**
+ * DiscussionTab
+ *
+ * Community chat experience for Course Player.
+ * ALL realtime state is owned by CommunicationStore (Context + useReducer).
+ * This component reads from the store via selectors and writes via actions.
+ * No direct Echo/WebSocket usage here.
+ */
 export default function DiscussionTab({ course, currentLesson, getCurrentTime, onSeek }) {
   const { user } = useSelector((state) => state.auth);
+  const { state } = useCommunication();
+  const actions = useCommunicationActions();
 
-  const [loading, setLoading] = useState(true);
-  const [threads, setThreads] = useState([]);
-  const [activeThreadId, setActiveThreadId] = useState(null);
-  const [activeMessages, setActiveMessages] = useState([]);
+  // Local UI-only state (not communication state)
   const [hoveredMsgId, setHoveredMsgId] = useState(null);
-
-  // Composer State
   const [composerMessage, setComposerMessage] = useState('');
   const [attachTimestamp, setAttachTimestamp] = useState(false);
   const [capturedTime, setCapturedTime] = useState(0);
   const [isPosting, setIsPosting] = useState(false);
 
   const feedBottomRef = useRef(null);
-  const feedContainerRef = useRef(null);
 
-  // Lesson Awareness: Reset & Load when lesson changes
+  // ─── Selectors ─────────────────────────────────────────────────────────
+  const activeThreadId = state.activeThreadId;
+  const threads        = state.threads;
+  const loading        = state.loading;
+  const messages       = selectSortedMessages(state, activeThreadId);
+  const activeThread   = selectActiveThread(state);
+  const typingUsers    = selectTypingUsers(state, activeThreadId);
+
+  // ─── Load threads on course/lesson context change ──────────────────────
   useEffect(() => {
-    if (course?.id || currentLesson?.id) {
-      setActiveThreadId(null);
-      setActiveMessages([]);
-      fetchDiscussions();
+    const entityType = currentLesson?.id ? 'lesson' : 'course';
+    const entityId   = currentLesson?.id  ? currentLesson.id : course?.id;
+    if (entityId) {
+      actions.loadThreads(entityType, entityId);
     }
   }, [course?.id, currentLesson?.id]);
 
-  // WebSocket Listener for Real-Time Messages
+  // ─── Auto-scroll when new messages arrive ─────────────────────────────
   useEffect(() => {
-    if (!course?.id) return;
-
-    const channel = subscribeToCourseChannel(course.id, {
-      onMessageCreated: (event) => {
-        if (activeThreadId && Number(event.threadId) === Number(activeThreadId)) {
-          fetchThreadMessages(activeThreadId, false);
-        } else {
-          fetchDiscussions();
-        }
-      },
-      onThreadStatusUpdated: () => {
-        fetchDiscussions();
-      },
-    });
-
-    return () => {
-      const echo = getEcho();
-      if (echo) echo.leave(`course.${course.id}`);
-    };
-  }, [course?.id, activeThreadId]);
-
-  const fetchDiscussions = async () => {
-    setLoading(true);
-    try {
-      const entityType = currentLesson?.id ? 'lesson' : 'course';
-      const entityId = currentLesson?.id ? currentLesson.id : course?.id;
-
-      if (entityId) {
-        const threadsRes = await communicationApi.getThreads({
-          entity_type: entityType,
-          entity_id: entityId,
-        });
-        const list = threadsRes?.data || [];
-        setThreads(list);
-        if (list.length > 0) {
-          setActiveThreadId(list[0].id);
-          fetchThreadMessages(list[0].id, true);
-        }
-      }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+    if (messages.length > 0) {
+      setTimeout(() => {
+        feedBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, 80);
     }
-  };
+  }, [messages.length]);
 
-  const fetchThreadMessages = async (threadId, autoScroll = true) => {
-    try {
-      const res = await communicationApi.getThreadMessages(threadId);
-      setActiveMessages(res?.data || []);
-      if (autoScroll) {
-        scrollToBottom();
-      }
-    } catch (err) {
-      toast.error('Failed to load conversation');
-    }
-  };
-
-  const scrollToBottom = () => {
-    setTimeout(() => {
-      feedBottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  };
-
+  // ─── Handlers ─────────────────────────────────────────────────────────
   const handleCaptureTimestamp = () => {
     const time = getCurrentTime ? Math.floor(getCurrentTime()) : 0;
     setCapturedTime(time);
@@ -117,36 +77,31 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
     setIsPosting(true);
     try {
       if (activeThreadId && threads.length > 0) {
-        await communicationApi.createReply(activeThreadId, {
+        // Reply to existing thread
+        const result = await actions.sendMessage({
+          threadId: activeThreadId,
           body: composerMessage,
-          ...(attachTimestamp && capturedTime > 0 ? {
-            video_timestamp_seconds: capturedTime,
-            timestamp_label: formatSeconds(capturedTime)
-          } : {})
+          videoTimestampSeconds: attachTimestamp && capturedTime > 0 ? capturedTime : null,
+          timestampLabel: attachTimestamp && capturedTime > 0 ? formatSeconds(capturedTime) : null,
+          currentUser: user,
         });
-        fetchThreadMessages(activeThreadId, true);
+        if (!result.success) toast.error('Failed to send message');
       } else {
-        const payload = {
+        // Create new thread
+        const result = await actions.createThread({
           entity_type: currentLesson ? 'lesson' : 'course',
-          entity_id: currentLesson ? currentLesson.id : course.id,
-          body: composerMessage,
+          entity_id:   currentLesson ? currentLesson.id : course.id,
+          body:        composerMessage,
           ...(attachTimestamp && capturedTime > 0 ? {
             video_timestamp_seconds: capturedTime,
-            timestamp_label: formatSeconds(capturedTime)
-          } : {})
-        };
-        const created = await communicationApi.createThread(payload);
-        const newThread = created?.data;
-        fetchDiscussions();
-        if (newThread?.id) {
-          setActiveThreadId(newThread.id);
-          fetchThreadMessages(newThread.id, true);
-        }
+            timestamp_label: formatSeconds(capturedTime),
+          } : {}),
+        });
+        if (!result.success) toast.error('Failed to start discussion');
       }
 
       setComposerMessage('');
       setAttachTimestamp(false);
-      toast.success('Message posted to Community!');
     } catch (err) {
       toast.error('Failed to send message');
     } finally {
@@ -154,13 +109,8 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
     }
   };
 
-  const handleToggleReaction = async (messageId, reaction) => {
-    try {
-      await communicationApi.toggleReaction(messageId, reaction);
-      if (activeThreadId) fetchThreadMessages(activeThreadId, false);
-    } catch (err) {
-      toast.error('Failed to update reaction');
-    }
+  const handleToggleReaction = (messageId, reaction) => {
+    actions.toggleReaction(messageId, reaction, activeThreadId, user);
   };
 
   const formatSeconds = (sec) => {
@@ -170,16 +120,9 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  // Sort messages strictly created_at ASC
-  const sortedMessages = [...activeMessages].sort(
-    (a, b) => new Date(a.created_at || 0) - new Date(b.created_at || 0)
-  );
+  const getInitials = (name) => (name ? name.charAt(0).toUpperCase() : 'S');
 
-  const getInitials = (name) => {
-    if (!name) return 'S';
-    return name.charAt(0).toUpperCase();
-  };
-
+  // ─── Render ────────────────────────────────────────────────────────────
   return (
     <div 
       className="CommunityChatExperience" 
@@ -215,7 +158,7 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
             </h3>
             <p style={{ fontSize: '11px', color: '#64748b', margin: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ display: 'inline-block', width: '6px', height: '6px', backgroundColor: '#22c55e', borderRadius: '50%' }} />
-              Instructor Online • {sortedMessages.length} Messages
+              Instructor Online • {messages.length} Messages
             </p>
           </div>
         </div>
@@ -227,7 +170,6 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
 
       {/* Conversation Feed Area */}
       <div 
-        ref={feedContainerRef}
         style={{ 
           flex: 1, 
           padding: '16px 20px', 
@@ -242,7 +184,7 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
           <div style={{ textAlign: 'center', padding: '60px 0', color: '#94a3b8', fontSize: '13px' }}>
             Loading lesson discussion feed...
           </div>
-        ) : sortedMessages.length === 0 ? (
+        ) : messages.length === 0 ? (
           <div style={{ textAlign: 'center', margin: 'auto', color: '#64748b', padding: '40px 0' }}>
             <FiMessageSquare size={36} style={{ color: '#cbd5e1', marginBottom: '10px' }} />
             <h4 style={{ fontSize: '15px', fontWeight: '700', color: '#334155', margin: '0 0 4px 0' }}>Start the Lesson Discussion</h4>
@@ -251,24 +193,24 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
             </p>
           </div>
         ) : (
-          sortedMessages.map((msg, index) => {
+          messages.map((msg, index) => {
             const isInstructor = msg.is_instructor_answer || msg.author?.role === 'admin' || msg.author?.role === 'instructor';
             const isMe = Number(msg.user_id) === Number(user?.id);
             const alignRight = isInstructor;
 
-            const prevMsg = index > 0 ? sortedMessages[index - 1] : null;
+            const prevMsg = index > 0 ? messages[index - 1] : null;
             const prevIsInstructor = prevMsg ? (prevMsg.is_instructor_answer || prevMsg.author?.role === 'admin' || prevMsg.author?.role === 'instructor') : false;
             const isSameSenderAsPrev = prevMsg && (
               (isInstructor && prevIsInstructor) ||
               (!isInstructor && !prevIsInstructor && prevMsg.user_id === msg.user_id)
             );
 
-            const likeCount = msg.reactions?.filter(r => r.reaction === 'like').length || 0;
+            const likeCount    = msg.reactions?.filter(r => r.reaction === 'like').length || 0;
             const helpfulCount = msg.reactions?.filter(r => r.reaction === 'helpful').length || 0;
 
             return (
               <div
-                key={msg.id}
+                key={msg._clientId || msg.id}
                 onMouseEnter={() => setHoveredMsgId(msg.id)}
                 onMouseLeave={() => setHoveredMsgId(null)}
                 style={{
@@ -277,7 +219,9 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
                   alignSelf: alignRight ? 'flex-end' : 'flex-start',
                   maxWidth: '75%',
                   marginTop: isSameSenderAsPrev ? '2px' : '10px',
-                  position: 'relative'
+                  position: 'relative',
+                  opacity: msg._isPending ? 0.6 : 1,
+                  transition: 'opacity 0.2s ease',
                 }}
               >
                 {/* Sender Header with Avatar */}
@@ -319,6 +263,7 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
                       </span>
                     )}
                     <span>• {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}</span>
+                    {msg._isPending && <span style={{ color: '#94a3b8', fontSize: '10px' }}>Sending...</span>}
                   </div>
                 )}
 
@@ -334,85 +279,98 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
                     display: 'inline-block'
                   }}
                 >
-                    <p style={{ margin: 0, fontSize: '13px', lineHeight: '1.5', whiteSpace: 'pre-line' }}>
-                      {msg.body}
-                    </p>
+                  <p style={{ margin: 0, fontSize: '13px', lineHeight: '1.5', whiteSpace: 'pre-line' }}>
+                    {msg.body}
+                  </p>
 
-                    {/* Timestamp Seek Button */}
-                    {msg.video_timestamp_seconds && (
+                  {/* Timestamp Seek Button */}
+                  {msg.video_timestamp_seconds && (
+                    <button
+                      onClick={() => onSeek && onSeek(msg.video_timestamp_seconds)}
+                      style={{
+                        marginTop: '6px',
+                        padding: '3px 9px',
+                        backgroundColor: alignRight ? 'rgba(3, 105, 161, 0.1)' : isMe ? 'rgba(255,255,255,0.2)' : 'rgba(135, 68, 41, 0.1)',
+                        color: alignRight ? '#0369a1' : isMe ? '#ffffff' : 'var(--primaryColor, #874429)',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                    >
+                      <FiClock size={11} /> Seek to {msg.timestamp_label || formatSeconds(msg.video_timestamp_seconds)}
+                    </button>
+                  )}
+                </div>
+
+                {/* Reaction Bar */}
+                {!msg._isPending && (likeCount > 0 || helpfulCount > 0 || hoveredMsgId === msg.id) && (
+                  <div style={{ display: 'flex', gap: '5px', marginTop: '3px', alignSelf: alignRight ? 'flex-end' : 'flex-start' }}>
+                    {(likeCount > 0 || hoveredMsgId === msg.id) && (
                       <button
-                        onClick={() => onSeek && onSeek(msg.video_timestamp_seconds)}
+                        onClick={() => handleToggleReaction(msg.id, 'like')}
                         style={{
-                          marginTop: '6px',
-                          padding: '3px 9px',
-                          backgroundColor: alignRight ? 'rgba(3, 105, 161, 0.1)' : isMe ? 'rgba(255,255,255,0.2)' : 'rgba(135, 68, 41, 0.1)',
-                          color: alignRight ? '#0369a1' : isMe ? '#ffffff' : 'var(--primaryColor, #874429)',
-                          border: 'none',
-                          borderRadius: '6px',
-                          fontSize: '11px',
-                          fontWeight: '600',
+                          padding: '2px 7px',
+                          borderRadius: '12px',
+                          backgroundColor: '#f1f5f9',
+                          border: '1px solid #e2e8f0',
+                          fontSize: '10px',
+                          color: '#475569',
                           cursor: 'pointer',
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: '4px'
+                          gap: '3px',
+                          fontWeight: '600'
                         }}
                       >
-                        <FiClock size={11} /> Seek to {msg.timestamp_label || formatSeconds(msg.video_timestamp_seconds)}
+                        <FiThumbsUp size={10} /> {likeCount > 0 ? likeCount : 'Like'}
+                      </button>
+                    )}
+
+                    {(helpfulCount > 0 || hoveredMsgId === msg.id) && (
+                      <button
+                        onClick={() => handleToggleReaction(msg.id, 'helpful')}
+                        style={{
+                          padding: '2px 7px',
+                          borderRadius: '12px',
+                          backgroundColor: '#f1f5f9',
+                          border: '1px solid #e2e8f0',
+                          fontSize: '10px',
+                          color: '#475569',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '3px',
+                          fontWeight: '600'
+                        }}
+                      >
+                        <FiSmile size={10} /> {helpfulCount > 0 ? helpfulCount : 'Helpful'}
                       </button>
                     )}
                   </div>
+                )}
+              </div>
+            );
+          })
+        )}
 
-                  {/* Clean Reaction Bar: Only show counts if > 0 OR when hovered */}
-                  {(likeCount > 0 || helpfulCount > 0 || hoveredMsgId === msg.id) && (
-                    <div style={{ display: 'flex', gap: '5px', marginTop: '3px', alignSelf: alignRight ? 'flex-end' : 'flex-start' }}>
-                      {(likeCount > 0 || hoveredMsgId === msg.id) && (
-                        <button
-                          onClick={() => handleToggleReaction(msg.id, 'like')}
-                          style={{
-                            padding: '2px 7px',
-                            borderRadius: '12px',
-                            backgroundColor: '#f1f5f9',
-                            border: '1px solid #e2e8f0',
-                            fontSize: '10px',
-                            color: '#475569',
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '3px',
-                            fontWeight: '600'
-                          }}
-                        >
-                          <FiThumbsUp size={10} /> {likeCount > 0 ? likeCount : 'Like'}
-                        </button>
-                      )}
+        {/* Typing indicator */}
+        {typingUsers.length > 0 && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: '#94a3b8', padding: '4px 0' }}>
+            <span style={{ display: 'flex', gap: '2px' }}>
+              <span className="typing-dot" style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#94a3b8', animation: 'bounce 1.2s infinite 0s' }} />
+              <span className="typing-dot" style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#94a3b8', animation: 'bounce 1.2s infinite 0.2s' }} />
+              <span className="typing-dot" style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#94a3b8', animation: 'bounce 1.2s infinite 0.4s' }} />
+            </span>
+            {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
+          </div>
+        )}
 
-                      {(helpfulCount > 0 || hoveredMsgId === msg.id) && (
-                        <button
-                          onClick={() => handleToggleReaction(msg.id, 'helpful')}
-                          style={{
-                            padding: '2px 7px',
-                            borderRadius: '12px',
-                            backgroundColor: '#f1f5f9',
-                            border: '1px solid #e2e8f0',
-                            fontSize: '10px',
-                            color: '#475569',
-                            cursor: 'pointer',
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '3px',
-                            fontWeight: '600'
-                          }}
-                        >
-                          <FiSmile size={10} /> {helpfulCount > 0 ? helpfulCount : 'Helpful'}
-                        </button>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          )}
-          <div ref={feedBottomRef} />
+        <div ref={feedBottomRef} />
       </div>
 
       {/* Sticky Bottom Composer */}
