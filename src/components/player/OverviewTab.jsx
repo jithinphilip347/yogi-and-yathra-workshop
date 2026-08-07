@@ -1,15 +1,30 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { FiCheckCircle, FiAward, FiDownload, FiLock } from 'react-icons/fi';
-import { MEDIA_BASE_URL } from '@/utils/constants';
+import { 
+  FiCheckCircle, 
+  FiAward, 
+  FiDownload, 
+  FiLock, 
+  FiUsers, 
+  FiStar, 
+  FiShoppingCart 
+} from 'react-icons/fi';
+import { AiFillStar } from 'react-icons/ai';
+import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from '@/utils/constants';
 import courseApi from '@/libs/courseApi';
-import toast from 'react-hot-toast';
+import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 
 export default function OverviewTab({ course, currentLesson, completionSummary }) {
   const [eligibility, setEligibility] = useState(null);
   const [isClaiming, setIsClaiming] = useState(false);
+  const [fullCourse, setFullCourse] = useState(null);
+  const [isLoadingCourse, setIsLoadingCourse] = useState(false);
 
+  // Commerce hooks
+  const { addItem, removeItem, isInCart } = useCart();
+
+  // 1. Fetch certificate eligibility status
   useEffect(() => {
     if (!course?.id) return;
     courseApi.getCertificateEligibility(course.id)
@@ -19,6 +34,23 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
       })
       .catch(() => {});
   }, [course?.id, completionSummary?.percentage]);
+
+  // 2. Fetch full course details (products, requirements, stats)
+  useEffect(() => {
+    if (!course?.id) return;
+    setIsLoadingCourse(true);
+    courseApi.show(course.id)
+      .then((res) => {
+        const data = res.data?.data || res.data;
+        setFullCourse(data);
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch full course details:", err);
+      })
+      .finally(() => {
+        setIsLoadingCourse(false);
+      });
+  }, [course?.id]);
 
   const handleClaim = async () => {
     if (!course?.id) return;
@@ -41,54 +73,66 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
 
   if (!course) return null;
 
-  const instructorAvatar = course.instructor?.avatar
-    ? (course.instructor.avatar.startsWith('http')
-        ? course.instructor.avatar
-        : `${MEDIA_BASE_URL.replace(/\/+$/, '')}/${course.instructor.avatar.replace(/^\/+/, '')}`)
+  const instructor = fullCourse?.instructor || course.instructor;
+  const instructorAvatar = instructor?.avatar
+    ? (instructor.avatar.startsWith('http')
+        ? instructor.avatar
+        : `${MEDIA_BASE_URL.replace(/\/+$/, '')}/${instructor.avatar.replace(/^\/+/, '')}`)
     : '/images/avatar-placeholder.webp';
 
   const percentage = completionSummary?.percentage ?? 0;
   const isCompleted = percentage >= 100;
 
-  // Clean HTML from strings if we render as plain text, or render rich HTML safely
-  const courseDescriptionHtml = course.description || course.short_description || "Welcome to this comprehensive workshop course.";
+  // Rich texts
+  const courseDescriptionHtml = fullCourse?.description || course.description || course.short_description || "Welcome to this comprehensive workshop course.";
   const lessonDescriptionHtml = currentLesson?.description || currentLesson?.short_description || "";
 
+  const products = fullCourse?.products || [];
+  const requirements = fullCourse?.requirements || course.requirements || [];
+
   return (
-    <div className="OverviewTab" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div className="OverviewTab">
       
-      {/* 1. Certificate Status Card */}
-      <div className="CertificateStatusCard" style={{
-        backgroundColor: isCompleted ? '#fff7ed' : '#ffffff',
-        border: isCompleted ? '1px solid rgba(135, 68, 41, 0.3)' : '1px solid #d1d7dc',
-        borderRadius: '8px',
-        padding: '16px 20px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '16px',
-        flexWrap: 'wrap'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div className="AwardIconWrapper" style={{
-            width: '44px',
-            height: '44px',
-            borderRadius: '50%',
-            backgroundColor: isCompleted ? 'var(--primaryColor, #874429)' : '#f1f5f9',
-            color: isCompleted ? '#ffffff' : '#6a6f73',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '20px'
-          }}>
+      {/* ─── Banner Header Info Row ─────────────────────────────────── */}
+      <div className="CourseOverviewBanner">
+        <h2>
+          {fullCourse?.title || course.title}
+        </h2>
+        <p>
+          {fullCourse?.short_description || course.short_description}
+        </p>
+
+        <div className="BannerMetaRow">
+          <div className="InstructorMetaBlock">
+            <img src={instructorAvatar} alt="Instructor" />
+            <span>Created by <strong>{instructor?.name || 'Instructor'}</strong></span>
+          </div>
+
+          <div className="RatingMetaBlock">
+            <AiFillStar />
+            <span>4.5</span>
+            <span className="RatingCount">(250 ratings)</span>
+          </div>
+
+          <div className="StudentsMetaBlock">
+            <FiUsers />
+            <span>{fullCourse?.enrollments_count || '1,234'} students</span>
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Certificate Status Card ────────────────────────────────── */}
+      <div className={`CertificateStatusCard ${isCompleted ? 'IsCompleted' : ''}`}>
+        <div className="CardLeft">
+          <div className="AwardIconWrapper">
             <FiAward />
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            <span style={{ fontSize: '15px', fontWeight: '700', color: '#1c1d1f' }}>
+          <div className="TextWrapper">
+            <span className="CardTitle">
               Course Completion Certificate
             </span>
-            <span style={{ fontSize: '13px', color: '#6a6f73' }}>
+            <span className="CardDesc">
               {eligibility?.is_claimed
                 ? `Issued Certificate #${eligibility.certificate?.certificate_number || ''}`
                 : isCompleted
@@ -106,18 +150,6 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
               rel="noopener noreferrer"
               download
               className="DownloadCertificateBtn"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '10px 16px',
-                fontSize: '13px',
-                fontWeight: '700',
-                borderRadius: '4px',
-                backgroundColor: 'var(--primaryColor, #874429)',
-                color: '#ffffff',
-                textDecoration: 'none'
-              }}
             >
               <FiDownload />
               <span>Download PDF</span>
@@ -126,35 +158,13 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
             <button
               onClick={handleClaim}
               disabled={isClaiming}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                padding: '10px 16px',
-                fontSize: '13px',
-                fontWeight: '700',
-                borderRadius: '4px',
-                border: 'none',
-                backgroundColor: 'var(--primaryColor, #874429)',
-                color: '#ffffff',
-                cursor: 'pointer'
-              }}
+              className="ClaimCertificateBtn"
             >
               <FiAward />
               <span>{isClaiming ? 'Claiming...' : 'Claim Certificate'}</span>
             </button>
           ) : (
-            <span style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 12px',
-              fontSize: '12px',
-              fontWeight: '600',
-              borderRadius: '4px',
-              backgroundColor: '#f1f5f9',
-              color: '#6a6f73'
-            }}>
+            <span className="LockedBadge">
               <FiLock />
               <span>Locked ({percentage}%)</span>
             </span>
@@ -162,80 +172,150 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
         </div>
       </div>
 
-      {/* 2. Current Lesson Description (Rich Text Rendered Safely) */}
+      {/* ─── Current Lesson Description ─────────────────────────────── */}
       {currentLesson && (
         <div className="SectionBlock">
-          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1d1f', marginBottom: '8px' }}>
+          <h4>
             About This Lesson: {currentLesson.title}
           </h4>
           {lessonDescriptionHtml ? (
             <div 
               className="RichDescriptionText" 
-              style={{ fontSize: '14.5px', color: '#1c1d1f', lineHeight: '1.6' }}
               dangerouslySetInnerHTML={{ __html: lessonDescriptionHtml }} 
             />
           ) : (
-            <p style={{ fontSize: '14.5px', color: '#1c1d1f', lineHeight: '1.6', margin: 0 }}>
+            <p>
               In this lesson, you will explore step-by-step guidance on {currentLesson.title}. Practice along with the video to master key techniques.
             </p>
           )}
         </div>
       )}
 
-      {/* 3. Course Description (Rich Text Rendered Safely) */}
+      {/* ─── What You'll Learn Card ─────────────────────────────────── */}
+      {Array.isArray(course.learning_outcomes) && course.learning_outcomes.length > 0 && (
+        <div className="HighlightOutlineCard">
+          <h3>
+            What you'll learn
+          </h3>
+          <div className="OutcomeGrid">
+            {course.learning_outcomes.map((item, idx) => (
+              <div key={idx} className="OutcomeItem">
+                <FiCheckCircle />
+                <span>{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ─── Description Section ────────────────────────────────────── */}
       <div className="SectionBlock">
-        <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1d1f', marginBottom: '8px' }}>
-          About The Course
-        </h4>
+        <h3>
+          Description
+        </h3>
         <div 
-          className="RichDescriptionText" 
-          style={{ fontSize: '14.5px', color: '#1c1d1f', lineHeight: '1.6' }}
+          className="ContentText" 
           dangerouslySetInnerHTML={{ __html: courseDescriptionHtml }} 
         />
       </div>
 
-      {/* 4. Learning Outcomes */}
-      {Array.isArray(course.learning_outcomes) && course.learning_outcomes.length > 0 && (
-        <div className="SectionBlock">
-          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1d1f', marginBottom: '8px' }}>
-            What You&apos;ll Learn
-          </h4>
-          <ul className="OutcomesList" style={{ listStyle: 'none', paddingLeft: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-            {course.learning_outcomes.map((outcome, idx) => (
-              <li key={idx} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', color: '#1c1d1f' }}>
-                <FiCheckCircle style={{ color: 'var(--primaryColor, #874429)', flexShrink: 0, fontSize: '16px' }} />
-                <span>{outcome}</span>
+      {/* ─── Requirements & Gear (Products list) Section ─────────────── */}
+      <div className="HighlightOutlineCard RequirementsSection">
+        <h3>
+          Course Requirements & Gear
+        </h3>
+        <p className="OutlinesSub">
+          To get the best results from this course, we recommend the following gear:
+        </p>
+
+        <ul className="OutlinesList">
+          {requirements.length > 0 ? (
+            requirements.map((item, idx) => (
+              <li key={idx}>
+                <FiCheckCircle />
+                <span>{item}</span>
               </li>
-            ))}
-          </ul>
+            ))
+          ) : (
+            <li>
+              <FiCheckCircle />
+              <span>No requirements mentioned.</span>
+            </li>
+          )}
+        </ul>
+
+        {/* Recommended Gear Products listing */}
+        {products.length > 0 && (
+          <div className="ProductList">
+            <h4>
+              Recommended Gear:
+            </h4>
+            {products.map((prod, index) => {
+              const isAdded = isInCart(prod.value, 'Product');
+              return (
+                <div key={index} className="ProductItem">
+                  <div className="ProductLeft">
+                    <img
+                      src={prod.image ? `${PRODUCT_MEDIA_BASE_URL}${prod.image}` : '/images/placeholder.webp'}
+                      alt="Product"
+                    />
+                    <div className="ProductMeta">
+                      <h5>{prod.label}</h5>
+                      <span className="ProductPrice">₹{prod.price}</span>
+                    </div>
+                  </div>
+
+                  <div className="ProductActions">
+                    <button
+                      className={`AddToCartBtn ${isAdded ? "added" : ""}`}
+                      onClick={() => isAdded ? removeItem('Product', prod.value) : addItem(prod, 'Product')}
+                    >
+                      <FiShoppingCart />
+                      <span>{isAdded ? "Remove" : "Add to Cart"}</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* ─── Instructor Section ────────────────────────────────────── */}
+      {instructor && (
+        <div className="SectionBlock InstructorDetails">
+          <h3>
+            Instructor
+          </h3>
+          <div className="InstructorCard">
+            <img
+              src={instructorAvatar}
+              alt="Instructor"
+            />
+            <div className="InsMeta">
+              <h4>
+                {instructor.name}
+              </h4>
+              <p>
+                {instructor.role || 'Instructor'}
+              </p>
+              <div className="InstructorStatsRow">
+                <span className="StatsRatings">
+                  <FiStar /> 4.8 Ratings
+                </span>
+                <span className="StatsStudents">
+                  <FiUsers /> 1,234 Students
+                </span>
+              </div>
+            </div>
+          </div>
+          <div 
+            className="Bio" 
+            dangerouslySetInnerHTML={{ __html: instructor.bio_graphy || "Instructor biography not available." }}
+          />
         </div>
       )}
 
-      {/* 5. Instructor Section */}
-      {course.instructor && (
-        <div className="SectionBlock">
-          <h4 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1d1f', marginBottom: '8px' }}>
-            Your Instructor
-          </h4>
-          <div className="InstructorCard" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={instructorAvatar}
-              alt={course.instructor.name}
-              className="Avatar"
-              style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }}
-            />
-            <div className="InstructorInfo" style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-              <span className="Name" style={{ fontSize: '15px', fontWeight: '700', color: '#1c1d1f' }}>
-                {course.instructor.name}
-              </span>
-              <span className="Bio" style={{ fontSize: '13px', color: '#6a6f73' }}>
-                {course.instructor.bio || "Certified Yoga & Wellness Instructor"}
-              </span>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import OverviewTab from './OverviewTab';
 import NotesTab from './NotesTab';
 import ResourcesTab from './ResourcesTab';
 import DiscussionTab from './DiscussionTab';
+import ReviewsTab from './ReviewsTab';
 
 export default React.memo(function PlayerTabs({ course, sections, currentLesson, getCurrentTime, onSeek, completionSummary }) {
   const [activeTab, setActiveTab] = useState('overview');
@@ -41,6 +42,13 @@ export default React.memo(function PlayerTabs({ course, sections, currentLesson,
         >
           Discussion
         </button>
+
+        <button
+          className={`TabButton ${activeTab === 'reviews' ? 'Active' : ''}`}
+          onClick={() => setActiveTab('reviews')}
+        >
+          Reviews
+        </button>
       </div>
 
       <div className="TabContent" style={{ marginTop: '16px' }}>
@@ -68,6 +76,10 @@ export default React.memo(function PlayerTabs({ course, sections, currentLesson,
             getCurrentTime={getCurrentTime}
             onSeek={onSeek}
           />
+        )}
+
+        {activeTab === 'reviews' && (
+          <ReviewsTab course={course} />
         )}
       </div>
     </div>
