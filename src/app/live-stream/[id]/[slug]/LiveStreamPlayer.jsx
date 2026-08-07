@@ -30,8 +30,12 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLaunchingZoom, setIsLaunchingZoom] = useState(false);
+  const [isJoined, setIsJoined] = useState(false);
+  const [isIframeLoaded, setIsIframeLoaded] = useState(false);
+  const [sdkParams, setSdkParams] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
 
+  const iframeRef = useRef(null);
   const data = liveSection || {};
   const instructor = data.instructor || {};
 
@@ -92,6 +96,77 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
     return () => clearInterval(timer);
   }, [data.class_date_time]);
 
+  // 2.1 Zoom iframe event listener hook
+  useEffect(() => {
+    const handleZoomMessage = async (event) => {
+      const payload = event.data;
+      if (!payload) return;
+
+      if (payload.event === 'zoom_event_loaded') {
+        setIsIframeLoaded(true);
+      } else if (payload.event === 'zoom_event_joined') {
+        setIsLaunchingZoom(false);
+        toast.success("Joined Zoom class successfully!");
+
+        // Record attendance
+        try {
+          await apiClient.post("attendance", {
+            entity_type: "live_section",
+            entity_id: data.id,
+            student_id: user.id,
+            status: "present",
+            attendance_date: new Date().toISOString().split("T")[0],
+            notes: "Successfully joined embedded Zoom meeting container",
+          });
+        } catch (e) {
+          console.error("Attendance marking failed", e);
+        }
+      } else if (payload.event === 'zoom_event_left') {
+        setIsJoined(false);
+        setIsIframeLoaded(false);
+        setIsLaunchingZoom(false);
+        toast.success("You have left the live session.");
+      } else if (payload.event === 'zoom_event_failed') {
+        setIsJoined(false);
+        setIsIframeLoaded(false);
+        setIsLaunchingZoom(false);
+        
+        const errDetails = payload.error || {};
+        toast.error(`Zoom connection failed: ${errDetails.message || 'Unknown error'}`);
+      }
+    };
+
+    window.addEventListener('message', handleZoomMessage);
+    return () => {
+      window.removeEventListener('message', handleZoomMessage);
+    };
+  }, [data.id, user?.id]);
+
+  // 2.2 Trigger Zoom join action when iframe is ready
+  useEffect(() => {
+    if (isJoined && isIframeLoaded && sdkParams && iframeRef.current) {
+      iframeRef.current.contentWindow.postMessage({
+        action: 'zoom_action_join',
+        ...sdkParams
+      }, '*');
+    }
+  }, [isJoined, isIframeLoaded, sdkParams]);
+
+  // 2.3 Cleanup Zoom client on unmount
+  useEffect(() => {
+    return () => {
+      if (iframeRef.current && iframeRef.current.contentWindow) {
+        try {
+          iframeRef.current.contentWindow.postMessage({
+            action: 'zoom_action_leave'
+          }, '*');
+        } catch (e) {
+          console.error("Failed to trigger zoom client unmount cleanup:", e);
+        }
+      }
+    };
+  }, []);
+
   // 3. Fullscreen Controller
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -107,7 +182,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
     }
   };
 
-  // 4. Join Meeting Action & Attendance Logger
+  // 4. Join Meeting Action
   const handleJoinClass = async () => {
     if (!user) {
       toast.error("Please login to join the live session");
@@ -116,44 +191,33 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
     }
 
     setIsLaunchingZoom(true);
-    const toastId = toast.loading("Launching class portal & recording attendance...");
+    const toastId = toast.loading("Authorizing Zoom session...");
 
     try {
-      // Record Attendance
-      await apiClient.post("attendance", {
-        entity_type: "live_section",
-        entity_id: data.id,
-        student_id: user.id,
-        status: "present",
-        attendance_date: new Date().toISOString().split("T")[0],
-        notes: "Joined class from live stream player portal",
+      // 1. Fetch SDK Signature dynamically
+      const signRes = await apiClient.post(`/live-sections/${data.id}/zoom-signature`);
+      if (!signRes.data || !signRes.data.success) {
+        throw new Error(signRes.data?.message || "Failed to generate Zoom signature");
+      }
+      const sdkConfig = signRes.data.data;
+
+      // 2. Set signature parameters to load inside iframe
+      setSdkParams({
+        sdkKey: sdkConfig.sdk_key,
+        signature: sdkConfig.signature,
+        meetingNumber: sdkConfig.meeting_number,
+        passcode: sdkConfig.passcode,
+        userName: sdkConfig.user_name,
+        userEmail: sdkConfig.user_email,
       });
-      toast.success("Attendance marked successfully!", { id: toastId });
 
-      // Determine meeting launch target
-      const isHost = user.role === 'admin' || Number(data.instructor_id) === Number(user.id);
-      const targetUrl = isHost && data.zoom_start_url ? data.zoom_start_url : data.zoom_meeting_url;
+      setIsJoined(true);
+      toast.dismiss(toastId);
 
-      if (targetUrl) {
-        setTimeout(() => {
-          window.open(targetUrl, "_blank", "noopener,noreferrer");
-          setIsLaunchingZoom(false);
-        }, 1000);
-      } else {
-        toast.error("Zoom link is not generated yet. Please contact the instructor.", { id: toastId });
-        setIsLaunchingZoom(false);
-      }
     } catch (err) {
-      console.error("Attendance marking failed", err);
-      // Fallback redirect even if attendance marking failed
-      const isHost = user.role === 'admin' || Number(data.instructor_id) === Number(user.id);
-      const targetUrl = isHost && data.zoom_start_url ? data.zoom_start_url : data.zoom_meeting_url;
-      if (targetUrl) {
-        window.open(targetUrl, "_blank", "noopener,noreferrer");
-      } else {
-        toast.error("Zoom meeting URL not available", { id: toastId });
-      }
+      console.error("Zoom authorization failed:", err);
       setIsLaunchingZoom(false);
+      toast.error(err.message || "Unable to authorize Zoom session", { id: toastId });
     }
   };
 
@@ -220,7 +284,14 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
         </button>
 
         <div className="VideoPlaceholder">
-          {recordingAvailable ? (
+          {isJoined && sdkParams ? (
+            <iframe
+              ref={iframeRef}
+              src="/zoom-embed.html"
+              style={{ width: "100%", height: "100%", border: "none", background: "#000" }}
+              allow="camera; microphone; display-capture; fullscreen"
+            />
+          ) : recordingAvailable ? (
             <video
               src={data.recording_url.includes("http") ? data.recording_url : `${MEDIA_BASE_URL}${data.recording_url}`}
               controls
@@ -308,9 +379,11 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
           )}
         </div>
 
-        <button className="FullscreenBtnOverlay" onClick={toggleFullscreen}>
-          {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
-        </button>
+        {!isJoined && (
+          <button className="FullscreenBtnOverlay" onClick={toggleFullscreen}>
+            {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
+          </button>
+        )}
       </div>
 
       <div className="StreamContainer">

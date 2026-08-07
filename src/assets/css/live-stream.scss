@@ -12,6 +12,13 @@
     aspect-ratio: 16 / 9;
     max-height: 70vh;
 
+    #meetingSDKElement {
+      width: 100%;
+      height: 100%;
+      background: #000000;
+      overflow: hidden;
+    }
+
     .BackBtnOverlay {
       position: absolute;
       top: 20px;

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoom Class</title>
+    <style>
+        html, body, #meetingSDKElement {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div id="meetingSDKElement"></div>
+
+    <!-- Load Dependencies from Zoom CDN -->
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/react.min.js"></script>
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/react-dom.min.js"></script>
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/redux.min.js"></script>
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/redux-thunk.min.js"></script>
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/lodash.min.js"></script>
+
+    <!-- Load Zoom Embedded SDK Component View -->
+    <script src="https://source.zoom.us/zoom-meeting-embedded-3.8.0.min.js"></script>
+
+    <script>
+        let client = null;
+
+        // Normalize SDK error codes into structured human-readable messages
+        const normalizeError = (err) => {
+            const code = err.errorCode || err.code || 0;
+            const type = err.type || 'SDK_ERROR';
+            let message = err.errorMessage || err.message || err.reason || 'An unexpected Zoom SDK error occurred.';
+
+            if (code === 3633) {
+                message = "The live class has not been started by the instructor yet. Please wait a moment.";
+            } else if (code === 1 || code === 2) {
+                message = "Failed to connect to Zoom servers. Please check your internet connection.";
+            } else if (code === 3001) {
+                message = "The Zoom meeting ID is invalid or has expired.";
+            } else if (code === 3712) {
+                message = "Invalid or expired signature authorization. Please refresh the page.";
+            } else if (code === 3301) {
+                message = "The meeting passcode is incorrect. Please contact support.";
+            }
+
+            return {
+                code: code,
+                type: type,
+                message: message
+            };
+        };
+
+        const joinMeeting = async (config) => {
+            if (!window.ZoomMtgEmbedded) {
+                window.parent.postMessage({
+                    event: 'zoom_event_failed',
+                    error: { code: 0, type: 'SDK_MISSING', message: 'Zoom SDK script failed to load.' }
+                }, '*');
+                return;
+            }
+
+            try {
+                if (!client) {
+                    client = window.ZoomMtgEmbedded.createClient();
+                }
+
+                const targetElement = document.getElementById('meetingSDKElement');
+
+                client.init({
+                    zoomAppRoot: targetElement,
+                    zoomAppHeader: false,
+                    language: 'en-US',
+                    customize: {
+                        meetingInfo: [
+                            'topic',
+                            'host',
+                            'mn',
+                            'pwd',
+                            'telPwd',
+                            'invite',
+                            'participant',
+                            'dc',
+                            'enctype'
+                        ]
+                    }
+                });
+
+                await client.join({
+                    sdkKey: config.sdkKey,
+                    signature: config.signature,
+                    meetingNumber: config.meetingNumber,
+                    password: config.passcode || '',
+                    userName: config.userName,
+                    userEmail: config.userEmail || '',
+                });
+
+                window.parent.postMessage({ event: 'zoom_event_joined' }, '*');
+
+            } catch (err) {
+                console.log(config.signature)
+                console.error("Zoom SDK Join Failure:", err);
+                const structuredError = normalizeError(err);
+                window.parent.postMessage({
+                    event: 'zoom_event_failed',
+                    error: structuredError
+                }, '*');
+            }
+        };
+
+        const leaveMeeting = () => {
+            if (client) {
+                try {
+                    client.leave();
+                    window.parent.postMessage({ event: 'zoom_event_left' }, '*');
+                } catch (e) {
+                    console.error("Error triggering client leave:", e);
+                }
+            }
+        };
+
+        // Listen for actions from the parent Next.js application
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            if (!data) return;
+
+            if (data.action === 'zoom_action_join') {
+                joinMeeting(data);
+            } else if (data.action === 'zoom_action_leave') {
+                leaveMeeting();
+            }
+        });
+
+        // Inform the parent frame that the runtime iframe is loaded and ready
+        window.addEventListener('DOMContentLoaded', () => {
+            window.parent.postMessage({ event: 'zoom_event_loaded' }, '*');
+        });
+    </script>
+</body>
+</html>
