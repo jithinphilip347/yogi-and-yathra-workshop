@@ -58,13 +58,17 @@ export function useCommunicationActions() {
   }, [dispatch, state.messagesByThread]);
 
   // ─── Load Messages for Thread ────────────────────────────────────────────
-  const loadMessages = useCallback(async (threadId) => {
+  const loadMessages = useCallback(async (threadId, params = {}) => {
     if (!threadId) return;
     try {
-      const res = await communicationApi.getThreadMessages(threadId);
+      const res = await communicationApi.getThreadMessages(threadId, params);
       dispatch({
         type: COMM_ACTIONS.MESSAGES_LOADED,
-        payload: { threadId, messages: res?.data || [] },
+        payload: { 
+          threadId, 
+          messages: res?.data || [],
+          meta: res?.meta || null
+        },
       });
     } catch (err) {
       commLog('ERROR', { action: 'loadMessages', threadId, err });

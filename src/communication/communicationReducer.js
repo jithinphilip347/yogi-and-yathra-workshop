@@ -52,6 +52,9 @@ export const initialState = {
   // Message cache: { [threadId]: Message[] }
   messagesByThread: {},
 
+  // Pagination metadata cache: { [threadId]: { current_page, last_page, total } }
+  paginationByThread: {},
+
   // Currently active thread
   activeThreadId: null,
 
@@ -184,13 +187,18 @@ export function communicationReducer(state, action) {
 
     // ── Messages ───────────────────────────────────────────────────────────
     case COMM_ACTIONS.MESSAGES_LOADED: {
-      const { threadId, messages } = action.payload;
+      const { threadId, messages, meta } = action.payload;
+      const existing = state.messagesByThread[String(threadId)] || [];
       return {
         ...state,
         messagesByThread: {
           ...state.messagesByThread,
-          [String(threadId)]: mergeMessages([], messages),
+          [String(threadId)]: mergeMessages(existing, messages),
         },
+        paginationByThread: {
+          ...state.paginationByThread,
+          [String(threadId)]: meta || null
+        }
       };
     }
 

@@ -1260,341 +1260,839 @@
   }
 }
 
-/* Discussion Tab Styles */
-.DiscussionTabContainer {
+/* Discussion Tab Styles - WhatsApp Split Inbox Layout */
+.DiscussionInboxLayout {
   display: flex;
-  flex-direction: column;
-  gap: 24px;
+  height: 550px;
+  background-color: #ffffff;
+  border: 1px solid #d1d7dc;
+  border-radius: 6px;
+  overflow: hidden;
 
-  .CreateDiscussionArea {
+  .ThreadInboxSidebar {
+    width: 320px;
+    border-right: 1px solid #d1d7dc;
     display: flex;
-    gap: 16px;
-    align-items: flex-start;
+    flex-direction: column;
+    background-color: #f7f9fa;
+    flex-shrink: 0;
 
-    .TimestampCapsuleBtn {
-      background-color: #1c1d1f;
-      color: #ffffff;
-      border: none;
-      border-radius: 16px;
-      padding: 6px 14px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
+    .SidebarHeaderRow {
+      padding: 12px;
       display: flex;
+      gap: 8px;
       align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
+      border-bottom: 1px solid #d1d7dc;
+      background-color: #ffffff;
 
-      &:hover {
-        background-color: #000000;
-      }
-    }
+      .SearchBoxWrapper {
+        flex: 1;
+        position: relative;
+        display: flex;
+        align-items: center;
 
-    .ComposerBox {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-
-      .EditorBox {
-        border: 1px solid #d1d7dc;
-        border-radius: 6px;
-        background-color: #ffffff;
-
-        textarea {
-          width: 100%;
-          padding: 12px;
+        .SearchIcon {
+          position: absolute;
+          left: 10px;
+          color: #6a6f73;
           font-size: 14px;
-          border: none;
+        }
+
+        input {
+          width: 100%;
+          padding: 8px 10px 8px 32px;
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          font-size: 13px;
           outline: none;
-          resize: vertical;
+          background-color: #fafafa;
           color: #1c1d1f;
-          font-family: inherit;
+
+          &:focus {
+            border-color: var(--primaryColor, #874429);
+          }
         }
       }
 
-      .ActionsRow {
+      .NewThreadFabBtn {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: none;
+        background-color: var(--primaryColor, #874429);
+        color: #ffffff;
         display: flex;
-        justify-content: flex-end;
         align-items: center;
-        gap: 16px;
+        justify-content: center;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+        font-size: 16px;
+
+        &:hover {
+          background-color: #6d3620;
+        }
+
+        &.active {
+          transform: rotate(45deg);
+          background-color: #ef4444;
+        }
+      }
+    }
+
+    .ThreadsListScrollContainer {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+
+      .NoThreadsText {
+        padding: 24px;
+        text-align: center;
+        color: #6a6f73;
+        font-size: 13px;
+      }
+
+      .ThreadItemCard {
+        display: flex;
+        gap: 12px;
+        padding: 12px;
+        border-bottom: 1px solid #e2e8f0;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        position: relative;
+
+        &:hover {
+          background-color: #ebedee;
+        }
+
+        &.Active {
+          background-color: #e2e8f0;
+        }
+
+        .Avatar {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background-color: var(--primaryColor, #874429);
+          color: #ffffff;
+          font-size: 13px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+
+          &.Instructor {
+            background-color: #0369a1;
+          }
+        }
+
+        .ThreadCardMiddle {
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+
+          .TitleRow {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+
+            h4 {
+              font-size: 13.5px;
+              font-weight: 700;
+              color: #1c1d1f;
+              margin: 0;
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+            }
+
+            .TimeBadge {
+              font-size: 10.5px;
+              color: #6a6f73;
+              flex-shrink: 0;
+            }
+          }
+
+          .Snippet {
+            font-size: 12px;
+            color: #6a6f73;
+            margin: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+
+          .MetaBadgesRow {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 2px;
+
+            span {
+              display: inline-flex;
+              align-items: center;
+              gap: 3px;
+              font-size: 9px;
+              font-weight: 700;
+              padding: 1px 4px;
+              border-radius: 4px;
+            }
+
+            .PinPill {
+              background-color: #fef3c7;
+              color: #d97706;
+            }
+
+            .ResolvedPill {
+              background-color: #d1fae5;
+              color: #059669;
+            }
+
+            .LockPill {
+              background-color: #f3f4f6;
+              color: #4b5563;
+            }
+          }
+        }
+
+        .UnreadDotBadge {
+          min-width: 16px;
+          height: 16px;
+          border-radius: 8px;
+          background-color: #22c55e;
+          color: #ffffff;
+          font-size: 9px;
+          font-weight: 700;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 4px;
+          position: absolute;
+          right: 12px;
+          bottom: 12px;
+        }
+      }
+    }
+  }
+
+  .ChatConversationPane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #efeae2;
+    position: relative;
+
+    .EmptyChatPane {
+      margin: auto;
+      text-align: center;
+      color: #6a6f73;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+
+      .PaneIcon {
+        font-size: 48px;
+        color: #cbd5e1;
+      }
+
+      h3 {
+        font-size: 16px;
+        font-weight: 700;
+        color: #1c1d1f;
+        margin: 0;
+      }
+
+      p {
+        font-size: 13px;
+        max-width: 320px;
+        line-height: 1.5;
+        margin: 0;
+      }
+    }
+
+    .ChatPaneHeaderRow {
+      padding: 10px 16px;
+      border-bottom: 1px solid #d1d7dc;
+      background-color: #f7f9fa;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 5;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+
+      .HeaderLeft {
+        min-width: 0;
+
+        h3.ChatTitle {
+          font-size: 14.5px;
+          font-weight: 700;
+          color: #1c1d1f;
+          margin: 0 0 2px 0;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 400px;
+        }
+
+        .MetaAuthor {
+          font-size: 11px;
+          color: #6a6f73;
+          margin: 0;
+        }
+      }
+
+      .HeaderRightBadges {
+        display: flex;
+        gap: 6px;
+        flex-shrink: 0;
+
+        span {
+          display: inline-flex;
+          align-items: center;
+          gap: 3px;
+          font-size: 9px;
+          font-weight: 700;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+
+        .PinPill {
+          background-color: #fef3c7;
+          color: #d97706;
+        }
+
+        .ResolvedPill {
+          background-color: #d1fae5;
+          color: #059669;
+        }
+
+        .LockPill {
+          background-color: #f3f4f6;
+          color: #4b5563;
+        }
+      }
+    }
+
+    .ChatFeedContainer {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+
+      .NewMessagesBanner {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--primaryColor, #874429);
+        color: #ffffff;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 16px;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        z-index: 10;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: #6d3620;
+        }
+      }
+
+      .ShowOlderMessagesBtn {
+        background: rgba(255, 255, 255, 0.8);
+        border: 1px solid #d1d7dc;
+        color: #1c1d1f;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        padding: 6px 14px;
+        margin: 0 auto;
+        display: block;
+        border-radius: 16px;
+        transition: background-color 0.2s;
+
+        &:hover {
+          background-color: #ffffff;
+        }
+      }
+
+      .LoadingText {
+        text-align: center;
+        padding: 20px;
+        color: #6a6f73;
+        font-size: 13px;
+      }
+
+      .MessageGroup {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+
+        &.MyGroup {
+          flex-direction: row-reverse;
+
+          .GroupLeftCol {
+            align-items: flex-end;
+          }
+
+          .MessageContentCol {
+            align-items: flex-end;
+
+            .MessageHeaderRow {
+              justify-content: flex-end;
+            }
+
+            .GroupMessagesList .GroupedBubbleRow {
+              align-items: flex-end;
+
+              .BubbleBody {
+                background-color: #d9fdd3;
+                border-color: #c7ebc0;
+              }
+            }
+          }
+        }
+
+        &.InstructorGroup {
+          .MessageContentCol .GroupMessagesList .GroupedBubbleRow .BubbleBody {
+            border-color: rgba(3, 105, 161, 0.2);
+            background-color: #f0f9ff;
+          }
+        }
+
+        .GroupLeftCol {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          flex-shrink: 0;
+          width: 65px;
+
+          .TimestampCapsuleBtn {
+            background-color: #1c1d1f;
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            padding: 5px 8px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            width: 100%;
+            justify-content: center;
+
+            &:hover {
+              background-color: #000000;
+            }
+          }
+        }
+
+        .MessageContentCol {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          min-width: 0;
+
+          .MessageHeaderRow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 2px;
+
+            .AuthorBlock {
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              flex-wrap: wrap;
+
+              .Avatar {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background-color: var(--primaryColor, #874429);
+                color: #ffffff;
+                font-size: 9px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &.Instructor {
+                  background-color: #0369a1;
+                }
+
+                &.MeAvatar {
+                  background-color: #475569;
+                }
+              }
+
+              .AuthorName {
+                font-size: 12px;
+                font-weight: 700;
+                color: #1c1d1f;
+              }
+
+              .InstructorBadge {
+                background-color: #e0f2fe;
+                color: #0369a1;
+                padding: 1px 4px;
+                border-radius: 4px;
+                font-weight: 700;
+                font-size: 8.5px;
+                display: inline-flex;
+                align-items: center;
+                gap: 2px;
+              }
+
+              .TimeLabel {
+                font-size: 10px;
+                color: #6a6f73;
+              }
+            }
+          }
+
+          .GroupMessagesList {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            width: 100%;
+
+            .GroupedBubbleRow {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-start;
+
+              .BubbleBody {
+                background-color: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 6px;
+                padding: 8px 12px;
+                display: inline-block;
+                max-width: 85%;
+                box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+
+                p {
+                  font-size: 13px;
+                  color: #1c1d1f;
+                  line-height: 1.45;
+                  margin: 0;
+                  white-space: pre-wrap;
+                }
+              }
+
+              .ReactionsRow {
+                display: flex;
+                gap: 4px;
+                margin-top: 2px;
+
+                .ReactionBtn {
+                  padding: 2px 6px;
+                  border-radius: 10px;
+                  background-color: rgba(255, 255, 255, 0.7);
+                  border: 1px solid #cbd5e1;
+                  font-size: 9.5px;
+                  color: #475569;
+                  cursor: pointer;
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 3px;
+                  font-weight: 600;
+                  transition: background-color 0.2s;
+
+                  &:hover {
+                    background-color: #ffffff;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .TypingIndicator {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11.5px;
+        color: #6a6f73;
+        padding: 4px 0;
+
+        .TypingDots {
+          display: flex;
+          gap: 2px;
+
+          .dot {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #6a6f73;
+            animation: bounce 1.2s infinite ease-in-out;
+
+            &:nth-child(2) { animation-delay: 0.2s; }
+            &:nth-child(3) { animation-delay: 0.4s; }
+          }
+        }
+      }
+    }
+
+    .ChatComposerFooter {
+      padding: 10px 16px;
+      border-top: 1px solid #d1d7dc;
+      background-color: #f0f2f5;
+
+      .InputComposerRow {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        position: relative;
+
+        .TimestampCapsuleBtn {
+          background-color: #1c1d1f;
+          color: #ffffff;
+          border: none;
+          border-radius: 16px;
+          padding: 6px 12px;
+          font-size: 11px;
+          font-weight: 700;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          flex-shrink: 0;
+
+          &:hover {
+            background-color: #000000;
+          }
+        }
+
+        .ComposerBox {
+          flex: 1;
+          background-color: #ffffff;
+          border-radius: 6px;
+          border: 1px solid #cbd5e1;
+          display: flex;
+          align-items: center;
+
+          textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: #1c1d1f;
+            resize: none;
+            font-family: inherit;
+            line-height: 1.4;
+          }
+        }
 
         .AttachedBadge {
           display: inline-flex;
           align-items: center;
-          gap: 6px;
-          background-color: rgba(135, 68, 41, 0.08);
+          gap: 4px;
+          background-color: rgba(135, 68, 41, 0.1);
           color: var(--primaryColor, #874429);
-          padding: 4px 10px;
-          border-radius: 6px;
-          font-size: 12px;
-          font-weight: 600;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 11px;
+          font-weight: 700;
 
           .ClearBtn {
             background: none;
             border: none;
             cursor: pointer;
             color: var(--primaryColor, #874429);
-            font-size: 13px;
+            font-size: 12px;
             display: flex;
             align-items: center;
           }
         }
 
-        button.PostBtn {
+        .SendBtn {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          border: none;
           background-color: var(--primaryColor, #874429);
           color: #ffffff;
-          border: none;
-          padding: 8px 16px;
-          border-radius: 6px;
-          font-size: 14px;
-          font-weight: 700;
-          cursor: pointer;
-          transition: background-color 0.2s;
           display: flex;
           align-items: center;
-          gap: 6px;
-
-          &:hover {
-            background-color: #6d3620;
-          }
+          justify-content: center;
+          cursor: pointer;
+          font-size: 15px;
+          flex-shrink: 0;
+          transition: background-color 0.2s;
 
           &:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
+          }
+
+          &:hover:not(:disabled) {
+            background-color: #6d3620;
           }
         }
       }
     }
-  }
 
-  .DiscussionHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #d1d7dc;
-    padding-bottom: 12px;
-
-    .Title {
-      font-size: 16px;
-      font-weight: 700;
-      color: #1c1d1f;
-      margin: 0;
-    }
-
-    .Stats {
+    .NewThreadPaneContainer {
       display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 13px;
-      color: #6a6f73;
-    }
-  }
-
-  .DiscussionFeed {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-
-    .ShowOlderMessagesBtn {
-      background: none;
-      border: none;
-      color: var(--primaryColor, #874429);
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      padding: 8px 16px;
-      margin: 0 auto;
-      display: block;
-      text-align: center;
-      transition: opacity 0.2s;
-
-      &:hover {
-        opacity: 0.8;
-      }
-    }
-
-    .LoadingText {
-      text-align: center;
-      padding: 30px;
-      color: #6a6f73;
-      font-size: 13.5px;
-    }
-
-    .EmptyState {
-      text-align: center;
-      padding: 40px 20px;
+      flex-direction: column;
+      height: 100%;
       background-color: #ffffff;
-      border-radius: 8px;
-      border: 1px dashed #d1d7dc;
-      color: #6a6f73;
 
-      .EmptyIcon {
-        font-size: 32px;
-        color: #cbd5e1;
-        margin-bottom: 10px;
-      }
-
-      h4 {
-        font-size: 14.5px;
-        font-weight: 700;
-        color: #1c1d1f;
-        margin: 0 0 4px 0;
-      }
-
-      p {
-        font-size: 13px;
-        margin: 0;
-      }
-    }
-
-    .DiscussionItem {
-      display: flex;
-      gap: 16px;
-      align-items: flex-start;
-
-      .TimestampCapsuleBtn {
-        background-color: #1c1d1f;
-        color: #ffffff;
-        border: none;
-        border-radius: 16px;
-        padding: 6px 14px;
-        font-size: 12px;
-        font-weight: 700;
-        cursor: pointer;
+      .NewThreadHeader {
+        padding: 16px;
+        border-bottom: 1px solid #d1d7dc;
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        gap: 4px;
-        flex-shrink: 0;
 
-        &:hover {
-          background-color: #000000;
+        h3 {
+          font-size: 16px;
+          font-weight: 700;
+          color: #1c1d1f;
+          margin: 0;
+        }
+
+        .CloseBtn {
+          background: none;
+          border: none;
+          font-size: 18px;
+          cursor: pointer;
+          color: #6a6f73;
         }
       }
 
-      .MessageContentCol {
-        flex: 1;
+      .NewThreadForm {
+        padding: 20px;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 16px;
+        flex: 1;
+        overflow-y: auto;
 
-        .MessageHeaderRow {
+        .FormGroup {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+
+          label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #1c1d1f;
+          }
+
+          input {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13.5px;
+            outline: none;
+            color: #1c1d1f;
+
+            &:focus {
+              border-color: var(--primaryColor, #874429);
+            }
+          }
+
+          textarea {
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13.5px;
+            outline: none;
+            resize: vertical;
+            color: #1c1d1f;
+
+            &:focus {
+              border-color: var(--primaryColor, #874429);
+            }
+          }
+        }
+
+        .CreationActionsRow {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          gap: 16px;
+          margin-top: 10px;
 
-          .AuthorBlock {
+          .TimestampCapsuleBtn {
+            background-color: #1c1d1f;
+            color: #ffffff;
+            border: none;
+            border-radius: 16px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            gap: 4px;
 
-            .Avatar {
-              width: 24px;
-              height: 24px;
-              border-radius: 50%;
-              background-color: var(--primaryColor, #874429);
-              color: #ffffff;
-              font-size: 10px;
-              font-weight: 700;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-
-              &.Instructor {
-                background-color: #0369a1;
-              }
-            }
-
-            .AuthorName {
-              font-size: 14px;
-              font-weight: 700;
-              color: #1c1d1f;
-            }
-
-            .InstructorBadge {
-              background-color: #e0f2fe;
-              color: #0369a1;
-              padding: 2px 6px;
-              border-radius: 6px;
-              font-weight: 700;
-              font-size: 9.5px;
-              display: inline-flex;
-              align-items: center;
-              gap: 3px;
-            }
-
-            .TimeLabel {
-              font-size: 11px;
-              color: #6a6f73;
+            &:hover {
+              background-color: #000000;
             }
           }
 
-          .ReactionsRow {
+          .RightActions {
             display: flex;
-            gap: 6px;
+            gap: 12px;
 
-            .ReactionBtn {
-              padding: 4px 8px;
-              border-radius: 12px;
-              background-color: #f7f9fa;
-              border: 1px solid #d1d7dc;
-              font-size: 11px;
-              color: #1c1d1f;
+            .CancelBtn {
+              background: none;
+              border: 1px solid #cbd5e1;
+              padding: 8px 16px;
+              border-radius: 6px;
+              font-size: 13px;
+              font-weight: 700;
               cursor: pointer;
-              display: inline-flex;
-              align-items: center;
-              gap: 4px;
-              font-weight: 600;
               transition: background-color 0.2s;
 
               &:hover {
-                background-color: #ebedee;
+                background-color: #f7f9fa;
+              }
+            }
+
+            .SubmitBtn {
+              background-color: var(--primaryColor, #874429);
+              color: #ffffff;
+              border: none;
+              padding: 8px 16px;
+              border-radius: 6px;
+              font-size: 13px;
+              font-weight: 700;
+              cursor: pointer;
+              transition: background-color 0.2s;
+
+              &:hover:not(:disabled) {
+                background-color: #6d3620;
+              }
+
+              &:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
               }
             }
           }
-        }
-
-        .MessageBodyWrapper {
-          background-color: #f7f9fa;
-          border: 1px solid #f1f5f9;
-          border-radius: 6px;
-          padding: 16px 20px;
-          margin-top: 4px;
-
-          p {
-            font-size: 14px;
-            color: #1c1d1f;
-            line-height: 1.6;
-            margin: 0;
-            white-space: pre-wrap;
-          }
-        }
-      }
-    }
-
-    .TypingIndicator {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11.5px;
-      color: #6a6f73;
-      padding: 4px 0;
-
-      .TypingDots {
-        display: flex;
-        gap: 2px;
-
-        .dot {
-          width: 4px;
-          height: 4px;
-          border-radius: 50%;
-          background: #6a6f73;
-          animation: bounce 1.2s infinite ease-in-out;
-
-          &:nth-child(2) { animation-delay: 0.2s; }
-          &:nth-child(3) { animation-delay: 0.4s; }
         }
       }
     }
