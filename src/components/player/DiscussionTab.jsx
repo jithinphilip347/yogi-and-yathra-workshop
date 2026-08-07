@@ -3,16 +3,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { 
   FiMessageSquare, FiClock, FiSend, FiThumbsUp, FiSmile, FiUserCheck, FiUsers, FiX, 
-  FiArrowDown, FiSearch, FiPlus, FiCheck, FiLock, FiUnlock, FiBookmark, FiTrash2 
+  FiSearch, FiFilter, FiCheckCircle, FiHeart, FiAward, FiTrash2, FiBookmark, FiPlus, FiChevronDown, FiChevronUp 
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { useCommunication } from '@/communication/CommunicationStore';
 import { useCommunicationActions } from '@/communication/useCommunicationActions';
 import {
+  selectSortedThreads,
   selectSortedMessages,
-  selectActiveThread,
-  selectTypingUsers,
 } from '@/communication/selectors';
 
 export default function DiscussionTab({ course, currentLesson, getCurrentTime, onSeek }) {
@@ -20,252 +19,125 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
   const { state } = useCommunication();
   const actions = useCommunicationActions();
 
-  // Local UI & Composer States
-  const [hoveredMsgId, setHoveredMsgId] = useState(null);
+  // Search & Filtering State
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState('recent'); // recent, pinned, solved, instructor, popular
+
+  // Main Composer State
   const [composerMessage, setComposerMessage] = useState('');
   const [attachTimestamp, setAttachTimestamp] = useState(false);
   const [capturedTime, setCapturedTime] = useState(0);
-  const [isPosting, setIsPosting] = useState(false);
+  const [isPostingQuestion, setIsPostingQuestion] = useState(false);
 
-  // Search filter for left sidebar threads
-  const [searchQuery, setSearchQuery] = useState('');
+  // Progressive thread loading limit
+  const [threadsLimit, setThreadsLimit] = useState(5);
 
-  // Creation state for starting a new thread (WhatsApp-like new inbox)
-  const [isCreatingThread, setIsCreatingThread] = useState(false);
-  const [newThreadTitle, setNewThreadTitle] = useState('');
-  const [newThreadBody, setNewThreadBody] = useState('');
+  // Inline expanded threads tracking
+  const [expandedThreads, setExpandedThreads] = useState(new Set());
 
-  // Progressive Loading Limits
-  const [visibleLimit, setVisibleLimit] = useState(5);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [showNewMsgBanner, setShowNewMsgBanner] = useState(false);
+  // Reply composers state: { [threadId]: string }
+  const [replyInputs, setReplyInputs] = useState({});
 
   // Refs
-  const feedContainerRef = useRef(null);
-  const textareaRef = useRef(null);
+  const mainComposerRef = useRef(null);
 
   // ─── Selectors ─────────────────────────────────────────────────────────
-  const activeThreadId = state.activeThreadId;
-  const threads        = state.threads;
-  const loading        = state.loading;
-  const messages       = selectSortedMessages(state, activeThreadId);
-  const activeThread   = selectActiveThread(state);
-  const typingUsers    = selectTypingUsers(state, activeThreadId);
-  const pagination     = state.paginationByThread?.[String(activeThreadId)] || null;
+  const threads = selectSortedThreads(state);
+  const loading = state.loading;
 
-  // Filtered threads list (by search query)
-  const filteredThreads = threads.filter(t => 
-    (t.title || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (t.author?.name || '').toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // ─── 1. Composer Draft Caching ─────────────────────────────────────────
-  useEffect(() => {
-    if (!activeThreadId) return;
-    const cachedDraft = localStorage.getItem(`discussion_draft_${activeThreadId}`);
-    setComposerMessage(cachedDraft || '');
-    
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
-  }, [activeThreadId]);
-
-  const handleComposerChange = (e) => {
-    const val = e.target.value;
-    setComposerMessage(val);
-    if (activeThreadId) {
-      localStorage.setItem(`discussion_draft_${activeThreadId}`, val);
-    }
-  };
-
-  // ─── 2. Scroll Anchoring and Auto-Scroll ──────────────────────────────
-  const prevMessagesLength = useRef(messages.length);
-
-  useEffect(() => {
-    const container = feedContainerRef.current;
-    if (!container) return;
-
-    const isNewMessageAdded = messages.length > prevMessagesLength.current;
-    if (isNewMessageAdded) {
-      const lastMessage = messages[messages.length - 1];
-      const isLastMsgMe = Number(lastMessage?.user_id) === Number(user?.id);
-      const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 180;
-
-      const addedCount = messages.length - prevMessagesLength.current;
-      setVisibleLimit((prev) => prev + addedCount);
-
-      if (isLastMsgMe || isNearBottom) {
-        setTimeout(() => {
-          container.scrollTop = container.scrollHeight;
-        }, 50);
-        setShowNewMsgBanner(false);
-      } else {
-        setShowNewMsgBanner(true);
-      }
-    }
-    prevMessagesLength.current = messages.length;
-  }, [messages, user?.id]);
-
-  // Reset states on active thread change
-  useEffect(() => {
-    setVisibleLimit(5);
-    setShowNewMsgBanner(false);
-    setIsCreatingThread(false);
-  }, [activeThreadId]);
-
-  // ─── 3. Load threads on course/lesson context change ──────────────────────
+  // ─── 1. Fetch threads on Context, Search, or Filter change ─────────────
   useEffect(() => {
     const entityType = currentLesson?.id ? 'lesson' : 'course';
     const entityId   = currentLesson?.id  ? currentLesson.id : course?.id;
     if (entityId) {
-      actions.loadThreads(entityType, entityId);
+      actions.loadThreads(entityType, entityId, {
+        search: searchQuery || undefined,
+        filter: filterType !== 'recent' ? filterType : undefined,
+      });
     }
-  }, [course?.id, currentLesson?.id]);
+  }, [course?.id, currentLesson?.id, searchQuery, filterType]);
 
-  // ─── 4. Progressive Loading / View Earlier Messages ────────────────────
-  const handleViewEarlierMessages = async () => {
-    const container = feedContainerRef.current;
-    const prevScrollHeight = container ? container.scrollHeight : 0;
-    const prevScrollTop = container ? container.scrollTop : 0;
+  // Reset pagination and expansions when lesson changes
+  useEffect(() => {
+    setThreadsLimit(5);
+    setExpandedThreads(new Set());
+  }, [currentLesson?.id]);
 
-    if (messages.length > visibleLimit) {
-      setVisibleLimit((prev) => prev + 5);
-      
-      setTimeout(() => {
-        if (container) {
-          const newScrollHeight = container.scrollHeight;
-          container.scrollTop = prevScrollTop + (newScrollHeight - prevScrollHeight);
-        }
-      }, 50);
-    } else if (pagination && pagination.current_page < pagination.last_page) {
-      setIsLoadingMore(true);
-      try {
-        const nextPage = pagination.current_page + 1;
-        await actions.loadMessages(activeThreadId, { page: nextPage, per_page: 15 });
-        setVisibleLimit((prev) => prev + 5);
-
-        setTimeout(() => {
-          if (container) {
-            const newScrollHeight = container.scrollHeight;
-            container.scrollTop = prevScrollTop + (newScrollHeight - prevScrollHeight);
-          }
-        }, 50);
-      } catch (err) {
-        toast.error("Failed to load older messages");
-      } finally {
-        setIsLoadingMore(false);
-      }
-    }
-  };
-
-  const handleScroll = () => {
-    const container = feedContainerRef.current;
-    if (!container) return;
-    const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 120;
-    if (isAtBottom) {
-      setShowNewMsgBanner(false);
-    }
-  };
-
-  const handleScrollToBottom = () => {
-    const container = feedContainerRef.current;
-    if (container) {
-      container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' });
-    }
-    setShowNewMsgBanner(false);
-  };
-
-  // ─── Handlers ─────────────────────────────────────────────────────────
+  // ─── 2. Question Creation ──────────────────────────────────────────────
   const handleCaptureTimestamp = () => {
     const time = getCurrentTime ? Math.floor(getCurrentTime()) : 0;
     setCapturedTime(time);
     setAttachTimestamp(true);
-    toast.success(`Captured video timestamp ${formatSeconds(time)}`);
-    if (textareaRef.current) {
-      textareaRef.current.focus();
-    }
+    toast.success(`Attached playback time ${formatSeconds(time)}`);
   };
 
-  const handlePostConversation = async (e) => {
-    if (e) e.preventDefault();
+  const handlePostQuestion = async (e) => {
+    e.preventDefault();
     if (!composerMessage.trim()) return;
 
-    setIsPosting(true);
+    setIsPostingQuestion(true);
     try {
-      const result = await actions.sendMessage({
-        threadId: activeThreadId,
-        body: composerMessage.trim(),
-        videoTimestampSeconds: attachTimestamp && capturedTime > 0 ? capturedTime : null,
-        timestampLabel: attachTimestamp && capturedTime > 0 ? formatSeconds(capturedTime) : null,
-        currentUser: user,
-      });
-      if (result.success) {
-        setComposerMessage('');
-        setAttachTimestamp(false);
-        localStorage.removeItem(`discussion_draft_${activeThreadId}`);
-      } else {
-        toast.error('Failed to send message');
-      }
-    } catch {
-      toast.error('Failed to send message');
-    } finally {
-      setIsPosting(false);
-    }
-  };
-
-  const handleCreateNewThread = async (e) => {
-    if (e) e.preventDefault();
-    if (!newThreadBody.trim()) {
-      toast.error("Please enter discussion details");
-      return;
-    }
-
-    setIsPosting(true);
-    try {
-      const payload = {
+      const result = await actions.createThread({
         entity_type: currentLesson ? 'lesson' : 'course',
         entity_id:   currentLesson ? currentLesson.id : course.id,
-        title:       newThreadTitle.trim() || newThreadBody.trim().substring(0, 45) + '...',
-        body:        newThreadBody.trim(),
+        body:        composerMessage.trim(),
         ...(attachTimestamp && capturedTime > 0 ? {
           video_timestamp_seconds: capturedTime,
           timestamp_label: formatSeconds(capturedTime),
-        } : {})
-      };
-      
-      const result = await actions.createThread(payload);
+        } : {}),
+      });
+
       if (result.success) {
-        toast.success("Discussion started!");
-        setNewThreadTitle('');
-        setNewThreadBody('');
+        toast.success('Question posted successfully!');
+        setComposerMessage('');
         setAttachTimestamp(false);
-        setIsCreatingThread(false);
       } else {
-        toast.error("Failed to create thread");
+        toast.error('Failed to post question');
       }
     } catch {
-      toast.error("Failed to create thread");
+      toast.error('Failed to post question');
     } finally {
-      setIsPosting(false);
+      setIsPostingQuestion(false);
     }
   };
 
-  const handleToggleReaction = (messageId, reaction) => {
-    actions.toggleReaction(messageId, reaction, activeThreadId, user);
+  // ─── 3. Expand Inline Replies & Load Messages ─────────────────────────
+  const handleToggleReplies = async (threadId) => {
+    const nextExp = new Set(expandedThreads);
+    if (nextExp.has(threadId)) {
+      nextExp.delete(threadId);
+    } else {
+      nextExp.add(threadId);
+      // Fetch replies from API if not already cached
+      actions.loadMessages(threadId);
+    }
+    setExpandedThreads(nextExp);
   };
 
-  const handleKeyDown = (e) => {
-    if (e.key === 'Escape') {
-      if (attachTimestamp) {
-        setAttachTimestamp(false);
-        toast('Cleared timestamp attachment');
+  // ─── 4. Post Reply Inline ──────────────────────────────────────────────
+  const handlePostReply = async (threadId) => {
+    const replyBody = replyInputs[threadId] || '';
+    if (!replyBody.trim()) return;
+
+    try {
+      const result = await actions.sendMessage({
+        threadId,
+        body: replyBody.trim(),
+        currentUser: user,
+      });
+
+      if (result.success) {
+        setReplyInputs(prev => ({ ...prev, [threadId]: '' }));
+        toast.success('Reply posted!');
+      } else {
+        toast.error('Failed to post reply');
       }
-    } else if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handlePostConversation();
+    } catch {
+      toast.error('Failed to post reply');
     }
   };
 
+  // ─── Helper Functions ──────────────────────────────────────────────────
   const formatSeconds = (sec) => {
     if (!sec) return '0:00';
     const m = Math.floor(sec / 60);
@@ -273,417 +145,338 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
     return `${m}:${s < 10 ? '0' : ''}${s}`;
   };
 
-  const getInitials = (name) => (name ? name.charAt(0).toUpperCase() : 'S');
+  const getInitials = (name) => (name ? name.charAt(0).toUpperCase() : 'U');
 
-  // Group consecutive messages from same author (within 2 minutes)
-  const visibleMessages = messages.slice(-visibleLimit);
-  const groupedMessages = [];
-
-  visibleMessages.forEach((msg, idx) => {
-    const isInstructor = msg.is_instructor_answer || msg.author?.role === 'admin' || msg.author?.role === 'instructor';
-    const prevMsg = idx > 0 ? visibleMessages[idx - 1] : null;
-    const timeDiff = prevMsg 
-      ? (new Date(msg.created_at) - new Date(prevMsg.created_at)) / 1000 / 60 
-      : 999;
-    
-    const isSameSender = prevMsg && String(prevMsg.user_id) === String(msg.user_id);
-    const isGrouped = isSameSender && timeDiff < 2;
-
-    if (isGrouped && groupedMessages.length > 0) {
-      groupedMessages[groupedMessages.length - 1].messages.push(msg);
-    } else {
-      groupedMessages.push({
-        id: msg.id || msg._clientId,
-        author: msg.author,
-        userId: msg.user_id,
-        isInstructor,
-        created_at: msg.created_at,
-        messages: [msg]
-      });
-    }
-  });
-
-  const hasMore = messages.length > visibleLimit || (pagination && pagination.current_page < pagination.last_page);
+  const visibleThreads = threads.slice(0, threadsLimit);
+  const hasMoreThreads = threads.length > threadsLimit;
 
   return (
-    <div className="DiscussionInboxLayout" role="region" aria-label="Community WhatsApp inbox">
+    <div className="QuestionsDiscussionContainer" role="region" aria-label="Questions and Discussions Q&A">
       
-      {/* ─── LEFT PANEL: Thread Index Sidebar (WhatsApp style) ─────── */}
-      <div className="ThreadInboxSidebar">
-        {/* Search and Action Header */}
-        <div className="SidebarHeaderRow">
-          <div className="SearchBoxWrapper">
-            <FiSearch className="SearchIcon" />
-            <input 
-              type="text"
-              placeholder="Search discussions..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label="Search threads"
+      {/* ─── A. Main Composer (YT/Udemy style Q&A prompt) ────────────────── */}
+      <div className="MainComposerBlock">
+        <div className="ComposerHeader">
+          <span className="PromptText">Ask a question about this lesson...</span>
+        </div>
+        <form onSubmit={handlePostQuestion} className="QuestionForm">
+          <div className="InputWrapper">
+            <textarea
+              ref={mainComposerRef}
+              rows={3}
+              value={composerMessage}
+              onChange={(e) => setComposerMessage(e.target.value)}
+              placeholder="What are you stuck on? Share details so instructors or classmates can help..."
+              aria-label="Write a question"
             />
           </div>
-          <button 
-            onClick={() => {
-              setIsCreatingThread(true);
-              actions.switchThread(null); // Deselect active thread
-            }}
-            className={`NewThreadFabBtn ${isCreatingThread ? 'active' : ''}`}
-            title="Start a new discussion"
-            aria-label="Start new discussion thread"
-          >
-            <FiPlus />
-          </button>
+          <div className="ComposerControlBar">
+            <button
+              type="button"
+              onClick={handleCaptureTimestamp}
+              className="TimestampCaptureBtn"
+              title="Tag current video timestamp"
+            >
+              <FiClock />
+              <span>Comment at {formatSeconds(getCurrentTime ? getCurrentTime() : 0)}</span>
+            </button>
+
+            {attachTimestamp && (
+              <span className="TimestampBadge">
+                <FiClock />
+                <span>Tagged: {formatSeconds(capturedTime)}</span>
+                <button type="button" onClick={() => setAttachTimestamp(false)} className="ClearBadgeBtn">
+                  <FiX />
+                </button>
+              </span>
+            )}
+
+            <button
+              type="submit"
+              disabled={isPostingQuestion || !composerMessage.trim()}
+              className="PostQuestionBtn"
+            >
+              <FiSend />
+              <span>{isPostingQuestion ? 'Posting...' : 'Post Question'}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* ─── B. Search & Sorting Control Header ────────────────────────── */}
+      <div className="SearchFilterHeader">
+        <div className="SearchBox">
+          <FiSearch className="Icon" />
+          <input
+            type="text"
+            placeholder="Search questions, replies, or instructors..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            aria-label="Search questions"
+          />
+          {searchQuery && (
+            <button onClick={() => setSearchQuery('')} className="ClearSearchBtn">
+              <FiX />
+            </button>
+          )}
         </div>
 
-        {/* Thread Index List */}
-        <div className="ThreadsListScrollContainer">
-          {filteredThreads.length === 0 ? (
-            <div className="NoThreadsText">No discussions found.</div>
-          ) : (
-            filteredThreads.map((t) => {
-              const isSelected = Number(activeThreadId) === Number(t.id);
-              const unreadCount = state.unreadByThread?.[String(t.id)] || 0;
-              const isInstructorThread = t.author?.role === 'admin' || t.author?.role === 'instructor';
-              
-              return (
-                <div 
-                  key={t.id}
-                  onClick={() => {
-                    setIsCreatingThread(false);
-                    actions.switchThread(t.id);
-                  }}
-                  className={`ThreadItemCard ${isSelected ? 'Active' : ''}`}
-                >
-                  {/* Left Avatar circle */}
-                  <div className={`Avatar ${isInstructorThread ? 'Instructor' : ''}`}>
-                    {getInitials(t.author?.name)}
-                  </div>
-
-                  {/* Middle Info Column */}
-                  <div className="ThreadCardMiddle">
-                    <div className="TitleRow">
-                      <h4>{t.title || 'Discussion Thread'}</h4>
-                      <span className="TimeBadge">
-                        {t.last_activity_at 
-                          ? new Date(t.last_activity_at).toLocaleDateString([], { month: 'short', day: 'numeric' }) 
-                          : ''}
-                      </span>
-                    </div>
-                    
-                    <p className="Snippet">
-                      {t.messages_count > 0 
-                        ? `Last reply: ${t.messages_count} messages` 
-                        : 'No replies yet'}
-                    </p>
-
-                    <div className="MetaBadgesRow">
-                      {t.is_pinned && <span className="PinPill"><FiBookmark /> Pinned</span>}
-                      {t.is_resolved && <span className="ResolvedPill"><FiCheck /> Resolved</span>}
-                      {t.is_locked && <span className="LockPill"><FiLock /> Locked</span>}
-                    </div>
-                  </div>
-
-                  {/* Right Unread Indicator dot */}
-                  {unreadCount > 0 && (
-                    <div className="UnreadDotBadge">
-                      {unreadCount}
-                    </div>
-                  )}
-                </div>
-              );
-            })
-          )}
+        <div className="FilterDropdown">
+          <FiFilter className="Icon" />
+          <select 
+            value={filterType} 
+            onChange={(e) => setFilterType(e.target.value)}
+            aria-label="Sort and filter questions"
+          >
+            <option value="recent">Newest Questions</option>
+            <option value="popular">Most Replied</option>
+            <option value="pinned">Pinned Questions</option>
+            <option value="solved">Solved Q&A</option>
+            <option value="instructor">Instructor Answered</option>
+          </select>
         </div>
       </div>
 
-      {/* ─── RIGHT PANEL: Conversation Pane / New Thread Pane ───────── */}
-      <div className="ChatConversationPane">
+      {/* ─── C. Questions Listing Feed ─────────────────────────────────── */}
+      <div className="QuestionsFeed">
+        {loading && threads.length === 0 ? (
+          <div className="FeedLoadingText">Loading questions feed...</div>
+        ) : threads.length === 0 ? (
+          <div className="EmptyStateBlock">
+            <FiMessageSquare className="EmptyIcon" />
+            <p className="TitleText">No questions have been asked for this lesson yet.</p>
+            <p className="SubText">Be the first to spark a conversation or ask for help!</p>
+          </div>
+        ) : (
+          visibleThreads.map((thread) => {
+            const isExpanded = expandedThreads.has(thread.id);
+            const messagesList = state.messagesByThread[String(thread.id)] || [];
+            
+            // The first message is the actual question content (body, reactions, timestamp)
+            const mainQuestion = messagesList[0] || null;
+            const replies = messagesList.slice(1);
 
-        {/* CASE A: Starting a New Discussion Thread */}
-        {isCreatingThread && (
-          <div className="NewThreadPaneContainer">
-            <div className="NewThreadHeader">
-              <h3>Start a New Discussion</h3>
-              <button 
-                type="button" 
-                onClick={() => setIsCreatingThread(false)} 
-                className="CloseBtn"
-                aria-label="Cancel thread creation"
+            const isInstructor = thread.author?.role === 'admin' || thread.author?.role === 'instructor';
+            const isMe = Number(thread.user_id) === Number(user?.id);
+
+            // Reactions counts from main message
+            const likesCount = mainQuestion?.reactions?.filter(r => r.reaction === 'like').length || 0;
+            const helpfulCount = mainQuestion?.reactions?.filter(r => r.reaction === 'helpful').length || 0;
+            const loveCount = mainQuestion?.reactions?.filter(r => r.reaction === 'love').length || 0;
+            const insightCount = mainQuestion?.reactions?.filter(r => r.reaction === 'insightful').length || 0;
+
+            const hasInstructorReply = replies.some(r => r.is_instructor_answer || r.author?.role === 'admin' || r.author?.role === 'instructor');
+
+            return (
+              <div 
+                key={thread.id} 
+                className={`QuestionCard ${thread.is_pinned ? 'PinnedQuestion' : ''} ${thread.is_resolved ? 'SolvedQuestion' : ''}`}
               >
-                <FiX />
-              </button>
-            </div>
-
-            <form onSubmit={handleCreateNewThread} className="NewThreadForm">
-              <div className="FormGroup">
-                <label htmlFor="thread-title">Topic Title</label>
-                <input 
-                  id="thread-title"
-                  type="text" 
-                  placeholder="e.g. Question about alignment technique..."
-                  value={newThreadTitle}
-                  onChange={(e) => setNewThreadTitle(e.target.value)}
-                />
-              </div>
-
-              <div className="FormGroup">
-                <label htmlFor="thread-body">Details / Message</label>
-                <textarea 
-                  id="thread-body"
-                  rows={6}
-                  placeholder="Describe your question or share your thoughts here..."
-                  value={newThreadBody}
-                  onChange={(e) => setNewThreadBody(e.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="CreationActionsRow">
-                <button 
-                  type="button"
-                  onClick={handleCaptureTimestamp}
-                  className="TimestampCapsuleBtn"
-                >
-                  <FiClock />
-                  <span>{attachTimestamp ? `Timestamp: ${formatSeconds(capturedTime)}` : "Attach Timestamp"}</span>
-                </button>
-
-                <div className="RightActions">
-                  <button 
-                    type="button" 
-                    onClick={() => setIsCreatingThread(false)}
-                    className="CancelBtn"
-                  >
-                    Cancel
-                  </button>
-                  <button 
-                    type="submit" 
-                    disabled={isPosting || !newThreadBody.trim()}
-                    className="SubmitBtn"
-                  >
-                    Post Topic
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* CASE B: Empty State (No Active Thread Selected) */}
-        {!isCreatingThread && !activeThreadId && (
-          <div className="EmptyChatPane">
-            <FiMessageSquare className="PaneIcon" />
-            <h3>Select a Conversation</h3>
-            <p>Choose an ongoing discussion thread from the sidebar list, or click the plus icon to start a new Q&A thread.</p>
-          </div>
-        )}
-
-        {/* CASE C: Active Conversation Thread */}
-        {!isCreatingThread && activeThreadId && activeThread && (
-          <>
-            {/* Conversation Header banner */}
-            <div className="ChatPaneHeaderRow">
-              <div className="HeaderLeft">
-                <h3 className="ChatTitle">{activeThread.title}</h3>
-                <p className="MetaAuthor">
-                  Started by <strong>{activeThread.author?.name || 'Classmate'}</strong>
-                </p>
-              </div>
-
-              {/* Status Action Badges */}
-              <div className="HeaderRightBadges">
-                {activeThread.is_pinned && <span className="PinPill"><FiBookmark /> Pinned</span>}
-                {activeThread.is_resolved && <span className="ResolvedPill"><FiCheck /> Solved</span>}
-                {activeThread.is_locked && <span className="LockPill"><FiLock /> Locked</span>}
-              </div>
-            </div>
-
-            {/* Conversation Feed */}
-            <div 
-              ref={feedContainerRef} 
-              onScroll={handleScroll}
-              className="ChatFeedContainer"
-              role="log"
-              aria-live="polite"
-            >
-              {/* Floating Alert Indicator banner */}
-              {showNewMsgBanner && (
-                <button 
-                  type="button" 
-                  onClick={handleScrollToBottom} 
-                  className="NewMessagesBanner"
-                  aria-label="Scroll to bottom for new messages"
-                >
-                  <FiArrowDown /> New replies below
-                </button>
-              )}
-
-              {/* Progressive loadingView Earlier button */}
-              {hasMore && (
-                <button 
-                  type="button"
-                  onClick={handleViewEarlierMessages}
-                  disabled={isLoadingMore}
-                  className="ShowOlderMessagesBtn"
-                  aria-label="Load older messages"
-                >
-                  {isLoadingMore ? "Loading..." : "View Earlier Messages"}
-                </button>
-              )}
-
-              {groupedMessages.map((group) => {
-                const isMe = Number(group.userId) === Number(user?.id);
-                
-                return (
-                  <div 
-                    key={group.id} 
-                    className={`MessageGroup ${group.isInstructor ? 'InstructorGroup' : ''} ${isMe ? 'MyGroup' : ''}`}
-                  >
-                    {/* Left Timestamp block (only if first message in group has it) */}
-                    <div className="GroupLeftCol">
-                      {group.messages[0].video_timestamp_seconds && (
-                        <button
-                          onClick={() => onSeek && onSeek(group.messages[0].video_timestamp_seconds)}
-                          className="TimestampCapsuleBtn"
-                          title="Seek video"
-                          aria-label={`Seek to ${formatSeconds(group.messages[0].video_timestamp_seconds)}`}
-                        >
-                          <FiClock />
-                          <span>{formatSeconds(group.messages[0].video_timestamp_seconds)}</span>
-                        </button>
-                      )}
+                {/* 1. Header author details */}
+                <div className="CardHeader">
+                  <div className="AuthorBlock">
+                    <div className={`Avatar ${isInstructor ? 'Instructor' : ''} ${isMe ? 'MeAvatar' : ''}`}>
+                      {getInitials(thread.author?.name)}
                     </div>
-
-                    {/* Conversational bubble pane */}
-                    <div className="MessageContentCol">
-                      {/* Sender details (once per group) */}
-                      <div className="MessageHeaderRow">
-                        <div className="AuthorBlock">
-                          <div className={`Avatar ${group.isInstructor ? 'Instructor' : ''} ${isMe ? 'MeAvatar' : ''}`}>
-                            {getInitials(group.author?.name)}
-                          </div>
-                          <span className="AuthorName">
-                            {group.author?.name || (group.isInstructor ? 'Instructor' : 'Student')}
-                          </span>
-                          {group.isInstructor && (
-                            <span className="InstructorBadge">
-                              <FiUserCheck /> Instructor
-                            </span>
-                          )}
-                          <span className="TimeLabel">
-                            {group.created_at ? new Date(group.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Stacking conversation message list */}
-                      <div className="GroupMessagesList">
-                        {group.messages.map((msg) => {
-                          const likeCount    = msg.reactions?.filter(r => r.reaction === 'like').length || 0;
-                          const helpfulCount = msg.reactions?.filter(r => r.reaction === 'helpful').length || 0;
-                          
-                          return (
-                            <div 
-                              key={msg.id || msg._clientId}
-                              onMouseEnter={() => setHoveredMsgId(msg.id)}
-                              onMouseLeave={() => setHoveredMsgId(null)}
-                              className="GroupedBubbleRow"
-                            >
-                              <div className="BubbleBody">
-                                <p>{msg.body}</p>
-                              </div>
-
-                              {/* Reactions rows */}
-                              {!msg._isPending && (likeCount > 0 || helpfulCount > 0 || hoveredMsgId === msg.id) && (
-                                <div className="ReactionsRow">
-                                  <button 
-                                    onClick={() => handleToggleReaction(msg.id, 'like')} 
-                                    className="ReactionBtn"
-                                    aria-label="Like reply"
-                                  >
-                                    <FiThumbsUp /> <span>{likeCount > 0 ? likeCount : 'Like'}</span>
-                                  </button>
-                                  <button 
-                                    onClick={() => handleToggleReaction(msg.id, 'helpful')} 
-                                    className="ReactionBtn"
-                                    aria-label="Mark helpful"
-                                  >
-                                    <FiSmile /> <span>{helpfulCount > 0 ? helpfulCount : 'Helpful'}</span>
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
+                    <div className="AuthorMeta">
+                      <span className="AuthorName">
+                        {thread.author?.name || 'Classmate'}
+                      </span>
+                      <span className="TimeLabel">
+                        {thread.created_at ? new Date(thread.created_at).toLocaleDateString() : ''}
+                      </span>
                     </div>
-
                   </div>
-                );
-              })}
 
-              {/* Typing indicator */}
-              {typingUsers.length > 0 && (
-                <div className="TypingIndicator" aria-live="polite">
-                  <span className="TypingDots">
-                    <span className="dot" />
-                    <span className="dot" />
-                    <span className="dot" />
-                  </span>
-                  <span>{typingUsers.map(u => u.userName).join(', ')} typing...</span>
-                </div>
-              )}
-            </div>
-
-            {/* Conversation Composer Footer */}
-            <div className="ChatComposerFooter">
-              <div className="InputComposerRow">
-                <button 
-                  className="TimestampCapsuleBtn"
-                  onClick={handleCaptureTimestamp}
-                  title="Capture current video timestamp"
-                  aria-label="Capture timestamp"
-                >
-                  <FiClock />
-                  <span>{formatSeconds(capturedTime)}</span>
-                </button>
-
-                <div className="ComposerBox flex-1">
-                  <textarea
-                    ref={textareaRef}
-                    rows={1}
-                    placeholder="Type a reply... (Enter to send, Shift+Enter for newline, Esc to clear timestamp)"
-                    value={composerMessage}
-                    onChange={handleComposerChange}
-                    onKeyDown={handleKeyDown}
-                    disabled={isPosting}
-                    aria-label="Write chat reply"
-                  />
+                  <div className="CardBadges">
+                    {thread.is_pinned && (
+                      <span className="Badge PinnedBadge">
+                        <FiBookmark /> Pinned
+                      </span>
+                    )}
+                    {thread.is_resolved && (
+                      <span className="Badge SolvedBadge">
+                        <FiCheckCircle /> Solved
+                      </span>
+                    )}
+                    {hasInstructorReply && (
+                      <span className="Badge InstructorBadge">
+                        <FiUserCheck /> Instructor Reply
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {attachTimestamp && (
-                  <span className="AttachedBadge">
-                    <FiClock />
-                    <span>{formatSeconds(capturedTime)}</span>
-                    <button type="button" onClick={() => setAttachTimestamp(false)} className="ClearBtn">
-                      <FiX />
+                {/* 2. Question Text Body */}
+                <div className="CardBody">
+                  <p className="QuestionText">
+                    {isExpanded && mainQuestion ? mainQuestion.body : thread.title}
+                  </p>
+
+                  {/* Video Seeking Capsule */}
+                  {((isExpanded && mainQuestion?.video_timestamp_seconds) || (!isExpanded && thread.latest_message?.video_timestamp_seconds)) && (
+                    <button
+                      onClick={() => onSeek && onSeek(isExpanded ? mainQuestion.video_timestamp_seconds : thread.latest_message.video_timestamp_seconds)}
+                      className="VideoSeekCapsule"
+                      title="Seek player to timestamp"
+                    >
+                      <FiClock />
+                      <span>Seek to {formatSeconds(isExpanded ? mainQuestion.video_timestamp_seconds : thread.latest_message.video_timestamp_seconds)}</span>
                     </button>
-                  </span>
+                  )}
+                </div>
+
+                {/* 3. Footer actions row (Reactions & Replies togglers) */}
+                <div className="CardFooterActions">
+                  <div className="ReactionChipsList">
+                    <button 
+                      onClick={() => mainQuestion && actions.toggleReaction(mainQuestion.id, 'like', thread.id, user)} 
+                      className={`ReactionChip ${mainQuestion?.reactions?.some(r => r.user_id === user?.id && r.reaction === 'like') ? 'active' : ''}`}
+                    >
+                      <FiThumbsUp />
+                      <span>{likesCount}</span>
+                    </button>
+                    
+                    <button 
+                      onClick={() => mainQuestion && actions.toggleReaction(mainQuestion.id, 'helpful', thread.id, user)}
+                      className={`ReactionChip ${mainQuestion?.reactions?.some(r => r.user_id === user?.id && r.reaction === 'helpful') ? 'active' : ''}`}
+                    >
+                      <FiSmile />
+                      <span>{helpfulCount}</span>
+                    </button>
+
+                    <button 
+                      onClick={() => mainQuestion && actions.toggleReaction(mainQuestion.id, 'love', thread.id, user)}
+                      className={`ReactionChip ${mainQuestion?.reactions?.some(r => r.user_id === user?.id && r.reaction === 'love') ? 'active' : ''}`}
+                    >
+                      <FiHeart />
+                      <span>{loveCount}</span>
+                    </button>
+
+                    <button 
+                      onClick={() => mainQuestion && actions.toggleReaction(mainQuestion.id, 'insightful', thread.id, user)}
+                      className={`ReactionChip ${mainQuestion?.reactions?.some(r => r.user_id === user?.id && r.reaction === 'insightful') ? 'active' : ''}`}
+                    >
+                      <FiAward />
+                      <span>{insightCount}</span>
+                    </button>
+                  </div>
+
+                  <div className="RightActions">
+                    {/* Instructor Moderation Triggers */}
+                    {(user?.role === 'admin' || user?.role === 'instructor') && (
+                      <>
+                        <button 
+                          onClick={() => actions.deleteThread(thread.id)}
+                          className="ModeratorActionBtn delete"
+                          title="Delete thread"
+                        >
+                          <FiTrash2 />
+                        </button>
+                      </>
+                    )}
+
+                    <button 
+                      onClick={() => handleToggleReplies(thread.id)}
+                      className="RepliesToggleBtn"
+                    >
+                      <span>{isExpanded ? 'Hide Replies' : `Show Replies (${thread.messages_count - 1})`}</span>
+                      {isExpanded ? <FiChevronUp /> : <FiChevronDown />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4. Collapsible Inline Replies Section */}
+                {isExpanded && (
+                  <div className="InlineRepliesContainer">
+                    <div className="RepliesHeader">
+                      <span>Replies ({replies.length})</span>
+                    </div>
+
+                    <div className="RepliesList">
+                      {replies.map((reply) => {
+                        const isReplyInstructor = reply.is_instructor_answer || reply.author?.role === 'admin' || reply.author?.role === 'instructor';
+                        const isReplyMe = Number(reply.user_id) === Number(user?.id);
+                        
+                        return (
+                          <div 
+                            key={reply.id} 
+                            className={`ReplyCard ${isReplyInstructor ? 'InstructorReply' : ''} ${isReplyMe ? 'MyReply' : ''}`}
+                          >
+                            <div className="ReplyHeader">
+                              <div className="AuthorBlock">
+                                <div className={`Avatar ${isReplyInstructor ? 'Instructor' : ''} ${isReplyMe ? 'MeAvatar' : ''}`}>
+                                  {getInitials(reply.author?.name)}
+                                </div>
+                                <div className="AuthorMeta">
+                                  <span className="AuthorName">{reply.author?.name}</span>
+                                  {isReplyInstructor && (
+                                    <span className="InstructorBadge">
+                                      <FiUserCheck /> Instructor
+                                    </span>
+                                  )}
+                                  <span className="TimeLabel">
+                                    {reply.created_at ? new Date(reply.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="ReplyBody">
+                              <p>{reply.body}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Inline Reply Composer */}
+                    <div className="InlineReplyComposer">
+                      <div className="Avatar">
+                        {getInitials(user?.name)}
+                      </div>
+                      <div className="ReplyInputWrapper">
+                        <textarea
+                          rows={1}
+                          placeholder="Write a reply..."
+                          value={replyInputs[thread.id] || ''}
+                          onChange={(e) => setReplyInputs({ ...replyInputs, [thread.id]: e.target.value })}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !e.shiftKey) {
+                              e.preventDefault();
+                              handlePostReply(thread.id);
+                            }
+                          }}
+                          aria-label="Write a reply"
+                        />
+                        <button
+                          onClick={() => handlePostReply(thread.id)}
+                          disabled={!(replyInputs[thread.id] || '').trim()}
+                          className="SendReplyBtn"
+                          aria-label="Submit reply"
+                        >
+                          <FiSend />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 )}
 
-                <button
-                  onClick={handlePostConversation}
-                  disabled={isPosting || !composerMessage.trim()}
-                  className="SendBtn"
-                  aria-label="Send reply"
-                >
-                  <FiSend />
-                </button>
               </div>
-            </div>
-          </>
+            );
+          })
         )}
 
+        {/* Load Earlier Questions progressive list button */}
+        {hasMoreThreads && (
+          <button 
+            type="button" 
+            onClick={() => setThreadsLimit(prev => prev + 5)}
+            className="LoadEarlierQuestionsBtn"
+            aria-label="Load earlier questions"
+          >
+            <FiPlus /> Load Earlier Questions
+          </button>
+        )}
       </div>
 
     </div>

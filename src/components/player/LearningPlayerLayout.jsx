@@ -244,7 +244,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
               onRegisterPlayerCallbacks={handleRegisterPlayerCallbacks}
             />
 
-            {/* Overview, Notes, Resources & Discussion Tabs */}
+            {/* Overview, Notes, Resources & Questions & Discussion Tabs */}
             <PlayerTabs
               course={course}
               sections={sections}

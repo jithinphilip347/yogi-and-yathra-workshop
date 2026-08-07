@@ -21,13 +21,17 @@ export function useCommunicationActions() {
   const { state, dispatch } = useCommunication();
 
   // ─── Load Threads ────────────────────────────────────────────────────────
-  const loadThreads = useCallback(async (entityType, entityId) => {
+  const loadThreads = useCallback(async (entityType, entityId, extraParams = {}) => {
     if (!entityId) return;
 
     dispatch({ type: COMM_ACTIONS.SET_LOADING, payload: true });
     try {
-      commLog('DISPATCH', { action: 'loadThreads', entityType, entityId });
-      const res = await communicationApi.getThreads({ entity_type: entityType, entity_id: entityId });
+      commLog('DISPATCH', { action: 'loadThreads', entityType, entityId, ...extraParams });
+      const res = await communicationApi.getThreads({ 
+        entity_type: entityType, 
+        entity_id: entityId,
+        ...extraParams
+      });
       const threads = res?.data || [];
 
       dispatch({

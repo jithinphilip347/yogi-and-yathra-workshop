@@ -40,7 +40,7 @@ export default React.memo(function PlayerTabs({ course, sections, currentLesson,
           className={`TabButton ${activeTab === 'discussion' ? 'Active' : ''}`}
           onClick={() => setActiveTab('discussion')}
         >
-          Discussion
+          Questions & Discussion
         </button>
 
         <button
