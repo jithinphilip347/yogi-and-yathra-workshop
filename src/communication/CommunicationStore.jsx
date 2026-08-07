@@ -37,7 +37,7 @@ import commLog from './commLogger';
 const CommunicationContext = createContext(null);
 
 // ─── Provider ─────────────────────────────────────────────────────────────
-export function CommunicationProvider({ children, courseId, lessonId }) {
+export function CommunicationProvider({ children, courseId, lessonId, liveSectionId }) {
   const [state, dispatch] = useReducer(communicationReducer, initialState);
 
   // Initialize the Event Bus with dispatch on mount
@@ -46,27 +46,34 @@ export function CommunicationProvider({ children, courseId, lessonId }) {
     commLog('CONNECT', 'CommunicationProvider mounted — Event Bus ready');
   }, []);
 
-  // React to course / lesson context changes and manage channel subscription lifecycle
+  // React to course / lesson / liveSection context changes and manage channel subscription lifecycle
   useEffect(() => {
-    if (!courseId) return;
+    if (!courseId && !liveSectionId) return;
 
-    commLog('SUBSCRIBE', { courseId, lessonId });
+    commLog('SUBSCRIBE', { courseId, lessonId, liveSectionId });
 
-    // Subscribe to course and optional lesson channels
-    commEventBus.subscribeToCourse(courseId);
-    if (lessonId) {
-      commEventBus.subscribeToLesson(lessonId);
+    if (liveSectionId) {
+      commEventBus.subscribeToLiveSection(liveSectionId);
+    } else {
+      commEventBus.subscribeToCourse(courseId);
+      if (lessonId) {
+        commEventBus.subscribeToLesson(lessonId);
+      }
     }
 
-    // Cleanup: cleanly leave course and lesson channels on context change or unmount
+    // Cleanup: cleanly leave course, lesson or live-session channels on context change or unmount
     return () => {
-      commLog('LEAVE', { courseId, lessonId });
-      commEventBus.leaveChannel(`course.${courseId}`);
-      if (lessonId) {
-        commEventBus.leaveChannel(`lesson.${lessonId}`);
+      commLog('LEAVE', { courseId, lessonId, liveSectionId });
+      if (liveSectionId) {
+        commEventBus.leaveChannel(`live-session.${liveSectionId}`);
+      } else {
+        commEventBus.leaveChannel(`course.${courseId}`);
+        if (lessonId) {
+          commEventBus.leaveChannel(`lesson.${lessonId}`);
+        }
       }
     };
-  }, [courseId, lessonId]);
+  }, [courseId, lessonId, liveSectionId]);
 
   // Stable context value: memoize to prevent unnecessary renders
   const value = useMemo(() => ({ state, dispatch }), [state]);

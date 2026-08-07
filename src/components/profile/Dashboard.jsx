@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FiBookOpen, FiClock, FiUsers, FiCalendar, FiPlayCircle, FiMoreVertical, FiZap, FiAward } from "react-icons/fi";
+import { MdMoreVert, MdEvent, MdAccessTime, MdLiveTv } from "react-icons/md";
+import { FaChalkboardTeacher } from "react-icons/fa";
 import { AiFillStar } from "react-icons/ai";
 import courseApi from "@/libs/courseApi";
 import useWishlist from "@/hooks/useWishlist";
@@ -338,7 +340,7 @@ const Dashboard = ({
                       <div className="BookingId">ID: #{activeLiveSession.id}</div>
                     </div>
                     <div className="FooterRight">
-                      <Link href={activeLiveSession.meeting_link || "/live-stream"} passHref>
+                      <Link href={`/live-stream/${activeLiveSession.id}/${activeLiveSession.slug || 'live-session'}`} passHref>
                         <button className="ActionBtn primary live-btn">
                           <MdLiveTv style={{ marginRight: '6px' }} /> Join Live
                         </button>

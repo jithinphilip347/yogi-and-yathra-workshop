@@ -82,6 +82,31 @@ class CommunicationEventBus {
   }
 
   /**
+   * Subscribe to a live-session presence/private channel.
+   */
+  subscribeToLiveSection(liveSectionId) {
+    const name = `live-session.${liveSectionId}`;
+    if (this.subscribedChannels.has(name)) return;
+
+    const echo = getEcho();
+    if (!echo) {
+      commLog('ERROR', 'Echo not available — cannot subscribe to live-session channel');
+      return;
+    }
+
+    commLog('SUBSCRIBE', { channel: name });
+    const channel = echo.private(name);
+
+    channel.listen('.message.created', (event) => this._onMessageCreated(event));
+    channel.listen('.message.updated', (event) => this._onMessageUpdated(event));
+    channel.listen('.message.deleted', (event) => this._onMessageDeleted(event));
+    channel.listen('.thread.status_updated', (event) => this._onThreadStatusUpdated(event));
+    channel.listen('.reaction.updated', (event) => this._onReactionUpdated(event));
+
+    this.subscribedChannels.set(name, channel);
+  }
+
+  /**
    * Subscribe to a lesson-level private channel.
    */
   subscribeToLesson(lessonId) {

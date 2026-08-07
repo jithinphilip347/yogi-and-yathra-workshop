@@ -1,11 +1,8 @@
 #LiveStreamFull {
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
   min-height: 100vh;
   background: #ffffff;
-  z-index: 99999;
   color: #111;
 
   .VideoSection {

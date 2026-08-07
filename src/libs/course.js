@@ -7,6 +7,7 @@ const fetchLiveSections = async () => {
       revalidate: 600,
     },
   });
+  console.log(res,API_BASE_URL + "home/live-sections")
   const data = await res.json();
   return data;
 };

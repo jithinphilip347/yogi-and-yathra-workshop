@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import { useRouter } from "next/navigation";
+import { useSelector } from 'react-redux';
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
+import courseApi from '@/libs/courseApi';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
@@ -28,8 +30,22 @@ const LiveYogaDetails = ({ liveSection }) => {
   const data = liveSection || {};
   const instructor = data.instructor || {};
 
+  const { user } = useSelector((state) => state.auth);
+  const [isEnrolled, setIsEnrolled] = useState(false);
   const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
   const [openFaq, setOpenFaq] = useState(null);
+
+  useEffect(() => {
+    if (user?.id && data.id) {
+      courseApi.userEnrollments(user.id, 'live_section')
+        .then(res => {
+          const list = res.data?.data || res.data || [];
+          const enrolled = list.some(e => Number(e.enrollable_id) === Number(data.id) && e.status === 'active');
+          setIsEnrolled(enrolled);
+        })
+        .catch(() => {});
+    }
+  }, [user?.id, data.id]);
 
   // ─── Compute derived values ──────────────────────────────────────────
 
@@ -62,7 +78,7 @@ const LiveYogaDetails = ({ liveSection }) => {
   const instructorExperience = instructor.years_of_experience
     ? `${instructor.years_of_experience}+ Years`
     : "";
-  const instructorImage = instructor.avatar.includes("http")
+  const instructorImage = instructor?.avatar?.includes("http")
     ? `${instructor.avatar}`
     : instructor.avatar ? `${MEDIA_BASE_URL}${instructor.avatar}` : null;
   const instructorExpertise = Array.isArray(instructor.expertise)
@@ -451,7 +467,16 @@ const LiveYogaDetails = ({ liveSection }) => {
                 </div>
               )}
 
-              {isInCart(data?.id, 'LiveSection') ? (
+              {isEnrolled ? (
+                <Link
+                  href={`/live-stream/${data.id}/${data.slug}`}
+                  style={{ textDecoration: 'none', width: '100%' }}
+                >
+                  <button className="BookBtnSidebar">
+                    Go to Live Stream Portal <MdKeyboardArrowRight className="ArrowAnim" />
+                  </button>
+                </Link>
+              ) : isInCart(data?.id, 'LiveSection') ? (
                 <button
                   className="BookBtnSidebar"
                   onClick={() => router.push('/cart')}

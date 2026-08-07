@@ -190,7 +190,7 @@ export const useProfileLearning = () => {
         status: item.status || session.status || "upcoming",
         countdown: "Upcoming • Scheduled",
         image: session.image || session.thumbnail || null,
-        meeting_link: session.meeting_link || session.stream_url || "/live-stream",
+        meeting_link: `/live-stream/${session.id}/${session.slug || 'live-session'}`,
       };
     });
 
@@ -206,7 +206,7 @@ export const useProfileLearning = () => {
         status: session.status || "upcoming",
         countdown: "Upcoming • Scheduled",
         image: session.image || session.thumbnail || null,
-        meeting_link: session.meeting_link || session.stream_url || "/live-stream",
+        meeting_link: `/live-stream/${session.id}/${session.slug || 'live-session'}`,
       }))
     : [];
 

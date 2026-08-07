@@ -14,7 +14,7 @@ import {
   selectSortedMessages,
 } from '@/communication/selectors';
 
-export default function DiscussionTab({ course, currentLesson, getCurrentTime, onSeek }) {
+export default function DiscussionTab({ course, currentLesson, entityType: propEntityType, getCurrentTime, onSeek }) {
   const { user } = useSelector((state) => state.auth);
   const { state } = useCommunication();
   const actions = useCommunicationActions();
@@ -47,7 +47,7 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
 
   // ─── 1. Fetch threads on Context, Search, or Filter change ─────────────
   useEffect(() => {
-    const entityType = currentLesson?.id ? 'lesson' : 'course';
+    const entityType = propEntityType || (currentLesson?.id ? 'lesson' : 'course');
     const entityId   = currentLesson?.id  ? currentLesson.id : course?.id;
     if (entityId) {
       actions.loadThreads(entityType, entityId, {
@@ -55,7 +55,7 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
         filter: filterType !== 'recent' ? filterType : undefined,
       });
     }
-  }, [course?.id, currentLesson?.id, searchQuery, filterType]);
+  }, [course?.id, currentLesson?.id, searchQuery, filterType, propEntityType]);
 
   // Reset pagination and expansions when lesson changes
   useEffect(() => {
@@ -78,7 +78,7 @@ export default function DiscussionTab({ course, currentLesson, getCurrentTime, o
     setIsPostingQuestion(true);
     try {
       const result = await actions.createThread({
-        entity_type: currentLesson ? 'lesson' : 'course',
+        entity_type: propEntityType || (currentLesson ? 'lesson' : 'course'),
         entity_id:   currentLesson ? currentLesson.id : course.id,
         body:        composerMessage.trim(),
         ...(attachTimestamp && capturedTime > 0 ? {
