@@ -23,7 +23,7 @@ export default function CheckoutFailurePage() {
         </div>
 
         {/* Error Reason */}
-        <div className="bg-red-50 p-4 rounded-xl border border-red-200 text-red-700 text-sm font-medium">
+        <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-red-700 text-sm font-medium">
           {paymentError || 'Transaction was declined or cancelled by the user.'}
         </div>
 
@@ -31,13 +31,13 @@ export default function CheckoutFailurePage() {
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Link
             href="/checkout"
-            className="flex-1 bg-primary-700 text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-800 transition flex items-center justify-center gap-2"
+            className="flex-1 bg-primary-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-primary-800 transition flex items-center justify-center gap-2"
           >
             <FaRedo /> Retry Checkout
           </Link>
           <Link
             href="/contact"
-            className="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            className="px-6 py-3 border border-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
           >
             <FaHeadset /> Contact Support
           </Link>

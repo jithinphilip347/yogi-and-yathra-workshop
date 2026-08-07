@@ -27,7 +27,7 @@ export default function CheckoutSuccessPage() {
         </div>
 
         {/* Order Details Card */}
-        <div className="bg-gray-50 p-4 rounded-xl border border-gray-200 text-left text-sm space-y-2 font-mono">
+        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-left text-sm space-y-2 font-mono">
           <div className="flex justify-between">
             <span className="text-gray-500">Order Reference:</span>
             <span className="font-bold text-gray-900">#{orderNumber}</span>
@@ -46,13 +46,13 @@ export default function CheckoutSuccessPage() {
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <Link
             href="/auth/profile"
-            className="flex-1 bg-primary-700 text-white py-3 px-6 rounded-xl font-semibold hover:bg-primary-800 transition flex items-center justify-center gap-2"
+            className="flex-1 bg-primary-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-primary-800 transition flex items-center justify-center gap-2"
           >
             <FaBookOpen /> Go to My Enrolled Courses
           </Link>
           <Link
             href="/"
-            className="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            className="px-6 py-3 border border-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
           >
             Browse More <FaArrowRight size={14} />
           </Link>
