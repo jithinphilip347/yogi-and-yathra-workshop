@@ -12,6 +12,7 @@ import { useCommunicationActions } from '@/communication/useCommunicationActions
 import {
   selectSortedThreads,
   selectSortedMessages,
+  selectUnreadCount,
 } from '@/communication/selectors';
 
 export default function DiscussionTab({ course, currentLesson, entityType: propEntityType, getCurrentTime, onSeek }) {
@@ -264,46 +265,52 @@ export default function DiscussionTab({ course, currentLesson, entityType: propE
             const loveCount = mainQuestion?.reactions?.filter(r => r.reaction === 'love').length || 0;
             const insightCount = mainQuestion?.reactions?.filter(r => r.reaction === 'insightful').length || 0;
 
-            const hasInstructorReply = replies.some(r => r.is_instructor_answer || r.author?.role === 'admin' || r.author?.role === 'instructor');
-
-            return (
-              <div 
-                key={thread.id} 
-                className={`QuestionCard ${thread.is_pinned ? 'PinnedQuestion' : ''} ${thread.is_resolved ? 'SolvedQuestion' : ''}`}
-              >
-                {/* 1. Header author details */}
-                <div className="CardHeader">
-                  <div className="AuthorBlock">
-                    <div className={`Avatar ${isInstructor ? 'Instructor' : ''} ${isMe ? 'MeAvatar' : ''}`}>
-                      {getInitials(thread.author?.name)}
-                    </div>
-                    <div className="AuthorMeta">
-                      <span className="AuthorName">
-                        {thread.author?.name || 'Classmate'}
-                      </span>
-                      <span className="TimeLabel">
-                        {thread.created_at ? new Date(thread.created_at).toLocaleDateString() : ''}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="CardBadges">
-                    {thread.is_pinned && (
-                      <span className="Badge PinnedBadge">
-                        <FiBookmark /> Pinned
-                      </span>
-                    )}
-                    {thread.is_resolved && (
-                      <span className="Badge SolvedBadge">
-                        <FiCheckCircle /> Solved
-                      </span>
-                    )}
-                    {hasInstructorReply && (
-                      <span className="Badge InstructorBadge">
-                        <FiUserCheck /> Instructor Reply
-                      </span>
-                    )}
-                  </div>
+             const hasInstructorReply = replies.some(r => r.is_instructor_answer || r.author?.role === 'admin' || r.author?.role === 'instructor');
+             const unreadCount = selectUnreadCount(state, thread.id) || thread.unread_count || 0;
+ 
+             return (
+               <div 
+                 key={thread.id} 
+                 className={`QuestionCard ${thread.is_pinned ? 'PinnedQuestion' : ''} ${thread.is_resolved ? 'SolvedQuestion' : ''} ${unreadCount > 0 ? 'UnreadQuestion' : ''}`}
+               >
+                 {/* 1. Header author details */}
+                 <div className="CardHeader">
+                   <div className="AuthorBlock">
+                     <div className={`Avatar ${isInstructor ? 'Instructor' : ''} ${isMe ? 'MeAvatar' : ''}`}>
+                       {getInitials(thread.author?.name)}
+                     </div>
+                     <div className="AuthorMeta">
+                       <span className="AuthorName">
+                         {thread.author?.name || 'Classmate'}
+                       </span>
+                       <span className="TimeLabel">
+                         {thread.created_at ? new Date(thread.created_at).toLocaleDateString() : ''}
+                       </span>
+                     </div>
+                   </div>
+ 
+                   <div className="CardBadges">
+                     {unreadCount > 0 && (
+                       <span className="Badge UnreadBadge" style={{ backgroundColor: '#3b82f6', color: '#ffffff' }}>
+                         New
+                       </span>
+                     )}
+                     {thread.is_pinned && (
+                       <span className="Badge PinnedBadge">
+                         <FiBookmark /> Pinned
+                       </span>
+                     )}
+                     {thread.is_resolved && (
+                       <span className="Badge SolvedBadge">
+                         <FiCheckCircle /> Solved
+                       </span>
+                     )}
+                     {hasInstructorReply && (
+                       <span className="Badge InstructorBadge">
+                         <FiUserCheck /> Instructor Reply
+                       </span>
+                     )}
+                   </div>
                 </div>
 
                 {/* 2. Question Text Body */}

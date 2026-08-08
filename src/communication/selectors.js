@@ -59,9 +59,7 @@ export const selectPresence = (state) => state.presence;
  */
 export const selectSortedThreads = (state) => {
   return [...state.threads].sort((a, b) => {
-    if (a.is_pinned && !b.is_pinned) return -1;
-    if (!a.is_pinned && b.is_pinned) return 1;
-    return new Date(b.last_activity_at || 0) - new Date(a.last_activity_at || 0);
+    return new Date(b.last_activity_at || b.created_at || 0) - new Date(a.last_activity_at || a.created_at || 0);
   });
 };
 
