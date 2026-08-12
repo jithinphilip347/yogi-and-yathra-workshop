@@ -10,7 +10,7 @@ export default function CheckoutFailurePage() {
 
   return (
     <div id="Checkout" className="py-12">
-      <div className="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-100 text-center space-y-6">
+      <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-100 text-center space-y-6">
         <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto text-3xl">
           <FaTimesCircle />
         </div>
