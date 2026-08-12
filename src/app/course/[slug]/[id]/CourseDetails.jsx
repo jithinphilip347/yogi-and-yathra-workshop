@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
@@ -23,6 +23,7 @@ import ReviewPopup from "@/components/popup/ReviewPopup";
 import VideoPreviewPopup from "@/components/popup/VideoPreviewPopup";
 import ProductDetailPopup from "@/components/popup/ProductDetailPopup";
 import { useCourseReviews, formatReviewDate } from "@/components/reviews/useCourseReviews";
+import { reviewApi } from "@/services/reviewApi";
 import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from "@/utils/constants";
 
 const CourseDetails = ({ courseDetails }) => {
@@ -43,10 +44,56 @@ const CourseDetails = ({ courseDetails }) => {
   const router = useRouter();
   const { items: cartItems, addItem, buyNow, removeItem, isInCart } = useCart();
 
-  const reviews = Array.isArray(course?.reviews) ? course.reviews : [];
-  const avgRating =
-    course?.average_rating ?? course?.rating ?? "0";
-  const reviewCount = course?.review_count ?? course?.total_reviews ?? 0;
+  // Live review list + rating summary, fetched client-side from the same
+  // backend contract the Course Player uses. This prevents the page from
+  // showing a stale, server-cached review list ("No reviews yet") after a
+  // review has been submitted or moderated.
+  const [reviews, setReviews] = useState(() =>
+    Array.isArray(course?.reviews) ? course.reviews : []
+  );
+  const [reviewsLoading, setReviewsLoading] = useState(false);
+  const [summary, setSummary] = useState({
+    average_rating: course?.average_rating ?? course?.rating ?? 0,
+    total_reviews: course?.review_count ?? course?.total_reviews ?? 0,
+  });
+
+  const loadReviews = useCallback(async () => {
+    if (!course?.id) return;
+    try {
+      setReviewsLoading(true);
+      const res = await reviewApi.getReviews({
+        target_type: "course",
+        target_id: course.id,
+        // The "Read all reviews" popup relies on this list, so fetch a
+        // generous limit rather than the player's 5-review preview.
+        per_page: 100,
+      });
+      setReviews(res.data?.data || []);
+    } catch {
+      // Keep the current list on failure — never break the page.
+    } finally {
+      setReviewsLoading(false);
+    }
+  }, [course?.id]);
+
+  const loadSummary = useCallback(async () => {
+    if (!course?.id) return;
+    try {
+      const res = await reviewApi.getSummary("course", course.id);
+      const data = res.data?.data ?? {};
+      setSummary({
+        average_rating: data.average_rating ?? 0,
+        total_reviews: data.total_reviews ?? 0,
+      });
+    } catch {
+      // Ignore — the header keeps the server-provided values.
+    }
+  }, [course?.id]);
+
+  useEffect(() => {
+    loadReviews();
+    loadSummary();
+  }, [loadReviews, loadSummary]);
 
   const {
     eligibility: reviewEligibility,
@@ -73,6 +120,9 @@ const CourseDetails = ({ courseDetails }) => {
       setIsEditingReview(false);
       setReviewComment("");
       setReviewRating(5);
+      // Reviews are published instantly — refresh the public list & summary.
+      loadReviews();
+      loadSummary();
     }
   };
 
@@ -85,7 +135,11 @@ const CourseDetails = ({ courseDetails }) => {
   const handleDeleteReview = async () => {
     if (!reviewEligibility?.review?.id) return;
     if (!window.confirm("Delete your review? This cannot be undone.")) return;
-    await removeReview(reviewEligibility.review.id);
+    const deleted = await removeReview(reviewEligibility.review.id);
+    if (deleted) {
+      loadReviews();
+      loadSummary();
+    }
   };
 
   const toggleCartItem = (value) => {
@@ -164,7 +218,7 @@ const CourseDetails = ({ courseDetails }) => {
               <div className="Ratings">
                 <AiFillStar className="star" />
                 <span>
-                  {avgRating} ({reviewCount} Reviews)
+                  {summary.average_rating} ({summary.total_reviews} Reviews)
                 </span>
                 <span className="Students">
                   <FiUsers /> {course?.enrollments_count || "0"} Students
@@ -425,6 +479,8 @@ const CourseDetails = ({ courseDetails }) => {
                       <p className="Comment">{rev.content}</p>
                     </div>
                   ))
+                ) : reviewsLoading ? (
+                  <p className="NoReviewsText">Loading reviews…</p>
                 ) : (
                   <p className="NoReviewsText">
                     No reviews yet. Be the first to review this course.
