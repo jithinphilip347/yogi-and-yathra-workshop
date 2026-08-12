@@ -19,6 +19,7 @@ import CompletionModal from './CompletionModal';
 export default function LearningPlayerLayout({ playerSession: initialSession }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [activePlayerTab, setActivePlayerTab] = useState('overview');
   const [sessionData, setSessionData] = useState(initialSession);
   const [isBookmarked, setIsBookmarked] = useState(initialSession?.current_lesson?.is_bookmarked ?? false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
@@ -196,6 +197,8 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
 
   const handleToggleSidebar = useCallback(() => setSidebarOpen((prev) => !prev), []);
 
+  const handleLeaveReview = useCallback(() => setActivePlayerTab('reviews'), []);
+
   if (!sessionData) return null;
 
   return (
@@ -227,6 +230,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
           onToggleBookmark={handleToggleBookmark}
           isLessonCompleted={current_lesson?.is_completed}
           onToggleCompletion={handleToggleManualCompletion}
+          onLeaveReview={handleLeaveReview}
         />
 
         {/* 2. Main Player Body (Video + Tabs on Left, Course Sidebar on Right) */}
@@ -252,6 +256,8 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
               getCurrentTime={handleGetCurrentTime}
               onSeek={handleSeek}
               completionSummary={completion_summary}
+              activeTab={activePlayerTab}
+              onTabChange={setActivePlayerTab}
             />
           </main>
 

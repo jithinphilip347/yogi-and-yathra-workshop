@@ -5,6 +5,7 @@ import {
   FiCheckCircle, 
   FiAward, 
   FiDownload, 
+  FiEye,
   FiLock, 
   FiUsers, 
   FiStar, 
@@ -14,12 +15,15 @@ import { AiFillStar } from 'react-icons/ai';
 import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from '@/utils/constants';
 import courseApi from '@/libs/courseApi';
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
+import CertificateViewerModal from "@/components/certificate/CertificateViewerModal";
+import toast from "react-hot-toast";
 
 export default function OverviewTab({ course, currentLesson, completionSummary }) {
   const [eligibility, setEligibility] = useState(null);
   const [isClaiming, setIsClaiming] = useState(false);
   const [fullCourse, setFullCourse] = useState(null);
   const [isLoadingCourse, setIsLoadingCourse] = useState(false);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   // Commerce hooks
   const { addItem, removeItem, isInCart } = useCart();
@@ -58,12 +62,13 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
       setIsClaiming(true);
       const res = await courseApi.claimCertificate(course.id);
       const data = res.data?.data || res.data;
-      toast.success("Certificate claimed!");
+      toast.success("Certificate claimed successfully! 🎉");
       setEligibility(prev => ({
         ...prev,
         is_claimed: true,
         certificate: data
       }));
+      setIsViewerOpen(true);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to claim certificate");
     } finally {
@@ -122,55 +127,75 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
       </div>
 
       {/* ─── Certificate Status Card ────────────────────────────────── */}
-      <div className={`CertificateStatusCard ${isCompleted ? 'IsCompleted' : ''}`}>
-        <div className="CardLeft">
-          <div className="AwardIconWrapper">
-            <FiAward />
-          </div>
-
-          <div className="TextWrapper">
-            <span className="CardTitle">
-              Course Completion Certificate
-            </span>
-            <span className="CardDesc">
-              {eligibility?.is_claimed
-                ? `Issued Certificate #${eligibility.certificate?.certificate_number || ''}`
-                : isCompleted
-                ? 'Congratulations! Course 100% completed.'
-                : `Complete all lessons to earn certificate (${percentage}% finished)`}
-            </span>
-          </div>
-        </div>
-
-        <div>
-          {eligibility?.is_claimed && eligibility?.certificate?.download_url ? (
-            <a
-              href={eligibility.certificate.download_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              download
-              className="DownloadCertificateBtn"
-            >
-              <FiDownload />
-              <span>Download PDF</span>
-            </a>
-          ) : isCompleted ? (
-            <button
-              onClick={handleClaim}
-              disabled={isClaiming}
-              className="ClaimCertificateBtn"
-            >
+      {eligibility?.has_certificate !== false && (
+        <div className={`CertificateStatusCard ${isCompleted ? 'IsCompleted' : ''}`}>
+          <div className="CardLeft">
+            <div className="AwardIconWrapper">
               <FiAward />
-              <span>{isClaiming ? 'Claiming...' : 'Claim Certificate'}</span>
-            </button>
-          ) : (
-            <span className="LockedBadge">
-              <FiLock />
-              <span>Locked ({percentage}%)</span>
-            </span>
-          )}
+            </div>
+
+            <div className="TextWrapper">
+              <span className="CardTitle">
+                Course Completion Certificate
+              </span>
+              <span className="CardDesc">
+                {eligibility?.is_claimed
+                  ? `Issued Certificate #${eligibility.certificate?.certificate_number || ''}`
+                  : isCompleted
+                  ? 'Congratulations! Course 100% completed. Your official certificate is unlocked.'
+                  : `Complete all lessons to earn your certificate (${percentage}% finished)`}
+              </span>
+            </div>
+          </div>
+
+          <div style={{ display: "flex", items: "center", gap: "8px" }}>
+            {eligibility?.is_claimed && eligibility?.certificate ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setIsViewerOpen(true)}
+                  className="ClaimCertificateBtn"
+                  style={{ backgroundColor: "#0f172a" }}
+                >
+                  <FiEye />
+                  <span>View Certificate</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setIsViewerOpen(true)}
+                  className="DownloadCertificateBtn"
+                >
+                  <FiDownload />
+                  <span>Download</span>
+                </button>
+              </>
+            ) : isCompleted ? (
+              <button
+                onClick={handleClaim}
+                disabled={isClaiming}
+                className="ClaimCertificateBtn"
+              >
+                <FiAward />
+                <span>{isClaiming ? 'Claiming...' : 'Claim & View Certificate'}</span>
+              </button>
+            ) : (
+              <span className="LockedBadge">
+                <FiLock />
+                <span>Locked ({percentage}%)</span>
+              </span>
+            )}
+          </div>
+
+          {/* Certificate Preview & Download Modal */}
+          <CertificateViewerModal
+            isOpen={isViewerOpen}
+            onClose={() => setIsViewerOpen(false)}
+            certificate={eligibility?.certificate}
+            course={fullCourse || course}
+          />
         </div>
-      </div>
+      )}
 
       {/* ─── Current Lesson Description ─────────────────────────────── */}
       {currentLesson && (

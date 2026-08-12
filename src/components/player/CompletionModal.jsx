@@ -2,14 +2,16 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiAward, FiCheckCircle, FiDownload, FiRefreshCw, FiGrid, FiX } from 'react-icons/fi';
+import { FiAward, FiCheckCircle, FiDownload, FiEye, FiRefreshCw, FiGrid, FiX } from 'react-icons/fi';
 import courseApi from '@/libs/courseApi';
 import toast from 'react-hot-toast';
+import CertificateViewerModal from '@/components/certificate/CertificateViewerModal';
 
 export default function CompletionModal({ course, certificateData, onClose, onClaimSuccess }) {
   const router = useRouter();
   const [isClaiming, setIsClaiming] = useState(false);
   const [claimedCert, setClaimedCert] = useState(certificateData?.certificate || null);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   const handleClaim = async () => {
     if (!course?.id) return;
@@ -22,6 +24,7 @@ export default function CompletionModal({ course, certificateData, onClose, onCl
       if (typeof onClaimSuccess === 'function') {
         onClaimSuccess(data);
       }
+      setIsViewerOpen(true);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to claim certificate");
     } finally {
@@ -110,30 +113,54 @@ export default function CompletionModal({ course, certificateData, onClose, onCl
 
         {/* Action Buttons */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
-          {claimedCert?.download_url ? (
-            <a
-              href={claimedCert.download_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              download
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                padding: '12px 20px',
-                fontSize: '14px',
-                fontWeight: '600',
-                borderRadius: '10px',
-                backgroundColor: 'var(--primaryColor, #874429)',
-                color: '#ffffff',
-                textDecoration: 'none',
-                boxShadow: '0 4px 12px rgba(135, 68, 41, 0.25)'
-              }}
-            >
-              <FiDownload />
-              <span>Download Official Certificate</span>
-            </a>
+          {claimedCert ? (
+            <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+              <button
+                onClick={() => setIsViewerOpen(true)}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '12px 16px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  borderRadius: '10px',
+                  backgroundColor: '#0f172a',
+                  color: '#ffffff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(15, 23, 42, 0.2)'
+                }}
+              >
+                <FiEye />
+                <span>View Certificate</span>
+              </button>
+
+              <button
+                onClick={() => setIsViewerOpen(true)}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  padding: '12px 16px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  borderRadius: '10px',
+                  backgroundColor: 'var(--primaryColor, #874429)',
+                  color: '#ffffff',
+                  border: 'none',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(135, 68, 41, 0.25)'
+                }}
+              >
+                <FiDownload />
+                <span>Download</span>
+              </button>
+            </div>
           ) : (
             <button
               onClick={handleClaim}
@@ -200,6 +227,14 @@ export default function CompletionModal({ course, certificateData, onClose, onCl
             </button>
           </div>
         </div>
+
+        {/* Certificate Viewer Modal */}
+        <CertificateViewerModal
+          isOpen={isViewerOpen}
+          onClose={() => setIsViewerOpen(false)}
+          certificate={claimedCert}
+          course={course}
+        />
       </div>
     </div>
   );

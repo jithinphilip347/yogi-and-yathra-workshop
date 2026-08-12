@@ -7,8 +7,19 @@ import ResourcesTab from './ResourcesTab';
 import DiscussionTab from './DiscussionTab';
 import ReviewsTab from './ReviewsTab';
 
-export default React.memo(function PlayerTabs({ course, sections, currentLesson, getCurrentTime, onSeek, completionSummary }) {
-  const [activeTab, setActiveTab] = useState('overview');
+export default React.memo(function PlayerTabs({ course, sections, currentLesson, getCurrentTime, onSeek, completionSummary, activeTab: activeTabProp, onTabChange }) {
+  // Tabs can be controlled externally (e.g. the header "Leave a review" button
+  // switches straight to the Reviews tab); fall back to internal state otherwise.
+  const [localActiveTab, setLocalActiveTab] = useState('overview');
+  const isControlled = activeTabProp !== undefined;
+  const activeTab = isControlled ? activeTabProp : localActiveTab;
+  const selectTab = (tab) => {
+    if (isControlled) {
+      onTabChange?.(tab);
+    } else {
+      setLocalActiveTab(tab);
+    }
+  };
 
   const resourceCount = (currentLesson?.attachment ? 1 : 0) + (Array.isArray(currentLesson?.resources) ? currentLesson.resources.length : 0);
 
@@ -17,35 +28,35 @@ export default React.memo(function PlayerTabs({ course, sections, currentLesson,
       <div className="TabsNav">
         <button
           className={`TabButton ${activeTab === 'overview' ? 'Active' : ''}`}
-          onClick={() => setActiveTab('overview')}
+          onClick={() => selectTab('overview')}
         >
           Overview
         </button>
 
         <button
           className={`TabButton ${activeTab === 'notes' ? 'Active' : ''}`}
-          onClick={() => setActiveTab('notes')}
+          onClick={() => selectTab('notes')}
         >
           Notes
         </button>
 
         <button
           className={`TabButton ${activeTab === 'resources' ? 'Active' : ''}`}
-          onClick={() => setActiveTab('resources')}
+          onClick={() => selectTab('resources')}
         >
           Resources {resourceCount > 0 ? `(${resourceCount})` : ''}
         </button>
 
         <button
           className={`TabButton ${activeTab === 'discussion' ? 'Active' : ''}`}
-          onClick={() => setActiveTab('discussion')}
+          onClick={() => selectTab('discussion')}
         >
           Questions & Discussion
         </button>
 
         <button
           className={`TabButton ${activeTab === 'reviews' ? 'Active' : ''}`}
-          onClick={() => setActiveTab('reviews')}
+          onClick={() => selectTab('reviews')}
         >
           Reviews
         </button>

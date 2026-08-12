@@ -18,7 +18,8 @@ export default React.memo(function LearningHeader({
   onToggleBookmark,
   isLessonCompleted,
   onToggleCompletion,
-  completionMode = 'auto_and_manual'
+  completionMode = 'auto_and_manual',
+  onLeaveReview
 }) {
   const router = useRouter();
 
@@ -49,10 +50,18 @@ export default React.memo(function LearningHeader({
       </div>
 
       <div className="HeaderRight">
-        {/* Rating Link / Button */}
-        <button className="HeaderLinkBtn" onClick={() => router.push(`/course/${courseSlug || ''}#reviews`)}>
+        {/* Leave a Review — opens the Reviews tab inside the player */}
+        <button
+          className="HeaderLinkBtn"
+          onClick={() =>
+            onLeaveReview
+              ? onLeaveReview()
+              : router.push(`/course/${courseSlug || ''}#reviews`)
+          }
+          title="Leave a review for this course"
+        >
           <FiStar style={{ marginRight: '6px' }} />
-          <span>Leave a rating</span>
+          <span>Leave a review</span>
         </button>
 
         {/* Your Progress circular/percentage widget */}

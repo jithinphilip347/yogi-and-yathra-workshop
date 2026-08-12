@@ -1193,6 +1193,7 @@
       .FormBottomRow {
         display: flex;
         justify-content: flex-end;
+        gap: 10px;
 
         button.SubmitReviewBtn {
           background-color: var(--primaryColor, #874429);
@@ -1210,6 +1211,52 @@
           }
         }
       }
+    }
+  }
+
+  /* Review workflow states (shared by Course Details & Player) */
+  .ReviewHint {
+    font-size: 13.5px;
+    color: #6a6f73;
+    margin: 0;
+  }
+
+  .ReviewLoginLink {
+    color: var(--primaryColor, #874429);
+    font-weight: 700;
+    text-decoration: underline;
+  }
+
+  .MyReviewText {
+    font-size: 14px;
+    color: #1c1d1f;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .ReviewStatusNote {
+    font-size: 12.5px;
+    color: #b4690e;
+    background-color: #fff7ed;
+    border: 1px solid rgba(135, 68, 41, 0.25);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 0;
+  }
+
+  button.CancelBtn {
+    background: transparent;
+    border: 1px solid #6a6f73;
+    color: #1c1d1f;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+      background-color: rgba(28, 29, 31, 0.04);
     }
   }
 }

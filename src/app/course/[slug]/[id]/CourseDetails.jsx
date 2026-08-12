@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import {
   FiPlayCircle,
@@ -21,6 +22,7 @@ import ThumbNail from "@/assets/images/live1.webp";
 import ReviewPopup from "@/components/popup/ReviewPopup";
 import VideoPreviewPopup from "@/components/popup/VideoPreviewPopup";
 import ProductDetailPopup from "@/components/popup/ProductDetailPopup";
+import { useCourseReviews, formatReviewDate } from "@/components/reviews/useCourseReviews";
 import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from "@/utils/constants";
 
 const CourseDetails = ({ courseDetails }) => {
@@ -35,8 +37,56 @@ const CourseDetails = ({ courseDetails }) => {
   const [showPreviewPopup, setShowPreviewPopup] = useState(false);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewComment, setReviewComment] = useState("");
+  const [isEditingReview, setIsEditingReview] = useState(false);
   const router = useRouter();
   const { items: cartItems, addItem, buyNow, removeItem, isInCart } = useCart();
+
+  const reviews = Array.isArray(course?.reviews) ? course.reviews : [];
+  const avgRating =
+    course?.average_rating ?? course?.rating ?? "0";
+  const reviewCount = course?.review_count ?? course?.total_reviews ?? 0;
+
+  const {
+    eligibility: reviewEligibility,
+    loading: reviewLoading,
+    submitting: isSubmittingReview,
+    submitReview,
+    updateReview,
+    removeReview,
+  } = useCourseReviews(course?.id);
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!reviewComment.trim()) {
+      toast.error("Please enter a comment");
+      return;
+    }
+    const result = isEditingReview
+      ? await updateReview(reviewEligibility.review.id, {
+          rating: reviewRating,
+          content: reviewComment,
+        })
+      : await submitReview({ rating: reviewRating, content: reviewComment });
+    if (result) {
+      setIsEditingReview(false);
+      setReviewComment("");
+      setReviewRating(5);
+    }
+  };
+
+  const startEditReview = () => {
+    setIsEditingReview(true);
+    setReviewRating(reviewEligibility?.review?.rating ?? 5);
+    setReviewComment(reviewEligibility?.review?.content ?? "");
+  };
+
+  const handleDeleteReview = async () => {
+    if (!reviewEligibility?.review?.id) return;
+    if (!window.confirm("Delete your review? This cannot be undone.")) return;
+    await removeReview(reviewEligibility.review.id);
+  };
 
   const toggleCartItem = (value) => {
     // Resolve the full product (from the list, or the popup's selected product)
@@ -113,7 +163,9 @@ const CourseDetails = ({ courseDetails }) => {
               </div>
               <div className="Ratings">
                 <AiFillStar className="star" />
-                <span>4.5 (250 Reviews)</span>
+                <span>
+                  {avgRating} ({reviewCount} Reviews)
+                </span>
                 <span className="Students">
                   <FiUsers /> {course?.enrollments_count || "0"} Students
                 </span>
@@ -336,33 +388,48 @@ const CourseDetails = ({ courseDetails }) => {
             <div className="HighlightBox ReviewsSection">
               <h3>Student Feedback</h3>
               <div className="ReviewList">
-                {[1, 2].map((rev) => (
-                  <div key={rev} className="SingleReview">
-                    <div className="ReviewTop">
-                      <div className="UserInfo">
-                        <Image src={Inst1} alt="User" className="UserImg" />
+                {reviews.length > 0 ? (
+                  reviews.map((rev) => (
+                    <div key={rev.id} className="SingleReview">
+                      <div className="ReviewTop">
                         <div className="UserInfo">
-                          <h5>
-                            Emma Crieght <span>4 months ago</span>
-                          </h5>
+                          {rev.user_image ? (
+                            <img
+                              src={rev.user_image}
+                              alt={rev.user_name || "Reviewer"}
+                              className="UserImg"
+                            />
+                          ) : (
+                            <div className="UserImg UserImgFallback">
+                              {(rev.user_name || "?").charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <div className="UserInfo">
+                            <h5>
+                              {rev.user_name || "Anonymous"}{" "}
+                              <span>{formatReviewDate(rev.created_at)}</span>
+                            </h5>
+                          </div>
+                        </div>
+                        <div className="UserStars">
+                          {[1, 2, 3, 4, 5].map((s) =>
+                            s <= rev.rating ? (
+                              <AiFillStar key={s} />
+                            ) : (
+                              <FiStar key={s} style={{ opacity: 0.35 }} />
+                            )
+                          )}
+                          <span className="RatingNum">{rev.rating}.0</span>
                         </div>
                       </div>
-                      <div className="UserStars">
-                        <AiFillStar />
-                        <AiFillStar />
-                        <AiFillStar />
-                        <AiFillStar />
-                        <AiFillStar />
-                        <span className="RatingNum">5.0</span>
-                      </div>
+                      <p className="Comment">{rev.content}</p>
                     </div>
-                    <p className="Comment">
-                      Effortless booking, unbeatable affordability! Small yet
-                      comfortable rooms in the heart of Sheffield&apos;s
-                      nightlife. Peaceful gem!
-                    </p>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="NoReviewsText">
+                    No reviews yet. Be the first to review this course.
+                  </p>
+                )}
               </div>
               <button
                 className="ReadAllBtn"
@@ -373,23 +440,130 @@ const CourseDetails = ({ courseDetails }) => {
             </div>
 
             <div className="HighlightBox SubmitReview">
-              <h3>Write a Review</h3>
-              <div className="ReviewForm">
-                <div className="RateInput">
-                  <span>Rate this course</span>
-                  <div className="rateIconBox">
-                    <FiStar />
-                    <FiStar />
-                    <FiStar />
-                    <FiStar />
-                    <FiStar />
+              {reviewLoading ? (
+                <>
+                  <h3>Write a Review</h3>
+                  <p className="ReviewHint">Loading your review status…</p>
+                </>
+              ) : !reviewEligibility ? (
+                <>
+                  <h3>Write a Review</h3>
+                  <p className="ReviewHint">
+                    Please refresh the page and try again later.
+                  </p>
+                </>
+              ) : reviewEligibility.reason === "auth_required" ? (
+                <>
+                  <h3>Write a Review</h3>
+                  <p className="ReviewHint">
+                    <a href="/auth/login" className="ReviewLoginLink">
+                      Log in
+                    </a>{" "}
+                    to review this course.
+                  </p>
+                </>
+              ) : reviewEligibility.reason === "purchase_required" ? (
+                <>
+                  <h3>Write a Review</h3>
+                  <p className="ReviewHint">
+                    Purchase this course to share your review.
+                  </p>
+                </>
+              ) : reviewEligibility.has_review && !isEditingReview ? (
+                <>
+                  <h3>Your Review</h3>
+                  <div className="ReviewForm">
+                    <div className="RateInput">
+                      <span>Your rating</span>
+                      <div className="rateIconBox">
+                        {[1, 2, 3, 4, 5].map((s) =>
+                          s <= (reviewEligibility.review?.rating || 0) ? (
+                            <AiFillStar key={s} />
+                          ) : (
+                            <FiStar key={s} style={{ opacity: 0.35 }} />
+                          )
+                        )}
+                      </div>
+                    </div>
+                    <p className="MyReviewText">
+                      {reviewEligibility.review?.content}
+                    </p>
+                    <div className="FormBottom">
+                      <button
+                        className="CancelBtn"
+                        onClick={handleDeleteReview}
+                        type="button"
+                      >
+                        Delete
+                      </button>
+                      <button
+                        className="SubmitBtn"
+                        onClick={startEditReview}
+                        type="button"
+                      >
+                        Edit Review
+                      </button>
+                    </div>
                   </div>
-                </div>
-                <textarea placeholder="Share your experience with this course..."></textarea>
-                <div className="FormBottom">
-                  <button className="SubmitBtn">Submit Review</button>
-                </div>
-              </div>
+                </>
+              ) : (
+                <>
+                  <h3>
+                    {isEditingReview ? "Edit Your Review" : "Write a Review"}
+                  </h3>
+                  <form
+                    className="ReviewForm"
+                    onSubmit={handleSubmitReview}
+                  >
+                    <div className="RateInput">
+                      <span>Rate this course</span>
+                      <div className="rateIconBox">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span
+                            key={star}
+                            className="ReviewStarBtn"
+                            onClick={() => setReviewRating(star)}
+                          >
+                            {star <= reviewRating ? (
+                              <AiFillStar />
+                            ) : (
+                              <FiStar />
+                            )}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <textarea
+                      value={reviewComment}
+                      onChange={(e) => setReviewComment(e.target.value)}
+                      placeholder="Share your experience with this course..."
+                      required
+                    ></textarea>
+                    <div className="FormBottom">
+                      <button
+                        className="SubmitBtn"
+                        type="submit"
+                        disabled={isSubmittingReview}
+                      >
+                        {isSubmittingReview
+                          ? "Submitting..."
+                          : isEditingReview
+                            ? "Update Review"
+                            : "Submit Review"}
+                      </button>
+                      {isEditingReview && (
+                        <button
+                          type="button"
+                          className="CancelBtn"
+                          onClick={() => setIsEditingReview(false)}
+                        >
+                          Cancel
+                        </button>
+                      )}
+                    </div>
+                  </form>
+                </>
+              )}
             </div>
           </div>
 
@@ -521,7 +695,10 @@ const CourseDetails = ({ courseDetails }) => {
         />
       )}
       {showReviewPopup && (
-        <ReviewPopup onClose={() => setShowReviewPopup(false)} />
+        <ReviewPopup
+          reviews={reviews}
+          onClose={() => setShowReviewPopup(false)}
+        />
       )}
       {showPreviewPopup && (
         <VideoPreviewPopup onClose={() => setShowPreviewPopup(false)} />
