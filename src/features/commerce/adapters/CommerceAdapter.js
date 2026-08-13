@@ -6,7 +6,7 @@
  */
 
 import { PRODUCT_TYPES } from '../constants';
-import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from '@/utils/constants';
+import { resolveMediaUrl, resolveProductMediaUrl } from '@/utils/mediaUrl';
 
 export class CommerceAdapter {
   /**
@@ -23,7 +23,7 @@ export class CommerceAdapter {
       productable_id: course.id,
       title: course.title || 'Untitled Course',
       subtitle: course.instructor?.name ? `Instructor: ${course.instructor.name}` : '',
-      image: course.staticImage || (course.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : null),
+      image: course.staticImage || (course.thumbnail ? resolveMediaUrl(course.thumbnail) : null),
       price: priceVal,
       original_price: origPriceVal,
       currency: 'INR',
@@ -46,7 +46,7 @@ export class CommerceAdapter {
       productable_id: liveSection.id,
       title: liveSection.title || 'Live Workshop Section',
       subtitle: liveSection.instructor?.name ? `Instructor: ${liveSection.instructor.name}` : '',
-      image: liveSection.thumbnail ? `${MEDIA_BASE_URL}${liveSection.thumbnail}` : null,
+      image: liveSection.thumbnail ? resolveMediaUrl(liveSection.thumbnail) : null,
       price: Number(liveSection.price || 0),
       original_price: Number(liveSection.original_price || liveSection.price || 0),
       currency: 'INR',
@@ -68,7 +68,7 @@ export class CommerceAdapter {
       productable_id: dailyClass.id,
       title: dailyClass.title || 'Daily Live Yoga Class',
       subtitle: dailyClass.instructor_name ? `Instructor: ${dailyClass.instructor_name}` : '',
-      image: dailyClass.thumbnail ? `${MEDIA_BASE_URL}${dailyClass.thumbnail}` : null,
+      image: dailyClass.thumbnail ? resolveMediaUrl(dailyClass.thumbnail) : null,
       price: Number(dailyClass.price || 0),
       original_price: Number(dailyClass.original_price || dailyClass.price || 0),
       currency: 'INR',
@@ -115,7 +115,7 @@ export class CommerceAdapter {
 
     let image = null;
     if (typeof rawImage === 'string' && rawImage.length > 0) {
-      image = rawImage.startsWith('http') ? rawImage : `${PRODUCT_MEDIA_BASE_URL}${rawImage}`;
+      image = resolveProductMediaUrl(rawImage);
     }
 
     return {
@@ -143,7 +143,7 @@ export class CommerceAdapter {
       productable_id: membership.id,
       title: membership.title || membership.name || 'Platform Membership Plan',
       subtitle: membership.description || 'Full Access Pass',
-      image: membership.image ? (membership.image.startsWith('http') ? membership.image : `${MEDIA_BASE_URL}${membership.image}`) : null,
+      image: membership.image ? resolveMediaUrl(membership.image) : null,
       price: Number(membership.price || 0),
       original_price: Number(membership.original_price || membership.price || 0),
       currency: 'INR',
@@ -164,7 +164,7 @@ export class CommerceAdapter {
       productable_id: workshop.id,
       title: workshop.title || 'Interactive Workshop',
       subtitle: workshop.instructor?.name ? `Instructor: ${workshop.instructor.name}` : '',
-      image: workshop.image || (workshop.thumbnail ? `${MEDIA_BASE_URL}${workshop.thumbnail}` : null),
+      image: workshop.image || (workshop.thumbnail ? resolveMediaUrl(workshop.thumbnail) : null),
       price: Number(workshop.price || 0),
       original_price: Number(workshop.original_price || workshop.price || 0),
       currency: 'INR',

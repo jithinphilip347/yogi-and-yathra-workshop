@@ -13,7 +13,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 
 const EventSlide = ({ event }) => {
@@ -96,7 +96,7 @@ const EventSlide = ({ event }) => {
         <div className="InstructorRow">
            <div className="InstructorInfo">
              {event?.instructor?.image ? (
-                <Image src={event.instructor.image} alt="Instructor" width={28} height={28} className="ProfileImg" />
+                <Image src={resolveMediaUrl(event.instructor.image)} alt="Instructor" width={28} height={28} className="ProfileImg" />
              ) : (
                 <div className="ProfilePlaceholder"><FiUser /></div>
              )}
@@ -168,11 +168,7 @@ const HomeLiveCourse = ({ liveSections }) => {
                   <EventSlide
                     event={{
                       ...event,
-                      image: event.thumbnail
-                        ? event.thumbnail.includes('http')
-                          ? event.thumbnail
-                          : `${MEDIA_BASE_URL}${event.thumbnail}`
-                        : null
+                      image: event.thumbnail ? resolveMediaUrl(event.thumbnail) : null
                     }}
                   />
                 </SwiperSlide>

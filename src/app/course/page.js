@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import CourseCard from "../../components/coursebox/CourseCard";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import {
   FiUsers,
   FiClock,
@@ -196,7 +196,7 @@ const Page = () => {
                         loading={false}
                         image={
                           course?.thumbnail
-                            ? `${MEDIA_BASE_URL}${course.thumbnail}`
+                            ? resolveMediaUrl(course.thumbnail)
                             : "/images/course-placeholder.webp"
                         }
                         title={course?.title}
@@ -214,8 +214,8 @@ const Page = () => {
                         ratingIcon={<AiFillStar />}
                         buttonText="View Details"
                         instructorImg={
-                          course?.instructor?.avatar
-                            ? `${MEDIA_BASE_URL}${course.instructor.avatar}`
+                          course?.instructor?.avatar_url || course?.instructor?.avatar
+                            ? resolveMediaUrl(course.instructor.avatar_url || course.instructor.avatar)
                             : null
                         }
                         type="course"

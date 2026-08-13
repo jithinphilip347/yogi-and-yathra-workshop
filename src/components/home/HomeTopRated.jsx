@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import CourseCard from "../coursebox/CourseCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import { FaChevronLeft, FaChevronRight, FaHeart } from "react-icons/fa";
 import { FiUsers, FiClock, FiBookOpen } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
@@ -61,11 +61,7 @@ const HomeTopRated = () => {
                 <CourseCard
                   loading={isLoading}
                   image={
-                    course?.thumbnail
-                      ? course.thumbnail.includes('http')
-                        ? course.thumbnail
-                        : `${MEDIA_BASE_URL}${course.thumbnail}`
-                      : null
+                    course?.thumbnail ? resolveMediaUrl(course.thumbnail) : null
                   }
                   title={course.title}
                   lessons={course?.lessons_count}
@@ -85,8 +81,8 @@ const HomeTopRated = () => {
                   userIcon={<FiUsers />}
                   buttonText="View Details"
                   instructorImg={
-                    course?.instructor?.avatar
-                      ? `${MEDIA_BASE_URL}${course.instructor.avatar}`
+                    course?.instructor?.avatar_url || course?.instructor?.avatar
+                      ? resolveMediaUrl(course.instructor.avatar_url || course.instructor.avatar)
                       : null
                   }
                   instructorLabel={course?.instructor?.role}

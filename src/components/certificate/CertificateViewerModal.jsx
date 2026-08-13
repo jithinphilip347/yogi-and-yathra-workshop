@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { FiX, FiDownload, FiFileText, FiAward, FiAlertCircle, FiRefreshCw, FiLoader } from "react-icons/fi";
 import { ensureFontsLoaded } from "./fontLoader";
-import { resolveMediaUrl } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import apiClient from "@/services/apiClient";
 import toast from "react-hot-toast";
 import {

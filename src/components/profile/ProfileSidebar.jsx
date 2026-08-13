@@ -11,7 +11,7 @@ import {
   MdLogout,
 } from "react-icons/md";
 import UserProfileImg from "@/assets/images/user-img.webp";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import { useDispatch } from "react-redux";
 import useProfile from "@/hooks/useProfile";
 
@@ -49,7 +49,7 @@ const ProfileSidebar = ({
               alt="User"
               width={60}
               height={60}
-              onError={() => setProfileImg(MEDIA_BASE_URL + profileImg)}
+              onError={() => setProfileImg(resolveMediaUrl(profileImg))}
             />
           </div>
           <div className="UserInfo">

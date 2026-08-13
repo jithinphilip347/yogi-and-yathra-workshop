@@ -8,7 +8,7 @@ import { FaChalkboardTeacher } from "react-icons/fa";
 import { AiFillStar } from "react-icons/ai";
 import courseApi from "@/libs/courseApi";
 import useWishlist from "@/hooks/useWishlist";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import CourseCard from "@/components/coursebox/CourseCard";
 
 const Dashboard = ({
@@ -157,7 +157,7 @@ const Dashboard = ({
               <div className="ContinueCard" key={index} style={{ width: "100%", maxWidth: "550px" }}>
                 <div className="Thumb">
                   <Image
-                    src={item.image && item.image}
+                    src={item.image ? resolveMediaUrl(item.image) : null}
                     alt={item.title || "Course"}
                     width={200}
                     height={120}
@@ -180,7 +180,7 @@ const Dashboard = ({
                     <div className="Instructor">
                       {item.instructorImg && (
                         <Image
-                          src={typeof item.instructorImg === "string" ? `${MEDIA_BASE_URL}${item.instructorImg}` : item.instructorImg}
+                          src={resolveMediaUrl(item.instructorImg)}
                           alt={item.instructorName || "Instructor"}
                           width={30}
                           height={30}
@@ -219,7 +219,7 @@ const Dashboard = ({
                   <div className="Header">
                     <div className="Thumb">
                       <Image
-                        src={activeDailyClass.instructorImg ? (typeof activeDailyClass.instructorImg === 'string' ? `${MEDIA_BASE_URL}${activeDailyClass.instructorImg}` : activeDailyClass.instructorImg) : LiveThumb1}
+                        src={activeDailyClass.instructorImg ? resolveMediaUrl(activeDailyClass.instructorImg) : LiveThumb1}
                         alt={activeDailyClass.title}
                         width={100}
                         height={70}
@@ -301,7 +301,7 @@ const Dashboard = ({
               <div className="SessionCard">
                 <div className="ThumbnailWrapper">
                   <Image
-                    src={activeLiveSession.image ? (typeof activeLiveSession.image === 'string' ? `${MEDIA_BASE_URL}${activeLiveSession.image}` : activeLiveSession.image) : LiveImg1}
+                    src={activeLiveSession.image ? resolveMediaUrl(activeLiveSession.image) : LiveImg1}
                     alt={activeLiveSession.title}
                     width={150}
                     height={150}
@@ -376,7 +376,7 @@ const Dashboard = ({
             {courses.filter(Boolean).map((course, i) => (
               <div className="CourseItem" key={course?.id || i}>
                 <CourseCard
-                  image={course?.staticImage || (course?.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : null)}
+                  image={course?.staticImage || (course?.thumbnail ? resolveMediaUrl(course.thumbnail) : null)}
                   title={course?.title}
                   lessons={course?.lessons_count}
                   duration={(course?.duration || 0) + " hrs"}
@@ -394,7 +394,7 @@ const Dashboard = ({
                   ratingIcon={<AiFillStar />}
                   userIcon={<FiUsers />}
                   buttonText="Continue Learning"
-                  instructorImg={course?.instructor?.avatar ? `${MEDIA_BASE_URL}${course.instructor.avatar}` : null}
+                  instructorImg={course?.instructor?.avatar_url || course?.instructor?.avatar ? resolveMediaUrl(course.instructor.avatar_url || course.instructor.avatar) : null}
                   instructorLabel={course?.instructor?.role}
                   id={course?.id}
                   type="course"

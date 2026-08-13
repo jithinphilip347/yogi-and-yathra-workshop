@@ -1,6 +1,6 @@
 import { fetchCourseDetails } from "@/libs/course";
 import CourseDetails from "./CourseDetails";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 
 const revalidate = 600;
 
@@ -27,7 +27,7 @@ export async function generateMetadata({ params }) {
       images: [
         {
           url: course.thumbnail
-            ? `${MEDIA_BASE_URL}${course.thumbnail}`
+            ? resolveMediaUrl(course.thumbnail)
             : "/images/course-placeholder.webp",
           width: 1200,
           height: 630,
@@ -42,7 +42,7 @@ export async function generateMetadata({ params }) {
       description: course.short_description,
       images: [
         course.thumbnail
-          ? `${MEDIA_BASE_URL}${course.thumbnail}`
+          ? resolveMediaUrl(course.thumbnail)
           : "/images/course-placeholder.webp",
       ],
     },
@@ -65,7 +65,7 @@ export default async function Page({ params }) {
       sameAs: "https://yogify.com",
     },
     image: course?.thumbnail
-      ? `${MEDIA_BASE_URL}${course.thumbnail}`
+      ? resolveMediaUrl(course.thumbnail)
       : "/images/course-placeholder.webp",
     offers: {
       "@type": "Offer",

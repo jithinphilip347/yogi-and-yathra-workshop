@@ -21,7 +21,7 @@ import {
 } from 'react-icons/md';
 import { FiUsers, FiAward, FiClock, FiPlayCircle, FiCheck, FiXCircle, FiShoppingCart } from 'react-icons/fi';
 import { FaChalkboardTeacher, FaRegCalendarAlt } from 'react-icons/fa';
-import { MEDIA_BASE_URL } from '@/utils/constants';
+import { resolveMediaUrl } from '@/utils/mediaUrl';
 import '../../../../assets/css/live-yoga-details.css';
 
 const LiveYogaDetails = ({ liveSection }) => {
@@ -78,9 +78,9 @@ const LiveYogaDetails = ({ liveSection }) => {
   const instructorExperience = instructor.years_of_experience
     ? `${instructor.years_of_experience}+ Years`
     : "";
-  const instructorImage = instructor?.avatar?.includes("http")
-    ? `${instructor.avatar}`
-    : instructor.avatar ? `${MEDIA_BASE_URL}${instructor.avatar}` : null;
+  const instructorImage = instructor?.avatar_url || instructor?.avatar
+    ? resolveMediaUrl(instructor.avatar_url || instructor.avatar)
+    : null;
   const instructorExpertise = Array.isArray(instructor.expertise)
     ? instructor.expertise
     : typeof instructor.expertise === "string"
@@ -189,10 +189,8 @@ const LiveYogaDetails = ({ liveSection }) => {
       {/* Hero Banner */}
       <section
         className="HeroBanner"
-        style={data.banner_image.includes("http") ? {
-          backgroundImage: `url(${data.banner_image})`,
-        } : data.banner_image  ? {
-          backgroundImage: `url(${MEDIA_BASE_URL}${data.banner_image})`,
+        style={data.banner_image ? {
+          backgroundImage: `url(${resolveMediaUrl(data.banner_image)})`,
         } : undefined}
       >
         <div className="HeroOverlay"></div>

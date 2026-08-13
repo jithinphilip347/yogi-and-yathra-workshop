@@ -4,7 +4,7 @@ import { MdCameraAlt } from "react-icons/md";
 import { toast, Toaster } from "react-hot-toast";
 import UserProfileImg from "@/assets/images/user-img.webp";
 import useProfile from "@/hooks/useProfile";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 
 const EditProfile = ({ profileImg, setProfileImg, user }) => {
   const [imgError, setImgError] = useState("");
@@ -170,7 +170,7 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
               alt="Profile"
               width={60}
               height={60}
-              onError={() => setProfileImg(MEDIA_BASE_URL + profileImg)}
+              onError={() => setProfileImg(resolveMediaUrl(profileImg))}
             />
             <div className="Overlay">
               <MdCameraAlt />

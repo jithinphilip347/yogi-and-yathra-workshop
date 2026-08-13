@@ -2,7 +2,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
+import { useCourseAccess } from "@/hooks/useCourseAccess";
 import {
   FiPlayCircle,
   FiClock,
@@ -24,7 +27,7 @@ import VideoPreviewPopup from "@/components/popup/VideoPreviewPopup";
 import ProductDetailPopup from "@/components/popup/ProductDetailPopup";
 import { useCourseReviews, formatReviewDate } from "@/components/reviews/useCourseReviews";
 import { reviewApi } from "@/services/reviewApi";
-import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl, resolveProductMediaUrl } from "@/utils/mediaUrl";
 
 const CourseDetails = ({ courseDetails }) => {
   const course = courseDetails;
@@ -32,6 +35,9 @@ const CourseDetails = ({ courseDetails }) => {
   useEffect(() => {
     console.log(course);
   }, [course]);
+
+  // Purchase/access-aware CTA state (see useCourseAccess for the state machine).
+  const { ctaState, watchPath } = useCourseAccess(course);
 
   const [activeAccordion, setActiveAccordion] = useState(0);
   const [showReviewPopup, setShowReviewPopup] = useState(false);
@@ -159,6 +165,60 @@ const CourseDetails = ({ courseDetails }) => {
   const modules = course?.sections || [];
   const instructor = course?.instructor;
 
+  // Centralized CTA renderer — the only place purchase/access conditions live.
+  // - loading:        skeleton so enrolled students never see a purchase flash
+  // - watch-now / continue-watching / watch-again: single learning CTA
+  // - otherwise:      existing Add to Cart / Buy Now purchase flow
+  const renderCourseCta = () => {
+    if (ctaState === "loading") {
+      return (
+        <>
+          <Skeleton height={52} borderRadius={8} />
+          <Skeleton height={52} borderRadius={8} />
+        </>
+      );
+    }
+
+    if (
+      ctaState === "watch-now" ||
+      ctaState === "continue-watching" ||
+      ctaState === "watch-again"
+    ) {
+      const label =
+        ctaState === "continue-watching"
+          ? "Continue Watching"
+          : ctaState === "watch-again"
+            ? "Watch Again"
+            : "Watch Now";
+      return (
+        <button
+          className="AddToCart"
+          onClick={() => watchPath && router.push(watchPath)}
+        >
+          {label}
+        </button>
+      );
+    }
+
+    // Default: existing purchase CTA.
+    return (
+      <>
+        {isInCart(course?.id, "Course") ? (
+          <button className="AddToCart added" onClick={() => router.push("/cart")}>
+            Go to Cart
+          </button>
+        ) : (
+          <button className="AddToCart" onClick={() => addItem(course, "Course")}>
+            Add to Cart
+          </button>
+        )}
+        <button className="BuyNow" onClick={() => buyNow(course, "Course", router)}>
+          Buy Now
+        </button>
+      </>
+    );
+  };
+
   return (
     <div id="CourseDetails">
       <section className="CourseBanner">
@@ -173,7 +233,7 @@ const CourseDetails = ({ courseDetails }) => {
                 <Image
                   src={
                     course?.thumbnail
-                      ? `${MEDIA_BASE_URL}${course.thumbnail}`
+                      ? resolveMediaUrl(course.thumbnail)
                       : ThumbNail
                   }
                   alt="Preview"
@@ -199,9 +259,9 @@ const CourseDetails = ({ courseDetails }) => {
             </p>
             <div className="MetaInfo">
               <div className="InstructorInfo">
-                {instructor?.avatar ? (
+                {instructor?.avatar_url || instructor?.avatar ? (
                   <Image
-                    src={`${MEDIA_BASE_URL}${instructor.avatar}`}
+                    src={resolveMediaUrl(instructor.avatar_url || instructor.avatar)}
                     alt="Instructor"
                     width={40}
                     height={40}
@@ -244,20 +304,7 @@ const CourseDetails = ({ courseDetails }) => {
                   )}
                 </div>
               </div>
-              <div className="ActionBtns">
-                {isInCart(course?.id, 'Course') ? (
-                  <button className="AddToCart added" onClick={() => router.push('/cart')}>
-                    Go to Cart
-                  </button>
-                ) : (
-                  <button className="AddToCart" onClick={() => addItem(course, 'Course')}>
-                    Add to Cart
-                  </button>
-                )}
-                <button className="BuyNow" onClick={() => buyNow(course, 'Course', router)}>
-                  Buy Now
-                </button>
-              </div>
+              <div className="ActionBtns">{renderCourseCta()}</div>
             </div>
           </div>
         </div>
@@ -316,7 +363,7 @@ const CourseDetails = ({ courseDetails }) => {
                       <Image
                         src={
                           prod.image
-                            ? `${PRODUCT_MEDIA_BASE_URL}${prod.image}`
+                            ? resolveProductMediaUrl(prod.image)
                             : ThumbNail
                         }
                         alt="Product"
@@ -400,9 +447,9 @@ const CourseDetails = ({ courseDetails }) => {
             <div className="HighlightBox InstructorDetails">
               <h3>Instructor</h3>
               <div className="InstructorCard">
-                {instructor?.avatar ? (
+                {instructor?.avatar_url || instructor?.avatar ? (
                   <Image
-                    src={`${MEDIA_BASE_URL}${instructor.avatar}`}
+                    src={resolveMediaUrl(instructor.avatar_url || instructor.avatar)}
                     alt="Instructor"
                     width={100}
                     height={100}
@@ -449,7 +496,7 @@ const CourseDetails = ({ courseDetails }) => {
                         <div className="UserInfo">
                           {rev.user_image ? (
                             <img
-                              src={rev.user_image}
+                              src={resolveMediaUrl(rev.user_image)}
                               alt={rev.user_name || "Reviewer"}
                               className="UserImg"
                             />
@@ -632,7 +679,7 @@ const CourseDetails = ({ courseDetails }) => {
                 <Image
                   src={
                     course?.thumbnail
-                      ? `${MEDIA_BASE_URL}${course.thumbnail}`
+                      ? resolveMediaUrl(course.thumbnail)
                       : ThumbNail
                   }
                   alt="Preview"
@@ -660,29 +707,7 @@ const CourseDetails = ({ courseDetails }) => {
                   )}
                 </div>
               </div>
-              <div className="ActionBtns">
-                {isInCart(course?.id, 'Course') ? (
-                  <button
-                    className="AddToCart added"
-                    onClick={() => router.push('/cart')}
-                  >
-                    Go to Cart
-                  </button>
-                ) : (
-                  <button
-                    className="AddToCart"
-                    onClick={() => addItem(course, 'Course')}
-                  >
-                    Add to Cart
-                  </button>
-                )}
-                <button
-                  className="BuyNow"
-                  onClick={() => buyNow(course, 'Course', router)}
-                >
-                  Buy Now
-                </button>
-              </div>
+              <div className="ActionBtns">{renderCourseCta()}</div>
             </div>
           </aside>
         </div>
@@ -696,7 +721,7 @@ const CourseDetails = ({ courseDetails }) => {
               <Image
                 src={
                   course?.thumbnail
-                    ? `${MEDIA_BASE_URL}${course.thumbnail}`
+                    ? resolveMediaUrl(course.thumbnail)
                     : ThumbNail
                 }
                 alt="course"

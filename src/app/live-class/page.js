@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import CourseCard from "../../components/coursebox/CourseCard";
 import { FiClock } from "react-icons/fi";
 import { GoDotFill } from "react-icons/go";
@@ -41,7 +41,7 @@ const Page = () => {
               <CourseCard
                 key={course?.id ?? i}
                 loading={loading}
-                image={course?.thumbnail ? `${MEDIA_BASE_URL}${course.thumbnail}` : null}
+                image={course?.thumbnail ? resolveMediaUrl(course.thumbnail) : null}
                 title={course?.title}
                 wishlistIcon={findWishlistIcon(course?.id, "daily_class")}
                 dateIcon={<MdDateRange />}
@@ -53,8 +53,8 @@ const Page = () => {
                 buttonText="Join Now"
                 instructorLabel="Instructor"
                 instructorImg={
-                  course?.instructor?.avatar
-                    ? `${MEDIA_BASE_URL}${course.instructor.avatar}`
+                  course?.instructor?.avatar_url || course?.instructor?.avatar
+                    ? resolveMediaUrl(course.instructor.avatar_url || course.instructor.avatar)
                     : null
                 }
                 instructorName={course?.instructor?.name}

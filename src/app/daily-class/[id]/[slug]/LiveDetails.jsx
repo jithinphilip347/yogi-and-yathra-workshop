@@ -22,7 +22,7 @@ import { AiFillStar } from "react-icons/ai";
 import Image from "next/image";
 import Inst1 from "@/assets/images/instructor-1.webp";
 import ThumbNail from "@/assets/images/live1.webp";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import Yoga1 from "@/assets/images/yoga-1.jpg";
 import Yoga2 from "@/assets/images/yoga-2.jpg";
 import Yoga3 from "@/assets/images/yoga-3.jpg";
@@ -47,11 +47,11 @@ const LiveDetails = ({ id, classDetails }) => {
 
   // Fallback image sources
   const thumbnailSrc = dailyClass?.thumbnail
-    ? `${MEDIA_BASE_URL}${dailyClass.thumbnail}`
+    ? resolveMediaUrl(dailyClass.thumbnail)
     : ThumbNail.src;
 
-  const instructorAvatar = instructor?.avatar
-    ? `${MEDIA_BASE_URL}${instructor.avatar}`
+  const instructorAvatar = instructor?.avatar_url || instructor?.avatar
+    ? resolveMediaUrl(instructor.avatar_url || instructor.avatar)
     : Inst1;
 
   const instructorName = instructor?.name || "Achu Sivadasan";

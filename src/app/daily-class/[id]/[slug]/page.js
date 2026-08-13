@@ -1,6 +1,6 @@
 import { fetchDailyClassDetails } from "@/libs/course";
 import LiveDetails from "./LiveDetails";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 
 export const revalidate = 600;
 
@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
       images: [
         {
           url: dailyClass.thumbnail
-            ? `${MEDIA_BASE_URL}${dailyClass.thumbnail}`
+            ? resolveMediaUrl(dailyClass.thumbnail)
             : "/images/live-placeholder.webp",
           width: 1200,
           height: 630,
@@ -46,7 +46,7 @@ export default async function Page({ params }) {
   const dailyClass = data;
 
   const bannerImage = dailyClass?.thumbnail
-    ? `${MEDIA_BASE_URL}${dailyClass.thumbnail}`
+    ? resolveMediaUrl(dailyClass.thumbnail)
     : "/images/live-placeholder.webp";
 
   const jsonLd = {

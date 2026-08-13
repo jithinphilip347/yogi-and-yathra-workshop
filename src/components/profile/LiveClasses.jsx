@@ -10,7 +10,8 @@ import {
   FiInfo,
   FiXCircle
 } from "react-icons/fi";
-import ThumbNail from "@/assets/images/live1.webp"; 
+import ThumbNail from "@/assets/images/live1.webp";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 
 const MOCK_CLASSES = [
   {
@@ -202,7 +203,7 @@ const LiveClasses = ({ classesData = [] }) => {
                   <div className="Header">
                     <div className="Thumb">
                       <Image
-                        src={course.instructorImg ? (typeof course.instructorImg === 'string' ? (course.instructorImg.startsWith('http') ? course.instructorImg : `${MEDIA_BASE_URL}${course.instructorImg}`) : course.instructorImg) : ThumbNail}
+                        src={course.instructorImg ? resolveMediaUrl(course.instructorImg) : ThumbNail}
                         alt={course.title}
                         width={100}
                         height={70}

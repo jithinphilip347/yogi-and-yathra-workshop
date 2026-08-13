@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import CourseCard from "../coursebox/CourseCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
@@ -71,11 +71,7 @@ const HomeLiveClass = ({ dailyClasses }) => {
                 <CourseCard
                   loading={loading}
                   image={
-                    course?.thumbnail
-                      ? course.thumbnail.includes('http')
-                        ? course.thumbnail
-                        : `${MEDIA_BASE_URL}${course.thumbnail}`
-                      : null
+                    course?.thumbnail ? resolveMediaUrl(course.thumbnail) : null
                   }
 
                   title={course?.title}
@@ -89,8 +85,8 @@ const HomeLiveClass = ({ dailyClasses }) => {
                   buttonText="Join Now"
                   instructorLabel="Instructor"
                   instructorImg={
-                    course?.instructor?.avatar
-                      ? `${MEDIA_BASE_URL}${course.instructor.avatar}`
+                    course?.instructor?.avatar_url || course?.instructor?.avatar
+                      ? resolveMediaUrl(course.instructor.avatar_url || course.instructor.avatar)
                       : null
                   }
                   instructorName={course?.instructor?.name}

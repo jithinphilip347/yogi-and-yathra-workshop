@@ -12,6 +12,7 @@ import {
 } from 'react-icons/md';
 import { FaChalkboardTeacher } from 'react-icons/fa';
 import Link from 'next/link';
+import { resolveMediaUrl } from '@/utils/mediaUrl';
 
 import LiveImg1 from '../../assets/images/live1.webp';
 import LiveImg2 from '../../assets/images/live2.webp';
@@ -116,7 +117,7 @@ const LiveYoga = ({ sessionsData = [] }) => {
               <div key={session.id} className="SessionCard">
                 
                 <div className="ThumbnailWrapper">
-                  <Image src={session.image} alt={session.title} width={150} height={150} className="Thumbnail" />
+                  <Image src={session.image ? resolveMediaUrl(session.image) : null} alt={session.title} width={150} height={150} className="Thumbnail" />
                 </div>
 
                 <div className="SessionDetails">

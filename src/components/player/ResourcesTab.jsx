@@ -12,6 +12,7 @@ import {
   FiLink,
   FiExternalLink
 } from 'react-icons/fi';
+import { resolveMediaUrl } from '@/utils/mediaUrl';
 
 export default function ResourcesTab({ currentLesson }) {
   const [previewItem, setPreviewItem] = useState(null);
@@ -47,12 +48,7 @@ export default function ResourcesTab({ currentLesson }) {
 
   const formatDownloadUrl = (path) => {
     if (!path) return '#';
-    if (path.startsWith('http://') || path.startsWith('https://')) return path;
-    const clean = path.startsWith('/') ? path.substring(1) : path;
-    if (clean.startsWith('storage/')) {
-      return `http://localhost:8000/${clean}`;
-    }
-    return `http://localhost:8000/storage/${clean}`;
+    return resolveMediaUrl(path);
   };
 
   const formatFileSize = (bytes) => {

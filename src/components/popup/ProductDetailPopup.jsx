@@ -11,7 +11,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/thumbs';
 import 'swiper/css/effect-fade';
 import useProduct from '@/hooks/useProduct';
-import { PRODUCT_MEDIA_BASE_URL } from "@/utils/constants"
+import { resolveProductMediaUrl } from "@/utils/mediaUrl"
 
 const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -53,9 +53,8 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
         title: rawData.title,
         price: rawData.combo_price || rawData.price,
         oldPrice: rawData.original_price || rawData.price,
-        description: rawData.specifications,
-        images: rawData.media?.length > 0 
-                  ? rawData.media.map(m => `${PRODUCT_MEDIA_BASE_URL}${m.file_path}`) 
+        description: rawData.specifications,                images: rawData.media?.length > 0 
+                  ? rawData.media.map(m => resolveProductMediaUrl(m.file_path)) 
                   : [product.image],
         specs: {},
         isCombo: true,
@@ -71,7 +70,7 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
           oldPrice: p.price,
           description: p.description,
           images: p.media?.length > 0 
-                    ? p.media.map(m => `${PRODUCT_MEDIA_BASE_URL}${m.file_path}`) 
+                    ? p.media.map(m => resolveProductMediaUrl(m.file_path)) 
                     : [product.image],
           specs: p.custom_feilds || {},
           isCombo: false,
@@ -117,7 +116,7 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
                 <SwiperSlide key={i}>
                   <div className='MainSlideImg'>
                     <Image 
-                      src={img.startsWith('http') ? img : `${PRODUCT_MEDIA_BASE_URL}${img}`} 
+                      src={resolveProductMediaUrl(img)} 
                       alt={`${displayData.title} ${i}`} 
                       layout="fill" 
                       objectFit="contain" 
@@ -149,7 +148,7 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
                   <SwiperSlide key={i}>
                     <div className='ThumbSlideImg'>
                       <Image 
-                        src={img.startsWith('http') ? img : `${PRODUCT_MEDIA_BASE_URL}${img}`} 
+                        src={resolveProductMediaUrl(img)} 
                         alt="thumb" 
                         width={80} 
                         height={80} 
@@ -217,7 +216,7 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
           <div className='LeftBrief'>
             <div className='ImgBox'>
                 <Image 
-                  src={productImages[0].startsWith('http') ? productImages[0] : `${PRODUCT_MEDIA_BASE_URL}${productImages[0]}`} 
+                  src={resolveProductMediaUrl(productImages[0])} 
                   alt="brief" 
                   width={50} 
                   height={50} 

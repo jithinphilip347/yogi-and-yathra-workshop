@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import TeacherBox from "../../components/teachersBox/TeacherBox";
 import { fetchInstructors } from "@/libs/course";
-import { MEDIA_BASE_URL } from "@/utils/constants";
 
 const Page = () => {
   const [instructors, setInstructors] = useState([]);

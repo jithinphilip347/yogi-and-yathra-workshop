@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import courseApi from '@/libs/courseApi';
 import { playerDebug } from '@/libs/playerDebug';
+import { resolveMediaUrl } from '@/utils/mediaUrl';
 
 export function useProviderController({
   lesson,
@@ -30,12 +31,7 @@ export function useProviderController({
 
   const resolveStreamUrl = useCallback((url) => {
     if (!url || typeof url !== 'string') return '';
-    if (url.startsWith('http://') || url.startsWith('https://')) return url;
-    const cleanPath = url.startsWith('/') ? url.substring(1) : url;
-    if (cleanPath.startsWith('storage/')) {
-      return `http://localhost:8000/${cleanPath}`;
-    }
-    return `http://localhost:8000/storage/${cleanPath}`;
+    return resolveMediaUrl(url);
   }, []);
 
   function strtolower(str) {

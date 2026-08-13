@@ -6,6 +6,7 @@ import { AiFillStar } from 'react-icons/ai';
 import toast from 'react-hot-toast';
 import { reviewApi } from '@/services/reviewApi';
 import { useCourseReviews, formatReviewDate } from '@/components/reviews/useCourseReviews';
+import { resolveMediaUrl } from '@/utils/mediaUrl';
 
 export default function ReviewsTab({ course }) {
   const courseId = course?.id;
@@ -99,7 +100,7 @@ export default function ReviewsTab({ course }) {
                   <div className="ReviewerMeta">
                     {rev.user_image ? (
                       <img
-                        src={rev.user_image}
+                        src={resolveMediaUrl(rev.user_image)}
                         alt={rev.user_name || 'Reviewer'}
                         className="InitialsAvatar"
                         style={{ objectFit: 'cover' }}

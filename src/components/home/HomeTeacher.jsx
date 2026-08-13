@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import TeacherBox from "../teachersBox/TeacherBox";
 import Link from "next/link";
 import { fetchFeaturedInstructors } from "@/libs/course";
-import { MEDIA_BASE_URL } from "@/utils/constants";
 
 const HomeTeacher = () => {
   const [loading, setLoading] = useState(true);

@@ -24,7 +24,7 @@ import Events from "@/components/profile/Events";
 import Settings from "@/components/profile/Settings";
 import HelpSupport from "@/components/profile/HelpSupport";
 import { useSelector } from "react-redux";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import useCourse from "@/hooks/useCourse";
 import LiveYoga from "@/components/profile/LiveYoga";
 import StudentBilling from "@/components/profile/StudentBilling";
@@ -157,8 +157,8 @@ const Profile = () => {
   const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    if (user?.avatar) {
-      setProfileImg(user.avatar);
+    if (user?.avatar_url || user?.avatar) {
+      setProfileImg(resolveMediaUrl(user.avatar_url || user.avatar));
     }
   }, [user?.avatar]);
 

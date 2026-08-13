@@ -2,7 +2,7 @@ import React from "react";
 import CourseCard from "@/components/coursebox/CourseCard";
 import { FiBookOpen, FiClock, FiUsers, FiShoppingBag } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import useWishlist from "@/hooks/useWishlist";
 import Link from "next/link";
 
@@ -22,9 +22,7 @@ const MyCourses = ({ courses = [] }) => {
             <div className="CourseItem" key={course?.id || i}>
               <CourseCard
                 image={
-                  course?.thumbnail
-                    ? `${MEDIA_BASE_URL}${course.thumbnail}`
-                    : null
+                  course?.thumbnail ? resolveMediaUrl(course.thumbnail) : null
                 }
                 title={course?.title}
                 lessons={course?.lessons_count}
@@ -44,8 +42,8 @@ const MyCourses = ({ courses = [] }) => {
                 userIcon={<FiUsers />}
                 buttonText="View Details"
                 instructorImg={
-                  course?.instructor?.avatar
-                    ? `${MEDIA_BASE_URL}${course.instructor.avatar}`
+                  course?.instructor?.avatar_url || course?.instructor?.avatar
+                    ? resolveMediaUrl(course.instructor.avatar_url || course.instructor.avatar)
                     : null
                 }
                 instructorLabel={course?.instructor?.role}

@@ -1,5 +1,5 @@
 import { fetchLiveSections, fetchLiveSectionDetail } from "@/libs/course";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import LiveYogaDetails from "./LiveYogaDetails";
 
 export const revalidate = 600;
@@ -41,7 +41,7 @@ export async function generateMetadata({ params }) {
       images: [
         {
           url: liveSection.thumbnail
-            ? `${MEDIA_BASE_URL}${liveSection.thumbnail}`
+            ? resolveMediaUrl(liveSection.thumbnail)
             : "/images/live-placeholder.webp",
           width: 1200,
           height: 630,

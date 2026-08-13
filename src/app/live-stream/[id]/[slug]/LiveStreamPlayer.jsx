@@ -9,7 +9,7 @@ import {
 import { FaChalkboardTeacher, FaRegCalendarAlt } from 'react-icons/fa';
 import { FiUsers, FiAward, FiClock, FiPlayCircle, FiCheck, FiXCircle } from 'react-icons/fi';
 import toast from 'react-hot-toast';
-import { MEDIA_BASE_URL } from '@/utils/constants';
+import { resolveMediaUrl } from '@/utils/mediaUrl';
 import courseApi from '@/libs/courseApi';
 import apiClient from '@/services/apiClient';
 import { fetchLiveSectionDetail } from '@/libs/course';
@@ -223,8 +223,8 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
 
   // derived values
   const instructorName = instructor.name || "Instructor";
-  const instructorAvatar = instructor.avatar
-    ? instructor.avatar.includes("http") ? instructor.avatar : `${MEDIA_BASE_URL}${instructor.avatar}`
+  const instructorAvatar = instructor.avatar_url || instructor.avatar
+    ? resolveMediaUrl(instructor.avatar_url || instructor.avatar)
     : "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=150&h=150";
 
   const timezone = data.timezone || "IST";
@@ -293,16 +293,16 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
             />
           ) : recordingAvailable ? (
             <video
-              src={data.recording_url.includes("http") ? data.recording_url : `${MEDIA_BASE_URL}${data.recording_url}`}
+              src={resolveMediaUrl(data.recording_url)}
               controls
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
-              poster={data.banner_image ? `${MEDIA_BASE_URL}${data.banner_image}` : undefined}
+              poster={data.banner_image ? resolveMediaUrl(data.banner_image) : undefined}
             />
           ) : (
             <div style={{
               width: "100%",
               height: "100%",
-              backgroundImage: data.banner_image ? `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), url(${MEDIA_BASE_URL}${data.banner_image})` : "linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85))",
+              backgroundImage: data.banner_image ? `linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85)), url(${resolveMediaUrl(data.banner_image)})` : "linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.85))",
               backgroundSize: "cover",
               backgroundPosition: "center",
               display: "flex",

@@ -12,7 +12,7 @@ import {
   FiShoppingCart 
 } from 'react-icons/fi';
 import { AiFillStar } from 'react-icons/ai';
-import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from '@/utils/constants';
+import { resolveMediaUrl, resolveProductMediaUrl } from '@/utils/mediaUrl';
 import courseApi from '@/libs/courseApi';
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import CertificateViewerModal from "@/components/certificate/CertificateViewerModal";
@@ -79,10 +79,8 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
   if (!course) return null;
 
   const instructor = fullCourse?.instructor || course.instructor;
-  const instructorAvatar = instructor?.avatar
-    ? (instructor.avatar.startsWith('http')
-        ? instructor.avatar
-        : `${MEDIA_BASE_URL.replace(/\/+$/, '')}/${instructor.avatar.replace(/^\/+/, '')}`)
+  const instructorAvatar = instructor?.avatar_url || instructor?.avatar
+    ? resolveMediaUrl(instructor.avatar_url || instructor.avatar)
     : '/images/avatar-placeholder.webp';
 
   const percentage = completionSummary?.percentage ?? 0;
@@ -281,7 +279,7 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
                 <div key={index} className="ProductItem">
                   <div className="ProductLeft">
                     <img
-                      src={prod.image ? `${PRODUCT_MEDIA_BASE_URL}${prod.image}` : '/images/placeholder.webp'}
+                      src={prod.image ? resolveProductMediaUrl(prod.image) : '/images/placeholder.webp'}
                       alt="Product"
                     />
                     <div className="ProductMeta">

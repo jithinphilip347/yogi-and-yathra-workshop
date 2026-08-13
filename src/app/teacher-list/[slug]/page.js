@@ -22,7 +22,7 @@ import {
   FaUserGraduate,
 } from "react-icons/fa";
 import { fetchInstructorDetails } from "@/libs/course";
-import { MEDIA_BASE_URL } from "@/utils/constants";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import TeacherBox from "../../../components/teachersBox/TeacherBox";
 import CourseCard from "../../../components/coursebox/CourseCard";
 
@@ -62,15 +62,9 @@ const Page = () => {
 
   // ─── Helpers ──────────────────────────────────────────────────────────
 
-  const buildAvatarUrl = (url) => {
-    if (!url) return null;
-    return url.startsWith("http") ? url : `${MEDIA_BASE_URL}${url}`;
-  };
+  const buildAvatarUrl = (url) => (url ? resolveMediaUrl(url) : null);
 
-  const buildThumbnailUrl = (thumb) => {
-    if (!thumb) return null;
-    return thumb.startsWith("http") ? thumb : `${MEDIA_BASE_URL}${thumb}`;
-  };
+  const buildThumbnailUrl = (thumb) => (thumb ? resolveMediaUrl(thumb) : null);
 
   const formatDuration = (duration) => {
     if (!duration) return "0h";
