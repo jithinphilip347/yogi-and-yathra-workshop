@@ -22,6 +22,7 @@ import { usePlaybackProgress } from './controllers/usePlaybackProgress';
 import { useProviderController } from './controllers/useProviderController';
 import { useAutoNextController } from './controllers/useAutoNextController';
 import { useAnalyticsController } from './controllers/useAnalyticsController';
+import { createRafCoalescer } from '@/libs/rafCoalescer';
 
 export default React.memo(function VideoEngine({
   lesson,
@@ -43,6 +44,13 @@ export default React.memo(function VideoEngine({
   const lastProgressDebugRef = useRef(0);
   const renderCountRef = useRef(0);
   renderCountRef.current += 1;
+
+  // Coalesces media `timeupdate` events into at most ONE React state update
+  // per animation frame while playing (created exactly once).
+  const timeUpdateCoalescerRef = useRef(null);
+  if (timeUpdateCoalescerRef.current === null) {
+    timeUpdateCoalescerRef.current = createRafCoalescer();
+  }
 
   // 1. Session Controller
   const {
@@ -133,8 +141,6 @@ export default React.memo(function VideoEngine({
   // 7. Auto Next Controller
   const {
     autoNextCountdown,
-    setAutoNextCountdown,
-    countdownTimerRef,
     triggerAutoNext,
     cancelAutoNext,
     handlePlayNextImmediately,
@@ -151,8 +157,7 @@ export default React.memo(function VideoEngine({
     setHasError,
     setIsPlaying,
     setCurrentTime,
-    setAutoNextCountdown,
-    countdownTimerRef,
+    cancelAutoNext,
     initSession,
     lastSavedPosRef,
     activeWatchedSecondsRef,
@@ -213,6 +218,15 @@ export default React.memo(function VideoEngine({
     }
   }, [onRegisterPlayerCallbacks, requestSeek]);
 
+  // Cancel any pending timeupdate animation frame when the lesson changes or
+  // the engine unmounts, so a stale frame can never write to the next lesson's
+  // UI or update state after the player is destroyed.
+  useEffect(() => {
+    return () => {
+      timeUpdateCoalescerRef.current?.cancel();
+    };
+  }, [lesson?.id]);
+
   // Phase 4 — video element identity
   useEffect(() => {
     const el = videoRef.current;
@@ -268,8 +282,23 @@ export default React.memo(function VideoEngine({
         playerDebug.mediaEvent({ name: 'timeupdate', video: videoRef.current });
       }
 
-      setCurrentTime(vTime);
-      setIsPlaying(!videoRef.current.paused);
+      // Coalesce the React UI state writes (currentTime / isPlaying) into a
+      // single requestAnimationFrame callback. Media `timeupdate` events fire
+      // several times per second while playing; without coalescing every event
+      // re-renders the player subtree. Internal progress tracking above keeps
+      // running at the FULL media-event frequency — only the visual state is
+      // throttled. At most one animation frame is ever pending, and the frame
+      // reads the live element so the latest position always wins.
+      timeUpdateCoalescerRef.current.schedule(() => {
+        const el = videoRef.current;
+        // Re-check the seek guard at fire time — a seek may have started
+        // between scheduling and this frame, and must not be clobbered by a
+        // stale frame write.
+        if (el && !isSeekingRef.current && !el.seeking) {
+          setCurrentTime(el.currentTime || 0);
+          setIsPlaying(!el.paused);
+        }
+      });
     }
   }, [videoRef, isSeekingRef, playbackSessionRef, lastTimeRef, activeWatchedSecondsRef, setCurrentTime, setIsPlaying]);
 

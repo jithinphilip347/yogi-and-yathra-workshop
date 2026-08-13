@@ -1,44 +1,65 @@
 "use client";
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { createCountdownTimer } from '@/libs/countdownTimer';
 
 export function useAutoNextController({ nextLesson, courseSlug, router }) {
   const [autoNextCountdown, setAutoNextCountdown] = useState(null);
   const countdownTimerRef = useRef(null);
 
-  const triggerAutoNext = useCallback(() => {
-    if (!nextLesson || !courseSlug) return;
-    setAutoNextCountdown(5);
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
-
-    countdownTimerRef.current = setInterval(() => {
-      setAutoNextCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(countdownTimerRef.current);
-          router.push(`/course/${courseSlug}/learn/${nextLesson.id}`);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+  // The completion callback must always navigate using the LATEST props. The
+  // countdown object is created once; onComplete reads through this ref so a
+  // mid-session props change can never be captured stale.
+  const onCompleteRef = useRef(null);
+  useEffect(() => {
+    onCompleteRef.current = () => {
+      if (nextLesson && courseSlug) {
+        router.push(`/course/${courseSlug}/learn/${nextLesson.id}`);
+      }
+    };
   }, [nextLesson, courseSlug, router]);
 
+  // Create the countdown timer exactly once. It owns the interval lifecycle:
+  // start() clears any existing interval first, and cancel()/clear() are
+  // invoked on every exit path (complete / cancel / lesson change / unmount).
+  if (countdownTimerRef.current === null) {
+    countdownTimerRef.current = createCountdownTimer({
+      duration: 5,
+      onTick: (remaining) => setAutoNextCountdown(remaining),
+      onComplete: () => onCompleteRef.current?.(),
+    });
+  }
+
+  const triggerAutoNext = useCallback(() => {
+    if (!nextLesson || !courseSlug) return;
+    // start() clears any existing interval first, so repeated `ended` events
+    // can never create a second countdown.
+    countdownTimerRef.current?.start();
+  }, [nextLesson, courseSlug]);
+
   const cancelAutoNext = useCallback(() => {
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+    countdownTimerRef.current?.cancel();
     setAutoNextCountdown(null);
   }, []);
 
   const handlePlayNextImmediately = useCallback(() => {
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+    countdownTimerRef.current?.cancel();
     if (nextLesson && courseSlug) {
       router.push(`/course/${courseSlug}/learn/${nextLesson.id}`);
     }
   }, [nextLesson, courseSlug, router]);
 
+  // CRITICAL: clear the countdown interval when the player unmounts so a
+  // pending countdown can never fire `router.push()` (or update state) after
+  // the player has been destroyed.
+  useEffect(() => {
+    return () => {
+      countdownTimerRef.current?.cancel();
+    };
+  }, []);
+
   return {
     autoNextCountdown,
-    setAutoNextCountdown,
-    countdownTimerRef,
     triggerAutoNext,
     cancelAutoNext,
     handlePlayNextImmediately,

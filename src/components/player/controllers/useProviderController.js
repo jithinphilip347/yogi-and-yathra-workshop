@@ -11,8 +11,7 @@ export function useProviderController({
   setHasError,
   setIsPlaying,
   setCurrentTime,
-  setAutoNextCountdown,
-  countdownTimerRef,
+  cancelAutoNext,
   initSession,
   lastSavedPosRef,
   activeWatchedSecondsRef,
@@ -56,8 +55,10 @@ export function useProviderController({
     // NOTE: Do NOT call setCurrentTime(0) here — the video element will reset
     // naturally when the new src is assigned. Calling setCurrentTime(0) here
     // creates a false reset visible in the UI before the new video loads.
-    setAutoNextCountdown(null);
-    if (countdownTimerRef.current) clearInterval(countdownTimerRef.current);
+    // Cancel any in-flight auto-next countdown from the previous lesson so a
+    // stale timer can never navigate to (or re-navigate to) the old next
+    // lesson.
+    cancelAutoNext();
 
     // Reset all per-lesson bookkeeping
     if (typeof initSession === 'function') {
