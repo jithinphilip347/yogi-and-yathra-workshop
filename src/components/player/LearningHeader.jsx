@@ -3,7 +3,7 @@
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight, FiBookmark, FiCheckCircle, FiStar } from 'react-icons/fi';
-
+import Image from 'next/image';
 export default React.memo(function LearningHeader({
   courseTitle,
   lessonTitle,
@@ -41,7 +41,7 @@ export default React.memo(function LearningHeader({
     <header className="LearningHeader">
       <div className="HeaderLeft">
         <div className="Branding" onClick={handleBack} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span className="LogoText" style={{ fontSize: '20px', fontWeight: '800', letterSpacing: '-0.5px', color: '#ffffff' }}>Yogify</span>
+          <Image src="/logo-02.png" width={100} height={80} alt="" />
         </div>
         <div className="Divider" style={{ width: '1px', height: '24px', backgroundColor: '#3e4143', margin: '0 8px' }} />
         <h1 className="CourseTitleHeader" style={{ fontSize: '15px', fontWeight: '500', color: '#ffffff', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '400px' }}>

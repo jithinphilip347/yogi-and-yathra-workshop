@@ -234,6 +234,27 @@
         aspect-ratio: 16 / 9;
         max-height: 70vh;
 
+        /* Media element (HTML5/HLS <video> or provider wrapper div).
+           Must fill the player viewport while preserving the source aspect
+           ratio (contain) — without this rule the <video> renders at its
+           intrinsic resolution, leaving black space around the content. */
+        .EngineMediaElement {
+          width: 100%;
+          height: 100%;
+          object-fit: contain !important;
+          background-color: #000000;
+          border: none;
+
+          /* SDK-created iframes (e.g. Vimeo appends a fixed-size iframe into
+             the wrapper) must fill the wrapper too. */
+          iframe {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border: none;
+          }
+        }
+
         /* VideoEngine root styles */
         .VideoEngineRoot {
           position: relative;
