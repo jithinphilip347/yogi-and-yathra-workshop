@@ -16,6 +16,37 @@ import { CommunicationProvider } from '@/communication/CommunicationStore';
 
 import CompletionModal from './CompletionModal';
 
+// Completion modal dismissal is persisted per course so a closed modal is not
+// shown again for 24 hours (instead of popping up on every visit to a finished
+// course).
+const COMPLETION_MODAL_STORAGE_PREFIX = 'completion-modal-dismissed-at';
+const COMPLETION_MODAL_COOLDOWN_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+const getCompletionModalDismissedAt = (courseId) => {
+  if (typeof window === 'undefined' || !courseId) return 0;
+  try {
+    const raw = window.localStorage.getItem(`${COMPLETION_MODAL_STORAGE_PREFIX}:${courseId}`);
+    const ts = raw ? Number(raw) : 0;
+    return Number.isFinite(ts) && ts > 0 ? ts : 0;
+  } catch {
+    return 0;
+  }
+};
+
+const setCompletionModalDismissedAt = (courseId) => {
+  if (typeof window === 'undefined' || !courseId) return;
+  try {
+    window.localStorage.setItem(`${COMPLETION_MODAL_STORAGE_PREFIX}:${courseId}`, String(Date.now()));
+  } catch {
+    // Ignore storage errors (private mode / quota) — modal may show again.
+  }
+};
+
+const isCompletionModalDismissed = (courseId) => {
+  const dismissedAt = getCompletionModalDismissedAt(courseId);
+  return dismissedAt > 0 && Date.now() - dismissedAt < COMPLETION_MODAL_COOLDOWN_MS;
+};
+
 export default function LearningPlayerLayout({ playerSession: initialSession }) {
   const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -23,7 +54,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
   const [sessionData, setSessionData] = useState(initialSession);
   const [isBookmarked, setIsBookmarked] = useState(initialSession?.current_lesson?.is_bookmarked ?? false);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
-  const [modalDismissed, setModalDismissed] = useState(false);
+  const courseIdRef = useRef(initialSession?.course?.id);
   const playerCallbacksRef = useRef(null);
 
   // Monotonic server-response protection (Phase 9): tracks the highest position
@@ -37,15 +68,20 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
   useEffect(() => {
     setSessionData(initialSession);
     setIsBookmarked(initialSession?.current_lesson?.is_bookmarked ?? false);
+    courseIdRef.current = initialSession?.course?.id;
 
     if (initialSession?.current_lesson?.id) {
       courseApi.recordRecentView(initialSession.current_lesson.id).catch(() => {});
     }
 
-    if (initialSession?.completion_summary?.percentage >= 100 && !modalDismissed) {
+    // Only celebrate on load if the student hasn't dismissed it within 24h.
+    if (
+      initialSession?.completion_summary?.percentage >= 100 &&
+      !isCompletionModalDismissed(courseIdRef.current)
+    ) {
       setShowCompletionModal(true);
     }
-  }, [initialSession, modalDismissed]);
+  }, [initialSession]);
 
   const handleToggleBookmark = useCallback(async () => {
     const activeLessonId = sessionData?.current_lesson?.id;
@@ -135,7 +171,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
 
       const percentage = total > 0 ? Math.min(100, Math.round((completed / total) * 100)) : 0;
 
-      if (percentage >= 100 && !modalDismissed) {
+      if (percentage >= 100 && !isCompletionModalDismissed(courseIdRef.current)) {
         setShowCompletionModal(true);
       }
 
@@ -156,7 +192,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
         },
       };
     });
-  }, [modalDismissed]);
+  }, []);
 
   const handleToggleManualCompletion = useCallback(async () => {
     const activeLessonId = sessionData?.current_lesson?.id;
@@ -210,7 +246,8 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
             course={course}
             onClose={() => {
               setShowCompletionModal(false);
-              setModalDismissed(true);
+              // Persist the dismissal so the modal is not shown again for 24h.
+              setCompletionModalDismissedAt(courseIdRef.current);
             }}
           />
         )}
