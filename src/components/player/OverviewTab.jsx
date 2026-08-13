@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   FiCheckCircle, 
   FiAward, 
@@ -18,43 +18,36 @@ import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import CertificateViewerModal from "@/components/certificate/CertificateViewerModal";
 import toast from "react-hot-toast";
 
-export default function OverviewTab({ course, currentLesson, completionSummary }) {
-  const [eligibility, setEligibility] = useState(null);
+export default function OverviewTab({ course, currentLesson, completionSummary, certificateEligibility }) {
+  // Certificate eligibility ships inside the player session
+  // (sessionData.certificate_eligibility) — no separate request on mount.
+  const [eligibility, setEligibility] = useState(certificateEligibility || null);
   const [isClaiming, setIsClaiming] = useState(false);
-  const [fullCourse, setFullCourse] = useState(null);
-  const [isLoadingCourse, setIsLoadingCourse] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   // Commerce hooks
   const { addItem, removeItem, isInCart } = useCart();
 
-  // 1. Fetch certificate eligibility status
-  useEffect(() => {
-    if (!course?.id) return;
-    courseApi.getCertificateEligibility(course.id)
-      .then((res) => {
-        const data = res.data?.data || res.data;
-        setEligibility(data);
-      })
-      .catch(() => {});
-  }, [course?.id, completionSummary?.percentage]);
+  // The server is only re-consulted once, when the course crosses the 100%
+  // completion threshold, to verify the certificate state transition — never
+  // on ordinary progress updates or re-renders.
+  const prevPercentageRef = useRef(completionSummary?.percentage ?? 0);
 
-  // 2. Fetch full course details (products, requirements, stats)
   useEffect(() => {
+    const percentage = completionSummary?.percentage ?? 0;
+    const prev = prevPercentageRef.current;
+    prevPercentageRef.current = percentage;
+
     if (!course?.id) return;
-    setIsLoadingCourse(true);
-    courseApi.show(course.id)
-      .then((res) => {
-        const data = res.data?.data || res.data;
-        setFullCourse(data);
-      })
-      .catch((err) => {
-        console.warn("Failed to fetch full course details:", err);
-      })
-      .finally(() => {
-        setIsLoadingCourse(false);
-      });
-  }, [course?.id]);
+    if (prev < 100 && percentage >= 100) {
+      courseApi.getCertificateEligibility(course.id)
+        .then((res) => {
+          const data = res.data?.data || res.data;
+          setEligibility(data);
+        })
+        .catch(() => {});
+    }
+  }, [course?.id, completionSummary?.percentage]);
 
   const handleClaim = async () => {
     if (!course?.id) return;
@@ -78,7 +71,7 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
 
   if (!course) return null;
 
-  const instructor = fullCourse?.instructor || course.instructor;
+  const instructor = course.instructor;
   const instructorAvatar = instructor?.avatar_url || instructor?.avatar
     ? resolveMediaUrl(instructor.avatar_url || instructor.avatar)
     : '/images/avatar-placeholder.webp';
@@ -87,11 +80,11 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
   const isCompleted = percentage >= 100;
 
   // Rich texts
-  const courseDescriptionHtml = fullCourse?.description || course.description || course.short_description || "Welcome to this comprehensive workshop course.";
+  const courseDescriptionHtml = course.description || course.short_description || "Welcome to this comprehensive workshop course.";
   const lessonDescriptionHtml = currentLesson?.description || currentLesson?.short_description || "";
 
-  const products = fullCourse?.products || [];
-  const requirements = fullCourse?.requirements || course.requirements || [];
+  const products = course.products || [];
+  const requirements = course.requirements || [];
 
   return (
     <div className="OverviewTab">
@@ -99,10 +92,10 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
       {/* ─── Banner Header Info Row ─────────────────────────────────── */}
       <div className="CourseOverviewBanner">
         <h2>
-          {fullCourse?.title || course.title}
+          {course.title}
         </h2>
         <p>
-          {fullCourse?.short_description || course.short_description}
+          {course.short_description}
         </p>
 
         <div className="BannerMetaRow">
@@ -119,7 +112,7 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
 
           <div className="StudentsMetaBlock">
             <FiUsers />
-            <span>{fullCourse?.enrollments_count || '1,234'} students</span>
+            <span>{course.enrollments_count || '1,234'} students</span>
           </div>
         </div>
       </div>
@@ -190,7 +183,7 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
             isOpen={isViewerOpen}
             onClose={() => setIsViewerOpen(false)}
             certificate={eligibility?.certificate}
-            course={fullCourse || course}
+            course={course}
           />
         </div>
       )}
@@ -218,7 +211,7 @@ export default function OverviewTab({ course, currentLesson, completionSummary }
       {Array.isArray(course.learning_outcomes) && course.learning_outcomes.length > 0 && (
         <div className="HighlightOutlineCard">
           <h3>
-            What you'll learn
+            What you&apos;ll learn
           </h3>
           <div className="OutcomeGrid">
             {course.learning_outcomes.map((item, idx) => (

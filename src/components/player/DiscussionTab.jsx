@@ -22,6 +22,10 @@ export default function DiscussionTab({ course, currentLesson, entityType: propE
 
   // Search & Filtering State
   const [searchQuery, setSearchQuery] = useState('');
+  // Debounced copy of the search input (~300ms) so typing does not fire one
+  // threads request per keystroke — the API is only hit after the student
+  // pauses typing.
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('recent'); // recent, pinned, solved, instructor, popular
 
   // Main Composer State
@@ -41,22 +45,39 @@ export default function DiscussionTab({ course, currentLesson, entityType: propE
 
   // Refs
   const mainComposerRef = useRef(null);
+  // Tracks the current discussion context so first-thread messages are only
+  // auto-loaded when switching course/lesson — never on search/filter changes.
+  const discussionContextRef = useRef('');
 
   // ─── Selectors ─────────────────────────────────────────────────────────
   const threads = selectSortedThreads(state);
   const loading = state.loading;
+
+  // ─── 0. Debounce the search input (~300ms) ──────────────────────────────
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearchQuery(searchQuery), 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // ─── 1. Fetch threads on Context, Search, or Filter change ─────────────
   useEffect(() => {
     const entityType = propEntityType || (currentLesson?.id ? 'lesson' : 'course');
     const entityId   = currentLesson?.id  ? currentLesson.id : course?.id;
     if (entityId) {
+      const contextKey = `${entityType}:${entityId}`;
+      const contextChanged = discussionContextRef.current !== contextKey;
+      discussionContextRef.current = contextKey;
+
       actions.loadThreads(entityType, entityId, {
-        search: searchQuery || undefined,
+        search: debouncedSearchQuery || undefined,
         filter: filterType !== 'recent' ? filterType : undefined,
+        // Auto-load the first thread's messages only when the discussion
+        // context changed (course/lesson change) — not on search/filter
+        // changes where the student has not opened any thread yet.
+        loadFirstThread: contextChanged,
       });
     }
-  }, [course?.id, currentLesson?.id, searchQuery, filterType, propEntityType]);
+  }, [course?.id, currentLesson?.id, debouncedSearchQuery, filterType, propEntityType]);
 
   // Reset pagination and expansions when lesson changes
   useEffect(() => {

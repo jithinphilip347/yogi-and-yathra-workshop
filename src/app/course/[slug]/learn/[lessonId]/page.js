@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import courseApi from '@/libs/courseApi';
+import { playerSessionCache } from '@/libs/playerSessionCache';
 import LearningPlayerLayout from '@/components/player/LearningPlayerLayout';
 
 export default function CoursePlayerPage() {
@@ -15,33 +16,96 @@ export default function CoursePlayerPage() {
   const [playerSession, setPlayerSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const abortRef = useRef(null);
 
   useEffect(() => {
-    const fetchPlayerSession = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+    const fetchPlayerSession = async (signal) => {
+      setLoading(true);
 
-        // Fetch player payload by slug/course ID and target lesson ID
-        const res = await courseApi.getCoursePlayer(slug, lessonId);
-        const data = res.data?.data || res.data;
+      const cached = playerSessionCache.get(slug);
+      const requestedLessonId = lessonId ? String(lessonId) : null;
+      const cachedLessonId = cached?.current_lesson?.id != null ? String(cached.current_lesson.id) : null;
 
-        if (!data || !data.course) {
-          setError('Course or lesson not found.');
-          return;
+      // The course structure is stable while navigating between lessons. When
+      // this course's session is already cached and only the lesson changed,
+      // fetch the light current-lesson slice and merge it into the cached
+      // session instead of re-fetching the entire player payload.
+      if (cached?.course && requestedLessonId && cachedLessonId && cachedLessonId !== requestedLessonId) {
+        try {
+          const res = await courseApi.getCoursePlayer(slug, lessonId, { light: true, signal });
+          const lightData = res.data?.data || res.data;
+
+          if (signal.aborted) return;
+
+          if (lightData?.current_lesson) {
+            const merged = {
+              ...cached,
+              current_lesson: lightData.current_lesson,
+              next_lesson: lightData.next_lesson ?? cached.next_lesson,
+              previous_lesson: lightData.previous_lesson ?? cached.previous_lesson,
+              permissions: lightData.permissions
+                ? { ...cached.permissions, ...lightData.permissions }
+                : cached.permissions,
+              completion_summary: {
+                ...cached.completion_summary,
+                ...(lightData.completion_summary || {}),
+              },
+            };
+
+            setPlayerSession(merged);
+            setError(null);
+            return;
+          }
+        } catch (lightErr) {
+          // Fall through to a full session fetch — this preserves the original
+          // error semantics (e.g. the student lost access to the course).
+          if (signal.aborted) return;
         }
-
-        setPlayerSession(data);
-      } catch (err) {
-        console.error('Failed to load course player session:', err);
-        setError('Unable to load course player. Please check your network or login session.');
-      } finally {
-        setLoading(false);
       }
+
+      // Full session fetch (initial load / direct lesson URL / cache miss).
+      const res = await courseApi.getCoursePlayer(slug, lessonId, { signal });
+      const data = res.data?.data || res.data;
+
+      if (signal.aborted) return;
+
+      if (!data || !data.course) {
+        setError('Course or lesson not found.');
+        return;
+      }
+
+      playerSessionCache.set(slug, data);
+      setPlayerSession(data);
+      setError(null);
     };
 
     if (slug) {
-      fetchPlayerSession();
+      const controller = new AbortController();
+
+      // Abort the previous in-flight session request so a rapid lesson
+      // navigation can never be overwritten by a stale response.
+      if (abortRef.current) abortRef.current.abort();
+      abortRef.current = controller;
+
+      fetchPlayerSession(controller.signal)
+        .catch((err) => {
+          if (controller.signal.aborted || err?.name === 'CanceledError' || err?.name === 'AbortError') return;
+          console.error('Failed to load course player session:', err);
+          setError('Unable to load course player. Please check your network or login session.');
+        })
+        .finally(() => {
+          // Only the latest request may clear the loading state.
+          if (abortRef.current === controller) {
+            setLoading(false);
+          }
+        });
+
+      return () => {
+        if (abortRef.current === controller) {
+          abortRef.current = null;
+          controller.abort();
+        }
+      };
     }
   }, [slug, lessonId]);
 

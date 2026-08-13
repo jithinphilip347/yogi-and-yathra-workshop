@@ -20,46 +20,11 @@ const nextClientId = () => `opt_${Date.now()}_${++clientIdCounter}`;
 export function useCommunicationActions() {
   const { state, dispatch } = useCommunication();
 
-  // ─── Load Threads ────────────────────────────────────────────────────────
-  const loadThreads = useCallback(async (entityType, entityId, extraParams = {}) => {
-    if (!entityId) return;
-
-    dispatch({ type: COMM_ACTIONS.SET_LOADING, payload: true });
-    try {
-      commLog('DISPATCH', { action: 'loadThreads', entityType, entityId, ...extraParams });
-      const res = await communicationApi.getThreads({ 
-        entity_type: entityType, 
-        entity_id: entityId,
-        ...extraParams
-      });
-      const threads = res?.data || [];
-
-      dispatch({
-        type: COMM_ACTIONS.THREADS_LOADED,
-        payload: { threads, contextType: entityType, contextId: entityId },
-      });
-
-      // Auto-select first thread and load its messages
-      if (threads.length > 0) {
-        await switchThread(threads[0].id);
-      }
-    } catch (err) {
-      commLog('ERROR', { action: 'loadThreads', err });
-      dispatch({ type: COMM_ACTIONS.SET_ERROR, payload: 'Failed to load discussions' });
-    }
-  }, [dispatch]);
-
-  // ─── Switch Active Thread ────────────────────────────────────────────────
-  const switchThread = useCallback(async (threadId) => {
-    if (!threadId) return;
-
-    dispatch({ type: COMM_ACTIONS.SET_ACTIVE_THREAD, payload: { threadId } });
-
-    // Only fetch if not already cached
-    if (!state.messagesByThread[String(threadId)]) {
-      await loadMessages(threadId);
-    }
-  }, [dispatch, state.messagesByThread]);
+  // Guards for rapid discussion search: the previous threads request is
+  // aborted on every new search, and a sequence counter rejects any stale
+  // response that still resolves after a newer request has been issued.
+  const threadsAbortRef = useRef(null);
+  const threadsRequestSeqRef = useRef(0);
 
   // ─── Load Messages for Thread ────────────────────────────────────────────
   const loadMessages = useCallback(async (threadId, params = {}) => {
@@ -78,6 +43,59 @@ export function useCommunicationActions() {
       commLog('ERROR', { action: 'loadMessages', threadId, err });
     }
   }, [dispatch]);
+
+  // ─── Load Threads ────────────────────────────────────────────────────────
+  const loadThreads = useCallback(async (entityType, entityId, extraParams = {}) => {
+    if (!entityId) return;
+
+    const { loadFirstThread = false, ...apiParams } = extraParams;
+
+    // Cancel any in-flight threads request and reject older responses.
+    if (threadsAbortRef.current) threadsAbortRef.current.abort();
+    const controller = new AbortController();
+    threadsAbortRef.current = controller;
+    const requestSeq = ++threadsRequestSeqRef.current;
+
+    dispatch({ type: COMM_ACTIONS.SET_LOADING, payload: true });
+    try {
+      commLog('DISPATCH', { action: 'loadThreads', entityType, entityId, ...apiParams });
+      const res = await communicationApi.getThreads({
+        entity_type: entityType,
+        entity_id: entityId,
+        ...apiParams
+      }, controller.signal);
+      if (controller.signal.aborted || requestSeq !== threadsRequestSeqRef.current) return;
+      const threads = res?.data || [];
+
+      dispatch({
+        type: COMM_ACTIONS.THREADS_LOADED,
+        payload: { threads, contextType: entityType, contextId: entityId },
+      });
+
+      // Auto-load the first thread's messages ONLY when the discussion
+      // context itself changed (course/lesson change) — never on search or
+      // filter changes, where the student has not opened any thread yet.
+      if (loadFirstThread && threads.length > 0) {
+        await loadMessages(threads[0].id);
+      }
+    } catch (err) {
+      if (controller.signal.aborted || requestSeq !== threadsRequestSeqRef.current) return;
+      commLog('ERROR', { action: 'loadThreads', err });
+      dispatch({ type: COMM_ACTIONS.SET_ERROR, payload: 'Failed to load discussions' });
+    }
+  }, [dispatch, loadMessages]);
+
+  // ─── Switch Active Thread ────────────────────────────────────────────────
+  const switchThread = useCallback(async (threadId) => {
+    if (!threadId) return;
+
+    dispatch({ type: COMM_ACTIONS.SET_ACTIVE_THREAD, payload: { threadId } });
+
+    // Only fetch if not already cached
+    if (!state.messagesByThread[String(threadId)]) {
+      await loadMessages(threadId);
+    }
+  }, [dispatch, state.messagesByThread, loadMessages]);
 
   // ─── Send Message (optimistic) ────────────────────────────────────────────
   const sendMessage = useCallback(async ({ threadId, body, videoTimestampSeconds, timestampLabel, currentUser }) => {

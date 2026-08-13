@@ -22,10 +22,17 @@ const courseApi = {
 
   upcomingEvents: () => apiClient.get("dashboard/upcoming-events"),
 
-  getCoursePlayer: (courseId, lessonId) => {
+  getCoursePlayer: (courseId, lessonId, options = {}) => {
     const params = {};
     if (lessonId) params.lesson_id = lessonId;
-    return apiClient.get(`course/${courseId}/player`, { params });
+    // `light` returns only the current-lesson slice so lesson navigation can
+    // reuse the already-loaded course structure instead of re-fetching the
+    // entire player session for every lesson change.
+    if (options.light) params.light = 1;
+    return apiClient.get(`course/${courseId}/player`, {
+      params,
+      ...(options.signal ? { signal: options.signal } : {}),
+    });
   },
 
   getLessonPlayer: (lessonId) => apiClient.get(`lesson/${lessonId}/player`),
@@ -45,7 +52,7 @@ const courseApi = {
 
   continueLearning: () => apiClient.get("student/continue-learning"),
 
-  getLessonStream: (lessonId) => apiClient.get(`lesson/${lessonId}/stream`),
+  getLessonStream: (lessonId, options = {}) => apiClient.get(`lesson/${lessonId}/stream`, options),
 
   // Sprint P4: Notes, Bookmarks, Recent Views
   getLessonNotes: (lessonId, params) => apiClient.get(`lesson/${lessonId}/notes`, { params }),

@@ -8,6 +8,7 @@ import LessonNavigation from './LessonNavigation';
 import PlayerTabs from './PlayerTabs';
 import LessonSidebar from './LessonSidebar';
 import courseApi from '@/libs/courseApi';
+import { playerSessionCache } from '@/libs/playerSessionCache';
 import { playerDebug } from '@/libs/playerDebug';
 import { mergeProgressRecord } from '@/libs/playbackSync';
 import toast from 'react-hot-toast';
@@ -82,6 +83,15 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
       setShowCompletionModal(true);
     }
   }, [initialSession]);
+
+  // Keep the session-scoped cache in sync so lesson navigation can reuse the
+  // course structure (including live progress updates) without re-fetching the
+  // entire player session. Single source of truth: the latest sessionData.
+  useEffect(() => {
+    if (sessionData?.course?.slug) {
+      playerSessionCache.set(sessionData.course.slug, sessionData);
+    }
+  }, [sessionData]);
 
   const handleToggleBookmark = useCallback(async () => {
     const activeLessonId = sessionData?.current_lesson?.id;
@@ -293,6 +303,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
               getCurrentTime={handleGetCurrentTime}
               onSeek={handleSeek}
               completionSummary={completion_summary}
+              certificateEligibility={sessionData?.certificate_eligibility}
               activeTab={activePlayerTab}
               onTabChange={setActivePlayerTab}
             />

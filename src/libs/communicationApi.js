@@ -11,8 +11,8 @@ export const communicationApi = {
     return res.data;
   },
 
-  getThreads: async (params = {}) => {
-    const res = await apiClient.get('communication/threads', { params });
+  getThreads: async (params = {}, signal) => {
+    const res = await apiClient.get('communication/threads', { params, signal });
     return res.data;
   },
 

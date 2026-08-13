@@ -134,6 +134,12 @@ export function usePlaybackProgress({
         }
       })
       .catch((err) => {
+        // 429 Too Many Requests: the request reached the server and was
+        // throttled — stored progress is intact. Do NOT queue a retry (it
+        // would only re-trigger the limiter); the next regular flush re-sends
+        // the cumulative value anyway.
+        if (err?.response?.status === 429) return;
+
         // Error-tolerant fallback: push to retry queue (capped at max 50 items)
         console.warn("[CoursePlayer Sync] Progress save deferred (retry queued):", err?.message || err);
         if (pendingProgressQueueRef.current.length < 50) {
