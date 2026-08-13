@@ -57,6 +57,20 @@ export default React.memo(function MediaProviderAdapter({
         <YouTubeProvider
           src={rawUrl}
           title={title}
+          videoRef={videoRef}
+          onLoadedMetadata={onLoadedMetadata}
+          onLoadedData={onLoadedData}
+          onCanPlay={onCanPlay}
+          onPlaying={onPlaying}
+          onWaiting={onWaiting}
+          onDurationChange={onDurationChange}
+          onProgress={onProgress}
+          onTimeUpdate={onTimeUpdate}
+          onSeeking={onSeeking}
+          onSeeked={onSeeked}
+          onPause={onPause}
+          onEnded={onEnded}
+          onError={onError}
         />
       );
 
@@ -65,6 +79,20 @@ export default React.memo(function MediaProviderAdapter({
         <VimeoProvider
           src={rawUrl}
           title={title}
+          videoRef={videoRef}
+          onLoadedMetadata={onLoadedMetadata}
+          onLoadedData={onLoadedData}
+          onCanPlay={onCanPlay}
+          onPlaying={onPlaying}
+          onWaiting={onWaiting}
+          onDurationChange={onDurationChange}
+          onProgress={onProgress}
+          onTimeUpdate={onTimeUpdate}
+          onSeeking={onSeeking}
+          onSeeked={onSeeked}
+          onPause={onPause}
+          onEnded={onEnded}
+          onError={onError}
         />
       );
 

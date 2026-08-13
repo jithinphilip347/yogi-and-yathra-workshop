@@ -1,6 +1,7 @@
 
 import { logout, updateUser } from '@/features/auth/authSlice';
 import ProfileApi from '@/libs/profileApi';
+import { playerSessionCache } from '@/libs/playerSessionCache';
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import toast from 'react-hot-toast';
@@ -38,6 +39,9 @@ const useProfile = () => {
   
 
   const handleLogout = () => {
+    // Never let a logged-out user's cached course session leak to the next
+    // authenticated user on the same tab.
+    playerSessionCache.clear();
     dispatch(logout())
     queryClient.invalidateQueries({ queryKey: ['profile'] });
     toast.success("Logout successfully");

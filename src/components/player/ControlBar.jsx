@@ -10,8 +10,6 @@ import {
   FiMinimize, 
   FiAirplay,
   FiRotateCcw,
-  FiSettings,
-  FiMessageSquare,
   FiEdit3
 } from 'react-icons/fi';
 
@@ -38,6 +36,7 @@ export default React.memo(function ControlBar({
   handleSeekCommit,
   handleSeekPreviewCommit,
   onRewind,
+  onOpenNotes,
 }) {
   const formatTime = (secs) => {
     if (isNaN(secs) || secs === null || secs === undefined) return '00:00';
@@ -127,19 +126,9 @@ export default React.memo(function ControlBar({
             />
           </div>
 
-          {/* Notes shortcut button */}
-          <button className="ControlBtn NotesBtn" title="Add Note">
+          {/* Notes shortcut button — opens the Notes tab below the player */}
+          <button className="ControlBtn NotesBtn" onClick={onOpenNotes} title="Open Notes">
             <FiEdit3 />
-          </button>
-
-          {/* Captions shortcut button */}
-          <button className="ControlBtn CaptionsBtn" title="Toggle Captions">
-            <FiMessageSquare />
-          </button>
-
-          {/* Settings shortcut button */}
-          <button className="ControlBtn SettingsBtn" title="Settings">
-            <FiSettings />
           </button>
 
           {/* Picture-in-Picture */}

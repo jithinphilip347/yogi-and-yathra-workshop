@@ -110,6 +110,11 @@ export const playerDebug = {
     });
   },
 
+  /** Sprint 7 — stream refresh (expired signed URL recovery) */
+  streamRefresh({ lessonId, action, attempt }) {
+    emit('stream.refresh', { lessonId, action, attempt });
+  },
+
   /** Phase 10 — session actions */
   session({ lessonId, action, session }) {
     emit('session', { lessonId, action, sessionId: session?.sessionId });

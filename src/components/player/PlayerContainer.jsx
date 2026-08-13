@@ -13,7 +13,8 @@ export default React.memo(function PlayerContainer({
   permissions,
   courseSlug,
   onProgressUpdated,
-  onRegisterPlayerCallbacks
+  onRegisterPlayerCallbacks,
+  onOpenNotes
 }) {
   const router = useRouter();
 
@@ -60,6 +61,7 @@ export default React.memo(function PlayerContainer({
         permissions={permissions}
         onProgressUpdated={onProgressUpdated}
         onRegisterPlayerCallbacks={onRegisterPlayerCallbacks}
+        onOpenNotes={onOpenNotes}
       />
     </div>
   );

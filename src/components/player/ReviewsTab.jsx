@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { reviewApi } from '@/services/reviewApi';
 import { useCourseReviews, formatReviewDate } from '@/components/reviews/useCourseReviews';
 import { resolveMediaUrl } from '@/utils/mediaUrl';
+import PlayerTabState from './PlayerTabState';
 
 export default function ReviewsTab({ course }) {
   const courseId = course?.id;
@@ -22,6 +23,7 @@ export default function ReviewsTab({ course }) {
 
   const [reviews, setReviews] = useState([]);
   const [reviewsLoading, setReviewsLoading] = useState(() => !courseId);
+  const [reviewsError, setReviewsError] = useState(false);
   const [rating, setRating] = useState(5);
   const [reviewComment, setReviewComment] = useState('');
   const [isEditingReview, setIsEditingReview] = useState(false);
@@ -31,6 +33,7 @@ export default function ReviewsTab({ course }) {
     if (!courseId) return;
     try {
       setReviewsLoading(true);
+      setReviewsError(false);
       const res = await reviewApi.getReviews({
         target_type: 'course',
         target_id: courseId,
@@ -38,6 +41,9 @@ export default function ReviewsTab({ course }) {
       });
       setReviews(res.data?.data || []);
     } catch {
+      // A failed load is an ERROR state with retry — never a misleading
+      // "no reviews yet" empty state.
+      setReviewsError(true);
       setReviews([]);
     } finally {
       setReviewsLoading(false);
@@ -91,7 +97,14 @@ export default function ReviewsTab({ course }) {
           Student Feedback
         </h3>
         {reviewsLoading ? (
-          <p className="ReviewHint">Loading reviews…</p>
+          <PlayerTabState state="loading" loadingLabel="Loading reviews..." />
+        ) : reviewsError ? (
+          <PlayerTabState
+            state="error"
+            errorTitle="Unable to load reviews."
+            errorHint="Please check your network connection and try again."
+            onRetry={loadReviews}
+          />
         ) : reviews.length > 0 ? (
           <div className="ReviewsList">
             {reviews.map((rev) => (
@@ -128,7 +141,11 @@ export default function ReviewsTab({ course }) {
             ))}
           </div>
         ) : (
-          <p className="ReviewHint">No reviews yet. Be the first to review this course.</p>
+          <PlayerTabState
+            state="empty"
+            emptyTitle="No reviews yet."
+            emptyHint="Be the first to review this course."
+          />
         )}
       </div>
 

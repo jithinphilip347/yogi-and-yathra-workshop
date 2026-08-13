@@ -1,20 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef } from 'react';
-
-/**
- * Extract just the pathname+search from a URL string for comparison.
- * This prevents a different origin (e.g. http://localhost vs http://localhost:8000)
- * from triggering video.load() for the same underlying media file.
- */
-function extractPath(url) {
-  if (!url) return '';
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
+import { extractUrlKey } from '@/libs/streamRefresh';
 
 export default function HTML5Provider({
   videoRef,
@@ -39,14 +26,16 @@ export default function HTML5Provider({
 
   useEffect(() => {
     if (!videoRef.current || !src) return;
-    const prevPath = extractPath(prevSrcRef.current);
-    const nextPath = extractPath(src);
-    if (prevPath !== nextPath) {
-      // Genuine source change — reload the media element
+    const prevKey = extractUrlKey(prevSrcRef.current);
+    const nextKey = extractUrlKey(src);
+    if (prevKey !== nextKey) {
+      // Genuine source change — reload the media element. The key includes the
+      // query string, so a refreshed signed URL (new signature/expiry) IS a
+      // change and reloads; a different origin with the same path+search
+      // (e.g. localhost vs localhost:8000) is the same media and skips reload.
       prevSrcRef.current = src;
       videoRef.current.load();
     }
-    // Same path, different origin (e.g. localhost vs localhost:8000) — skip reload
     // Update the ref so future comparisons use the latest URL string
     prevSrcRef.current = src;
   }, [src, videoRef]);

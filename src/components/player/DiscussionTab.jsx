@@ -3,7 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { 
   FiMessageSquare, FiClock, FiSend, FiThumbsUp, FiSmile, FiUserCheck, FiUsers, FiX, 
-  FiSearch, FiFilter, FiCheckCircle, FiHeart, FiAward, FiTrash2, FiBookmark, FiPlus, FiChevronDown, FiChevronUp 
+  FiSearch, FiFilter, FiCheckCircle, FiHeart, FiAward, FiTrash2, FiBookmark, FiPlus, FiChevronDown, FiChevronUp,
+  FiAlertCircle, FiRefreshCw,
 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
@@ -43,6 +44,10 @@ export default function DiscussionTab({ course, currentLesson, entityType: propE
   // Reply composers state: { [threadId]: string }
   const [replyInputs, setReplyInputs] = useState({});
 
+  // Retry nonce: increments to force the thread-load effect to re-run after a
+  // failed load (the store error is surfaced with a manual retry action).
+  const [retryNonce, setRetryNonce] = useState(0);
+
   // Refs
   const mainComposerRef = useRef(null);
   // Tracks the current discussion context so first-thread messages are only
@@ -59,7 +64,7 @@ export default function DiscussionTab({ course, currentLesson, entityType: propE
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // ─── 1. Fetch threads on Context, Search, or Filter change ─────────────
+  // ─── 1. Fetch threads on Context, Search, Filter, or Retry change ──────
   useEffect(() => {
     const entityType = propEntityType || (currentLesson?.id ? 'lesson' : 'course');
     const entityId   = currentLesson?.id  ? currentLesson.id : course?.id;
@@ -77,7 +82,7 @@ export default function DiscussionTab({ course, currentLesson, entityType: propE
         loadFirstThread: contextChanged,
       });
     }
-  }, [course?.id, currentLesson?.id, debouncedSearchQuery, filterType, propEntityType]);
+  }, [course?.id, currentLesson?.id, debouncedSearchQuery, filterType, propEntityType, retryNonce]);
 
   // Reset pagination and expansions when lesson changes
   useEffect(() => {
@@ -262,6 +267,33 @@ export default function DiscussionTab({ course, currentLesson, entityType: propE
       <div className="QuestionsFeed">
         {loading && threads.length === 0 ? (
           <div className="FeedLoadingText">Loading questions feed...</div>
+        ) : state.error && threads.length === 0 ? (
+          <div className="EmptyStateBlock" style={{ borderColor: '#fecaca' }}>
+            <FiAlertCircle className="EmptyIcon" style={{ color: '#ef4444' }} />
+            <p className="TitleText">Unable to load discussions.</p>
+            <p className="SubText">Please check your network connection and try again.</p>
+            <button
+              type="button"
+              onClick={() => setRetryNonce((n) => n + 1)}
+              style={{
+                marginTop: '12px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 16px',
+                fontSize: '13px',
+                fontWeight: '700',
+                borderRadius: '6px',
+                border: '1px solid var(--primaryColor, #874429)',
+                backgroundColor: '#ffffff',
+                color: 'var(--primaryColor, #874429)',
+                cursor: 'pointer',
+              }}
+            >
+              <FiRefreshCw />
+              <span>Retry</span>
+            </button>
+          </div>
         ) : threads.length === 0 ? (
           <div className="EmptyStateBlock">
             <FiMessageSquare className="EmptyIcon" />

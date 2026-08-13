@@ -10,6 +10,7 @@ import {
 } from 'react-icons/fi';
 
 import { playerDebug } from '@/libs/playerDebug';
+import { shouldRefreshStream } from '@/libs/streamRefresh';
 import MediaProviderAdapter from './MediaProviderAdapter';
 import ControlBar from './ControlBar';
 import PlaybackDebugOverlay from './PlaybackDebugOverlay';
@@ -31,7 +32,8 @@ export default React.memo(function VideoEngine({
   onNavigate,
   courseSlug,
   onProgressUpdated,
-  onRegisterPlayerCallbacks
+  onRegisterPlayerCallbacks,
+  onOpenNotes
 }) {
   const router = useRouter();
   const playerContainerRef = useRef(null);
@@ -151,6 +153,7 @@ export default React.memo(function VideoEngine({
     rawUrl,
     providerType,
     formatType,
+    refreshStream,
   } = useProviderController({
     lesson,
     setIsLoading,
@@ -166,6 +169,16 @@ export default React.memo(function VideoEngine({
     committedSeekRef,
     seekGuardTimerRef,
   });
+
+  // Bounded stream-refresh budget. A media failure is frequently an expired
+  // signed stream URL: refresh from the authorized endpoint a small number of
+  // times before showing the error UI. Never refresh indefinitely.
+  const streamRefreshAttemptsRef = useRef(0);
+
+  // Reset the refresh budget whenever the lesson changes.
+  useEffect(() => {
+    streamRefreshAttemptsRef.current = 0;
+  }, [lesson?.id]);
 
   // Keyboard Shortcuts Handler
   useEffect(() => {
@@ -356,15 +369,28 @@ export default React.memo(function VideoEngine({
     }
   }, [videoRef, retryPendingSeekFromBuffer]);
 
-  const handleError = useCallback(() => setHasError(true), [setHasError]);
+  const handleError = useCallback(() => {
+    // A playback error is often an expired signed stream URL. Automatically
+    // re-fetch a fresh authorized stream (bounded — see shouldRefreshStream)
+    // before surfacing the error UI. Playback position survives: the local
+    // PlaybackSession is untouched and resume re-applies on loadedmetadata.
+    if (shouldRefreshStream(streamRefreshAttemptsRef.current)) {
+      streamRefreshAttemptsRef.current += 1;
+      playerDebug.streamRefresh({ lessonId: lesson?.id, attempt: streamRefreshAttemptsRef.current });
+      refreshStream();
+    } else {
+      setHasError(true);
+    }
+  }, [lesson?.id, refreshStream, setHasError]);
 
   const handleRetry = useCallback(() => {
+    // Manual retry: reset the budget and request a FRESH authorized stream URL
+    // (never replay the dead/expired one from the failed element).
+    streamRefreshAttemptsRef.current = 0;
     setHasError(false);
     setIsLoading(true);
-    if (videoRef.current) {
-      videoRef.current.load();
-    }
-  }, [setHasError, setIsLoading, videoRef]);
+    refreshStream();
+  }, [refreshStream, setHasError, setIsLoading]);
 
   return (
     <div
@@ -578,6 +604,7 @@ export default React.memo(function VideoEngine({
               requestSeek(Math.max(0, videoRef.current.currentTime - 15), 'rewind-15s');
             }
           }}
+          onOpenNotes={onOpenNotes}
         />
       )}
 

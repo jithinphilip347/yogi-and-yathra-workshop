@@ -7,7 +7,7 @@ import ResourcesTab from './ResourcesTab';
 import DiscussionTab from './DiscussionTab';
 import ReviewsTab from './ReviewsTab';
 
-export default React.memo(function PlayerTabs({ course, sections, currentLesson, getCurrentTime, onSeek, completionSummary, certificateEligibility, activeTab: activeTabProp, onTabChange }) {
+export default React.memo(function PlayerTabs({ course, sections, currentLesson, getCurrentTime, onSeek, completionSummary, certificateEligibility, onEligibilityUpdate, activeTab: activeTabProp, onTabChange }) {
   // Tabs can be controlled externally (e.g. the header "Leave a review" button
   // switches straight to the Reviews tab); fall back to internal state otherwise.
   const [localActiveTab, setLocalActiveTab] = useState('overview');
@@ -69,6 +69,7 @@ export default React.memo(function PlayerTabs({ course, sections, currentLesson,
             currentLesson={currentLesson}
             completionSummary={completionSummary}
             certificateEligibility={certificateEligibility}
+            onEligibilityUpdate={onEligibilityUpdate}
           />
         )}
 

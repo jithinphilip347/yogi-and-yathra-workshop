@@ -19,16 +19,21 @@ export function useAutoNextController({ nextLesson, courseSlug, router }) {
     };
   }, [nextLesson, courseSlug, router]);
 
-  // Create the countdown timer exactly once. It owns the interval lifecycle:
-  // start() clears any existing interval first, and cancel()/clear() are
-  // invoked on every exit path (complete / cancel / lesson change / unmount).
-  if (countdownTimerRef.current === null) {
-    countdownTimerRef.current = createCountdownTimer({
+  // Create the countdown timer exactly once, after mount. It owns the interval
+  // lifecycle: start() clears any existing interval first, and cancel()/clear()
+  // are invoked on every exit path (complete / cancel / lesson change / unmount).
+  useEffect(() => {
+    const timer = createCountdownTimer({
       duration: 5,
       onTick: (remaining) => setAutoNextCountdown(remaining),
       onComplete: () => onCompleteRef.current?.(),
     });
-  }
+    countdownTimerRef.current = timer;
+    // CRITICAL: clear the countdown interval when the player unmounts so a
+    // pending countdown can never fire `router.push()` (or update state) after
+    // the player has been destroyed.
+    return () => timer.cancel();
+  }, []);
 
   const triggerAutoNext = useCallback(() => {
     if (!nextLesson || !courseSlug) return;
@@ -48,15 +53,6 @@ export function useAutoNextController({ nextLesson, courseSlug, router }) {
       router.push(`/course/${courseSlug}/learn/${nextLesson.id}`);
     }
   }, [nextLesson, courseSlug, router]);
-
-  // CRITICAL: clear the countdown interval when the player unmounts so a
-  // pending countdown can never fire `router.push()` (or update state) after
-  // the player has been destroyed.
-  useEffect(() => {
-    return () => {
-      countdownTimerRef.current?.cancel();
-    };
-  }, []);
 
   return {
     autoNextCountdown,

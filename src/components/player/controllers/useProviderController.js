@@ -27,6 +27,17 @@ export function useProviderController({
   const prevLessonIdRef = useRef(null);
   // Freeze the stream URL once loaded so mid-session ACKs never change it
   const frozenStreamUrlRef = useRef('');
+  // Component liveness + the current in-flight stream request (lesson change
+  // or refresh aborts any previous fetch).
+  const mountedRef = useRef(true);
+  const streamAbortRef = useRef(null);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   const resolveStreamUrl = useCallback((url) => {
     if (!url || typeof url !== 'string') return '';
@@ -37,6 +48,62 @@ export function useProviderController({
     return typeof str === 'string' ? str.toLowerCase() : '';
   }
 
+  /**
+   * Fetch the lesson's stream payload from the AUTHENTICATED endpoint and
+   * install the resulting URL. This is the ONLY way a stream URL is obtained —
+   * refreshes always re-request the authorized payload (never raw storage URLs
+   * or unauthenticated fallbacks). Aborts any previous in-flight request.
+   */
+  const loadStream = useCallback((lessonId, lessonVideoUrl) => {
+    if (streamAbortRef.current) streamAbortRef.current.abort();
+    const controller = new AbortController();
+    streamAbortRef.current = controller;
+
+    courseApi.getLessonStream(lessonId, { signal: controller.signal })
+      .then((res) => {
+        if (!mountedRef.current || controller.signal.aborted) return;
+        const data = res.data?.data || res.data;
+        if (data?.stream_url) {
+          const resolved = resolveStreamUrl(data.stream_url);
+          // Only update the stream URL if it hasn't been frozen yet
+          if (!frozenStreamUrlRef.current) {
+            frozenStreamUrlRef.current = resolved;
+            setActiveStreamUrl(resolved);
+          }
+          setActiveProvider(data.provider || 'html5');
+          setActiveFormat(data.format || 'mp4');
+          setHasError(false);
+          setIsLoading(false);
+        } else {
+          const direct = resolveStreamUrl(lessonVideoUrl);
+          if (!frozenStreamUrlRef.current) {
+            frozenStreamUrlRef.current = direct;
+            setActiveStreamUrl(direct);
+          }
+          setHasError(false);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (err.name === 'CanceledError' || err.name === 'AbortError') return;
+        if (!mountedRef.current) return;
+        if (lessonVideoUrl) {
+          // Fall back to the lesson's own (already authorized/signed) video URL
+          // from the session — never an unauthenticated public storage URL.
+          const direct = resolveStreamUrl(lessonVideoUrl);
+          if (!frozenStreamUrlRef.current) {
+            frozenStreamUrlRef.current = direct;
+            setActiveStreamUrl(direct);
+          }
+          setHasError(false);
+          setIsLoading(false);
+        } else {
+          setHasError(true);
+          setIsLoading(false);
+        }
+      });
+  }, [resolveStreamUrl, setHasError, setIsLoading]);
+
   // Runs ONLY when the actual lesson ID changes (new lesson navigation)
   useEffect(() => {
     if (!lesson?.id) return;
@@ -45,9 +112,6 @@ export function useProviderController({
 
     // Reset the frozen URL so the new lesson's stream URL gets applied
     frozenStreamUrlRef.current = '';
-
-    let isMounted = true;
-    const abortController = new AbortController();
 
     setIsLoading(true);
     setHasError(false);
@@ -74,53 +138,34 @@ export function useProviderController({
       seekGuardTimerRef.current = null;
     }
 
-    courseApi.getLessonStream(lesson.id, { signal: abortController.signal })
-      .then((res) => {
-        const data = res.data?.data || res.data;
-        if (!isMounted) return;
-        if (data?.stream_url) {
-          const resolved = resolveStreamUrl(data.stream_url);
-          // Only update the stream URL if it hasn't been frozen yet
-          if (!frozenStreamUrlRef.current) {
-            frozenStreamUrlRef.current = resolved;
-            setActiveStreamUrl(resolved);
-          }
-          setActiveProvider(data.provider || 'html5');
-          setActiveFormat(data.format || 'mp4');
-          setIsLoading(false);
-        } else {
-          const direct = resolveStreamUrl(lesson.video_url);
-          if (!frozenStreamUrlRef.current) {
-            frozenStreamUrlRef.current = direct;
-            setActiveStreamUrl(direct);
-          }
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (err.name === 'CanceledError' || err.name === 'AbortError') return;
-        if (!isMounted) return;
-        if (lesson?.video_url) {
-          const direct = resolveStreamUrl(lesson.video_url);
-          if (!frozenStreamUrlRef.current) {
-            frozenStreamUrlRef.current = direct;
-            setActiveStreamUrl(direct);
-          }
-          setIsLoading(false);
-        } else {
-          setHasError(true);
-          setIsLoading(false);
-        }
-      });
+    loadStream(lesson.id, lesson?.video_url);
 
     return () => {
-      isMounted = false;
-      abortController.abort();
+      if (streamAbortRef.current) streamAbortRef.current.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson?.id]);
 
-  
+  /**
+   * Re-fetch the CURRENT lesson's stream from the authorized endpoint.
+   *
+   * Used after a playback failure (typically an expired signed stream URL).
+   * The frozen URL is deliberately released so the fresh authorized URL takes
+   * effect. Playback position is preserved: the local PlaybackSession is
+   * untouched and resume re-applies on loadedmetadata. The caller (VideoEngine)
+   * bounds how many times this may run before showing the error UI.
+   */
+  const refreshStream = useCallback(() => {
+    const lessonId = prevLessonIdRef.current;
+    if (!lessonId) return;
+
+    frozenStreamUrlRef.current = '';
+    setHasError(false);
+    setIsLoading(true);
+    playerDebug.streamRefresh({ lessonId, action: 'refresh-requested' });
+    loadStream(lessonId, lesson?.video_url);
+  }, [lesson?.video_url, loadStream, setHasError, setIsLoading]);
+
   const rawUrl = activeStreamUrl || resolveStreamUrl(lesson?.video_url);
 
   const lessonType = strtolower(lesson?.type || '');
@@ -149,5 +194,6 @@ export function useProviderController({
     providerType,
     formatType,
     resolveStreamUrl,
+    refreshStream,
   };
 }

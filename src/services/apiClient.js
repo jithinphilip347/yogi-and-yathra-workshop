@@ -2,6 +2,7 @@ import { API_BASE_URL } from "@/utils/constants";
 import axios from "axios";
 import { store } from "../../store";
 import { logout } from "../features/auth/authSlice";
+import { playerSessionCache } from "../libs/playerSessionCache";
 
 const apiClient = axios.create({
     baseURL: API_BASE_URL,
@@ -36,6 +37,9 @@ const handleUnauthorized = (error) => {
     // every other 401 means the session is invalid or absent, so bounce to login.
     const isAuthRequest = url.includes("/auth/");
     if (status === 401 && !isAuthRequest && !isRedirectingToLogin) {
+        // A revoked/expired session must never leave a previous user's course
+        // session behind in the in-memory player cache.
+        playerSessionCache.clear();
         store.dispatch(logout());
         // Avoid bouncing users who are mid-flow on any auth page (login, OTP, reset...).
         if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth")) {

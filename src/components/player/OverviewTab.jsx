@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { 
   FiCheckCircle, 
   FiAward, 
@@ -18,7 +18,7 @@ import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import CertificateViewerModal from "@/components/certificate/CertificateViewerModal";
 import toast from "react-hot-toast";
 
-export default function OverviewTab({ course, currentLesson, completionSummary, certificateEligibility }) {
+export default function OverviewTab({ course, currentLesson, completionSummary, certificateEligibility, onEligibilityUpdate }) {
   // Certificate eligibility ships inside the player session
   // (sessionData.certificate_eligibility) — no separate request on mount.
   const [eligibility, setEligibility] = useState(certificateEligibility || null);
@@ -33,6 +33,15 @@ export default function OverviewTab({ course, currentLesson, completionSummary, 
   // on ordinary progress updates or re-renders.
   const prevPercentageRef = useRef(completionSummary?.percentage ?? 0);
 
+  // Fresh eligibility is pushed back into the session state (and therefore the
+  // session cache) so the unlocked certificate survives tab switches and is
+  // observed by the header / Overview on the next mount.
+  const applyEligibility = useCallback((data) => {
+    if (!data) return;
+    setEligibility(data);
+    onEligibilityUpdate?.(data);
+  }, [onEligibilityUpdate]);
+
   useEffect(() => {
     const percentage = completionSummary?.percentage ?? 0;
     const prev = prevPercentageRef.current;
@@ -41,13 +50,10 @@ export default function OverviewTab({ course, currentLesson, completionSummary, 
     if (!course?.id) return;
     if (prev < 100 && percentage >= 100) {
       courseApi.getCertificateEligibility(course.id)
-        .then((res) => {
-          const data = res.data?.data || res.data;
-          setEligibility(data);
-        })
+        .then((res) => applyEligibility(res.data?.data || res.data))
         .catch(() => {});
     }
-  }, [course?.id, completionSummary?.percentage]);
+  }, [course?.id, completionSummary?.percentage, applyEligibility]);
 
   const handleClaim = async () => {
     if (!course?.id) return;
@@ -56,11 +62,13 @@ export default function OverviewTab({ course, currentLesson, completionSummary, 
       const res = await courseApi.claimCertificate(course.id);
       const data = res.data?.data || res.data;
       toast.success("Certificate claimed successfully! 🎉");
-      setEligibility(prev => ({
-        ...prev,
+      const claimed = {
+        ...eligibility,
         is_claimed: true,
         certificate: data
-      }));
+      };
+      setEligibility(claimed);
+      onEligibilityUpdate?.(claimed);
       setIsViewerOpen(true);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to claim certificate");

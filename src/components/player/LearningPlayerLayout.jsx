@@ -4,13 +4,13 @@ import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import LearningHeader from './LearningHeader';
 import PlayerContainer from './PlayerContainer';
-import LessonNavigation from './LessonNavigation';
 import PlayerTabs from './PlayerTabs';
 import LessonSidebar from './LessonSidebar';
 import courseApi from '@/libs/courseApi';
 import { playerSessionCache } from '@/libs/playerSessionCache';
 import { playerDebug } from '@/libs/playerDebug';
 import { mergeProgressRecord } from '@/libs/playbackSync';
+import { store } from '../../../store';
 import toast from 'react-hot-toast';
 import '@/assets/css/learning-player.scss';
 import { CommunicationProvider } from '@/communication/CommunicationStore';
@@ -87,11 +87,22 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
   // Keep the session-scoped cache in sync so lesson navigation can reuse the
   // course structure (including live progress updates) without re-fetching the
   // entire player session. Single source of truth: the latest sessionData.
+  // The cache is keyed by the current user so a session can never leak across
+  // authenticated users (belt-and-braces on top of logout/401 cache clearing).
   useEffect(() => {
     if (sessionData?.course?.slug) {
-      playerSessionCache.set(sessionData.course.slug, sessionData);
+      const userId = store.getState().auth.user?.id ?? null;
+      playerSessionCache.set(sessionData.course.slug, sessionData, userId);
     }
   }, [sessionData]);
+
+  // Fresh certificate eligibility (e.g. fetched once when completion crosses
+  // 100%) is written back into the session state so the Overview tab, the
+  // header and the session cache all observe the unlocked certificate.
+  const handleCertificateEligibilityUpdate = useCallback((eligibility) => {
+    if (!eligibility) return;
+    setSessionData((prev) => (prev ? { ...prev, certificate_eligibility: eligibility } : prev));
+  }, []);
 
   const handleToggleBookmark = useCallback(async () => {
     const activeLessonId = sessionData?.current_lesson?.id;
@@ -245,6 +256,9 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
 
   const handleLeaveReview = useCallback(() => setActivePlayerTab('reviews'), []);
 
+  // The ControlBar notes shortcut opens the Notes tab below the player.
+  const handleOpenNotes = useCallback(() => setActivePlayerTab('notes'), []);
+
   if (!sessionData) return null;
 
   return (
@@ -258,6 +272,16 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
               setShowCompletionModal(false);
               // Persist the dismissal so the modal is not shown again for 24h.
               setCompletionModalDismissedAt(courseIdRef.current);
+            }}
+            onClaimSuccess={(certificate) => {
+              // A claim from the completion modal must also reach the session
+              // (and therefore the cache) so the Overview tab never shows a
+              // stale "locked" certificate state.
+              handleCertificateEligibilityUpdate({
+                ...(sessionData?.certificate_eligibility || {}),
+                is_claimed: true,
+                certificate,
+              });
             }}
           />
         )}
@@ -293,6 +317,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
               courseSlug={course?.slug}
               onProgressUpdated={handleProgressUpdated}
               onRegisterPlayerCallbacks={handleRegisterPlayerCallbacks}
+              onOpenNotes={handleOpenNotes}
             />
 
             {/* Overview, Notes, Resources & Questions & Discussion Tabs */}
@@ -304,6 +329,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
               onSeek={handleSeek}
               completionSummary={completion_summary}
               certificateEligibility={sessionData?.certificate_eligibility}
+              onEligibilityUpdate={handleCertificateEligibilityUpdate}
               activeTab={activePlayerTab}
               onTabChange={setActivePlayerTab}
             />

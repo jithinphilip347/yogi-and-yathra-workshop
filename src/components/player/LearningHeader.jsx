@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight, FiBookmark, FiCheckCircle, FiShare2, FiStar, FiMoreVertical } from 'react-icons/fi';
+import { FiArrowLeft, FiSidebar, FiChevronLeft, FiChevronRight, FiBookmark, FiCheckCircle, FiStar } from 'react-icons/fi';
 
 export default React.memo(function LearningHeader({
   courseTitle,
@@ -92,12 +92,6 @@ export default React.memo(function LearningHeader({
           </div>
         </div>
 
-        {/* Share Button */}
-        <button className="ShareBtn" title="Share Course">
-          <FiShare2 />
-          <span>Share</span>
-        </button>
-
         {/* Bookmark Toggle Button */}
         <button
           onClick={onToggleBookmark}
@@ -149,10 +143,6 @@ export default React.memo(function LearningHeader({
           <FiSidebar />
         </button>
 
-        {/* Options Menu */}
-        <button className="HeaderMoreBtn">
-          <FiMoreVertical />
-        </button>
       </div>
     </header>
   );

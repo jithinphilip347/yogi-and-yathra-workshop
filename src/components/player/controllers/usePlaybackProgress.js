@@ -4,6 +4,18 @@ import { useRef, useCallback, useEffect, useState } from 'react';
 import courseApi from '@/libs/courseApi';
 import { playerDebug } from '@/libs/playerDebug';
 
+// Throttle the (expected, transient) deferred-progress warning so a flaky
+// network can never spam the console on every 5s flush.
+let lastProgressWarnAt = 0;
+const PROGRESS_WARN_THROTTLE_MS = 10_000;
+
+function warnDeferredProgress(message) {
+  const now = Date.now();
+  if (now - lastProgressWarnAt < PROGRESS_WARN_THROTTLE_MS) return;
+  lastProgressWarnAt = now;
+  console.warn(message);
+}
+
 export function usePlaybackProgress({
   lesson,
   duration,
@@ -140,8 +152,9 @@ export function usePlaybackProgress({
         // the cumulative value anyway.
         if (err?.response?.status === 429) return;
 
-        // Error-tolerant fallback: push to retry queue (capped at max 50 items)
-        console.warn("[CoursePlayer Sync] Progress save deferred (retry queued):", err?.message || err);
+        // Error-tolerant fallback: push to retry queue (capped at max 50 items).
+        // The warning is throttled — expected transient failures must not spam logs.
+        warnDeferredProgress("[CoursePlayer Sync] Progress save deferred (retry queued): " + (err?.message || err));
         if (pendingProgressQueueRef.current.length < 50) {
           pendingProgressQueueRef.current.push({
             lessonId: lesson.id,

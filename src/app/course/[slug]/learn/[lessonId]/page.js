@@ -3,7 +3,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import courseApi from '@/libs/courseApi';
-import { playerSessionCache } from '@/libs/playerSessionCache';
+import { playerSessionCache, mergeLightSession } from '@/libs/playerSessionCache';
+import { store } from '../../../../../../store';
 import LearningPlayerLayout from '@/components/player/LearningPlayerLayout';
 
 export default function CoursePlayerPage() {
@@ -22,7 +23,10 @@ export default function CoursePlayerPage() {
     const fetchPlayerSession = async (signal) => {
       setLoading(true);
 
-      const cached = playerSessionCache.get(slug);
+      // The cache key is scoped to the current authenticated user so a cached
+      // session from a previous user can never be reused after logout/login.
+      const userId = store.getState().auth.user?.id ?? null;
+      const cached = playerSessionCache.get(slug, userId);
       const requestedLessonId = lessonId ? String(lessonId) : null;
       const cachedLessonId = cached?.current_lesson?.id != null ? String(cached.current_lesson.id) : null;
 
@@ -38,20 +42,11 @@ export default function CoursePlayerPage() {
           if (signal.aborted) return;
 
           if (lightData?.current_lesson) {
-            const merged = {
-              ...cached,
-              current_lesson: lightData.current_lesson,
-              next_lesson: lightData.next_lesson ?? cached.next_lesson,
-              previous_lesson: lightData.previous_lesson ?? cached.previous_lesson,
-              permissions: lightData.permissions
-                ? { ...cached.permissions, ...lightData.permissions }
-                : cached.permissions,
-              completion_summary: {
-                ...cached.completion_summary,
-                ...(lightData.completion_summary || {}),
-              },
-            };
+            const merged = mergeLightSession(cached, lightData);
 
+            // Write the merged session back so the cache is the single source
+            // of truth even if the layout never re-renders with the result.
+            playerSessionCache.set(slug, merged, userId);
             setPlayerSession(merged);
             setError(null);
             return;
@@ -74,7 +69,7 @@ export default function CoursePlayerPage() {
         return;
       }
 
-      playerSessionCache.set(slug, data);
+      playerSessionCache.set(slug, data, userId);
       setPlayerSession(data);
       setError(null);
     };

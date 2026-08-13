@@ -14,10 +14,12 @@ import {
 } from 'react-icons/fi';
 import courseApi from '@/libs/courseApi';
 import toast from 'react-hot-toast';
+import PlayerTabState from './PlayerTabState';
 
 export default function NotesTab({ sections = [], currentLesson, getCurrentTime, onSeek }) {
   const [notes, setNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
   const [sortBy, setSortBy] = useState('timestamp'); // 'timestamp' or 'date'
   const [filterLecture, setFilterLecture] = useState('current'); // 'current' or 'all'
 
@@ -33,13 +35,18 @@ export default function NotesTab({ sections = [], currentLesson, getCurrentTime,
     if (!currentLesson?.id) return;
     try {
       setIsLoading(true);
+      setHasError(false);
       const res = await courseApi.getLessonNotes(currentLesson.id, {
         sort: sortBy,
       });
       const data = res.data?.data || res.data || [];
       setNotes(data);
     } catch (err) {
+      // A failed load is an ERROR state with retry — never a misleading
+      // "no notes yet" empty state. 429 is shown as a controlled retry hint.
       console.warn("Failed to fetch notes:", err);
+      setHasError(true);
+      setNotes([]);
     } finally {
       setIsLoading(false);
     }
@@ -297,23 +304,20 @@ export default function NotesTab({ sections = [], currentLesson, getCurrentTime,
       {/* ─── 3. Notes Listing ─────────────────────────────────────────── */}
       <div className="NotesList" style={{ display: 'flex', flexDirection: 'column', gap: '20px', marginTop: '8px' }}>
         {isLoading ? (
-          <div style={{ textAlign: 'center', padding: '30px', color: '#6a6f73', fontSize: '13.5px' }}>
-            Loading notes...
-          </div>
+          <PlayerTabState state="loading" loadingLabel="Loading notes..." />
+        ) : hasError ? (
+          <PlayerTabState
+            state="error"
+            errorTitle="Unable to load notes."
+            errorHint="Please check your network connection and try again."
+            onRetry={fetchNotes}
+          />
         ) : notes.length === 0 ? (
-          <div style={{
-            textAlign: 'center',
-            padding: '40px 20px',
-            backgroundColor: '#ffffff',
-            borderRadius: '8px',
-            border: '1px dashed #d1d7dc',
-            color: '#6a6f73'
-          }}>
-            <p style={{ fontSize: '14.5px', fontWeight: '700', color: '#1c1d1f' }}>No notes taken yet for this lesson</p>
-            <p style={{ fontSize: '13px', color: '#6a6f73', marginTop: '4px' }}>
-              Click "Capture Current Time" to save timestamped notes while watching!
-            </p>
-          </div>
+          <PlayerTabState
+            state="empty"
+            emptyTitle="No notes taken yet for this lesson"
+            emptyHint={'Click "Capture Current Time" to save timestamped notes while watching!'}
+          />
         ) : (
           notes.map((note) => (
             <div
