@@ -656,23 +656,47 @@ const LiveDetails = ({ id, classDetails }) => {
                   )}
                 </>
               ) : subStatus === "pending" ? (
-                <div
-                  className="SubPendingBadge"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    background: "#fffbeb",
-                    color: "#b45309",
-                    padding: "10px 12px",
-                    borderRadius: 8,
-                    fontSize: 13,
-                    fontWeight: 600,
-                    marginBottom: 10,
-                  }}
-                >
-                  <FiRefreshCw /> Authorization Pending
-                </div>
+                <>
+                  <div
+                    className="SubPendingBadge"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      background: "#fffbeb",
+                      color: "#b45309",
+                      padding: "10px 12px",
+                      borderRadius: 8,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      marginBottom: 10,
+                    }}
+                  >
+                    <FiRefreshCw /> Authorization Pending
+                  </div>
+                  {subData?.id && (
+                    <button
+                      className="EnrollSidebarBtn"
+                      disabled={subLoading}
+                      onClick={() =>
+                        startSubscription({
+                          dailyClassId: id,
+                          planId: subData?.plan?.id || selectedPlan,
+                        })
+                      }
+                    >
+                      {subLoading ? "Please wait…" : "Resume AutoPay Authorization"}
+                    </button>
+                  )}
+                  <button
+                    className="EnrollSidebarBtn"
+                    style={{ background: "#334155", marginTop: 8 }}
+                    disabled={subLoading}
+                    onClick={() => fetchStatus(id)}
+                  >
+                    Check Status
+                  </button>
+                </>
               ) : subStatus === "creating" || subStatus === "authorizing" || subStatus === "verifying" ? (
                 <button className="EnrollSidebarBtn" disabled>
                   {subStatus === "creating"

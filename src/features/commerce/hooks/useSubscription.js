@@ -12,7 +12,8 @@
  * The frontend never constructs the payment payload and never treats its own
  * callback as the source of truth — the server verifies the Razorpay state.
  * On page load / return from checkout, fetchStatus() renders the ACTUAL
- * server state so a refresh never creates a duplicate subscription.
+ * server state, and resuming a pending subscription re-opens the same
+ * Razorpay AutoPay window instead of creating a duplicate subscription.
  */
 
 import { useCallback, useState } from 'react';
@@ -54,9 +55,12 @@ export function useSubscription() {
       setStatus('idle');
     } else if (subStatus === 'active' || subStatus === 'trial') {
       setStatus('active');
-    } else if (subStatus === 'pending_activation' || subStatus === 'draft') {
-      setStatus('pending');
-    } else if (subStatus === 'past_due' || subStatus === 'paused') {
+    } else if (
+      subStatus === 'pending_activation' ||
+      subStatus === 'draft' ||
+      subStatus === 'past_due' ||
+      subStatus === 'paused'
+    ) {
       setStatus('pending');
     } else if (subStatus === 'cancelled') {
       setStatus('cancelled');
@@ -66,96 +70,26 @@ export function useSubscription() {
   }, []);
 
   /**
-   * Fetch the current subscription state from the server for a Daily Class.
-   * Safe to call on mount and after returning from the Razorpay checkout.
-   */
-  const fetchStatus = useCallback(
-    async (dailyClassId) => {
-      if (!dailyClassId || !isAuthenticated || !user?.id) {
-        return null;
-      }
-      setLoading(true);
-      try {
-        const res = await commerceApi.getSubscriptionStatus(dailyClassId);
-        if (res.success && res.data) {
-          applyStatusPayload(res.data);
-          return res.data;
-        }
-        return null;
-      } catch {
-        // Not authenticated / network error — treat as no subscription
-        setSubscription(null);
-        setStatus('idle');
-        return null;
-      } finally {
-        setLoading(false);
-      }
-    },
-    [isAuthenticated, user?.id, applyStatusPayload]
-  );
-
-  /**
-   * Start the subscription + Razorpay AutoPay flow for a Daily Class.
+   * Open the Razorpay subscription (AutoPay mandate) checkout using the
+   * authoritative payload returned by the server.
    *
-   * @param {object} opts  { dailyClassId, planId }
+   * @returns {Promise<boolean>} true when the checkout opened.
    */
-  const startSubscription = useCallback(
-    async ({ dailyClassId, planId }) => {
-      if (!dailyClassId || !planId) {
-        setError('Please select a pricing plan first.');
-        setStatus('failed');
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-      setStatus('creating');
-
-      try {
-        const res = await commerceApi.createSubscription({
-          daily_class_id: dailyClassId,
-          pricing_plan_id: planId,
-          user_id: user?.id,
-        });
-
-        if (!res.success) {
-          throw new Error(res.message || 'Failed to create subscription');
-        }
-
-        const data = res.data || {};
-        const sub = data.subscription;
-
-        // Duplicate-subscription response → surface existing state
-        if (data.existing) {
-          setSubscription(sub);
-          applyStatusPayload({ subscription: sub, access_level: data.access_level });
-          setStatus(sub?.status === 'active' ? 'active' : 'pending');
-          setLoading(false);
+  const openRazorpayCheckout = useCallback(
+    (sub, razorpay, keyId) =>
+      new Promise((resolve) => {
+        if (!razorpay?.id || !keyId || !sub?.id) {
+          resolve(false);
           return;
-        }
-
-        setSubscription(sub);
-
-        const razorpay = data.razorpay;
-        const keyId = data.key_id;
-        if (!razorpay?.id || !keyId) {
-          throw new Error('Missing Razorpay subscription details. Please retry.');
-        }
-
-        // ─── Open Razorpay subscription (AutoPay mandate) checkout ──
-        const loaded = await loadRazorpayScript();
-        if (!loaded) {
-          throw new Error('Razorpay SDK failed to load. Please check your internet connection.');
         }
 
         setStatus('authorizing');
 
         const options = {
-          // Authoritative subscription payload returned by the server
           key: keyId,
           subscription_id: razorpay.id,
           name: 'Yogify Workshop',
-          description: sub ? `Subscription #${sub.id}` : 'Daily Class Subscription',
+          description: `Subscription #${sub.id}`,
           prefill: {
             name: user?.name || '',
             email: user?.email || '',
@@ -197,7 +131,7 @@ export function useSubscription() {
           modal: {
             ondismiss: () => {
               // User closed the AutoPay window without completing → stay pending
-              setStatus(sub?.status === 'pending_activation' ? 'pending' : 'idle');
+              setStatus('pending');
             },
           },
         };
@@ -209,6 +143,104 @@ export function useSubscription() {
           setStatus('failed');
         });
         rzp.open();
+        resolve(true);
+      }),
+    [user?.name, user?.email, user?.phone]
+  );
+
+  /**
+   * Fetch the current subscription state from the server for a Daily Class.
+   * Safe to call on mount and after returning from the Razorpay checkout.
+   */
+  const fetchStatus = useCallback(
+    async (dailyClassId) => {
+      if (!dailyClassId || !isAuthenticated || !user?.id) {
+        return null;
+      }
+      setLoading(true);
+      try {
+        const res = await commerceApi.getSubscriptionStatus(dailyClassId);
+        if (res.success && res.data) {
+          applyStatusPayload(res.data);
+          return res.data;
+        }
+        return null;
+      } catch {
+        // Not authenticated / network error — treat as no subscription
+        setSubscription(null);
+        setStatus('idle');
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [isAuthenticated, user?.id, applyStatusPayload]
+  );
+
+  /**
+   * Start (or resume) the subscription + Razorpay AutoPay flow.
+   *
+   * @param {object} opts  { dailyClassId, planId }
+   */
+  const startSubscription = useCallback(
+    async ({ dailyClassId, planId }) => {
+      if (!dailyClassId || !planId) {
+        setError('Please select a pricing plan first.');
+        setStatus('failed');
+        return;
+      }
+
+      setLoading(true);
+      setError(null);
+      setStatus('creating');
+
+      try {
+        const res = await commerceApi.createSubscription({
+          daily_class_id: dailyClassId,
+          pricing_plan_id: planId,
+          user_id: user?.id,
+        });
+
+        if (!res.success) {
+          throw new Error(res.message || 'Failed to create subscription');
+        }
+
+        const data = res.data || {};
+        const sub = data.subscription;
+        const razorpay = data.razorpay;
+        const keyId = data.key_id;
+
+        // Duplicate-subscription response → resume the existing subscription's
+        // AutoPay checkout (same Razorpay subscription) instead of creating a
+        // duplicate. Otherwise just surface the existing server state.
+        if (data.existing) {
+          if (razorpay?.id && keyId && sub) {
+            const opened = await loadRazorpayScript();
+            if (opened) {
+              await openRazorpayCheckout(sub, razorpay, keyId);
+              setLoading(false);
+              return;
+            }
+          }
+          setSubscription(sub);
+          applyStatusPayload({ subscription: sub });
+          setStatus(sub?.status === 'active' ? 'active' : 'pending');
+          setLoading(false);
+          return;
+        }
+
+        setSubscription(sub);
+
+        if (!razorpay?.id || !keyId) {
+          throw new Error('Missing Razorpay subscription details. Please retry.');
+        }
+
+        const loaded = await loadRazorpayScript();
+        if (!loaded) {
+          throw new Error('Razorpay SDK failed to load. Please check your internet connection.');
+        }
+
+        await openRazorpayCheckout(sub, razorpay, keyId);
       } catch (err) {
         const msg = err.response?.data?.message || err.message || 'Failed to start subscription';
         setError(msg);
@@ -217,7 +249,7 @@ export function useSubscription() {
         setLoading(false);
       }
     },
-    [user?.id, user?.name, user?.email, user?.phone, applyStatusPayload]
+    [user?.id, openRazorpayCheckout, applyStatusPayload]
   );
 
   /**
