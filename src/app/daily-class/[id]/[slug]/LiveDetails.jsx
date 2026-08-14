@@ -1,7 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
+import { useSubscription } from "@/features/commerce/hooks/useSubscription";
 import {
   FiClock,
   FiCalendar,
@@ -17,6 +19,8 @@ import {
   FiPlus,
   FiMinus,
   FiAward,
+  FiLock,
+  FiRefreshCw,
 } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
 import Image from "next/image";
@@ -61,8 +65,29 @@ const LiveDetails = ({ id, classDetails }) => {
 
   const [activeFaq, setActiveFaq] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
+  const [confirmCancel, setConfirmCancel] = useState(false);
   const router = useRouter();
-  const { addItem, buyNow, removeItem, isInCart } = useCart();
+  const { addItem, removeItem, isInCart } = useCart();
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
+  const {
+    status: subStatus,
+    subscription: subData,
+    accessLevel,
+    error: subError,
+    loading: subLoading,
+    startSubscription,
+    fetchStatus,
+    cancelSubscription,
+  } = useSubscription();
+
+  // On load (and after returning from the AutoPay checkout), fetch the
+  // ACTUAL server subscription state — never trust local frontend state.
+  useEffect(() => {
+    if (id && isAuthenticated) {
+      fetchStatus(id);
+    }
+  }, [id, isAuthenticated, fetchStatus]);
 
   const toggleFaq = (idx) => {
     setActiveFaq(activeFaq === idx ? null : idx);
@@ -541,29 +566,166 @@ const LiveDetails = ({ id, classDetails }) => {
 
               <div className="PriceRow">
                 <span className="Label">
-                  {selectedPlan ? "Total Price" : "Starts from"}
+                  {selectedPlan ? "Monthly Subscription" : "Starts from"}
                 </span>
                 <span className="Price">
                   ₹
                   {selectedPlan
                     ? selectedPlanDetails?.discount_price || selectedPlanDetails?.price
                     : pricingPlans[0]?.discount_price || pricingPlans[0]?.price || "499"}
+                  {selectedPlan ? <small> /month</small> : null}
                 </span>
               </div>
 
-              {isInCart(dailyClass?.id, 'DailyClass') ? (
-                <button
-                  className="EnrollSidebarBtn"
-                  onClick={() => router.push('/cart')}
+              {subError && (
+                <div
+                  className="SubErrorMsg"
+                  style={{
+                    background: "#fef2f2",
+                    color: "#b91c1c",
+                    padding: "10px 12px",
+                    borderRadius: 8,
+                    fontSize: 13,
+                    lineHeight: 1.5,
+                    marginBottom: 10,
+                  }}
                 >
-                  Go to Cart
+                  {subError}
+                </div>
+              )}
+
+              {/* ── Subscription status / CTA ─────────────────────── */}
+              {subStatus === "active" ? (
+                <>
+                  <div
+                    className="SubActiveBadge"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      background: "#ecfdf5",
+                      color: "#047857",
+                      padding: "10px 12px",
+                      borderRadius: 8,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      marginBottom: 10,
+                    }}
+                  >
+                    <FiCheckCircle /> Subscription Active
+                  </div>
+                  {subData?.next_billing_at && (
+                    <p className="SubMeta" style={{ fontSize: 12, color: "#64748b", margin: "0 0 10px" }}>
+                      Next billing:{" "}
+                      {new Date(subData.next_billing_at).toLocaleDateString("en-IN", {
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </p>
+                  )}
+                  {confirmCancel ? (
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button
+                        className="EnrollSidebarBtn"
+                        style={{ background: "#b91c1c", flex: 1 }}
+                        disabled={subLoading}
+                        onClick={async () => {
+                          await cancelSubscription(subData.id);
+                          setConfirmCancel(false);
+                        }}
+                      >
+                        {subLoading ? "Cancelling…" : "Confirm Cancel"}
+                      </button>
+                      <button
+                        className="EnrollSidebarBtn"
+                        style={{ background: "#64748b", flex: 1 }}
+                        onClick={() => setConfirmCancel(false)}
+                      >
+                        Keep
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      className="EnrollSidebarBtn"
+                      style={{ background: "#b91c1c" }}
+                      onClick={() => setConfirmCancel(true)}
+                    >
+                      Cancel Subscription
+                    </button>
+                  )}
+                </>
+              ) : subStatus === "pending" ? (
+                <div
+                  className="SubPendingBadge"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    background: "#fffbeb",
+                    color: "#b45309",
+                    padding: "10px 12px",
+                    borderRadius: 8,
+                    fontSize: 13,
+                    fontWeight: 600,
+                    marginBottom: 10,
+                  }}
+                >
+                  <FiRefreshCw /> Authorization Pending
+                </div>
+              ) : subStatus === "creating" || subStatus === "authorizing" || subStatus === "verifying" ? (
+                <button className="EnrollSidebarBtn" disabled>
+                  {subStatus === "creating"
+                    ? "Creating subscription…"
+                    : subStatus === "authorizing"
+                      ? "Authorize AutoPay to continue…"
+                      : "Confirming payment…"}
                 </button>
               ) : (
+                <>
+                  <button
+                    className="EnrollSidebarBtn"
+                    disabled={subLoading}
+                    onClick={() => {
+                      if (!isAuthenticated) {
+                        router.push("/auth/login");
+                        return;
+                      }
+                      if (!selectedPlan) {
+                        document
+                          .getElementById("pricing-section")
+                          ?.scrollIntoView({ behavior: "smooth" });
+                        return;
+                      }
+                      startSubscription({
+                        dailyClassId: id,
+                        planId: selectedPlan,
+                      });
+                    }}
+                  >
+                    <FiLock style={{ display: "inline", marginRight: 6 }} />
+                    {isAuthenticated
+                      ? selectedPlan
+                        ? "Subscribe Now — AutoPay"
+                        : "Choose a Plan & Subscribe"
+                      : "Login to Subscribe"}
+                  </button>
+                  <p
+                    className="SecureCheckoutNote"
+                    style={{ fontSize: 12, color: "#64748b", textAlign: "center", marginTop: 8 }}
+                  >
+                    Recurring monthly billing via Razorpay AutoPay. Cancel anytime.
+                  </p>
+                </>
+              )}
+
+              {isInCart(dailyClass?.id, 'DailyClass') && subStatus !== 'active' && (
                 <button
                   className="EnrollSidebarBtn"
-                  onClick={() => buyNow(dailyClass, 'DailyClass', router)}
+                  style={{ background: "#334155", marginTop: 8 }}
+                  onClick={() => router.push('/cart')}
                 >
-                  {selectedPlan ? "Enroll Now" : "Choose Plan & Enroll"}
+                  View Cart
                 </button>
               )}
             </div>

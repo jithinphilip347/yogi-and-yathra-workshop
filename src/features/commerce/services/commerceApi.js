@@ -62,4 +62,57 @@ export const commerceApi = {
     );
     return res.data;
   },
+
+  // ─── Subscription (Daily Class AutoPay) ──────────────────────────
+
+  /**
+   * Create a Daily Class subscription (server resolves pricing plan,
+   * creates the Razorpay plan + subscription, returns the AutoPay payload).
+   */
+  async createSubscription({ daily_class_id, pricing_plan_id, user_id }) {
+    const res = await axios.post(
+      `${API_BASE_URL}/subscriptions/create`,
+      { daily_class_id, pricing_plan_id, user_id },
+      { headers: getAuthHeaders() }
+    );
+    return res.data;
+  },
+
+  /**
+   * Activate a subscription after the AutoPay mandate is authorized.
+   * The backend verifies the actual Razorpay subscription state before
+   * activating — the frontend callback is never the source of truth.
+   */
+  async activateSubscription({ subscription_id, razorpay_subscription_id }) {
+    const res = await axios.post(
+      `${API_BASE_URL}/subscriptions/activate`,
+      { subscription_id, razorpay_subscription_id },
+      { headers: getAuthHeaders() }
+    );
+    return res.data;
+  },
+
+  /**
+   * Fetch the current subscription + access state for a Daily Class
+   * (used on page load / return from the AutoPay checkout).
+   */
+  async getSubscriptionStatus(dailyClassId) {
+    const res = await axios.get(
+      `${API_BASE_URL}/subscriptions/status`,
+      { params: { daily_class_id: dailyClassId }, headers: getAuthHeaders() }
+    );
+    return res.data;
+  },
+
+  /**
+   * Cancel a subscription (ownership verified server-side).
+   */
+  async cancelSubscription(subscriptionId, reason = null) {
+    const res = await axios.post(
+      `${API_BASE_URL}/subscriptions/${subscriptionId}/cancel`,
+      { reason },
+      { headers: getAuthHeaders() }
+    );
+    return res.data;
+  },
 };
