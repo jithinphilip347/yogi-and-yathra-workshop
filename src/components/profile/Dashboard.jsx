@@ -10,6 +10,8 @@ import courseApi from "@/libs/courseApi";
 import useWishlist from "@/hooks/useWishlist";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import CourseCard from "@/components/coursebox/CourseCard";
+import LiveThumb1 from "../../assets/images/live2.webp";
+import LiveImg1 from "../../assets/images/live1.webp";
 
 const Dashboard = ({
   courses = [],
