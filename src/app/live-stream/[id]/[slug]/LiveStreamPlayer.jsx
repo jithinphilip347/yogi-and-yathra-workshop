@@ -309,6 +309,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
   const timeDisplay = humanDate ? `${humanDate} at ${data.human_start_time || ""} (${timezone})` : "";
 
   // Render State check
+  const isHost = Boolean(user && (user.role === 'admin' || Number(data.instructor_id) === Number(user.id)));
   const isClassActive = data.can_join === true || data.status === 'live';
   const isCompleted = data.status === 'completed' || data.status === 'passed';
   const recordingAvailable = isCompleted && data.recording_available;
@@ -483,14 +484,30 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
 
               {isFuture && (
                 <div style={{ maxWidth: "600px" }}>
-                  <div style={{ background: "rgba(255,255,255,0.15)", backdropFilter: "blur(6px)", display: "inline-flex", padding: "8px 16px", borderRadius: "20px", fontSize: "14px", fontWeight: "700", marginBottom: "20px", gap: "6px", alignItems: "center" }}>
-                    <span style={{ width: "8px", height: "8px", background: "#f59e0b", borderRadius: "50%" }}></span> Upcoming Live Class
+                  <div style={{ 
+                    background: isHost ? "rgba(16,185,129,0.2)" : "rgba(255,255,255,0.15)", 
+                    border: isHost ? "1px solid rgba(16,185,129,0.4)" : "1px solid rgba(255,255,255,0.2)",
+                    color: isHost ? "#34d399" : "#fff",
+                    backdropFilter: "blur(6px)", 
+                    display: "inline-flex", 
+                    padding: "8px 16px", 
+                    borderRadius: "20px", 
+                    fontSize: "14px", 
+                    fontWeight: "700", 
+                    marginBottom: "20px", 
+                    gap: "6px", 
+                    alignItems: "center" 
+                  }}>
+                    <span style={{ width: "8px", height: "8px", background: isHost ? "#10b981" : "#f59e0b", borderRadius: "50%" }}></span> 
+                    {isHost ? "Host Ready • Scheduled Session" : "Upcoming Live Class"}
                   </div>
                   <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "15px" }}>{data.title}</h2>
-                  <p style={{ color: "#ccc", fontSize: "15px", marginBottom: "30px" }}>{timeDisplay}</p>
+                  <p style={{ color: "#ccc", fontSize: "15px", marginBottom: "25px" }}>
+                    {isHost ? `Scheduled for ${timeDisplay}. You can launch the host room early to prepare.` : timeDisplay}
+                  </p>
                   
                   {/* Countdown Timer Block */}
-                  <div style={{ display: "flex", gap: "15px", justifyContent: "center" }}>
+                  <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: isHost ? "25px" : "0" }}>
                     {['days', 'hours', 'minutes', 'seconds'].map((label) => (
                       <div key={label} style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)", minWidth: "80px", padding: "15px 10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)" }}>
                         <span style={{ display: "block", fontSize: "24px", fontWeight: "800" }}>{timeLeft[label]}</span>
@@ -498,21 +515,52 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                       </div>
                     ))}
                   </div>
+
+                  {/* Host Start Button for scheduled class */}
+                  {isHost && (
+                    <div>
+                      <button 
+                        id="start-live-class-btn"
+                        onClick={handleJoinClass}
+                        disabled={isLaunchingZoom}
+                        aria-label="Start Live Class as Host"
+                        style={{
+                          background: "var(--primaryColor)",
+                          color: "#fff",
+                          border: "none",
+                          padding: "16px 40px",
+                          borderRadius: "30px",
+                          fontSize: "17px",
+                          fontWeight: "700",
+                          cursor: "pointer",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "10px",
+                          boxShadow: "0 10px 20px rgba(0,0,0,0.25)",
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        <FiPlayCircle style={{ fontSize: "22px" }} /> {isLaunchingZoom ? "Launching Zoom Host Room..." : "Start Live Class (Host)"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
 
               {isClassActive && (
                 <div style={{ maxWidth: "550px" }}>
                   <div style={{ background: "rgba(220,38,38,0.2)", backdropFilter: "blur(6px)", border: "1px solid rgba(220,38,38,0.4)", display: "inline-flex", padding: "8px 16px", borderRadius: "20px", fontSize: "14px", fontWeight: "700", marginBottom: "20px", gap: "6px", alignItems: "center", color: "#f87171" }}>
-                    <span style={{ width: "8px", height: "8px", background: "#dc2626", borderRadius: "50%", animation: "pulse 1.5s infinite" }}></span> Live Session Active
+                    <span style={{ width: "8px", height: "8px", background: "#dc2626", borderRadius: "50%", animation: "pulse 1.5s infinite" }}></span> {isHost ? "Live Session Active (Host Mode)" : "Live Session Active"}
                   </div>
                   <h2 style={{ fontSize: "28px", fontWeight: "800", marginBottom: "15px" }}>{data.title}</h2>
-                  <p style={{ color: "#ccc", fontSize: "15px", marginBottom: "30px" }}>The live Zoom session is currently active and ready for you to join!</p>
+                  <p style={{ color: "#ccc", fontSize: "15px", marginBottom: "30px" }}>
+                    {isHost ? "The live Zoom session is active. Enter the room to instruct and manage participants." : "The live Zoom session is currently active and ready for you to join!"}
+                  </p>
                   <button 
                     id="join-meeting-btn"
                     onClick={handleJoinClass}
                     disabled={isLaunchingZoom}
-                    aria-label="Join Live Zoom Class"
+                    aria-label={isHost ? "Enter Live Meeting as Host" : "Join Live Zoom Class"}
                     style={{
                       background: "var(--primaryColor)",
                       color: "#fff",
@@ -529,7 +577,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                       transition: "all 0.2s"
                     }}
                   >
-                    <MdLiveTv style={{ fontSize: "20px" }} /> {isLaunchingZoom ? "Launching Zoom Room..." : "Join Live Zoom Class"}
+                    <MdLiveTv style={{ fontSize: "20px" }} /> {isLaunchingZoom ? "Launching Zoom Room..." : (isHost ? "Enter Live Meeting (Host)" : "Join Live Zoom Class")}
                   </button>
                 </div>
               )}
@@ -653,15 +701,15 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
       </div>
 
       {/* Mobile Sticky Bottom Bar */}
-      {isClassActive && (
+      {(isClassActive || isHost) && (
         <div className="MobileLiveBar">
           <div className="MobileLiveBadge">
-            <span className="LiveDot"></span> LIVE
+            <span className="LiveDot"></span> {isClassActive ? (isHost ? "HOST LIVE" : "LIVE") : "HOST"}
           </div>
           <button 
             onClick={handleJoinClass}
             disabled={isLaunchingZoom}
-            aria-label="Join Class"
+            aria-label={isHost ? (isClassActive ? "Enter Live Meeting as Host" : "Start Live Class as Host") : "Join Live Class"}
             style={{
               background: "var(--primaryColor)",
               color: "#fff",
@@ -674,7 +722,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
               boxShadow: "0 4px 10px rgba(0,0,0,0.15)"
             }}
           >
-            {isLaunchingZoom ? "Launching..." : "Join Class"}
+            {isLaunchingZoom ? "Launching..." : (isHost ? (isClassActive ? "Enter as Host" : "Start Live Class") : "Join Class")}
           </button>
         </div>
       )}
