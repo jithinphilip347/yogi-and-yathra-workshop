@@ -209,6 +209,8 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
         passcode: sdkConfig.passcode,
         userName: sdkConfig.user_name,
         userEmail: sdkConfig.user_email,
+        role: sdkConfig.role,
+        zak: sdkConfig.zak || null,
       });
 
       setIsJoined(true);

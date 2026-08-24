@@ -14,7 +14,7 @@
 const envImageBase =
   process.env.NEXT_PUBLIC_IMAGE_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8000";
+  "http://localhost:8001";
 
 export const IMAGE_URL = envImageBase
   .replace(/\/+$/, "")

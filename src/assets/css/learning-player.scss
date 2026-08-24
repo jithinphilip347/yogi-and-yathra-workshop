@@ -1981,3 +1981,54 @@
     }
   }
 }
+
+/* ============================================================
+   Content Protection (Phase 3–5)
+   Client-side deterrents ONLY — not real security.
+   Applied inside the course player scope, never globally.
+   ============================================================ */
+
+// Video engine area: block right-click on media surfaces
+.VideoEngineRoot {
+  // Prevent image dragging on any images inside the player
+  img {
+    -webkit-user-drag: none;
+    user-drag: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  // Prevent text selection on media overlays
+  video, audio {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+// Protected images throughout the course player
+.LearningPlayerRoot {
+  // Prevent casual image dragging
+  .ProtectedMediaArea,
+  .ResourcesTabContainer img {
+    -webkit-user-drag: none;
+    user-drag: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  // Disable text selection on video overlay areas (but NOT on notes/lesson text)
+  .VideoEngineRoot,
+  .EngineLoadingOverlay,
+  .AutoNextOverlay,
+  .ErrorOverlay {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  // Watermark overlay — non-interactive
+  .WatermarkOverlay {
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: none;
+  }
+}

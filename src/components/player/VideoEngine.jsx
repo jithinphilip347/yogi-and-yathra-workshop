@@ -14,6 +14,8 @@ import { shouldRefreshStream } from '@/libs/streamRefresh';
 import MediaProviderAdapter from './MediaProviderAdapter';
 import ControlBar from './ControlBar';
 import PlaybackDebugOverlay from './PlaybackDebugOverlay';
+import WatermarkOverlay from './WatermarkOverlay';
+import useContentProtection from '@/hooks/useContentProtection';
 
 import { usePlaybackSession } from './controllers/usePlaybackSession';
 import { usePlaybackController } from './controllers/usePlaybackController';
@@ -38,6 +40,9 @@ export default React.memo(function VideoEngine({
   const router = useRouter();
   const playerContainerRef = useRef(null);
   const videoRef = useRef(null);
+
+  // Phase 3/4 — Content protection: right-click, drag, selection deterrents
+  useContentProtection(playerContainerRef, { enabled: true });
 
   // Phase 4/6/7/10 instrumentation refs
   const prevVideoElementRef = useRef(null);
@@ -534,6 +539,9 @@ export default React.memo(function VideoEngine({
           </button>
         </div>
       )}
+
+      {/* Phase 12 — Subtle watermark overlay to deter screen recording */}
+      <WatermarkOverlay />
 
       {/* Render Selected Media Provider via Unified Adapter */}
       <MediaProviderAdapter
