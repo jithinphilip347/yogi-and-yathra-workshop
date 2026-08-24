@@ -406,6 +406,29 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                 )}
 
                 {/*
+                  Fit-screen toggle button — right side of the meeting container.
+                  Toggles between fullscreen and normal mode while the meeting
+                  is active. Positioned top-right so it doesn't overlap Zoom's
+                  own bottom toolbar or participant grid.
+                */}
+                <button
+                  className="FitScreenBtn"
+                  onClick={() => {
+                    if (!document.fullscreenElement) {
+                      meetingRef.current?.requestFullscreen?.().catch((e) => {
+                        console.warn("[Zoom] Fit-screen request denied:", e.message);
+                      });
+                    } else {
+                      document.exitFullscreen();
+                    }
+                  }}
+                  aria-label={isFullscreen ? "Exit fit screen" : "Fit to screen"}
+                  title={isFullscreen ? "Exit fullscreen" : "Fit to screen"}
+                >
+                  {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
+                </button>
+
+                {/*
                   The Zoom iframe.
                   allow="fullscreen" is required for Zoom's own native
                   fullscreen button to work inside the iframe.
