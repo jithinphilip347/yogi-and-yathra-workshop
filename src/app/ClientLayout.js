@@ -10,7 +10,7 @@ export default function ClientLayout({ children }) {
   const pathname = usePathname();
   
   const isAuthPage = pathname === "/auth/login" || pathname === "/auth/signup" || pathname === "/auth/forgetpassword" || pathname === "/auth/otp" || pathname === "/auth/changepassword";
-  const isPlayerPage = pathname?.includes("/learn/") || pathname?.includes("/live-stream");
+  const isPlayerPage = pathname?.includes("/learn/") || pathname?.includes("/live-stream") || pathname?.includes("/player");
   const hideHeaderFooter = isAuthPage || isPlayerPage;
 
   return (

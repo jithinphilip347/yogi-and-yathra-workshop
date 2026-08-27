@@ -114,8 +114,9 @@ const LiveClasses = ({ classesData = [] }) => {
     };
   }, [dropdownRef]);
 
-  const handleViewDetails = (id) => {
-    router.push(`/daily-class/${id}/live-class`);
+  const handleViewDetails = (course) => {
+    const slug = course.title?.trim().replace(/\s+/g, "-").toLowerCase() || "";
+    router.push(`/daily-class/${course.id}/${slug}`);
   };
 
   const handleActionBtnClick = (course) => {
@@ -187,7 +188,7 @@ const LiveClasses = ({ classesData = [] }) => {
                   </button>
                   {dropdownOpen === course.id && (
                     <div className="DropdownMenu">
-                      <button onClick={() => handleViewDetails(course.id)}>View Details</button>
+                      <button onClick={() => handleViewDetails(course)}>View Details</button>
                       <button>View Schedule</button>
                       <button>Download Invoice</button>
                       <button>Need Help</button>

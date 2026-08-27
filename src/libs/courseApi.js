@@ -18,6 +18,8 @@ const courseApi = {
 
   dailyClasses: () => apiClient.get("home/daily-classes"),
 
+  dailyClass: (id) => apiClient.get(`home/daily-classes/${id}`),
+
   liveSections: () => apiClient.get("home/live-sections"),
 
   upcomingEvents: () => apiClient.get("dashboard/upcoming-events"),

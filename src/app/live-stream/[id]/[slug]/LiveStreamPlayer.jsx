@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { 
@@ -11,58 +11,50 @@ import { FiUsers, FiAward, FiClock, FiPlayCircle, FiCheck, FiXCircle } from 'rea
 import toast from 'react-hot-toast';
 import { resolveMediaUrl } from '@/utils/mediaUrl';
 import courseApi from '@/libs/courseApi';
-import apiClient from '@/services/apiClient';
 import { fetchLiveSectionDetail } from '@/libs/course';
 import DiscussionTab from '@/components/player/DiscussionTab';
 import { CommunicationProvider } from '@/communication/CommunicationStore';
+import useZoomMeeting from '@/hooks/useZoomMeeting';
 
 import '../../../../assets/css/live-stream.scss';
 import '../../../../assets/css/learning-player.scss';
 
 const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
   const router = useRouter();
-  const videoRef = useRef(null);       // VideoSection — used for non-Zoom fullscreen
-  const meetingRef = useRef(null);     // Dedicated Zoom meeting container — fullscreen target
-  const iframeRef = useRef(null);
+  const videoRef = useRef(null);       // VideoSection — used for pre-join fullscreen
   const { user } = useSelector((state) => state.auth);
 
   // States
   const [liveSection, setLiveSection] = useState(initialLiveSection);
   const [loading, setLoading] = useState(true);
-  const [isEnrolled, setIsEnrolled] = useState(false);
-  const [isFullscreen, setIsFullscreen] = useState(false);    // driven by fullscreenchange
-  const [isLaunchingZoom, setIsLaunchingZoom] = useState(false);
-  const [isJoined, setIsJoined] = useState(false);
-  const [isIframeLoaded, setIsIframeLoaded] = useState(false);
-  const [sdkParams, setSdkParams] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
 
   const data = liveSection || {};
   const instructor = data.instructor || {};
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // FULLSCREEN STATE — driven by the browser event, not a manual toggle flag.
-  // document.fullscreenElement is the authoritative source of truth.
-  // ─────────────────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    const onFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+  // ─── Shared Zoom meeting integration ────────────────────────────────
+  const {
+    meetingRef,
+    iframeRef,
+    isJoined,
+    isIframeLoaded,
+    isLaunchingZoom,
+    isFullscreen,
+    sdkParams,
+    isEnrolled,
+    handleJoinMeeting,
+    toggleMeetingFullscreen,
+    togglePreviewFullscreen,
+  } = useZoomMeeting({
+    entityId: data.id,
+    entityType: "live_section",
+    entity: data,
+    instructorId: data.instructor_id,
+    signatureEndpoint: `live-sections/${data.id}/zoom-signature`,
+  });
 
-      // If fullscreen was exited externally (ESC, browser UI) while the
-      // meeting is still active, keep isJoined as-is — the meeting continues
-      // in the normal VideoSection container.
-      if (!document.fullscreenElement && isJoined) {
-        // Meeting remains active; layout returns to normal VideoSection height.
-        // No re-init or re-join needed.
-      }
-    };
-
-    document.addEventListener('fullscreenchange', onFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
-  }, [isJoined]);
-
   // ─────────────────────────────────────────────────────────────────────────────
-  // 1. Fetch Fresh Live Section Data & Check Enrollment Status
+  // 1. Fetch Fresh Live Section Data
   // ─────────────────────────────────────────────────────────────────────────────
   useEffect(() => {
     const fetchFreshData = async () => {
@@ -79,25 +71,11 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
       } catch (err) {
         console.error("Failed to fetch fresh live section details", err);
       }
-
-      // Check if user is enrolled
-      if (user?.id) {
-        try {
-          const enrollRes = await courseApi.userEnrollments(user.id, 'live_section');
-          const list = enrollRes.data?.data || enrollRes.data || [];
-          const enrolled = list.some(
-            (e) => Number(e.enrollable_id) === Number(initialLiveSection.id) && e.status === 'active'
-          );
-          setIsEnrolled(enrolled || user.role === 'admin' || Number(initialLiveSection.instructor_id) === Number(user.id));
-        } catch (err) {
-          console.error("Failed to verify enrollment", err);
-        }
-      }
       setLoading(false);
     };
 
     fetchFreshData();
-  }, [initialLiveSection?.id, user?.id]);
+  }, [initialLiveSection?.id]);
 
   // ─────────────────────────────────────────────────────────────────────────────
   // 2. Countdown Timer
@@ -122,183 +100,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
     return () => clearInterval(timer);
   }, [data.class_date_time]);
 
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 2.1 Zoom iframe event listener hook
-  // ─────────────────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    const handleZoomMessage = async (event) => {
-      const payload = event.data;
-      if (!payload) return;
-
-      if (payload.event === 'zoom_event_loaded') {
-        setIsIframeLoaded(true);
-      } else if (payload.event === 'zoom_event_joined') {
-        setIsLaunchingZoom(false);
-        toast.success("Joined Zoom class successfully!");
-
-        // Record attendance
-        try {
-          await apiClient.post("attendance", {
-            entity_type: "live_section",
-            entity_id: data.id,
-            student_id: user.id,
-            status: "present",
-            attendance_date: new Date().toISOString().split("T")[0],
-            notes: "Successfully joined embedded Zoom meeting container",
-          });
-        } catch (e) {
-          console.error("Attendance marking failed", e);
-        }
-      } else if (payload.event === 'zoom_event_left') {
-        setIsJoined(false);
-        setIsIframeLoaded(false);
-        setIsLaunchingZoom(false);
-
-        // Exit fullscreen if still active when the meeting is left
-        if (document.fullscreenElement) {
-          document.exitFullscreen().catch(() => {});
-        }
-
-        toast.success("You have left the live session.");
-      } else if (payload.event === 'zoom_event_failed') {
-        setIsJoined(false);
-        setIsIframeLoaded(false);
-        setIsLaunchingZoom(false);
-
-        // Exit fullscreen if the meeting failed to start
-        if (document.fullscreenElement) {
-          document.exitFullscreen().catch(() => {});
-        }
-
-        const errDetails = payload.error || {};
-        toast.error(`Zoom connection failed: ${errDetails.message || 'Unknown error'}`);
-      }
-    };
-
-    window.addEventListener('message', handleZoomMessage);
-    return () => {
-      window.removeEventListener('message', handleZoomMessage);
-    };
-  }, [data.id, user?.id]);
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 2.2 Trigger Zoom join action when iframe is ready
-  // ─────────────────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    if (isJoined && isIframeLoaded && sdkParams && iframeRef.current) {
-      iframeRef.current.contentWindow.postMessage({
-        action: 'zoom_action_join',
-        ...sdkParams
-      }, '*');
-    }
-  }, [isJoined, isIframeLoaded, sdkParams]);
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 2.3 Cleanup Zoom client on component unmount
-  // ─────────────────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    return () => {
-      if (iframeRef.current && iframeRef.current.contentWindow) {
-        try {
-          iframeRef.current.contentWindow.postMessage({
-            action: 'zoom_action_leave'
-          }, '*');
-        } catch (e) {
-          console.error("Failed to trigger zoom client unmount cleanup:", e);
-        }
-      }
-      // Ensure fullscreen is released if user navigates away
-      if (document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      }
-    };
-  }, []);
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 3. Fullscreen Toggle (for non-Zoom preview mode)
-  //    Used by the FullscreenBtnOverlay button shown before joining.
-  // ─────────────────────────────────────────────────────────────────────────────
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      videoRef.current?.requestFullscreen?.().catch((err) => {
-        console.warn("Preview fullscreen request denied:", err.message);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  };
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // 4. Join Meeting Action
-  //
-  // CRITICAL: requestFullscreen() MUST be called within the synchronous part of
-  // the click handler — before any await — to satisfy the browser's user-gesture
-  // requirement. The async signature fetch happens after fullscreen is entered.
-  // If fullscreen is denied (browser policy, iframe restriction, etc.), the
-  // meeting still joins normally in the normal container.
-  // ─────────────────────────────────────────────────────────────────────────────
-  const handleJoinClass = async () => {
-    if (!user) {
-      toast.error("Please login to join the live session");
-      router.push('/login');
-      return;
-    }
-
-    // ── Step 1: Request fullscreen synchronously while the user gesture is live.
-    //    Target: meetingRef (the dedicated Zoom container div).
-    let fullscreenGranted = false;
-    if (meetingRef.current && meetingRef.current.requestFullscreen) {
-      try {
-        await meetingRef.current.requestFullscreen();
-        fullscreenGranted = true;
-      } catch (fsErr) {
-        // Fullscreen denied — log safe diagnostic, continue with normal join.
-        console.warn("[Zoom] Fullscreen request denied — joining in normal mode:", fsErr.message);
-      }
-    }
-
-    // ── Step 2: Start loading state and fetch Zoom signature.
-    setIsLaunchingZoom(true);
-    const toastId = toast.loading("Authorizing Zoom session...");
-
-    try {
-      // Fetch SDK Signature dynamically — unchanged authentication flow
-      const signRes = await apiClient.post(`/live-sections/${data.id}/zoom-signature`);
-      if (!signRes.data || !signRes.data.success) {
-        throw new Error(signRes.data?.message || "Failed to generate Zoom signature");
-      }
-      const sdkConfig = signRes.data.data;
-
-      // Set signature parameters — iframe will receive these via postMessage
-      setSdkParams({
-        sdkKey: sdkConfig.sdk_key,
-        signature: sdkConfig.signature,
-        meetingNumber: sdkConfig.meeting_number,
-        passcode: sdkConfig.passcode,
-        userName: sdkConfig.user_name,
-        userEmail: sdkConfig.user_email,
-        role: sdkConfig.role,
-        zak: sdkConfig.zak || null,
-      });
-
-      setIsJoined(true);
-      toast.dismiss(toastId);
-
-    } catch (err) {
-      console.error("Zoom authorization failed:", err);
-      setIsLaunchingZoom(false);
-      toast.error(err.message || "Unable to authorize Zoom session", { id: toastId });
-
-      // If auth failed and we entered fullscreen, exit it cleanly
-      if (fullscreenGranted && document.fullscreenElement) {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-  };
-
-  // ─────────────────────────────────────────────────────────────────────────────
-  // Derived values
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ─── Derived values ──────────────────────────────────────────────────
   const instructorName = instructor.name || "Instructor";
   const instructorAvatar = instructor.avatar_url || instructor.avatar
     ? resolveMediaUrl(instructor.avatar_url || instructor.avatar)
@@ -308,7 +110,6 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
   const humanDate = data.human_date || "";
   const timeDisplay = humanDate ? `${humanDate} at ${data.human_start_time || ""} (${timezone})` : "";
 
-  // Render State check
   const isHost = Boolean(user && (user.role === 'admin' || Number(data.instructor_id) === Number(user.id)));
   const isClassActive = data.can_join === true || data.status === 'live';
   const isCompleted = data.status === 'completed' || data.status === 'passed';
@@ -364,30 +165,13 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
   // ─────────────────────────────────────────────────────────────────────────────
   return (
     <div id="LiveStreamFull">
-      {/*
-        VideoSection: the overall preview + meeting area.
-        ref={videoRef} is used only for the pre-join fullscreen toggle button.
-      */}
       <div className="VideoSection" ref={videoRef}>
         <button className="BackBtnOverlay" onClick={() => router.back()} aria-label="Go back">
           <MdArrowBack />
         </button>
 
-        {/*
-          VideoPlaceholder: fills VideoSection via position:absolute; inset:0.
-          Contains both the Zoom meeting container and the pre-join placeholder.
-        */}
         <div className="VideoPlaceholder">
-
-          {/*
-            ZoomMeetingContainer: the DEDICATED fullscreen target.
-            This is the element passed to requestFullscreen().
-            It wraps only the Zoom iframe — nothing else.
-
-            CSS classes:
-              .ZoomMeetingContainer         — normal (inline) mode
-              .ZoomMeetingContainer:fullscreen — fills viewport
-          */}
+          {/* ─── ZoomMeetingContainer — dedicated fullscreen target ─── */}
           <div
             className={`ZoomMeetingContainer${isJoined && sdkParams ? ' ZoomMeetingContainer--active' : ''}`}
             ref={meetingRef}
@@ -395,47 +179,21 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
           >
             {isJoined && sdkParams ? (
               <>
-                {/*
-                  Fullscreen escape hint overlay — visible only while in
-                  actual browser fullscreen. Fades out automatically.
-                  Does NOT interfere with Zoom controls.
-                */}
                 {isFullscreen && (
                   <div className="FullscreenHint" aria-live="polite">
                     Press <kbd>Esc</kbd> to exit fullscreen
                   </div>
                 )}
 
-                {/*
-                  Fit-screen toggle button — right side of the meeting container.
-                  Toggles between fullscreen and normal mode while the meeting
-                  is active. Positioned top-right so it doesn't overlap Zoom's
-                  own bottom toolbar or participant grid.
-                */}
                 <button
                   className="FitScreenBtn"
-                  onClick={() => {
-                    if (!document.fullscreenElement) {
-                      meetingRef.current?.requestFullscreen?.().catch((e) => {
-                        console.warn("[Zoom] Fit-screen request denied:", e.message);
-                      });
-                    } else {
-                      document.exitFullscreen();
-                    }
-                  }}
+                  onClick={toggleMeetingFullscreen}
                   aria-label={isFullscreen ? "Exit fit screen" : "Fit to screen"}
                   title={isFullscreen ? "Exit fullscreen" : "Fit to screen"}
                 >
                   {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
                 </button>
 
-                {/*
-                  The Zoom iframe.
-                  allow="fullscreen" is required for Zoom's own native
-                  fullscreen button to work inside the iframe.
-                  The iframe fills the ZoomMeetingContainer completely.
-                  No recursive sizing applied to iframe descendants.
-                */}
                 <iframe
                   ref={iframeRef}
                   src="/zoom-embed.html"
@@ -445,15 +203,11 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                 />
               </>
             ) : (
-              /*
-                Pre-join placeholder — shown inside ZoomMeetingContainer when
-                not yet joined. Invisible when the meeting is active.
-              */
               <div className="ZoomMeetingContainer__placeholder" />
             )}
           </div>
 
-          {/* Pre-join content area — overlaid on top of the empty container */}
+          {/* ─── Pre-join content area ─── */}
           {!isJoined && (
             <div
               style={{
@@ -506,7 +260,6 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                     {isHost ? `Scheduled for ${timeDisplay}. You can launch the host room early to prepare.` : timeDisplay}
                   </p>
                   
-                  {/* Countdown Timer Block */}
                   <div style={{ display: "flex", gap: "15px", justifyContent: "center", marginBottom: isHost ? "25px" : "0" }}>
                     {['days', 'hours', 'minutes', 'seconds'].map((label) => (
                       <div key={label} style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)", minWidth: "80px", padding: "15px 10px", borderRadius: "8px", border: "1px solid rgba(255,255,255,0.15)" }}>
@@ -516,12 +269,11 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                     ))}
                   </div>
 
-                  {/* Host Start Button for scheduled class */}
                   {isHost && (
                     <div>
                       <button 
                         id="start-live-class-btn"
-                        onClick={handleJoinClass}
+                        onClick={handleJoinMeeting}
                         disabled={isLaunchingZoom}
                         aria-label="Start Live Class as Host"
                         style={{
@@ -532,7 +284,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                           borderRadius: "30px",
                           fontSize: "17px",
                           fontWeight: "700",
-                          cursor: "pointer",
+                          cursor: isLaunchingZoom ? "wait" : "pointer",
                           display: "inline-flex",
                           alignItems: "center",
                           gap: "10px",
@@ -558,7 +310,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                   </p>
                   <button 
                     id="join-meeting-btn"
-                    onClick={handleJoinClass}
+                    onClick={handleJoinMeeting}
                     disabled={isLaunchingZoom}
                     aria-label={isHost ? "Enter Live Meeting as Host" : "Join Live Zoom Class"}
                     style={{
@@ -569,7 +321,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                       borderRadius: "30px",
                       fontSize: "17px",
                       fontWeight: "700",
-                      cursor: "pointer",
+                      cursor: isLaunchingZoom ? "wait" : "pointer",
                       display: "inline-flex",
                       alignItems: "center",
                       gap: "10px",
@@ -597,11 +349,11 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
           )}
         </div>
 
-        {/* Pre-join fullscreen toggle — hidden once the meeting is active */}
+        {/* Pre-join fullscreen toggle */}
         {!isJoined && (
           <button
             className="FullscreenBtnOverlay"
-            onClick={toggleFullscreen}
+            onClick={() => togglePreviewFullscreen(videoRef)}
             aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
           >
             {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
@@ -609,7 +361,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
         )}
       </div>
 
-      {/* ── LMS metadata section — outside Zoom container, outside fullscreen target */}
+      {/* ── LMS metadata section ── */}
       <div className="StreamContainer">
         <div className="MainInfoRow">
           <div className="InfoLeft">
@@ -645,7 +397,6 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
           </div>
         </div>
 
-        {/* Detailed Column and Q&A Board Sidebar */}
         <div className="StreamDetailsGrid">
           <div className="DetailsLeft">
             <section className="DetailSection">
@@ -660,7 +411,6 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
               </div>
             </section>
 
-            {/* Q&A Board integration */}
             <section className="DetailSection" style={{ borderTop: "1px solid #eaeaea", paddingTop: "40px", marginTop: "40px" }}>
               <h2 className="SectionTitle">Questions & Discussion</h2>
               <CommunicationProvider liveSectionId={data.id}>
@@ -670,7 +420,6 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
           </div>
 
           <div className="DetailsRight">
-            {/* Sidebar info */}
             {data.what_youll_learn && data.what_youll_learn.length > 0 && (
               <section className="DetailSection" style={{ background: "#f9fafb", padding: "25px", borderRadius: "12px", border: "1px solid #eaeaea" }}>
                 <h3 style={{ fontSize: "16px", fontWeight: "700", marginBottom: "15px", color: "#111" }}>What You&apos;ll Learn</h3>
@@ -701,13 +450,13 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
       </div>
 
       {/* Mobile Sticky Bottom Bar */}
-      {(isClassActive || isHost) && (
+      {!isJoined && (isClassActive || isHost) && (
         <div className="MobileLiveBar">
           <div className="MobileLiveBadge">
             <span className="LiveDot"></span> {isClassActive ? (isHost ? "HOST LIVE" : "LIVE") : "HOST"}
           </div>
           <button 
-            onClick={handleJoinClass}
+            onClick={handleJoinMeeting}
             disabled={isLaunchingZoom}
             aria-label={isHost ? (isClassActive ? "Enter Live Meeting as Host" : "Start Live Class as Host") : "Join Live Class"}
             style={{
@@ -718,7 +467,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
               borderRadius: "20px",
               fontSize: "14px",
               fontWeight: "700",
-              cursor: "pointer",
+              cursor: isLaunchingZoom ? "wait" : "pointer",
               boxShadow: "0 4px 10px rgba(0,0,0,0.15)"
             }}
           >

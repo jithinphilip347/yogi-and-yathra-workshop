@@ -138,7 +138,7 @@ export const useProfileLearning = () => {
           actionType: "primary",
         },
         status: item.status || "active",
-        meeting_link: cls.meeting_link || cls.stream_url || "/live-stream",
+        meeting_link: `/daily-class/${cls.id}/${(cls.title || '').trim().replace(/\s+/g, '-').toLowerCase()}/player`,
       };
     });
 
@@ -163,7 +163,7 @@ export const useProfileLearning = () => {
           actionType: "primary",
         },
         status: "active",
-        meeting_link: cls.meeting_link || cls.stream_url || "/live-stream",
+        meeting_link: `/daily-class/${cls.id}/${(cls.title || '').trim().replace(/\s+/g, '-').toLowerCase()}/player`,
       }))
     : [];
 

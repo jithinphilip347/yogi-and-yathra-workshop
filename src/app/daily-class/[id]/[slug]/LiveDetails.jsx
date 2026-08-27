@@ -21,6 +21,7 @@ import {
   FiAward,
   FiLock,
   FiRefreshCw,
+  FiPlayCircle,
 } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
 import Image from "next/image";
@@ -31,6 +32,83 @@ import Yoga1 from "@/assets/images/yoga-1.jpg";
 import Yoga2 from "@/assets/images/yoga-2.jpg";
 import Yoga3 from "@/assets/images/yoga-3.jpg";
 import "@/assets/css/daily-live-details.scss";
+
+const dayMap = {
+  sun: 0, sunday: 0,
+  mon: 1, monday: 1,
+  tue: 2, tuesday: 2, tues: 2,
+  wed: 3, wednesday: 3,
+  thu: 4, thursday: 4, thur: 4, thurs: 4,
+  fri: 5, friday: 5,
+  sat: 6, saturday: 6,
+};
+
+const parseTimeString = (timeStr) => {
+  if (!timeStr) return { hours: 7, minutes: 0 };
+  const str = String(timeStr).trim().toUpperCase();
+  const isPM = str.includes("PM");
+  const isAM = str.includes("AM");
+  const match = str.match(/(\d+):(\d+)/);
+  if (match) {
+    let hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    if (isPM && hours < 12) hours += 12;
+    if (isAM && hours === 12) hours = 0;
+    return { hours, minutes };
+  }
+  return { hours: 7, minutes: 0 };
+};
+
+const getNextClassDate = (dailyClassObj) => {
+  const now = new Date();
+  const timeObj = parseTimeString(
+    dailyClassObj?.class_time || dailyClassObj?.human_class_time || "07:00 AM"
+  );
+  const durationMins = dailyClassObj?.duration ? parseInt(dailyClassObj.duration, 10) : 60;
+
+  const rawSchedule = dailyClassObj?.schedule;
+  const activeDays =
+    Array.isArray(rawSchedule) && rawSchedule.length > 0
+      ? rawSchedule
+          .map((d) => {
+            const key = String(d).toLowerCase().replace(/[^a-z]/g, "").slice(0, 3);
+            return dayMap[key];
+          })
+          .filter((d) => d !== undefined)
+      : [1, 2, 3, 4, 5];
+
+  for (let offset = 0; offset < 14; offset++) {
+    const candidate = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate() + offset,
+      timeObj.hours,
+      timeObj.minutes,
+      0
+    );
+    const dayOfWeek = candidate.getDay();
+
+    if (activeDays.includes(dayOfWeek)) {
+      const classEnd = new Date(candidate.getTime() + durationMins * 60 * 1000);
+      if (classEnd.getTime() > now.getTime()) {
+        const isLive =
+          now.getTime() >= candidate.getTime() - 15 * 60 * 1000 &&
+          now.getTime() <= classEnd.getTime();
+        return { targetTime: candidate, isLive };
+      }
+    }
+  }
+
+  const fallback = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1,
+    timeObj.hours,
+    timeObj.minutes,
+    0
+  );
+  return { targetTime: fallback, isLive: false };
+};
 
 const LiveDetails = ({ id, classDetails }) => {
   const dailyClass = classDetails || {};
@@ -66,9 +144,21 @@ const LiveDetails = ({ id, classDetails }) => {
   const [activeFaq, setActiveFaq] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [classCountdown, setClassCountdown] = useState({
+    days: "00",
+    hours: "00",
+    minutes: "00",
+    seconds: "00",
+    isLive: false,
+  });
   const router = useRouter();
   const { addItem, removeItem, isInCart } = useCart();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
+
+  // ─── Instructor / host detection (mirrors DailyClassPlayer pattern) ──
+  const isHost = Boolean(
+    user && (user.role === 'admin' || Number(dailyClass?.instructor_id) === Number(user.id))
+  );
 
   const {
     status: subStatus,
@@ -88,6 +178,37 @@ const LiveDetails = ({ id, classDetails }) => {
       fetchStatus(id);
     }
   }, [id, isAuthenticated, fetchStatus]);
+
+  // Real-time Countdown timer for daily class
+  useEffect(() => {
+    const updateTimer = () => {
+      const { targetTime, isLive } = getNextClassDate(dailyClass);
+      const distance = targetTime.getTime() - Date.now();
+
+      if (distance <= 0) {
+        setClassCountdown({
+          days: "00",
+          hours: "00",
+          minutes: "00",
+          seconds: "00",
+          isLive: true,
+        });
+        return;
+      }
+
+      setClassCountdown({
+        days: String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, "0"),
+        hours: String(Math.floor((distance / (1000 * 60 * 60)) % 24)).padStart(2, "0"),
+        minutes: String(Math.floor((distance / (1000 * 60)) % 60)).padStart(2, "0"),
+        seconds: String(Math.floor((distance / 1000) % 60)).padStart(2, "0"),
+        isLive,
+      });
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, [dailyClass]);
 
   const toggleFaq = (idx) => {
     setActiveFaq(activeFaq === idx ? null : idx);
@@ -594,8 +715,73 @@ const LiveDetails = ({ id, classDetails }) => {
                 </div>
               )}
 
+              {/* ── Instructor Host CTA (no subscription required) ──── */}
+              {isHost && (
+                <>
+                  <div
+                    className="SubActiveBadge"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      background: "#ecfdf5",
+                      color: "#047857",
+                      padding: "10px 12px",
+                      borderRadius: 8,
+                      fontSize: 13,
+                      fontWeight: 600,
+                      marginBottom: 10,
+                    }}
+                  >
+                    <FiCheckCircle /> Instructor Access
+                  </div>
+
+                  {/* ── Class Countdown Block ── */}
+                  <div className="CountdownBlock">
+                    <p>{classCountdown.isLive ? "Class is Live Now" : "Next Class Starts In"}</p>
+                    <div className="CountdownGrid">
+                      <div className="TimeBox">
+                        <span className="TimeVal">{classCountdown.days}</span>
+                        <span className="TimeLabel">DAYS</span>
+                      </div>
+                      <div className="TimeBox">
+                        <span className="TimeVal">{classCountdown.hours}</span>
+                        <span className="TimeLabel">HOURS</span>
+                      </div>
+                      <div className="TimeBox">
+                        <span className="TimeVal">{classCountdown.minutes}</span>
+                        <span className="TimeLabel">MINS</span>
+                      </div>
+                      <div className="TimeBox">
+                        <span className="TimeVal">{classCountdown.seconds}</span>
+                        <span className="TimeLabel">SECS</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── Enter Classroom CTA ── */}
+                  <button
+                    className="EnrollSidebarBtn EnterClassroomBtn"
+                    onClick={() => {
+                      const slug = dailyClass?.title?.trim().replace(/\s+/g, "-").toLowerCase() || "";
+                      router.push(`/daily-class/${dailyClass?.id}/${slug}/player`);
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                      background: classCountdown.isLive ? "#16a34a" : "var(--primaryColor)",
+                    }}
+                  >
+                    <FiPlayCircle style={{ fontSize: 18 }} />
+                    {classCountdown.isLive ? "Enter Live Meeting (Host)" : "Start Daily Class (Host)"}
+                  </button>
+                </>
+              )}
+
               {/* ── Subscription status / CTA ─────────────────────── */}
-              {subStatus === "active" ? (
+              {!isHost && (subStatus === "active" ? (
                 <>
                   <div
                     className="SubActiveBadge"
@@ -624,11 +810,55 @@ const LiveDetails = ({ id, classDetails }) => {
                       })}
                     </p>
                   )}
+
+                  {/* ── Class Countdown Block ── */}
+                  <div className="CountdownBlock">
+                    <p>{classCountdown.isLive ? "Class is Live Now" : "Next Class Starts In"}</p>
+                    <div className="CountdownGrid">
+                      <div className="TimeBox">
+                        <span className="TimeVal">{classCountdown.days}</span>
+                        <span className="TimeLabel">DAYS</span>
+                      </div>
+                      <div className="TimeBox">
+                        <span className="TimeVal">{classCountdown.hours}</span>
+                        <span className="TimeLabel">HOURS</span>
+                      </div>
+                      <div className="TimeBox">
+                        <span className="TimeVal">{classCountdown.minutes}</span>
+                        <span className="TimeLabel">MINS</span>
+                      </div>
+                      <div className="TimeBox">
+                        <span className="TimeVal">{classCountdown.seconds}</span>
+                        <span className="TimeLabel">SECS</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── Enter Classroom CTA ── */}
+                  <button
+                    className="EnrollSidebarBtn EnterClassroomBtn"
+                    onClick={() => {
+                      const slug = dailyClass?.title?.trim().replace(/\s+/g, "-").toLowerCase() || "";
+                      router.push(`/daily-class/${dailyClass?.id}/${slug}/player`);
+                    }}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      gap: 8,
+                      background: classCountdown.isLive ? "#16a34a" : "var(--primaryColor)",
+                    }}
+                  >
+                    <FiPlayCircle style={{ fontSize: 18 }} />
+                    {classCountdown.isLive ? "Join Live Class Now" : "Enter Class Room"}
+                  </button>
+
+                  {/* ── Cancel Subscription (Subtle secondary action) ── */}
                   {confirmCancel ? (
-                    <div style={{ display: "flex", gap: 8 }}>
+                    <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
                       <button
                         className="EnrollSidebarBtn"
-                        style={{ background: "#b91c1c", flex: 1 }}
+                        style={{ background: "#b91c1c", flex: 1, marginTop: 0, padding: "10px", fontSize: 13 }}
                         disabled={subLoading}
                         onClick={async () => {
                           await cancelSubscription(subData.id);
@@ -639,20 +869,34 @@ const LiveDetails = ({ id, classDetails }) => {
                       </button>
                       <button
                         className="EnrollSidebarBtn"
-                        style={{ background: "#64748b", flex: 1 }}
+                        style={{ background: "#64748b", flex: 1, marginTop: 0, padding: "10px", fontSize: 13 }}
                         onClick={() => setConfirmCancel(false)}
                       >
                         Keep
                       </button>
                     </div>
                   ) : (
-                    <button
-                      className="EnrollSidebarBtn"
-                      style={{ background: "#b91c1c" }}
-                      onClick={() => setConfirmCancel(true)}
-                    >
-                      Cancel Subscription
-                    </button>
+                    <div style={{ textAlign: "center", marginTop: 12 }}>
+                      <button
+                        type="button"
+                        className="CancelSubLink"
+                        onClick={() => setConfirmCancel(true)}
+                        style={{
+                          background: "transparent",
+                          border: "none",
+                          color: "#94a3b8",
+                          fontSize: 12,
+                          textDecoration: "underline",
+                          cursor: "pointer",
+                          padding: "4px 8px",
+                          transition: "color 0.2s",
+                        }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "#ef4444")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "#94a3b8")}
+                      >
+                        Cancel Subscription
+                      </button>
+                    </div>
                   )}
                 </>
               ) : subStatus === "pending" ? (
@@ -741,7 +985,7 @@ const LiveDetails = ({ id, classDetails }) => {
                     Recurring monthly billing via Razorpay AutoPay. Cancel anytime.
                   </p>
                 </>
-              )}
+              ))}
 
               {isInCart(dailyClass?.id, 'DailyClass') && subStatus !== 'active' && (
                 <button

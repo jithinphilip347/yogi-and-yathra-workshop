@@ -1,0 +1,13 @@
+/* ================================================================
+   Daily Class Player — Supplementary Styles
+   ================================================================
+   
+   NOTE: The DailyClassPlayer component renders with id="LiveStreamFull",
+   so all primary styles come from live-stream.scss.
+   
+   This file previously contained mock meeting UI classes that are no
+   longer used after the integration of the real ZoomPlayer via the
+   shared useZoomMeeting hook.
+   
+   Kept as a minimal import target; safe to remove entirely when ready.
+   ================================================================ */
