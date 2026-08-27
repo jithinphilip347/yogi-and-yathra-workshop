@@ -158,13 +158,6 @@ const NavSearchOverlay = ({ isOpen, onClose, searchQuery, setSearchQuery }) => {
                       )}
                     </div>
                     <h5 className="ItemTitle">{result.title}</h5>
-                    {(result.short_description || result.description) && (
-                      <p className="ItemShortDesc">
-                        {result.short_description
-                          ? result.short_description
-                          : result.description.replace(/<[^>]*>?/gm, "").slice(0, 140)}
-                      </p>
-                    )}
                     <div className="ItemMetaRow">
                       {result.instructor_name && (
                         <span className="InstructorName">
