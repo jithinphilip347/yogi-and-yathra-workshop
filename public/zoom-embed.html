@@ -58,6 +58,18 @@
 
     <script>
         let client = null;
+        let joinLock = false;   // Prevents concurrent join operations
+        let leaveLock = false;  // Prevents concurrent leave operations
+        let currentConfig = null; // Tracks active configuration (stale protection)
+
+        /* ─── Lifecycle States ─────────────────────────────────────────
+         *
+         *   IDLE  →  JOINING  →  JOINED  →  LEAVING  →  IDLE
+         *              ↓                       ↑
+         *           JOIN_FAILED              LEFT
+         *              ↓                       ↑
+         *            IDLE  ←───────────────────*
+         * ─────────────────────────────────────────────────────────── */
 
         // Normalize SDK error codes into structured human-readable messages
         const normalizeError = (err) => {
@@ -87,7 +99,12 @@
         };
 
         const joinMeeting = async (config) => {
+            // ── Join lock: prevent concurrent join operations ──
+            if (joinLock) return;
+            joinLock = true;
+
             if (!window.ZoomMtgEmbedded) {
+                joinLock = false;
                 window.parent.postMessage({
                     event: 'zoom_event_failed',
                     error: { code: 0, type: 'SDK_MISSING', message: 'Zoom SDK script failed to load.' }
@@ -122,6 +139,12 @@
                     joinParams.zak = config.zak;
                 }
 
+                // Track current configuration (stale protection)
+                currentConfig = {
+                    meetingNumber: config.meetingNumber,
+                    role: config.role,
+                };
+
                 await client.join(joinParams);
 
                 window.parent.postMessage({ event: 'zoom_event_joined' }, '*');
@@ -133,17 +156,30 @@
                     event: 'zoom_event_failed',
                     error: structuredError
                 }, '*');
+            } finally {
+                joinLock = false;
             }
         };
 
         const leaveMeeting = () => {
+            // ── Leave lock: prevent concurrent leave operations ──
+            if (leaveLock) return;
+            leaveLock = true;
+
             if (client) {
                 try {
                     client.leave();
+                    currentConfig = null; // Clear tracked config
                     window.parent.postMessage({ event: 'zoom_event_left' }, '*');
                 } catch (e) {
                     console.error("Error triggering client leave:", e);
+                    currentConfig = null;
+                } finally {
+                    leaveLock = false;
                 }
+            } else {
+                leaveLock = false;
+                window.parent.postMessage({ event: 'zoom_event_left' }, '*');
             }
         };
 

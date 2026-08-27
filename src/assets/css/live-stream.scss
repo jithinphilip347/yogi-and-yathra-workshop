@@ -3,6 +3,7 @@
   position: relative;
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   background: #ffffff;
   color: #111;
 
@@ -11,24 +12,30 @@
      * We use a fixed height approach so the iframe always gets a real pixel
      * height that Zoom's internal layout engine can measure.  The aspect-ratio
      * shorthand is kept as a soft hint; min/max-height are the real guards.
-     */
+     *
+     * 100dvh is preferred on mobile browsers where the address bar affects
+     * the visible viewport. 100vh is the fallback for older browsers. */
     width: 100%;
     position: relative;
     background: #000;
     overflow: hidden;
     /* 56.25% = 16:9 aspect ratio */
-    height: clamp(400px, 56.25vw, 72vh);
+    height: clamp(400px, 56.25vw, 78vh);
+    height: clamp(400px, 56.25vw, 78dvh);
 
     @media (max-width: 1024px) {
-      height: clamp(360px, 56.25vw, 65vh);
+      height: clamp(360px, 56.25vw, 70vh);
+      height: clamp(360px, 56.25vw, 70dvh);
     }
 
     @media (max-width: 768px) {
-      height: clamp(280px, 56.25vw, 55vh);
+      height: clamp(300px, 56.25vw, 60vh);
+      height: clamp(300px, 56.25vw, 60dvh);
     }
 
     @media (max-width: 480px) {
-      height: clamp(210px, 56.25vw, 50vh);
+      height: clamp(240px, 56.25vw, 55vh);
+      height: clamp(240px, 56.25vw, 55dvh);
     }
 
     /* VideoPlaceholder fills the VideoSection completely so the iframe
@@ -71,28 +78,14 @@
         opacity: 0;
       }
 
-      /* ── Fullscreen mode (standard) ── */
+      /* ── Fullscreen mode ──
+       * The standard :fullscreen pseudo-class covers all modern browsers
+       * (Chrome, Firefox, Safari 16.4+, Edge). Vendor-prefixed variants
+       * are no longer necessary and have been removed. */
       &:fullscreen {
         width: 100vw;
         height: 100vh;
-        background: #000;
-        margin: 0;
-        padding: 0;
-      }
-
-      /* ── Fullscreen mode (webkit prefix for Safari) ── */
-      &:-webkit-full-screen {
-        width: 100vw;
-        height: 100vh;
-        background: #000;
-        margin: 0;
-        padding: 0;
-      }
-
-      /* ── Fullscreen mode (moz prefix for older Firefox) ── */
-      &:-moz-full-screen {
-        width: 100vw;
-        height: 100vh;
+        height: 100dvh;
         background: #000;
         margin: 0;
         padding: 0;
@@ -111,7 +104,8 @@
 
       /* Fit-screen toggle button — top-right corner of the meeting container.
        * Sits above the Zoom UI (z-index 9999) so it's always reachable.
-       * Uses the same frosted-glass style as the other overlay buttons. */
+       * Uses the same frosted-glass style as the other overlay buttons.
+       * Keyboard accessible via tabIndex and onKeyDown for ESC/Enter. */
       .FitScreenBtn {
         position: absolute;
         top: 14px;
@@ -131,6 +125,7 @@
         backdrop-filter: blur(6px);
         transition: background 0.2s, transform 0.15s;
         padding: 0;
+        outline: none;
 
         svg {
           font-size: 20px;
@@ -144,6 +139,11 @@
 
         &:active {
           transform: scale(0.96);
+        }
+
+        &:focus-visible {
+          outline: 2px solid rgba(255, 255, 255, 0.8);
+          outline-offset: 2px;
         }
       }
     }
@@ -200,8 +200,13 @@
       -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
       transition: background 0.2s;
+      outline: none;
       svg { font-size: 24px; }
       &:hover { background: rgba(0,0,0,0.8); }
+      &:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.8);
+        outline-offset: 2px;
+      }
     }
 
     .FullscreenBtnOverlay {
@@ -222,8 +227,13 @@
       -webkit-backdrop-filter: blur(4px);
       backdrop-filter: blur(4px);
       transition: background 0.2s;
+      outline: none;
       svg { font-size: 28px; }
       &:hover { background: rgba(0,0,0,0.8); }
+      &:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.8);
+        outline-offset: 2px;
+      }
     }
 
   }

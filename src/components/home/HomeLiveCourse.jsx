@@ -143,6 +143,16 @@ const EventSlide = ({ event }) => {
 };
 
 const HomeLiveCourse = ({ liveSections }) => {
+  const list = Array.isArray(liveSections)
+    ? liveSections
+    : Array.isArray(liveSections?.data)
+      ? liveSections.data
+      : [];
+
+  if (!list || list.length === 0) {
+    return null;
+  }
+
   return (
     <section id="HomeLiveCourse">
       <div className="HomeLiveCourseMain">
@@ -157,13 +167,13 @@ const HomeLiveCourse = ({ liveSections }) => {
             <Swiper
               modules={[Navigation]}
               navigation={true}
-              loop={true}
+              loop={list.length > 1}
               grabCursor={true}
               slidesPerView={1}
               speed={700}
               className="LiveCourseSwiper"
             >
-              {liveSections?.map((event) => (
+              {list.map((event) => (
                 <SwiperSlide key={event.id}>
                   <EventSlide
                     event={{
@@ -183,3 +193,4 @@ const HomeLiveCourse = ({ liveSections }) => {
 };
 
 export default HomeLiveCourse;
+

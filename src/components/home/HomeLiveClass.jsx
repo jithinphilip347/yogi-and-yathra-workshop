@@ -28,12 +28,17 @@ import { MdDateRange } from "react-icons/md";
 import useWishlist from "@/hooks/useWishlist";
 
 const HomeLiveClass = ({ dailyClasses }) => {
-  const [loading, setLoading] = useState(true);
   const { findWishlistIcon } = useWishlist();
 
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 2000);
-  }, []);
+  const list = Array.isArray(dailyClasses)
+    ? dailyClasses
+    : Array.isArray(dailyClasses?.data)
+      ? dailyClasses.data
+      : [];
+
+  if (!list || list.length === 0) {
+    return null;
+  }
 
   return (
     <div id="HomeLiveClass">
@@ -58,7 +63,7 @@ const HomeLiveClass = ({ dailyClasses }) => {
               nextEl: ".next-btn",
               prevEl: ".prev-btn",
             }}
-            loop={true}
+            loop={list.length > 2}
             slidesPerView={2}
             spaceBetween={30}
             breakpoints={{
@@ -66,10 +71,10 @@ const HomeLiveClass = ({ dailyClasses }) => {
               768: { slidesPerView: 2 },
             }}
           >
-            {(loading ? Array(6).fill({}) : dailyClasses).map((course, i) => (
-              <SwiperSlide key={i}>
+            {list.map((course, i) => (
+              <SwiperSlide key={course.id || i}>
                 <CourseCard
-                  loading={loading}
+                  loading={false}
                   image={
                     course?.thumbnail ? resolveMediaUrl(course.thumbnail) : null
                   }
@@ -105,3 +110,4 @@ const HomeLiveClass = ({ dailyClasses }) => {
 };
 
 export default HomeLiveClass;
+

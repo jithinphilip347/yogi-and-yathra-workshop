@@ -42,7 +42,9 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
     isFullscreen,
     sdkParams,
     isEnrolled,
+    lastError,
     handleJoinMeeting,
+    retryWithFreshConfig,
     toggleMeetingFullscreen,
     togglePreviewFullscreen,
   } = useZoomMeeting({
@@ -166,7 +168,13 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
   return (
     <div id="LiveStreamFull">
       <div className="VideoSection" ref={videoRef}>
-        <button className="BackBtnOverlay" onClick={() => router.back()} aria-label="Go back">
+        <button
+          className="BackBtnOverlay"
+          onClick={() => router.back()}
+          aria-label="Go back"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); router.back(); } }}
+        >
           <MdArrowBack />
         </button>
 
@@ -190,6 +198,8 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
                   onClick={toggleMeetingFullscreen}
                   aria-label={isFullscreen ? "Exit fit screen" : "Fit to screen"}
                   title={isFullscreen ? "Exit fullscreen" : "Fit to screen"}
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMeetingFullscreen(); } }}
                 >
                   {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
                 </button>
@@ -355,6 +365,8 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
             className="FullscreenBtnOverlay"
             onClick={() => togglePreviewFullscreen(videoRef)}
             aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePreviewFullscreen(videoRef); } }}
           >
             {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
           </button>

@@ -162,7 +162,9 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
     isFullscreen,
     sdkParams,
     isEnrolled,
+    lastError,
     handleJoinMeeting,
+    retryWithFreshConfig,
     toggleMeetingFullscreen,
     togglePreviewFullscreen,
   } = useZoomMeeting({
@@ -337,7 +339,13 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
     <div id="LiveStreamFull">
       {/* ═══ 1. HERO VIDEO / MEETING SECTION ═══ */}
       <div className="VideoSection" ref={videoRef}>
-        <button className="BackBtnOverlay" onClick={handleBack} aria-label="Go back">
+        <button
+          className="BackBtnOverlay"
+          onClick={handleBack}
+          aria-label="Go back"
+          tabIndex={0}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleBack(); } }}
+        >
           <MdArrowBack />
         </button>
 
@@ -363,6 +371,8 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
                   onClick={toggleMeetingFullscreen}
                   aria-label={isFullscreen ? "Exit fit screen" : "Fit to screen"}
                   title={isFullscreen ? "Exit fullscreen" : "Fit to screen"}
+                  tabIndex={0}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMeetingFullscreen(); } }}
                 >
                   {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
                 </button>
@@ -614,6 +624,8 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
             className="FullscreenBtnOverlay"
             onClick={() => togglePreviewFullscreen(videoRef)}
             aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); togglePreviewFullscreen(videoRef); } }}
           >
             {isFullscreen ? <MdFullscreenExit /> : <MdFullscreen />}
           </button>
