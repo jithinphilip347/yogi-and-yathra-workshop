@@ -1,11 +1,15 @@
 "use client";
 import Image from "next/image";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import UserImg from "../../assets/images/user.webp";
 import Logo from "../../assets/images/logo.png";
 import courseImg1 from "../../assets/images/courseImg-1.webp";
 import { BiSearch, BiTimeFive } from "react-icons/bi";
 import { VscMenu } from "react-icons/vsc";
+import { FiAlertCircle, FiSearch, FiUser } from "react-icons/fi";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import Sidnav from "./Sidnav";
 
 import {
@@ -20,8 +24,6 @@ import {
   MdOutlineFileDownload,
   MdMenu,
 } from "react-icons/md";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { RiLoginCircleLine, RiUserLine } from "react-icons/ri";
 import { IoPeopleOutline, IoCartOutline } from "react-icons/io5";
@@ -29,6 +31,37 @@ import NavSearchOverlay from "./NavSearchOverlay";
 import { useSelector } from "react-redux";
 import { selectCartItemCount } from "@/features/commerce/selectors/commerceSelectors";
 import useProfile from "@/hooks/useProfile";
+import useDebounce from "@/hooks/useDebounce";
+import useGlobalSearch from "@/hooks/useGlobalSearch";
+
+/**
+ * Map a search result type to its route.
+ */
+function getResultRoute(result) {
+  switch (result.type) {
+    case "course":
+      return `/course/${result.slug || ""}/${result.id}`;
+    case "live_section":
+      return `/live-section/${result.id}/${result.slug || ""}`;
+    case "daily_class":
+      return `/daily-class/${result.id}/${result.slug || ""}`;
+    default:
+      return "#";
+  }
+}
+
+function getTypeLabel(type) {
+  switch (type) {
+    case "course":
+      return "Course";
+    case "live_section":
+      return "Live Section";
+    case "daily_class":
+      return "Daily Class";
+    default:
+      return "";
+  }
+}
 
 const Nav = () => {
   const { handleLogout } = useProfile();
@@ -46,6 +79,18 @@ const Nav = () => {
   const itemCount = useSelector(selectCartItemCount);
 
   const [mounted, setMounted] = useState(false);
+
+  // Debounced search for inline dropdown
+  const debouncedQuery = useDebounce(searchQuery, 350);
+  const trimmedDebounced = debouncedQuery?.trim() ?? "";
+  const {
+    data: inlineData,
+    isLoading: inlineLoading,
+    isFetching: inlineFetching,
+    isError: inlineError,
+  } = useGlobalSearch(trimmedDebounced);
+
+  const inlineResults = inlineData?.data || [];
 
   useEffect(() => {
     setMounted(true);
@@ -69,6 +114,15 @@ const Nav = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Determine inline dropdown state
+  const isInlineIdle = !trimmedDebounced;
+  const isInlineLoading = !isInlineIdle && (inlineLoading || inlineFetching);
+  const isInlineEmpty =
+    !isInlineIdle && !isInlineLoading && !inlineError && inlineResults.length === 0;
+  const isInlineError = !isInlineIdle && !isInlineLoading && inlineError;
+  const showInlineResults =
+    !isInlineIdle && !isInlineLoading && !inlineError && inlineResults.length > 0;
 
   return (
     <>
@@ -95,50 +149,99 @@ const Nav = () => {
                   value={searchQuery}
                   onFocus={() => setIsSearching(true)}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  aria-label="Search courses, live sections, and daily classes"
                 />
               </div>
 
-              {/* Search Dropdown */}
+              {/* Search Dropdown — Real API Results */}
               {isSearching && (
                 <div className="SearchDropdown">
-                  <div className="SuggestionSection">
-                    <div className="SuggestItem">
-                      <BiTimeFive /> <p>Yoga for Beginners</p>
+                  {/* Loading State */}
+                  {isInlineLoading && (
+                    <div className="SuggestionSection">
+                      <div className="SearchLoading" style={{ padding: "16px", textAlign: "center" }}>
+                        <div className="spinner"></div>
+                        <p>Searching...</p>
+                      </div>
                     </div>
-                    <div className="SuggestItem">
-                      <BiTimeFive /> <p>Advanced Meditation Techniques</p>
-                    </div>
-                  </div>
+                  )}
 
-                  <div className="RecommendedSection">
-                    <h4>Recommended Courses</h4>
-                    <div className="CourseList">
-                      {[1, 2].map((item) => (
-                        <div className="SearchCourseBox" key={item}>
-                          <div className="CourseImg">
-                            <Image src={courseImg1} alt="course" />
-                          </div>
-                          <div className="CourseDetails">
-                            <h5>Mastering Hatha Yoga</h5>
-                            <div className="CourseMeta">
-                              <span>
-                                <MdStar className="star" /> 4.8
-                              </span>
-                              <span>
-                                <MdPlayCircleOutline /> 12 Lessons
-                              </span>
-                              <span>
-                                <IoPeopleOutline /> 1.2k
-                              </span>
-                              <span>
-                                <MdOutlineFileDownload /> 240
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                  {/* Idle State — Show hints */}
+                  {isInlineIdle && (
+                    <div className="SuggestionSection">
+                      <div className="SuggestItem">
+                        <BiTimeFive /> <p>Start typing to search...</p>
+                      </div>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Results State */}
+                  {showInlineResults && (
+                    <div className="RecommendedSection">
+                      <h4>Search Results</h4>
+                      <div className="CourseList">
+                        {inlineResults.map((result) => (
+                          <Link
+                            key={`${result.type}-${result.id}`}
+                            href={getResultRoute(result)}
+                            className="SearchCourseBox"
+                            onClick={() => setIsSearching(false)}
+                            style={{ textDecoration: "none", color: "inherit" }}
+                          >
+                            <div className="CourseImg">
+                              <Image
+                                src={result.thumbnail ? resolveMediaUrl(result.thumbnail) : courseImg1}
+                                alt={result.title || "Search result"}
+                                width={76}
+                                height={56}
+                                className="ThumbImg"
+                                unoptimized={Boolean(result.thumbnail)}
+                              />
+                            </div>
+                            <div className="CourseDetails">
+                              <div className="TypeAndCategory">
+                                <span className={`TypeBadge TypeBadge--${result.type}`}>
+                                  {getTypeLabel(result.type)}
+                                </span>
+                                {result.category_name && (
+                                  <span className="CategoryTag">{result.category_name}</span>
+                                )}
+                              </div>
+                              <h5 className="ItemTitle">{result.title}</h5>
+                              <div className="ItemMetaRow">
+                                {result.instructor_name && (
+                                  <span className="InstructorName">
+                                    <FiUser className="MetaIcon" /> {result.instructor_name}
+                                  </span>
+                                )}
+                                {result.price ? (
+                                  <span className="PriceTag">
+                                    ₹{result.discount_price || result.price}
+                                  </span>
+                                ) : null}
+                              </div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Empty State */}
+                  {isInlineEmpty && (
+                    <div className="SuggestionSection" style={{ padding: "16px", textAlign: "center" }}>
+                      <FiSearch size={24} color="#999" />
+                      <p>No results found</p>
+                    </div>
+                  )}
+
+                  {/* Error State */}
+                  {isInlineError && (
+                    <div className="SuggestionSection" style={{ padding: "16px", textAlign: "center" }}>
+                      <FiAlertCircle size={24} color="#e74c3c" />
+                      <p>Search failed. Please try again.</p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

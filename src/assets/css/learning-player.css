@@ -1,123 +1,425 @@
-/* Learning Player Styles - Sprint P1 */
+@charset "UTF-8";
+/* Learning Player Styles - Redesigned like Udemy */
 .LearningPlayerRoot {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #0b0f19;
-  color: #e2e8f0;
-  font-family: inherit;
-  /* Header */
+  background-color: #ffffff;
+  color: #1c1d1f;
+  font-family: var(--myFont1), "SF Pro Display", -apple-system, BlinkMacSystemFont, Roboto, "Segoe UI", Helvetica, Arial, sans-serif;
+  /* ------------------------------------------------------------- */
+  /* Redesigned Udemy Dark Theme Header                            */
+  /* ------------------------------------------------------------- */
 }
 .LearningPlayerRoot .LearningHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 64px;
-  padding: 0 24px;
-  background-color: #111827;
-  border-bottom: 1px solid #1f2937;
+  height: 56px;
+  padding: 0 16px;
+  background-color: #1c1d1f;
+  border-bottom: 1px solid #3e4143;
   z-index: 50;
 }
 .LearningPlayerRoot .LearningHeader .HeaderLeft {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
 }
-.LearningPlayerRoot .LearningHeader .HeaderLeft .BackBtn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: transparent;
-  border: 1px solid #374151;
-  color: #9ca3af;
-  padding: 8px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.LearningPlayerRoot .LearningHeader .HeaderLeft .BackBtn:hover {
+.LearningPlayerRoot .LearningHeader .HeaderLeft .LogoText {
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
   color: #ffffff;
-  border-color: #4b5563;
-  background: rgba(255, 255, 255, 0.05);
+  text-transform: lowercase;
 }
-.LearningPlayerRoot .LearningHeader .HeaderLeft .CourseTitleGroup .CourseName {
-  font-size: 16px;
+.LearningPlayerRoot .LearningHeader .HeaderLeft .LogoText::first-letter {
+  text-transform: uppercase;
+  color: var(--primaryColor, #874429);
+}
+.LearningPlayerRoot .LearningHeader .HeaderLeft .CourseTitleHeader {
+  font-size: 14px;
   font-weight: 600;
-  color: #f3f4f6;
+  color: #ffffff;
   margin: 0;
+  max-width: 350px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.LearningPlayerRoot .LearningHeader .HeaderLeft .CourseTitleGroup .LessonName {
-  font-size: 13px;
-  color: #9ca3af;
-  margin: 2px 0 0 0;
+@media (max-width: 768px) {
+  .LearningPlayerRoot .LearningHeader .HeaderLeft .CourseTitleHeader {
+    display: none;
+  }
 }
 .LearningPlayerRoot .LearningHeader .HeaderRight {
   display: flex;
   align-items: center;
   gap: 16px;
+  /* Action link/buttons */
 }
-.LearningPlayerRoot .LearningHeader .HeaderRight .ProgressPlaceholder {
+.LearningPlayerRoot .LearningHeader .HeaderRight .HeaderLinkBtn,
+.LearningPlayerRoot .LearningHeader .HeaderRight .ShareBtn,
+.LearningPlayerRoot .LearningHeader .HeaderRight .BookmarkBtn,
+.LearningPlayerRoot .LearningHeader .HeaderRight .CompleteBtn {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.04);
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: transparent;
+  border: none;
+  color: #d1d7dc;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: color 0.2s, background-color 0.2s;
 }
-.LearningPlayerRoot .LearningHeader .HeaderRight .ProgressPlaceholder .ProgressText {
-  font-size: 12px;
-  color: #6b7280;
+.LearningPlayerRoot .LearningHeader .HeaderRight .HeaderLinkBtn:hover,
+.LearningPlayerRoot .LearningHeader .HeaderRight .ShareBtn:hover,
+.LearningPlayerRoot .LearningHeader .HeaderRight .BookmarkBtn:hover,
+.LearningPlayerRoot .LearningHeader .HeaderRight .CompleteBtn:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .HeaderLinkBtn svg,
+.LearningPlayerRoot .LearningHeader .HeaderRight .ShareBtn svg,
+.LearningPlayerRoot .LearningHeader .HeaderRight .BookmarkBtn svg,
+.LearningPlayerRoot .LearningHeader .HeaderRight .CompleteBtn svg {
+  font-size: 16px;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .BookmarkBtn.Active {
+  color: var(--primaryColor, #874429);
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .CompleteBtn.Completed {
+  color: #2e7d32;
+  background-color: rgba(46, 125, 50, 0.15);
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .CompleteBtn.Completed:hover {
+  color: #4caf50;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight {
+  /* Circular Progress Widget */
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .ProgressIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .ProgressIndicator .ProgressCircle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .ProgressIndicator .ProgressCircle svg {
+  transform: rotate(-90deg);
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .ProgressIndicator .ProgressText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .ProgressIndicator .ProgressText .ProgressLabel {
+  font-size: 11px;
+  color: #b4c9e0;
   font-weight: 500;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .ProgressIndicator .ProgressText .ProgressPercent {
+  font-size: 12px;
+  font-weight: 700;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight {
+  /* Integrated Lesson Nav Indicators */
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .HeaderLessonNav {
+  display: flex;
+  align-items: center;
+  border: 1px solid #3e4143;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .HeaderLessonNav .NavIconHeaderBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  color: #ffffff;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .HeaderLessonNav .NavIconHeaderBtn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .HeaderLessonNav .NavIconHeaderBtn:disabled {
+  color: #4e5153;
+  cursor: not-allowed;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .HeaderLessonNav .NavIconHeaderBtn:first-child {
+  border-right: 1px solid #3e4143;
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight {
+  /* Sidebar toggle style */
 }
 .LearningPlayerRoot .LearningHeader .HeaderRight .SidebarToggleBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  border: 1px solid #374151;
-  color: #9ca3af;
+  background-color: transparent;
+  border: 1px solid #3e4143;
+  color: #ffffff;
   width: 36px;
   height: 36px;
   border-radius: 6px;
   cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.2s, border-color 0.2s;
 }
 .LearningPlayerRoot .LearningHeader .HeaderRight .SidebarToggleBtn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .SidebarToggleBtn.Open {
+  border-color: var(--primaryColor, #874429);
+  background-color: rgba(135, 68, 41, 0.15);
+}
+.LearningPlayerRoot .LearningHeader .HeaderRight .HeaderMoreBtn {
+  background: transparent;
+  border: none;
   color: #ffffff;
-  border-color: #4b5563;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
 }
 .LearningPlayerRoot {
-  /* Main 2-Column Body */
+  /* ------------------------------------------------------------- */
+  /* Main Workspace Layout (Sidebar on Right, Player on Left)      */
+  /* ------------------------------------------------------------- */
 }
 .LearningPlayerRoot .PlayerBody {
   display: flex;
   flex: 1;
   overflow: hidden;
   position: relative;
+  height: calc(100vh - 56px);
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  background-color: #0b0f19;
-  /* Video Player Container */
+  background-color: #ffffff;
+  /* Video Container & Engine styling */
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer {
-  position: relative;
   width: 100%;
   background-color: #000000;
+  position: relative;
   aspect-ratio: 16/9;
   max-height: 70vh;
+  /* Media element (HTML5/HLS <video> or provider wrapper div).
+     Must fill the player viewport while preserving the source aspect
+     ratio (contain) — without this rule the <video> renders at its
+     intrinsic resolution, leaving black space around the content. */
 }
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .MediaElement {
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .EngineMediaElement {
   width: 100%;
   height: 100%;
-  -o-object-fit: contain;
-     object-fit: contain;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+  background-color: #000000;
   border: none;
+  /* SDK-created iframes (e.g. Vimeo appends a fixed-size iframe into
+     the wrapper) must fill the wrapper too. */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .EngineMediaElement iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer {
+  /* VideoEngine root styles */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Left and Right Overlay navigation chevrons exactly like Udemy */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .VideoSideChevron {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: rgba(135, 68, 41, 0.85); /* Primary-based semi-translucent styling */
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.2s ease, background-color 0.2s;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .VideoSideChevron:hover {
+  background-color: var(--primaryColor, #874429);
+  transform: translateY(-50%) scale(1.1);
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .VideoSideChevron.Left {
+  left: 16px;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .VideoSideChevron.Right {
+  right: 16px;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot {
+  /* Reveal chevrons on hover over the player area */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot:hover .VideoSideChevron {
+  opacity: 1;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot {
+  /* Custom controls bar styling overlay */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.3) 70%, rgba(0, 0, 0, 0));
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 25;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  /* Progress seekbar */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .SliderContainer {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .SliderContainer .SeekRangeInput {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.2);
+  accent-color: var(--primaryColor, #874429);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  border: none;
+  transition: height 0.15s ease;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .SliderContainer .SeekRangeInput:hover {
+  height: 6px;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar {
+  /* Controls row */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #ffffff;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  /* Individual button inside control bar */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup .ControlBtn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: color 0.2s, background-color 0.2s;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup .ControlBtn:hover {
+  color: var(--primaryColor, #874429);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup .ControlBtn.Rewind {
+  gap: 4px;
+  font-size: 16px;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup .ControlBtn.Rewind .RewindText {
+  font-size: 11px;
+  font-weight: 700;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup {
+  /* Speed select dial */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup .SpeedSelectorContainer {
+  display: flex;
+  align-items: center;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup .SpeedSelectorContainer .SpeedSelectorSelect {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup .SpeedSelectorContainer .SpeedSelectorSelect option {
+  background-color: #1c1d1f;
+  color: #ffffff;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup {
+  /* Time indicator */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup .ControlTimeDisplay {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #ffffff;
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup {
+  /* Volume group with slider */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup.Right .VolumeControlGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot .CustomControlsBar .ControlsActionsRow .ControlsGroup.Right .VolumeControlGroup .VolumeRangeInput {
+  width: 60px;
+  height: 4px;
+  accent-color: var(--primaryColor, #874429);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+  cursor: pointer;
+  outline: none;
+  border: none;
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot {
+  /* Show control bar when mouse hovers over player */
+}
+.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .VideoEngineRoot:hover .CustomControlsBar {
+  opacity: 1;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .LockedOverlay {
   position: absolute;
@@ -126,362 +428,1370 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(11, 15, 25, 0.95);
-  color: #f3f4f6;
+  background: #1c1d1f;
+  color: #ffffff;
   text-align: center;
   padding: 24px;
   z-index: 10;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .LockedOverlay .LockIcon {
-  font-size: 48px;
+  font-size: 40px;
   color: #ef4444;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .LockedOverlay h3 {
   font-size: 20px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 8px;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .LockedOverlay p {
-  font-size: 14px;
-  color: #9ca3af;
-  max-width: 420px;
+  font-size: 13.5px;
+  color: #d1d7dc;
+  max-width: 400px;
   margin-bottom: 20px;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .LockedOverlay .EnrollBtn {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: var(--primaryColor, #874429);
   color: #ffffff;
   border: none;
   padding: 10px 24px;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.2s;
+  transition: background-color 0.2s;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerContainer .LockedOverlay .EnrollBtn:hover {
-  opacity: 0.9;
+  background: #6d3620;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea {
-  /* Lesson Navigation Bar */
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .LessonNavigation {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px;
-  background-color: #111827;
-  border-bottom: 1px solid #1f2937;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .LessonNavigation .NavBtn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #1f2937;
-  color: #e5e7eb;
-  border: 1px solid #374151;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .LessonNavigation .NavBtn:hover:not(:disabled) {
-  background: #374151;
-  color: #ffffff;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .LessonNavigation .NavBtn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea {
-  /* Learning Tabs Area */
+  /* Tabs Area (Overview, Notes, Discussions...) */
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection {
-  padding: 24px;
-  flex: 1;
+  padding: 24px 32px;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabsNav {
   display: flex;
-  gap: 12px;
-  border-bottom: 1px solid #1f2937;
+  gap: 16px;
+  border-bottom: 1px solid #d1d7dc;
   margin-bottom: 24px;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabsNav .TabButton {
   background: transparent;
   border: none;
-  color: #9ca3af;
-  padding: 12px 16px;
-  font-size: 14px;
-  font-weight: 600;
+  color: #6a6f73;
+  padding: 12px 0;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
   border-bottom: 2px solid transparent;
-  transition: all 0.2s;
+  transition: color 0.2s, border-color 0.2s;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabsNav .TabButton:hover {
-  color: #f3f4f6;
+  color: #1c1d1f;
 }
 .LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabsNav .TabButton.Active {
-  color: #10b981;
-  border-bottom-color: #10b981;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent {
-  /* Overview Tab */
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .SectionBlock {
-  margin-bottom: 28px;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .SectionBlock h4 {
-  font-size: 16px;
-  font-weight: 600;
-  color: #f3f4f6;
-  margin-bottom: 10px;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .SectionBlock p {
-  font-size: 14px;
-  line-height: 1.6;
-  color: #9ca3af;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .SectionBlock .OutcomesList {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 12px;
-  padding: 0;
-  list-style: none;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .SectionBlock .OutcomesList li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 14px;
-  color: #d1d5db;
-  background: #111827;
-  padding: 10px 14px;
-  border-radius: 6px;
-  border: 1px solid #1f2937;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .SectionBlock .OutcomesList li .CheckIcon {
-  color: #10b981;
-  flex-shrink: 0;
-  margin-top: 3px;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .InstructorCard {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  background: #111827;
-  padding: 16px 20px;
-  border-radius: 8px;
-  border: 1px solid #1f2937;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .InstructorCard .Avatar {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .InstructorCard .Info h5 {
-  font-size: 15px;
-  font-weight: 600;
-  color: #f3f4f6;
-  margin: 0 0 4px 0;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .OverviewTab .InstructorCard .Info p {
-  font-size: 13px;
-  color: #9ca3af;
-  margin: 0;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent {
-  /* Resources Tab */
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .ResourcesTab .ResourceItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #111827;
-  padding: 14px 18px;
-  border-radius: 8px;
-  border: 1px solid #1f2937;
-  margin-bottom: 12px;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .ResourcesTab .ResourceItem .LeftInfo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .ResourcesTab .ResourceItem .LeftInfo .FileIcon {
-  font-size: 20px;
-  color: #10b981;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .ResourcesTab .ResourceItem .LeftInfo .FileName {
-  font-size: 14px;
-  font-weight: 500;
-  color: #e5e7eb;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .ResourcesTab .ResourceItem .DownloadBtn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #1f2937;
-  color: #10b981;
-  border: 1px solid #374151;
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.2s;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .ResourcesTab .ResourceItem .DownloadBtn:hover {
-  background: #10b981;
-  color: #ffffff;
-}
-.LearningPlayerRoot .PlayerBody .MainContentArea .PlayerTabsSection .TabContent .ResourcesTab .EmptyResources {
-  text-align: center;
-  padding: 40px 20px;
-  color: #6b7280;
-  font-size: 14px;
+  color: #1c1d1f;
+  border-bottom: 2px solid var(--primaryColor, #874429);
 }
 .LearningPlayerRoot .PlayerBody {
-  /* Course Sidebar */
+  /* ------------------------------------------------------------- */
+  /* Course Content Sidebar (Right Column)                         */
+  /* ------------------------------------------------------------- */
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar {
-  width: 360px;
-  background-color: #111827;
-  border-left: 1px solid #1f2937;
+  width: 350px;
+  background-color: #ffffff;
+  border-left: 1px solid #d1d7dc;
   display: flex;
   flex-direction: column;
-  transition: width 0.3s ease;
+  transition: width 0.2s ease, opacity 0.2s ease;
+  flex-shrink: 0;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar.Collapsed {
   width: 0;
-  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  border-left: none;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarHeader {
   padding: 16px 20px;
-  border-bottom: 1px solid #1f2937;
+  border-bottom: 1px solid #d1d7dc;
+  background-color: #ffffff;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarHeader h3 {
-  font-size: 15px;
-  font-weight: 600;
-  color: #f3f4f6;
-  margin: 0 0 4px 0;
-}
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarHeader p {
-  font-size: 12px;
-  color: #9ca3af;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c1d1f;
   margin: 0;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll {
   flex: 1;
   overflow-y: auto;
+  /* Accordion Chapter Styling */
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion {
-  border-bottom: 1px solid #1f2937;
+  border-bottom: 1px solid #d1d7dc;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .AccordionHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 14px 20px;
-  background: #111827;
+  padding: 16px 20px;
+  background: #f7f9fa;
   border: none;
-  color: #f3f4f6;
+  color: #1c1d1f;
   cursor: pointer;
-  text-align: left;
   transition: background 0.2s;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .AccordionHeader:hover {
-  background: #1f2937;
+  background: #ebedee;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .AccordionHeader .TitleText {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
 }
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .AccordionHeader .MetaText {
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .AccordionHeader .AccordionMeta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: 12px;
-  color: #9ca3af;
-  margin-left: 8px;
+  color: #6a6f73;
+  margin-top: 4px;
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .AccordionHeader .AccordionMeta .MetaSeparator {
+  color: #d1d7dc;
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .AccordionHeader .AccordionChevron {
+  font-size: 16px;
+  color: #1c1d1f;
+  display: flex;
+  align-items: center;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList {
-  background-color: #0b0f19;
+  background-color: #ffffff;
+  /* Lesson Listing item */
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 20px 12px 28px;
-  border-bottom: 1px solid #161e2e;
-  color: #9ca3af;
-  text-decoration: none;
-  font-size: 13px;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 20px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f1f5f9;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem:hover {
-  background: rgba(255, 255, 255, 0.03);
-  color: #e5e7eb;
+  background-color: #f7f9fa;
 }
 .LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem.Active {
-  background: rgba(255, 122, 26, 0.1) !important;
-  color: #ff7a1a !important;
-  font-weight: 600;
-  border-left: 3px solid #ff7a1a !important;
+  background-color: #ebedee !important;
 }
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .ItemLeft {
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem {
+  /* Squares checkbox indicator (Udemy style) */
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonCheckboxContainer {
+  padding-top: 2px;
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonCheckboxContainer .CustomCheckbox {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #1c1d1f;
+  border-radius: 2px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  transition: background-color 0.2s, border-color 0.2s;
 }
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .ItemLeft .TypeIcon {
-  font-size: 16px;
-  flex-shrink: 0;
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonCheckboxContainer .CustomCheckbox.Checked {
+  background-color: var(--primaryColor, #874429);
+  border-color: var(--primaryColor, #874429);
 }
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .ItemLeft .LessonTitle {
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonCheckboxContainer .CustomCheckbox .CheckMark {
+  color: #ffffff;
+  font-size: 11px;
+  stroke-width: 3px;
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem {
+  /* Info column */
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonInfoCol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonInfoCol .LessonTitle {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: #1c1d1f;
   line-height: 1.4;
 }
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .ItemRight {
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonInfoCol .LessonMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6a6f73;
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonInfoCol .LessonMetaRow .MetaIcon {
+  font-size: 12px;
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem {
+  /* Right resources / Lock indicators */
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonItemRight {
   display: flex;
   align-items: center;
   gap: 8px;
 }
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .ItemRight .Badge {
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .ItemRight .Badge.Preview {
-  background: rgba(255, 122, 26, 0.15);
-  color: #ff7a1a;
-}
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .ItemRight .Badge.Locked {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-}
-.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .ItemRight .Duration {
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonItemRight .LockIcon {
+  color: #6a6f73;
   font-size: 12px;
-  color: #6b7280;
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonItemRight .ResourcesPill {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: 1px solid #6a6f73;
+  color: #1c1d1f;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.LearningPlayerRoot .PlayerBody .LessonSidebar .SidebarScroll .ChapterAccordion .LessonList .LessonItem .LessonItemRight .ResourcesPill:hover {
+  background-color: rgba(28, 29, 31, 0.04);
 }
 
-/* Responsive Styles */
-@media (max-width: 992px) {
+/* Tab contents (Overview, Notes, etc.) */
+.OverviewTab {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.OverviewTab .CourseOverviewBanner {
+  border-bottom: 1px solid #d1d7dc;
+  padding-bottom: 20px;
+}
+.OverviewTab .CourseOverviewBanner h2 {
+  font-size: 22px;
+  font-weight: 800;
+  color: #1c1d1f;
+  margin: 0 0 10px 0;
+}
+.OverviewTab .CourseOverviewBanner p {
+  font-size: 15px;
+  color: #6a6f73;
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+.OverviewTab .CourseOverviewBanner .BannerMetaRow {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: 13.5px;
+  color: #1c1d1f;
+}
+.OverviewTab .CourseOverviewBanner .BannerMetaRow .InstructorMetaBlock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.OverviewTab .CourseOverviewBanner .BannerMetaRow .InstructorMetaBlock img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.OverviewTab .CourseOverviewBanner .BannerMetaRow .RatingMetaBlock {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #b4690e;
+  font-weight: 700;
+}
+.OverviewTab .CourseOverviewBanner .BannerMetaRow .RatingMetaBlock svg {
+  font-size: 16px;
+}
+.OverviewTab .CourseOverviewBanner .BannerMetaRow .RatingMetaBlock span.RatingCount {
+  color: #6a6f73;
+  font-weight: 400;
+}
+.OverviewTab .CourseOverviewBanner .BannerMetaRow .StudentsMetaBlock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #6a6f73;
+}
+.OverviewTab .CertificateStatusCard {
+  background-color: #ffffff;
+  border: 1px solid #d1d7dc;
+  border-radius: 6px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.OverviewTab .CertificateStatusCard.IsCompleted {
+  background-color: #fff7ed;
+  border: 1px solid rgba(135, 68, 41, 0.3);
+}
+.OverviewTab .CertificateStatusCard.IsCompleted .AwardIconWrapper {
+  background-color: var(--primaryColor, #874429);
+  color: #ffffff;
+}
+.OverviewTab .CertificateStatusCard .CardLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.OverviewTab .CertificateStatusCard .CardLeft .AwardIconWrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #f1f5f9;
+  color: #6a6f73;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.OverviewTab .CertificateStatusCard .CardLeft .TextWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.OverviewTab .CertificateStatusCard .CardLeft .TextWrapper .CardTitle {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1c1d1f;
+}
+.OverviewTab .CertificateStatusCard .CardLeft .TextWrapper .CardDesc {
+  font-size: 13px;
+  color: #6a6f73;
+}
+.OverviewTab .CertificateStatusCard .DownloadCertificateBtn,
+.OverviewTab .CertificateStatusCard button.ClaimCertificateBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 6px;
+  background-color: var(--primaryColor, #874429);
+  color: #ffffff;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+.OverviewTab .CertificateStatusCard .LockedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  background-color: "#f1f5f9";
+  color: "#6a6f73";
+}
+.OverviewTab .SectionBlock {
+  margin-bottom: 24px;
+}
+.OverviewTab .SectionBlock h4, .OverviewTab .SectionBlock h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1c1d1f;
+  margin-bottom: 8px;
+}
+.OverviewTab .SectionBlock p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #1c1d1f;
+  margin: 0;
+}
+.OverviewTab .SectionBlock ul {
+  padding-left: 24px;
+}
+.OverviewTab .SectionBlock ul li {
+  padding: 6px 0px;
+}
+.OverviewTab .SectionBlock .RichDescriptionText {
+  font-size: 14.5px;
+  color: #1c1d1f;
+  line-height: 1.6;
+}
+.OverviewTab {
+  /* Highlight outlines block card styling */
+}
+.OverviewTab .HighlightOutlineCard {
+  border: 1px solid #d1d7dc;
+  border-radius: 6px;
+  padding: 24px;
+  background-color: #ffffff;
+}
+.OverviewTab .HighlightOutlineCard h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #1c1d1f;
+  margin: 0 0 16px 0;
+}
+.OverviewTab .HighlightOutlineCard .OutcomeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+}
+.OverviewTab .HighlightOutlineCard .OutcomeGrid .OutcomeItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 14px;
+  color: #1c1d1f;
+  line-height: 1.4;
+}
+.OverviewTab .HighlightOutlineCard .OutcomeGrid .OutcomeItem svg {
+  color: var(--primaryColor, #874429);
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.OverviewTab .HighlightOutlineCard .OutlinesSub {
+  font-size: 13.5px;
+  color: #6a6f73;
+  margin: 0 0 16px 0;
+}
+.OverviewTab .HighlightOutlineCard .OutlinesList {
+  list-style: none;
+  padding-left: 0;
+  margin: 0 0 20px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.OverviewTab .HighlightOutlineCard .OutlinesList li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #1c1d1f;
+}
+.OverviewTab .HighlightOutlineCard .OutlinesList li svg {
+  color: var(--primaryColor, #874429);
+  flex-shrink: 0;
+}
+.OverviewTab .HighlightOutlineCard .ProductList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 16px;
+}
+.OverviewTab .HighlightOutlineCard .ProductList h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1c1d1f;
+  margin: 0 0 10px 0;
+}
+.OverviewTab .HighlightOutlineCard .ProductList .ProductItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  flex-wrap: wrap;
+}
+.OverviewTab .HighlightOutlineCard .ProductList .ProductItem .ProductLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.OverviewTab .HighlightOutlineCard .ProductList .ProductItem .ProductLeft img {
+  width: 48px;
+  height: 48px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 6px;
+}
+.OverviewTab .HighlightOutlineCard .ProductList .ProductItem .ProductLeft .ProductMeta h5 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1c1d1f;
+  margin: 0 0 4px 0;
+}
+.OverviewTab .HighlightOutlineCard .ProductList .ProductItem .ProductLeft .ProductMeta .ProductPrice {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--primaryColor, #874429);
+}
+.OverviewTab .HighlightOutlineCard .ProductList .ProductItem .ProductActions {
+  display: flex;
+  gap: 10px;
+}
+.OverviewTab .HighlightOutlineCard .ProductList .ProductItem .ProductActions .AddToCartBtn {
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 700;
+  border-radius: 6px;
+  border: 1px solid var(--primaryColor, #874429);
+  background-color: var(--primaryColor, #874429);
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s, color 0.2s;
+}
+.OverviewTab .HighlightOutlineCard .ProductList .ProductItem .ProductActions .AddToCartBtn.added {
+  background-color: transparent;
+  color: var(--primaryColor, #874429);
+}
+.OverviewTab .InstructorDetails .InstructorCard {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.OverviewTab .InstructorDetails .InstructorCard img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.OverviewTab .InstructorDetails .InstructorCard .InsMeta h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1c1d1f;
+  margin: 0 0 4px 0;
+}
+.OverviewTab .InstructorDetails .InstructorCard .InsMeta p {
+  font-size: 13px;
+  color: #6a6f73;
+  text-transform: capitalize;
+  margin: 0 0 8px 0;
+}
+.OverviewTab .InstructorDetails .InstructorCard .InsMeta .InstructorStatsRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12.5px;
+  color: #6a6f73;
+}
+.OverviewTab .InstructorDetails .InstructorCard .InsMeta .InstructorStatsRow .StatsRatings {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #b4690e;
+  font-weight: 600;
+}
+.OverviewTab .InstructorDetails .InstructorCard .InsMeta .InstructorStatsRow .StatsStudents {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.OverviewTab .InstructorDetails .Bio {
+  font-size: 14px;
+  color: #6a6f73;
+  line-height: 1.6;
+}
+.OverviewTab .ReviewsSection .ReviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.OverviewTab .ReviewsSection .ReviewsList .SingleReview {
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 16px;
+}
+.OverviewTab .ReviewsSection .ReviewsList .SingleReview .ReviewHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.OverviewTab .ReviewsSection .ReviewsList .SingleReview .ReviewHeader .ReviewerMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.OverviewTab .ReviewsSection .ReviewsList .SingleReview .ReviewHeader .ReviewerMeta .InitialsAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #ebedee;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+.OverviewTab .ReviewsSection .ReviewsList .SingleReview .ReviewHeader .ReviewerMeta .ReviewerName {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+.OverviewTab .ReviewsSection .ReviewsList .SingleReview .ReviewHeader .ReviewerMeta .ReviewTime {
+  font-size: 11px;
+  color: #6a6f73;
+}
+.OverviewTab .ReviewsSection .ReviewsList .SingleReview .ReviewHeader .ReviewStarsRow {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: #b4690e;
+  font-size: 13px;
+}
+.OverviewTab .ReviewsSection .ReviewsList .SingleReview .ReviewCommentText {
+  font-size: 13.5px;
+  color: #1c1d1f;
+  line-height: 1.5;
+  margin: 0;
+}
+.OverviewTab .SubmitReview {
+  border: 1px solid #d1d7dc;
+  border-radius: 6px;
+  padding: 24px;
+  background-color: #ffffff;
+}
+.OverviewTab .SubmitReview .SubmitReviewForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.OverviewTab .SubmitReview .SubmitReviewForm .FormRateRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+}
+.OverviewTab .SubmitReview .SubmitReviewForm .FormRateRow .StarsSelector {
+  display: flex;
+  gap: 4px;
+  color: #b4690e;
+  font-size: 18px;
+  cursor: pointer;
+}
+.OverviewTab .SubmitReview .SubmitReviewForm .ReviewTextarea {
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  outline: none;
+}
+.OverviewTab .SubmitReview .SubmitReviewForm .FormBottomRow {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.OverviewTab .SubmitReview .SubmitReviewForm .FormBottomRow button.SubmitReviewBtn {
+  background-color: var(--primaryColor, #874429);
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.OverviewTab .SubmitReview .SubmitReviewForm .FormBottomRow button.SubmitReviewBtn:hover {
+  background-color: #6d3620;
+}
+.OverviewTab {
+  /* Review workflow states (shared by Course Details & Player) */
+}
+.OverviewTab .ReviewHint {
+  font-size: 13.5px;
+  color: #6a6f73;
+  margin: 0;
+}
+.OverviewTab .ReviewLoginLink {
+  color: var(--primaryColor, #874429);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.OverviewTab .MyReviewText {
+  font-size: 14px;
+  color: #1c1d1f;
+  line-height: 1.6;
+  margin: 0;
+}
+.OverviewTab .ReviewStatusNote {
+  font-size: 12.5px;
+  color: #b4690e;
+  background-color: #fff7ed;
+  border: 1px solid rgba(135, 68, 41, 0.25);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 0;
+}
+.OverviewTab button.CancelBtn {
+  background: transparent;
+  border: 1px solid #6a6f73;
+  color: #1c1d1f;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.OverviewTab button.CancelBtn:hover {
+  background-color: rgba(28, 29, 31, 0.04);
+}
+
+/* Resources list tab view */
+.ResourcesTab .ResourceItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border: 1px solid #d1d7dc;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  background-color: #ffffff;
+}
+.ResourcesTab .ResourceItem .LeftInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ResourcesTab .ResourceItem .LeftInfo .FileIcon {
+  font-size: 20px;
+  color: #1c1d1f;
+}
+.ResourcesTab .ResourceItem .LeftInfo .FileName {
+  font-size: 14px;
+  font-weight: 600;
+}
+.ResourcesTab .ResourceItem .DownloadBtn {
+  background-color: transparent;
+  border: 1px solid #1c1d1f;
+  color: #1c1d1f;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+.ResourcesTab .ResourceItem .DownloadBtn:hover {
+  background-color: rgba(28, 29, 31, 0.04);
+}
+
+/* Questions & Discussion Q&A Board styles */
+.QuestionsDiscussionContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 8px 0;
+}
+.QuestionsDiscussionContainer .MainComposerBlock {
+  border: 1px solid #d1d7dc;
+  border-radius: 6px;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .ComposerHeader {
+  background-color: #f7f9fa;
+  padding: 10px 16px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .ComposerHeader .PromptText {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1c1d1f;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm {
+  display: flex;
+  flex-direction: column;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm .InputWrapper textarea {
+  width: 100%;
+  border: none;
+  padding: 14px;
+  font-size: 14px;
+  color: #1c1d1f;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm .ComposerControlBar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-top: 1px solid #f1f5f9;
+  background-color: #ffffff;
+  flex-wrap: wrap;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm .ComposerControlBar .TimestampCaptureBtn {
+  background-color: #f1f5f9;
+  color: #475569;
+  border: 1px solid #d1d7dc;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm .ComposerControlBar .TimestampCaptureBtn:hover {
+  background-color: #e2e8f0;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm .ComposerControlBar .TimestampBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: rgba(135, 68, 41, 0.08);
+  color: var(--primaryColor, #874429);
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm .ComposerControlBar .TimestampBadge .ClearBadgeBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--primaryColor, #874429);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm .ComposerControlBar .PostQuestionBtn {
+  margin-left: auto;
+  background-color: var(--primaryColor, #874429);
+  color: #ffffff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm .ComposerControlBar .PostQuestionBtn:hover {
+  background-color: #6d3620;
+}
+.QuestionsDiscussionContainer .MainComposerBlock .QuestionForm .ComposerControlBar .PostQuestionBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.QuestionsDiscussionContainer .SearchFilterHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.QuestionsDiscussionContainer .SearchFilterHeader .SearchBox {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  gap: 8px;
+}
+.QuestionsDiscussionContainer .SearchFilterHeader .SearchBox .Icon {
+  color: #64748b;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.QuestionsDiscussionContainer .SearchFilterHeader .SearchBox input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 13.5px;
+  color: #1e293b;
+  background: transparent;
+}
+.QuestionsDiscussionContainer .SearchFilterHeader .SearchBox .ClearSearchBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+.QuestionsDiscussionContainer .SearchFilterHeader .SearchBox .ClearSearchBtn:hover {
+  color: #1e293b;
+}
+.QuestionsDiscussionContainer .SearchFilterHeader .FilterDropdown {
+  display: flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background-color: #ffffff;
+  gap: 6px;
+}
+.QuestionsDiscussionContainer .SearchFilterHeader .FilterDropdown .Icon {
+  color: #64748b;
+  font-size: 15px;
+}
+.QuestionsDiscussionContainer .SearchFilterHeader .FilterDropdown select {
+  border: none;
+  outline: none;
+  font-size: 13.5px;
+  color: #1e293b;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 600;
+}
+.QuestionsDiscussionContainer .QuestionsFeed {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .FeedLoadingText {
+  text-align: center;
+  padding: 30px;
+  color: #6a6f73;
+  font-size: 13.5px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .EmptyStateBlock {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  border: 1px dashed #cbd5e1;
+  color: #64748b;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .EmptyStateBlock .EmptyIcon {
+  font-size: 36px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .EmptyStateBlock .TitleText {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .EmptyStateBlock .SubText {
+  font-size: 13px;
+  margin: 0;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 20px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: box-shadow 0.2s;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard.PinnedQuestion {
+  border-left: 4px solid var(--primaryColor, #874429);
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .AuthorBlock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .AuthorBlock .Avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--primaryColor, #874429);
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .AuthorBlock .Avatar.Instructor {
+  background-color: #0369a1;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .AuthorBlock .Avatar.MeAvatar {
+  background-color: #475569;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .AuthorBlock .AuthorMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .AuthorBlock .AuthorMeta .AuthorName {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1c1d1f;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .AuthorBlock .AuthorMeta .TimeLabel {
+  font-size: 11px;
+  color: #6a6f73;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .CardBadges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .CardBadges .Badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .CardBadges .Badge.PinnedBadge {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .CardBadges .Badge.SolvedBadge {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardHeader .CardBadges .Badge.InstructorBadge {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardBody .QuestionText {
+  font-size: 14.5px;
+  color: #1c1d1f;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-wrap;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardBody .VideoSeekCapsule {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #1c1d1f;
+  color: #ffffff;
+  border: none;
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardBody .VideoSeekCapsule:hover {
+  background-color: #000000;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  border-top: 1px solid #f1f5f9;
+  padding-top: 12px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions .ReactionChipsList {
+  display: flex;
+  gap: 6px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions .ReactionChipsList .ReactionChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+  background-color: #ffffff;
+  font-size: 12px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions .ReactionChipsList .ReactionChip:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions .ReactionChipsList .ReactionChip.active {
+  background-color: rgba(135, 68, 41, 0.08);
+  border-color: var(--primaryColor, #874429);
+  color: var(--primaryColor, #874429);
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions .RightActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions .RightActions .ModeratorActionBtn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 15px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions .RightActions .ModeratorActionBtn:hover.delete {
+  color: #ef4444;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions .RightActions .RepliesToggleBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: var(--primaryColor, #874429);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .CardFooterActions .RightActions .RepliesToggleBtn:hover {
+  text-decoration: underline;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard {
+  /* Nested inline replies listing styles */
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  margin: 12px -20px -20px -20px;
+  padding: 16px 20px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesHeader {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 12px 14px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard.InstructorReply {
+  border-color: rgba(3, 105, 161, 0.2);
+  background-color: #f0f9ff;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyHeader {
+  display: flex;
+  justify-content: space-between;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyHeader .AuthorBlock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyHeader .AuthorBlock .Avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--primaryColor, #874429);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyHeader .AuthorBlock .Avatar.Instructor {
+  background-color: #0369a1;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyHeader .AuthorBlock .Avatar.MeAvatar {
+  background-color: #475569;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyHeader .AuthorBlock .AuthorMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyHeader .AuthorBlock .AuthorMeta .AuthorName {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1c1d1f;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyHeader .AuthorBlock .AuthorMeta .InstructorBadge {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 1px 4px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 8.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyHeader .AuthorBlock .AuthorMeta .TimeLabel {
+  font-size: 10.5px;
+  color: #6a6f73;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .RepliesList .ReplyCard .ReplyBody p {
+  font-size: 13.5px;
+  color: #1c1d1f;
+  line-height: 1.5;
+  margin: 0;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .InlineReplyComposer {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 6px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .InlineReplyComposer .Avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #475569;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .InlineReplyComposer .ReplyInputWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border: 1px solid #cbd5e1;
+  border-radius: 18px;
+  background-color: #ffffff;
+  padding: 4px 12px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .InlineReplyComposer .ReplyInputWrapper textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: #1c1d1f;
+  resize: none;
+  font-family: inherit;
+  padding: 4px 0;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .InlineReplyComposer .ReplyInputWrapper .SendReplyBtn {
+  background: none;
+  border: none;
+  color: var(--primaryColor, #874429);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .QuestionCard .InlineRepliesContainer .InlineReplyComposer .ReplyInputWrapper .SendReplyBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .LoadEarlierQuestionsBtn {
+  background: none;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #1c1d1f;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 10px 16px;
+  margin: 10px auto 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+}
+.QuestionsDiscussionContainer .QuestionsFeed .LoadEarlierQuestionsBtn:hover {
+  background-color: rgba(28, 29, 31, 0.04);
+}
+
+/* Mobile responsive layout */
+@media (max-width: 768px) {
   .LearningPlayerRoot .PlayerBody {
     flex-direction: column;
+    height: auto;
+    overflow-y: auto;
   }
   .LearningPlayerRoot .PlayerBody .LessonSidebar {
-    position: fixed;
-    right: 0;
-    top: 64px;
-    bottom: 0;
-    width: 320px !important;
-    z-index: 40;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
-    background-color: #161b22;
-    border-left: 1px solid #21262d;
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #d1d7dc;
+    height: auto;
   }
+}
+/* ============================================================
+   Content Protection (Phase 3–5)
+   Client-side deterrents ONLY — not real security.
+   Applied inside the course player scope, never globally.
+   ============================================================ */
+.VideoEngineRoot img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+       user-select: none;
+}
+.VideoEngineRoot video, .VideoEngineRoot audio {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+       user-select: none;
+}
+
+.LearningPlayerRoot .ProtectedMediaArea,
+.LearningPlayerRoot .ResourcesTabContainer img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+       user-select: none;
+}
+.LearningPlayerRoot .VideoEngineRoot,
+.LearningPlayerRoot .EngineLoadingOverlay,
+.LearningPlayerRoot .AutoNextOverlay,
+.LearningPlayerRoot .ErrorOverlay {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+       user-select: none;
+}
+.LearningPlayerRoot .WatermarkOverlay {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+       user-select: none;
+  pointer-events: none;
 }/*# sourceMappingURL=learning-player.css.map */

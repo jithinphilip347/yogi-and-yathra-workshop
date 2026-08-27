@@ -1,55 +1,71 @@
 @charset "UTF-8";
-#LiveStreamFull {
+#LiveStreamFull,
+#DailyClassPlayer {
   position: relative;
   width: 100%;
   min-height: 100vh;
+  min-height: 100dvh;
   background: #ffffff;
   color: #111;
 }
-#LiveStreamFull .VideoSection {
+#LiveStreamFull .VideoSection,
+#DailyClassPlayer .VideoSection {
   /* Application-owned container: provides correct viewport for the iframe.
    * We use a fixed height approach so the iframe always gets a real pixel
    * height that Zoom's internal layout engine can measure.  The aspect-ratio
    * shorthand is kept as a soft hint; min/max-height are the real guards.
-   */
+   *
+   * 100dvh is preferred on mobile browsers where the address bar affects
+   * the visible viewport. 100vh is the fallback for older browsers. */
   width: 100%;
   position: relative;
   background: #000;
   overflow: hidden;
   /* 56.25% = 16:9 aspect ratio */
-  height: clamp(400px, 56.25vw, 72vh);
+  height: clamp(400px, 56.25vw, 78vh);
+  height: clamp(400px, 56.25vw, 78dvh);
 }
 @media (max-width: 1024px) {
-  #LiveStreamFull .VideoSection {
-    height: clamp(360px, 56.25vw, 65vh);
+  #LiveStreamFull .VideoSection,
+  #DailyClassPlayer .VideoSection {
+    height: clamp(360px, 56.25vw, 70vh);
+    height: clamp(360px, 56.25vw, 70dvh);
   }
 }
 @media (max-width: 768px) {
-  #LiveStreamFull .VideoSection {
-    height: clamp(280px, 56.25vw, 55vh);
+  #LiveStreamFull .VideoSection,
+  #DailyClassPlayer .VideoSection {
+    height: clamp(300px, 56.25vw, 60vh);
+    height: clamp(300px, 56.25vw, 60dvh);
   }
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .VideoSection {
-    height: clamp(210px, 56.25vw, 50vh);
+  #LiveStreamFull .VideoSection,
+  #DailyClassPlayer .VideoSection {
+    height: clamp(240px, 56.25vw, 55vh);
+    height: clamp(240px, 56.25vw, 55dvh);
   }
 }
-#LiveStreamFull .VideoSection {
+#LiveStreamFull .VideoSection,
+#DailyClassPlayer .VideoSection {
   /* VideoPlaceholder fills the VideoSection completely so the iframe
    * (and Zoom) receives an explicit pixel height, not a percentage of
    * an aspect-ratio-inferred height which can be unreliable. */
 }
-#LiveStreamFull .VideoSection .VideoPlaceholder {
+#LiveStreamFull .VideoSection .VideoPlaceholder,
+#DailyClassPlayer .VideoSection .VideoPlaceholder {
   position: absolute;
   inset: 0;
 }
-#LiveStreamFull .VideoSection .VideoPlaceholder iframe {
+#LiveStreamFull .VideoSection .VideoPlaceholder iframe,
+#DailyClassPlayer .VideoSection .VideoPlaceholder iframe {
   width: 100%;
   height: 100%;
   border: none;
   display: block;
 }
-#LiveStreamFull .VideoSection {
+#LiveStreamFull .VideoSection,
+#DailyClassPlayer .VideoSection {
   /* ─────────────────────────────────────────────────────────────────────
    * ZoomMeetingContainer — application-owned fullscreen target.
    *
@@ -64,65 +80,58 @@
    * CRITICAL: No descendant rules below — Zoom SDK owns everything inside.
    * ───────────────────────────────────────────────────────────────────── */
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer {
   position: absolute;
   inset: 0;
   background: #000;
   z-index: 5;
   /* Normal mode — hidden when meeting is not yet joined */
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer:not(.ZoomMeetingContainer--active) {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer:not(.ZoomMeetingContainer--active),
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer:not(.ZoomMeetingContainer--active) {
   pointer-events: none;
   opacity: 0;
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer {
-  /* ── Fullscreen mode (standard) ── */
+#LiveStreamFull .VideoSection .ZoomMeetingContainer,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer {
+  /* ── Fullscreen mode ──
+   * The standard :fullscreen pseudo-class covers all modern browsers
+   * (Chrome, Firefox, Safari 16.4+, Edge). Vendor-prefixed variants
+   * are no longer necessary and have been removed. */
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer:fullscreen {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer:fullscreen,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer:fullscreen {
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background: #000;
   margin: 0;
   padding: 0;
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer {
-  /* ── Fullscreen mode (webkit prefix for Safari) ── */
-}
-#LiveStreamFull .VideoSection .ZoomMeetingContainer:-webkit-full-screen {
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-  margin: 0;
-  padding: 0;
-}
-#LiveStreamFull .VideoSection .ZoomMeetingContainer {
-  /* ── Fullscreen mode (moz prefix for older Firefox) ── */
-}
-#LiveStreamFull .VideoSection .ZoomMeetingContainer:-moz-full-screen {
-  width: 100vw;
-  height: 100vh;
-  background: #000;
-  margin: 0;
-  padding: 0;
-}
-#LiveStreamFull .VideoSection .ZoomMeetingContainer {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer {
   /* The iframe fills the container in BOTH normal and fullscreen mode.
    * These styles apply ONLY to the iframe element itself — not its
    * document or any Zoom SDK internal element. */
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer .ZoomIframe {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer .ZoomIframe,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer .ZoomIframe {
   width: 100%;
   height: 100%;
   border: none;
   display: block;
   background: #000;
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer {
   /* Fit-screen toggle button — top-right corner of the meeting container.
    * Sits above the Zoom UI (z-index 9999) so it's always reachable.
-   * Uses the same frosted-glass style as the other overlay buttons. */
+   * Uses the same frosted-glass style as the other overlay buttons.
+   * Keyboard accessible via tabIndex and onKeyDown for ESC/Enter. */
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer .FitScreenBtn {
   position: absolute;
   top: 14px;
   right: 14px;
@@ -137,27 +146,37 @@
   border-radius: 8px;
   color: #fff;
   cursor: pointer;
-  -webkit-backdrop-filter: blur(6px);
   backdrop-filter: blur(6px);
   transition: background 0.2s, transform 0.15s;
   padding: 0;
+  outline: none;
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn svg {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn svg,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer .FitScreenBtn svg {
   font-size: 20px;
   display: block;
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn:hover {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn:hover,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer .FitScreenBtn:hover {
   background: rgba(255, 255, 255, 0.2);
   transform: scale(1.08);
 }
-#LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn:active {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn:active,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer .FitScreenBtn:active {
   transform: scale(0.96);
 }
-#LiveStreamFull .VideoSection {
+#LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn:focus-visible,
+#DailyClassPlayer .VideoSection .ZoomMeetingContainer .FitScreenBtn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+#LiveStreamFull .VideoSection,
+#DailyClassPlayer .VideoSection {
   /* Fullscreen escape hint — floats in top-right corner.
    * Fades out after 3 seconds via animation. */
 }
-#LiveStreamFull .VideoSection .FullscreenHint {
+#LiveStreamFull .VideoSection .FullscreenHint,
+#DailyClassPlayer .VideoSection .FullscreenHint {
   position: absolute;
   top: 16px;
   right: 16px;
@@ -169,11 +188,11 @@
   padding: 8px 14px;
   border-radius: 6px;
   pointer-events: none;
-  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   animation: hintFadeOut 4s ease forwards;
 }
-#LiveStreamFull .VideoSection .FullscreenHint kbd {
+#LiveStreamFull .VideoSection .FullscreenHint kbd,
+#DailyClassPlayer .VideoSection .FullscreenHint kbd {
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 3px;
@@ -192,7 +211,8 @@
     opacity: 0;
   }
 }
-#LiveStreamFull .VideoSection .BackBtnOverlay {
+#LiveStreamFull .VideoSection .BackBtnOverlay,
+#DailyClassPlayer .VideoSection .BackBtnOverlay {
   position: absolute;
   top: 20px;
   left: 20px;
@@ -207,17 +227,25 @@
   height: 44px;
   border-radius: 50%;
   cursor: pointer;
-  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   transition: background 0.2s;
+  outline: none;
 }
-#LiveStreamFull .VideoSection .BackBtnOverlay svg {
+#LiveStreamFull .VideoSection .BackBtnOverlay svg,
+#DailyClassPlayer .VideoSection .BackBtnOverlay svg {
   font-size: 24px;
 }
-#LiveStreamFull .VideoSection .BackBtnOverlay:hover {
+#LiveStreamFull .VideoSection .BackBtnOverlay:hover,
+#DailyClassPlayer .VideoSection .BackBtnOverlay:hover {
   background: rgba(0, 0, 0, 0.8);
 }
-#LiveStreamFull .VideoSection .FullscreenBtnOverlay {
+#LiveStreamFull .VideoSection .BackBtnOverlay:focus-visible,
+#DailyClassPlayer .VideoSection .BackBtnOverlay:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+#LiveStreamFull .VideoSection .FullscreenBtnOverlay,
+#DailyClassPlayer .VideoSection .FullscreenBtnOverlay {
   position: absolute;
   bottom: 20px;
   right: 20px;
@@ -232,17 +260,25 @@
   height: 44px;
   border-radius: 50%;
   cursor: pointer;
-  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   transition: background 0.2s;
+  outline: none;
 }
-#LiveStreamFull .VideoSection .FullscreenBtnOverlay svg {
+#LiveStreamFull .VideoSection .FullscreenBtnOverlay svg,
+#DailyClassPlayer .VideoSection .FullscreenBtnOverlay svg {
   font-size: 28px;
 }
-#LiveStreamFull .VideoSection .FullscreenBtnOverlay:hover {
+#LiveStreamFull .VideoSection .FullscreenBtnOverlay:hover,
+#DailyClassPlayer .VideoSection .FullscreenBtnOverlay:hover {
   background: rgba(0, 0, 0, 0.8);
 }
-#LiveStreamFull .StreamContainer {
+#LiveStreamFull .VideoSection .FullscreenBtnOverlay:focus-visible,
+#DailyClassPlayer .VideoSection .FullscreenBtnOverlay:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.8);
+  outline-offset: 2px;
+}
+#LiveStreamFull .StreamContainer,
+#DailyClassPlayer .StreamContainer {
   max-width: 1300px;
   margin: 0 auto;
   padding: 30px 4% 100px;
@@ -251,48 +287,57 @@
   background: #ffffff;
 }
 @media (max-width: 768px) {
-  #LiveStreamFull .StreamContainer {
+  #LiveStreamFull .StreamContainer,
+  #DailyClassPlayer .StreamContainer {
     padding: 20px 15px 80px;
   }
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .StreamContainer {
+  #LiveStreamFull .StreamContainer,
+  #DailyClassPlayer .StreamContainer {
     padding-bottom: 100px;
   }
 }
-#LiveStreamFull .StreamContainer .MainInfoRow {
+#LiveStreamFull .StreamContainer .MainInfoRow,
+#DailyClassPlayer .StreamContainer .MainInfoRow {
   display: flex;
   align-items: center;
   gap: 30px;
   flex-wrap: wrap;
 }
 @media (max-width: 768px) {
-  #LiveStreamFull .StreamContainer .MainInfoRow {
+  #LiveStreamFull .StreamContainer .MainInfoRow,
+  #DailyClassPlayer .StreamContainer .MainInfoRow {
     flex-direction: column;
     align-items: flex-start;
     gap: 20px;
   }
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoLeft {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoLeft,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoLeft {
   flex: 0 1 auto;
   min-width: 250px;
 }
 @media (max-width: 768px) {
-  #LiveStreamFull .StreamContainer .MainInfoRow .InfoLeft {
+  #LiveStreamFull .StreamContainer .MainInfoRow .InfoLeft,
+  #DailyClassPlayer .StreamContainer .MainInfoRow .InfoLeft {
     min-width: 100%;
   }
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoLeft .StreamTitle {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoLeft .StreamTitle,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoLeft .StreamTitle {
   font-size: 20px;
   font-weight: 800;
   color: #111;
   margin-bottom: 4px;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoLeft .StreamSubtitle {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoLeft .StreamSubtitle,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoLeft .StreamSubtitle {
   font-size: 14px;
   color: #555;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoMiddle {
   display: flex;
   align-items: center;
   gap: 15px;
@@ -301,12 +346,14 @@
   margin-right: auto;
 }
 @media (max-width: 1024px) {
-  #LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle {
+  #LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle,
+  #DailyClassPlayer .StreamContainer .MainInfoRow .InfoMiddle {
     padding: 0 15px;
   }
 }
 @media (max-width: 768px) {
-  #LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle {
+  #LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle,
+  #DailyClassPlayer .StreamContainer .MainInfoRow .InfoMiddle {
     width: 100%;
     padding: 15px 0;
     border-left: none;
@@ -315,79 +362,94 @@
     border-bottom: 1px solid #eaeaea;
   }
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorAvatar {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorAvatar,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoMiddle .InstructorAvatar {
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  object-fit: cover;
+  -o-object-fit: cover;
+     object-fit: cover;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .Name {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .Name,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .Name {
   font-size: 16px;
   font-weight: 700;
   color: #111;
   margin-bottom: 2px;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .InstructorMeta {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .InstructorMeta,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .InstructorMeta {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 13px;
   color: #666;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .InstructorMeta .Rating {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .InstructorMeta .Rating,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .InstructorMeta .Rating {
   display: flex;
   align-items: center;
   gap: 4px;
   color: #111;
   font-weight: 600;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .InstructorMeta .Rating .StarIcon {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .InstructorMeta .Rating .StarIcon,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoMiddle .InstructorDetails .InstructorMeta .Rating .StarIcon {
   color: #f59e0b;
   font-size: 14px;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight {
   display: flex;
   align-items: center;
   gap: 40px;
 }
 @media (max-width: 1024px) {
-  #LiveStreamFull .StreamContainer .MainInfoRow .InfoRight {
+  #LiveStreamFull .StreamContainer .MainInfoRow .InfoRight,
+  #DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight {
     gap: 20px;
   }
 }
 @media (max-width: 768px) {
-  #LiveStreamFull .StreamContainer .MainInfoRow .InfoRight {
+  #LiveStreamFull .StreamContainer .MainInfoRow .InfoRight,
+  #DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight {
     width: 100%;
     justify-content: space-between;
   }
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight .StatsGroup {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup {
+  #LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup,
+  #DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight .StatsGroup {
     width: 100%;
     justify-content: space-between;
   }
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup .StatItem {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup .StatItem,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight .StatsGroup .StatItem {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup .StatItem .StatValue {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup .StatItem .StatValue,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight .StatsGroup .StatItem .StatValue {
   font-size: 15px;
   font-weight: 700;
   color: #111;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup .StatItem .StatLabel {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .StatsGroup .StatItem .StatLabel,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight .StatsGroup .StatItem .StatLabel {
   font-size: 12px;
   text-transform: uppercase;
   color: #666;
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .LiveNowBadge {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .LiveNowBadge,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight .LiveNowBadge {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -396,18 +458,21 @@
   font-weight: 700;
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .LiveNowBadge {
+  #LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .LiveNowBadge,
+  #DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight .LiveNowBadge {
     display: none;
   }
 }
-#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .LiveNowBadge .LiveDot {
+#LiveStreamFull .StreamContainer .MainInfoRow .InfoRight .LiveNowBadge .LiveDot,
+#DailyClassPlayer .StreamContainer .MainInfoRow .InfoRight .LiveNowBadge .LiveDot {
   width: 8px;
   height: 8px;
   background: #dc2626;
   border-radius: 50%;
   animation: pulse 1.5s infinite;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 40px;
@@ -416,54 +481,64 @@
   padding-top: 40px;
 }
 @media (max-width: 1024px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid {
     grid-template-columns: 1fr;
     gap: 30px;
   }
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .SectionTitle {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .SectionTitle,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .SectionTitle {
   font-size: 20px;
   font-weight: 700;
   color: #111;
   margin-bottom: 20px;
 }
 @media (max-width: 420px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .SectionTitle {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .SectionTitle,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .SectionTitle {
     font-size: 18px;
   }
 }
 @media (max-width: 1024px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailsRight .AgendaSection {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailsRight .AgendaSection,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailsRight .AgendaSection {
     margin-bottom: 0;
   }
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection {
   margin-bottom: 40px;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .SectionText {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .SectionText,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .SectionText {
   font-size: 15px;
   line-height: 1.6;
   color: #444;
   margin-bottom: 20px;
 }
 @media (max-width: 420px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .SectionText {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .SectionText,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .SectionText {
     font-size: 14px;
   }
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -475,23 +550,28 @@
   font-weight: 500;
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill {
     justify-content: center;
     padding: 10px 5px;
     font-size: 13px;
     gap: 5px;
   }
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill .PillIcon {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill .PillIcon,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill .PillIcon {
   color: var(--primaryColor);
   font-size: 18px;
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill .PillIcon {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill .PillIcon,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .InfoPills .Pill .PillIcon {
     font-size: 16px;
   }
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .LearnList, #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .LearnList, #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .LearnList,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 15px;
@@ -499,38 +579,48 @@
   padding: 0;
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .LearnList, #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .LearnList, #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .LearnList,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList {
     grid-template-columns: 1fr;
   }
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .LearnList li, #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList li {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .LearnList li, #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList li,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .LearnList li,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList li {
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 14px;
   color: #444;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .LearnList li .CheckIcon, #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList li .CheckIcon {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .LearnList li .CheckIcon, #LiveStreamFull .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList li .CheckIcon,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .LearnList li .CheckIcon,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .DetailSection .FeaturesList li .CheckIcon {
   color: #10b981;
   font-size: 18px;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   margin-bottom: 40px;
 }
 @media (max-width: 768px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid {
     grid-template-columns: 1fr;
   }
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .FitBox {
   background: #f9fafb;
   padding: 24px;
   border-radius: 12px;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox .BoxTitle {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox .BoxTitle,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .FitBox .BoxTitle {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -539,12 +629,14 @@
   color: #111;
   margin-bottom: 16px;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox ul {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox ul,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .FitBox ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox ul li {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox ul li,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .FitBox ul li {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -552,43 +644,55 @@
   color: #555;
   margin-bottom: 12px;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox ul li:last-child {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .FitBox ul li:last-child,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .FitBox ul li:last-child {
   margin-bottom: 0;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .PerfectFor {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .PerfectFor,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .PerfectFor {
   border-left: 4px solid #10b981;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .PerfectFor .TitleIcon, #LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .PerfectFor .ListIcon {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .PerfectFor .TitleIcon, #LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .PerfectFor .ListIcon,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .PerfectFor .TitleIcon,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .PerfectFor .ListIcon {
   color: #10b981;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .NotFor {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .NotFor,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .NotFor {
   border-left: 4px solid #ef4444;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .NotFor .TitleIcon, #LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .NotFor .ListIcon {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .NotFor .TitleIcon, #LiveStreamFull .StreamContainer .StreamDetailsGrid .FitGrid .NotFor .ListIcon,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .NotFor .TitleIcon,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .FitGrid .NotFor .ListIcon {
   color: #ef4444;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .AgendaSection {
   background: #f9fafb;
   padding: 30px;
   border-radius: 12px;
   margin-bottom: 40px;
 }
 @media (max-width: 1024px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .AgendaSection {
     padding: 20px;
   }
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection {
+  #LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection,
+  #DailyClassPlayer .StreamContainer .StreamDetailsGrid .AgendaSection {
     padding: 15px;
   }
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem {
   display: flex;
   align-items: center;
   background: #fff;
@@ -598,23 +702,27 @@
   transition: all 0.2s ease;
   border-left: 3px solid transparent;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem:hover {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem:hover,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem:hover {
   border-left: 3px solid var(--primaryColor);
   transform: translateX(4px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem .AgendaTime {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem .AgendaTime,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem .AgendaTime {
   font-weight: 700;
   color: var(--primaryColor);
   min-width: 80px;
   font-size: 14px;
 }
-#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem .AgendaDesc {
+#LiveStreamFull .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem .AgendaDesc,
+#DailyClassPlayer .StreamContainer .StreamDetailsGrid .AgendaSection .SimpleAgendaList .SimpleAgendaItem .AgendaDesc {
   font-size: 14px;
   color: #444;
   font-weight: 500;
 }
-#LiveStreamFull .MobileLiveBar {
+#LiveStreamFull .MobileLiveBar,
+#DailyClassPlayer .MobileLiveBar {
   display: none;
   position: fixed;
   bottom: 0;
@@ -628,11 +736,13 @@
   align-items: center;
 }
 @media (max-width: 480px) {
-  #LiveStreamFull .MobileLiveBar {
+  #LiveStreamFull .MobileLiveBar,
+  #DailyClassPlayer .MobileLiveBar {
     display: flex;
   }
 }
-#LiveStreamFull .MobileLiveBar .MobileLiveBadge {
+#LiveStreamFull .MobileLiveBar .MobileLiveBadge,
+#DailyClassPlayer .MobileLiveBar .MobileLiveBadge {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -640,7 +750,8 @@
   font-size: 14px;
   font-weight: 700;
 }
-#LiveStreamFull .MobileLiveBar .MobileLiveBadge .LiveDot {
+#LiveStreamFull .MobileLiveBar .MobileLiveBadge .LiveDot,
+#DailyClassPlayer .MobileLiveBar .MobileLiveBadge .LiveDot {
   width: 8px;
   height: 8px;
   background: #dc2626;
@@ -658,4 +769,4 @@
   100% {
     box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
   }
-}
+}/*# sourceMappingURL=live-stream.css.map */

@@ -106,6 +106,50 @@
   font-weight: 700;
   color: var(--primaryColor);
 }
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .CountdownBlock {
+  background: #f8fafc;
+  padding: 14px 12px;
+  border-radius: 8px;
+  text-align: center;
+  margin: 12px 0 16px;
+  border: 1px solid #e2e8f0;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .CountdownBlock p {
+  margin: 0 0 10px 0;
+  font-weight: 600;
+  color: #64748b;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .CountdownBlock .CountdownGrid {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .CountdownBlock .CountdownGrid .TimeBox {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 8px 4px;
+  flex: 1;
+  min-width: 48px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .CountdownBlock .CountdownGrid .TimeBox .TimeVal {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primaryColor);
+  margin-bottom: 2px;
+  line-height: 1.1;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .CountdownBlock .CountdownGrid .TimeBox .TimeLabel {
+  font-size: 9px;
+  color: #94a3b8;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
 #DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .EnrollSidebarBtn {
   width: 100%;
   background: var(--primaryColor);
@@ -121,6 +165,11 @@
 }
 #DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .EnrollSidebarBtn:hover {
   opacity: 0.9;
+}
+#DailyLiveClassDetails .ContentLayout .RightColumn .StickySidebar .EnrollmentCard .EnrollSidebarBtn.EnterClassroomBtn {
+  margin-top: 10px;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
 }
 #DailyLiveClassDetails .HeroBanner {
   position: relative;
