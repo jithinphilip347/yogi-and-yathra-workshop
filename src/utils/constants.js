@@ -23,6 +23,7 @@ export const IMAGE_URL = envImageBase
 export const API_BASE_URL = `${IMAGE_URL}/api/v1/`;
 export const MEDIA_BASE_URL = `${IMAGE_URL}/storage/`;
 
+
 // Separate commerce/product backend — NOT the main LMS storage.
 export const PRODUCT_API_BASE_URL = "https://api.yogiandyathra.com/public/api/";
 export const PRODUCT_MEDIA_BASE_URL = "https://api.yogiandyathra.com/public";

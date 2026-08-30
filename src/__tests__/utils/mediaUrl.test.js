@@ -9,7 +9,7 @@ import { describe, it, expect } from "vitest";
 import { resolveMediaUrl, resolveProductMediaUrl } from "../../utils/mediaUrl";
 import { MEDIA_BASE_URL } from "../../utils/constants";
 
-// MEDIA_BASE_URL defaults to http://localhost:8000/storage/ when no env var
+// MEDIA_BASE_URL defaults to http://localhost:8001/storage/ when no env var
 // is present — the resolver tests assert against that configured base.
 const BASE = MEDIA_BASE_URL.replace(/\/+$/, "");
 

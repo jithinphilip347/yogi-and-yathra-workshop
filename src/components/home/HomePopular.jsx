@@ -75,6 +75,7 @@ const HomePopular = ({ categories }) => {
           >
             {(isLoading ? Array(6).fill({}) : courses).map((course, i) => (
               <SwiperSlide key={i}>
+                {console.log(course.thumbnail)}
                 <CourseCard
                   loading={isLoading}
                   image={

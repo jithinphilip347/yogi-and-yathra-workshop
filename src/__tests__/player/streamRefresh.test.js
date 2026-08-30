@@ -53,7 +53,7 @@ describe('shouldRefreshStream (bounded refresh budget)', () => {
 describe('extractUrlKey (media URL identity)', () => {
   it('treats different origins with the same path+search as the same media', () => {
     const a = extractUrlKey('http://localhost:3000/api/v1/video-stream/videos/a.mp4?user=1&expires=100&signature=x');
-    const b = extractUrlKey('http://localhost:8000/api/v1/video-stream/videos/a.mp4?user=1&expires=100&signature=x');
+    const b = extractUrlKey('http://localhost:8001/api/v1/video-stream/videos/a.mp4?user=1&expires=100&signature=x');
     expect(a).toBe(b);
   });
 

@@ -8,7 +8,7 @@
  *     before the error UI is shown (prevents infinite retry loops),
  *   - extractUrlKey(): canonical key for comparing media URLs. Two URLs are
  *     "the same media" when pathname + search match — the origin is ignored
- *     so dev-environment origin differences (localhost vs localhost:8000)
+ *     so dev-environment origin differences (localhost vs localhost:8001)
  *     never cause an unnecessary media reload, while a fresh signed URL
  *     (new signature/expiry in the query string) is detected as a real change
  *     and reloaded.

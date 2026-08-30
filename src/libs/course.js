@@ -1,37 +1,51 @@
 import { API_BASE_URL } from "@/utils/constants";
 
 const fetchLiveSections = async () => {
-  const res = await fetch(API_BASE_URL + "home/live-sections", {
-    method: "GET",
-    next: {
-      revalidate: 600,
-    },
-  });
-  console.log(res,API_BASE_URL + "home/live-sections")
-  const data = await res.json();
-  return data;
+  try {
+    const res = await fetch(API_BASE_URL + "home/live-sections", {
+      method: "GET",
+      next: {
+        revalidate: 600,
+      },
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.warn("fetchLiveSections failed (backend may be offline during build):", err.message);
+    return [];
+  }
 };
 
 const fetchDailyClasses = async () => {
-  const res = await fetch(API_BASE_URL + "home/daily-classes", {
-    method: "GET",
-    next: {
-      revalidate: 600,
-    },
-  });
-  const data = await res.json();
-  return data;
+  try {
+    const res = await fetch(API_BASE_URL + "home/daily-classes", {
+      method: "GET",
+      next: {
+        revalidate: 600,
+      },
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.warn("fetchDailyClasses failed (backend may be offline during build):", err.message);
+    return [];
+  }
 };
 
 const fetchCategories = async () => {
-  const res = await fetch(API_BASE_URL + "home/categories", {
-    method: "GET",
-    next: {
-      revalidate: 600,
-    },
-  });
-  const data = await res.json();
-  return data;
+  try {
+    const res = await fetch(API_BASE_URL + "home/categories", {
+      method: "GET",
+      next: {
+        revalidate: 600,
+      },
+    });
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.warn("fetchCategories failed (backend may be offline during build):", err.message);
+    return [];
+  }
 };
 
 const fetchCourseDetails = async (id) => {

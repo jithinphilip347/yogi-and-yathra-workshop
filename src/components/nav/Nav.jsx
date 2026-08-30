@@ -34,34 +34,7 @@ import useProfile from "@/hooks/useProfile";
 import useDebounce from "@/hooks/useDebounce";
 import useGlobalSearch from "@/hooks/useGlobalSearch";
 
-/**
- * Map a search result type to its route.
- */
-function getResultRoute(result) {
-  switch (result.type) {
-    case "course":
-      return `/course/${result.slug || ""}/${result.id}`;
-    case "live_section":
-      return `/live-section/${result.id}/${result.slug || ""}`;
-    case "daily_class":
-      return `/daily-class/${result.id}/${result.slug || ""}`;
-    default:
-      return "#";
-  }
-}
-
-function getTypeLabel(type) {
-  switch (type) {
-    case "course":
-      return "Course";
-    case "live_section":
-      return "Live Section";
-    case "daily_class":
-      return "Daily Class";
-    default:
-      return "";
-  }
-}
+import { getSearchResultRoute, getSearchResultTypeLabel } from "@/utils/searchNavigation";
 
 const Nav = () => {
   const { handleLogout } = useProfile();
@@ -201,7 +174,7 @@ const Nav = () => {
                             <div className="CourseDetails">
                               <div className="TypeAndCategory">
                                 <span className={`TypeBadge TypeBadge--${result.type}`}>
-                                  {getTypeLabel(result.type)}
+                                  {getSearchResultTypeLabel(result.type)}
                                 </span>
                                 {result.category_name && (
                                   <span className="CategoryTag">{result.category_name}</span>
