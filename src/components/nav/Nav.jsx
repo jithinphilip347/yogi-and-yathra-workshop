@@ -33,10 +33,14 @@ import { selectCartItemCount } from "@/features/commerce/selectors/commerceSelec
 import useProfile from "@/hooks/useProfile";
 import useDebounce from "@/hooks/useDebounce";
 import useGlobalSearch from "@/hooks/useGlobalSearch";
+import { useUnreadNotificationCount, useNotifications, useMarkNotificationRead } from "@/hooks/useNotifications";
+import useNotificationRealtime from "@/hooks/useNotificationRealtime";
+import { useRouter } from "next/navigation";
 
 import { getSearchResultRoute, getSearchResultTypeLabel } from "@/utils/searchNavigation";
 
 const Nav = () => {
+  const router = useRouter();
   const { handleLogout } = useProfile();
   const [openDropdown, setOpenDropdown] = useState(false);
   const [openNotification, setOpenNotification] = useState(false);
@@ -50,6 +54,28 @@ const Nav = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const itemCount = useSelector(selectCartItemCount);
+
+  // Activate WebSocket real-time subscription for in-app notifications
+  useNotificationRealtime();
+
+  // Real notification data
+  const { data: unreadCount = 0 } = useUnreadNotificationCount();
+  const { data: previewData, isLoading: isNotificationsLoading } = useNotifications({
+    page: 1,
+    per_page: 5,
+  });
+  const markReadMutation = useMarkNotificationRead();
+  const previewNotifications = previewData?.data || [];
+
+  const handlePreviewClick = (notif) => {
+    if (!notif.is_read) {
+      markReadMutation.mutate(notif.id);
+    }
+    setOpenNotification(false);
+    if (notif.action_url) {
+      router.push(notif.action_url);
+    }
+  };
 
   const [mounted, setMounted] = useState(false);
 
@@ -248,16 +274,47 @@ const Nav = () => {
                     setOpenNotification(!openNotification);
                     setOpenDropdown(false);
                   }}
+                  aria-label="Notifications"
                 >
                   <IoMdNotificationsOutline />
-                  <span className="notifBadge"></span>
+                  {mounted && isAuthenticated && unreadCount > 0 && (
+                    <span className="notifBadge"></span>
+                  )}
 
                   {openNotification && (
                     <div className="NotificationDropdown">
-                      <p className="notifItem">New course added </p>
-                      <p className="notifItem">50% Off on Yoga Course </p>
-                      <p className="notifItem">New updates available</p>
-                      <Link href="/notifications" className="viewAll">
+                      {!isAuthenticated ? (
+                        <p className="notifItem" style={{ color: "#94a3b8" }}>
+                          Please log in
+                        </p>
+                      ) : isNotificationsLoading ? (
+                        <p className="notifItem" style={{ color: "#94a3b8" }}>
+                          Loading...
+                        </p>
+                      ) : previewNotifications.length > 0 ? (
+                        previewNotifications.map((notif) => (
+                          <p
+                            key={notif.id}
+                            className={`notifItem ${notif.is_read ? "read" : "unread"}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePreviewClick(notif);
+                            }}
+                            title={notif.title}
+                          >
+                            {notif.title}
+                          </p>
+                        ))
+                      ) : (
+                        <p className="notifItem" style={{ color: "#94a3b8" }}>
+                          No notifications yet
+                        </p>
+                      )}
+                      <Link
+                        href="/notifications"
+                        className="viewAll"
+                        onClick={() => setOpenNotification(false)}
+                      >
                         View All
                       </Link>
                     </div>

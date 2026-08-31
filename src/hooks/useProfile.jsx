@@ -44,6 +44,7 @@ const useProfile = () => {
     playerSessionCache.clear();
     dispatch(logout())
     queryClient.invalidateQueries({ queryKey: ['profile'] });
+    queryClient.removeQueries({ queryKey: ['notifications'] });
     toast.success("Logout successfully");
     router.push('/');
   }
