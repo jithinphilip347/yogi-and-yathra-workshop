@@ -2,6 +2,7 @@ import useProfile from "@/hooks/useProfile";
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import NotificationPreferences from "./NotificationPreferences";
 
 const Settings = () => {
   const [showOldPass, setShowOldPass] = useState(false);
@@ -115,6 +116,8 @@ const Settings = () => {
           Update Password
         </button>
       </form>
+
+      <NotificationPreferences />
     </div>
   );
 };

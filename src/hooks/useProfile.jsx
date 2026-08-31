@@ -45,6 +45,7 @@ const useProfile = () => {
     dispatch(logout())
     queryClient.invalidateQueries({ queryKey: ['profile'] });
     queryClient.removeQueries({ queryKey: ['notifications'] });
+    queryClient.removeQueries({ queryKey: ['notification-preferences'] });
     toast.success("Logout successfully");
     router.push('/');
   }
