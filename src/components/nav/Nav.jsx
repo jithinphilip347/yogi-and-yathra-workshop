@@ -33,7 +33,8 @@ import { selectCartItemCount } from "@/features/commerce/selectors/commerceSelec
 import useProfile from "@/hooks/useProfile";
 import useDebounce from "@/hooks/useDebounce";
 import useGlobalSearch from "@/hooks/useGlobalSearch";
-import { useUnreadNotificationCount, useNotifications, useMarkNotificationRead } from "@/hooks/useNotifications";
+import NotificationPopover from "../notifications/NotificationPopover";
+import { useUnreadNotificationCount } from "@/hooks/useNotifications";
 import useNotificationRealtime from "@/hooks/useNotificationRealtime";
 import { useRouter } from "next/navigation";
 
@@ -58,24 +59,8 @@ const Nav = () => {
   // Activate WebSocket real-time subscription for in-app notifications
   useNotificationRealtime();
 
-  // Real notification data
+  // Real notification unread count for badge
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
-  const { data: previewData, isLoading: isNotificationsLoading } = useNotifications({
-    page: 1,
-    per_page: 5,
-  });
-  const markReadMutation = useMarkNotificationRead();
-  const previewNotifications = previewData?.data || [];
-
-  const handlePreviewClick = (notif) => {
-    if (!notif.is_read) {
-      markReadMutation.mutate(notif.id);
-    }
-    setOpenNotification(false);
-    if (notif.action_url) {
-      router.push(notif.action_url);
-    }
-  };
 
   const [mounted, setMounted] = useState(false);
 
@@ -274,51 +259,30 @@ const Nav = () => {
                     setOpenNotification(!openNotification);
                     setOpenDropdown(false);
                   }}
-                  aria-label="Notifications"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ""}`}
+                  aria-expanded={openNotification}
+                  aria-haspopup="dialog"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setOpenNotification(!openNotification);
+                      setOpenDropdown(false);
+                    }
+                  }}
                 >
                   <IoMdNotificationsOutline />
                   {mounted && isAuthenticated && unreadCount > 0 && (
-                    <span className="notifBadge"></span>
+                    <span className="notifBadge">
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
                   )}
 
-                  {openNotification && (
-                    <div className="NotificationDropdown">
-                      {!isAuthenticated ? (
-                        <p className="notifItem" style={{ color: "#94a3b8" }}>
-                          Please log in
-                        </p>
-                      ) : isNotificationsLoading ? (
-                        <p className="notifItem" style={{ color: "#94a3b8" }}>
-                          Loading...
-                        </p>
-                      ) : previewNotifications.length > 0 ? (
-                        previewNotifications.map((notif) => (
-                          <p
-                            key={notif.id}
-                            className={`notifItem ${notif.is_read ? "read" : "unread"}`}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handlePreviewClick(notif);
-                            }}
-                            title={notif.title}
-                          >
-                            {notif.title}
-                          </p>
-                        ))
-                      ) : (
-                        <p className="notifItem" style={{ color: "#94a3b8" }}>
-                          No notifications yet
-                        </p>
-                      )}
-                      <Link
-                        href="/notifications"
-                        className="viewAll"
-                        onClick={() => setOpenNotification(false)}
-                      >
-                        View All
-                      </Link>
-                    </div>
-                  )}
+                  <NotificationPopover
+                    isOpen={openNotification}
+                    onClose={() => setOpenNotification(false)}
+                  />
                 </div>
               </div>
               {mounted && !isAuthenticated && (
@@ -367,9 +331,9 @@ const Nav = () => {
                       <MdPerson /> Profile
                     </Link>
 
-                    <div className="DropItem borderBottom">
+                    <Link href="/notifications" className="DropItem borderBottom" onClick={() => setOpenDropdown(false)}>
                       <MdNotifications /> Notifications
-                    </div>
+                    </Link>
 
                     <div 
                       className="DropItem"

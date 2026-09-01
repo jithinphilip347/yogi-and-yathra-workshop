@@ -44,7 +44,15 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  const actionUrl = event.notification.data?.action_url || '/notifications';
+  const rawUrl = event.notification.data?.action_url || '/notifications';
+  let targetUrl = '/notifications';
+
+  try {
+    const parsed = new URL(rawUrl, self.location.origin);
+    targetUrl = parsed.href;
+  } catch (e) {
+    targetUrl = new URL('/notifications', self.location.origin).href;
+  }
 
   event.waitUntil(
     self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
@@ -52,7 +60,7 @@ self.addEventListener('notificationclick', (event) => {
       for (const client of windowClients) {
         if (client.url && 'focus' in client) {
           if ('navigate' in client) {
-            client.navigate(actionUrl);
+            client.navigate(targetUrl);
           }
           return client.focus();
         }
@@ -60,7 +68,7 @@ self.addEventListener('notificationclick', (event) => {
 
       // If no open client was found, open a new window
       if (self.clients.openWindow) {
-        return self.clients.openWindow(actionUrl);
+        return self.clients.openWindow(targetUrl);
       }
     })
   );

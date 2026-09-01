@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { FiClock, FiX, FiCheck, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiCheck, FiChevronLeft, FiChevronRight, FiBell, FiRefreshCw } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import Link from "next/link";
@@ -11,39 +11,9 @@ import {
   useMarkAllNotificationsRead,
   useDeleteNotification,
 } from "@/hooks/useNotifications";
-import { resolveMediaUrl } from "@/utils/mediaUrl";
-import defaultCourseImg from "@/assets/images/courseImg-1.webp";
+import { getSafeActionUrl } from "@/utils/notificationHelpers";
+import NotificationItem from "@/components/notifications/NotificationItem";
 import "@/assets/css/notification.css";
-
-const formatNotificationTime = (isoString) => {
-  if (!isoString) return { time: "", date: "" };
-  try {
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return { time: "", date: "" };
-
-    const time = d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const now = new Date();
-    const isToday =
-      d.getDate() === now.getDate() &&
-      d.getMonth() === now.getMonth() &&
-      d.getFullYear() === now.getFullYear();
-
-    const yesterday = new Date(now);
-    yesterday.setDate(now.getDate() - 1);
-    const isYesterday =
-      d.getDate() === yesterday.getDate() &&
-      d.getMonth() === yesterday.getMonth() &&
-      d.getFullYear() === yesterday.getFullYear();
-
-    let date = d.toLocaleDateString([], { month: "short", day: "numeric" });
-    if (isToday) date = "Today";
-    else if (isYesterday) date = "Yesterday";
-
-    return { time, date };
-  } catch {
-    return { time: "", date: "" };
-  }
-};
 
 const Notification = () => {
   const router = useRouter();
@@ -68,206 +38,140 @@ const Notification = () => {
   const notifications = notificationResponse?.data || [];
   const meta = notificationResponse?.meta || { current_page: 1, last_page: 1, total: 0 };
 
-  const handleCardClick = (notif) => {
+  const handleNotificationSelect = (notif) => {
     if (!notif.is_read) {
       markReadMutation.mutate(notif.id);
     }
-    if (notif.action_url) {
-      router.push(notif.action_url);
+    const targetUrl = getSafeActionUrl(notif.action_url);
+    if (targetUrl) {
+      router.push(targetUrl);
     }
   };
 
-  const handleMarkAsRead = (e, notif) => {
-    e.stopPropagation();
+  const handleMarkAsRead = (notif) => {
     if (!notif.is_read) {
       markReadMutation.mutate(notif.id);
     }
   };
 
-  const handleDelete = (e, notif) => {
-    e.stopPropagation();
+  const handleDelete = (notif) => {
     deleteMutation.mutate(notif.id);
   };
 
   const handleMarkAllAsRead = () => {
-    markAllReadMutation.mutate();
+    if (unreadCount > 0 && !markAllReadMutation.isPending) {
+      markAllReadMutation.mutate();
+    }
   };
 
   return (
     <div id="Notification">
       <div className="container">
-        {isAuthenticated && (
-          <div className="NotificationTopBar">
-            {unreadCount > 0 && (
-              <button
-                className="ActionBtn"
-                onClick={handleMarkAllAsRead}
-                disabled={markAllReadMutation.isPending}
-              >
-                <FiCheck className="Icon" /> Mark all as read
-              </button>
+        {/* Page Header */}
+        <div className="NotificationHeaderSection">
+          <div className="HeaderTitleWrapper">
+            <h1 className="PageHeading">Notifications</h1>
+            {isAuthenticated && unreadCount > 0 && (
+              <span className="UnreadPill">
+                {unreadCount > 99 ? "99+" : unreadCount} unread
+              </span>
             )}
           </div>
-        )}
 
+          {isAuthenticated && unreadCount > 0 && (
+            <button
+              type="button"
+              className="MarkAllBtn"
+              onClick={handleMarkAllAsRead}
+              disabled={markAllReadMutation.isPending}
+              title="Mark all notifications as read"
+              aria-label="Mark all notifications as read"
+            >
+              <FiCheck className="Icon" /> Mark all as read
+            </button>
+          )}
+        </div>
+
+        {/* Content Section */}
         <div className="NotificationList">
           {!isAuthenticated ? (
-            <div className="EmptyState">
+            <div className="NotificationStateBox empty">
+              <FiBell className="StateIcon" />
               <h3>Please Log In</h3>
-              <p>You need to be logged in to view your notifications.</p>
-              <div style={{ marginTop: "16px" }}>
-                <Link
-                  href="/auth/login"
-                  style={{
-                    padding: "8px 20px",
-                    background: "var(--primaryColor, #ff725e)",
-                    color: "#fff",
-                    borderRadius: "8px",
-                    textDecoration: "none",
-                    fontWeight: 600,
-                  }}
-                >
+              <p>You need to be logged in to view and manage your notifications.</p>
+              <div style={{ marginTop: "20px" }}>
+                <Link href="/auth/login" className="PrimaryActionBtn">
                   Log In
                 </Link>
               </div>
             </div>
           ) : isLoading ? (
-            <div className="EmptyState">
-              <h3>Loading notifications...</h3>
-              <p>Please wait a moment.</p>
+            <div className="NotificationLoadingList">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="SkeletonCard">
+                  <div className="SkeletonThumb"></div>
+                  <div className="SkeletonContent">
+                    <div className="SkeletonBar short"></div>
+                    <div className="SkeletonBar medium"></div>
+                    <div className="SkeletonBar long"></div>
+                  </div>
+                </div>
+              ))}
             </div>
           ) : isError ? (
-            <div className="EmptyState">
+            <div className="NotificationStateBox error">
+              <FiBell className="StateIcon" />
               <h3>Failed to load notifications</h3>
               <p>Something went wrong while retrieving your notifications.</p>
-              <div style={{ marginTop: "16px" }}>
+              <div style={{ marginTop: "20px" }}>
                 <button
+                  type="button"
                   onClick={() => refetch()}
-                  style={{
-                    padding: "8px 20px",
-                    background: "var(--primaryColor, #ff725e)",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontWeight: 600,
-                  }}
+                  className="PrimaryActionBtn"
                 >
-                  Retry
+                  <FiRefreshCw /> Retry
                 </button>
               </div>
             </div>
           ) : notifications.length > 0 ? (
             <>
               <div className="NotifItems">
-                {notifications.map((notif) => {
-                  const { time, date } = formatNotificationTime(notif.created_at);
-                  const imageUrl = resolveMediaUrl(
-                    notif.metadata?.thumbnail || notif.metadata?.image,
-                    defaultCourseImg.src
-                  );
-
-                  return (
-                    <div
-                      className={`NotifCard ${notif.is_read ? "read" : "unread"}`}
-                      key={notif.id}
-                      onClick={() => handleCardClick(notif)}
-                      style={{ cursor: notif.action_url ? "pointer" : "default" }}
-                    >
-                      <div className="CardLeft">
-                        <div className="ImageWrapper">
-                          <img src={imageUrl} alt={notif.title} />
-                        </div>
-                        <div className="NotifContent">
-                          <h5>{notif.title}</h5>
-                          <p>{notif.body}</p>
-                        </div>
-                      </div>
-
-                      <div className="CardRight">
-                        <div className="NotifDateTime">
-                          <span>{date}</span>
-                          {time && (
-                            <span className="Time">
-                              <FiClock /> {time}
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="CardActions">
-                          {!notif.is_read && (
-                            <button
-                              className="MarkReadBtn"
-                              onClick={(e) => handleMarkAsRead(e, notif)}
-                              title="Mark as read"
-                              aria-label="Mark as read"
-                            >
-                              <FiCheck />
-                            </button>
-                          )}
-                          <button
-                            className="DeleteBtn"
-                            onClick={(e) => handleDelete(e, notif)}
-                            title="Delete Notification"
-                            aria-label="Delete Notification"
-                          >
-                            <FiX />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                {notifications.map((notif) => (
+                  <NotificationItem
+                    key={notif.id}
+                    notification={notif}
+                    onSelect={handleNotificationSelect}
+                    onMarkRead={handleMarkAsRead}
+                    onDelete={handleDelete}
+                    compact={false}
+                    showActions={true}
+                  />
+                ))}
               </div>
 
+              {/* Server-side Pagination */}
               {meta.last_page > 1 && (
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: "12px",
-                    marginTop: "30px",
-                  }}
-                >
+                <div className="NotificationPagination">
                   <button
+                    type="button"
+                    className="PaginationBtn"
                     onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                     disabled={page <= 1}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      padding: "8px 16px",
-                      border: "1px solid #e2e8f0",
-                      background: page <= 1 ? "#f8fafc" : "#fff",
-                      color: page <= 1 ? "#94a3b8" : "#1e293b",
-                      borderRadius: "8px",
-                      cursor: page <= 1 ? "not-allowed" : "pointer",
-                      fontWeight: 500,
-                    }}
+                    aria-label="Previous Page"
                   >
                     <FiChevronLeft /> Previous
                   </button>
 
-                  <span style={{ fontSize: "14px", color: "#64748b" }}>
-                    Page {meta.current_page} of {meta.last_page}
+                  <span className="PaginationInfo">
+                    Page {meta.current_page} of {meta.last_page} ({meta.total} total)
                   </span>
 
                   <button
+                    type="button"
+                    className="PaginationBtn"
                     onClick={() => setPage((prev) => Math.min(prev + 1, meta.last_page))}
                     disabled={page >= meta.last_page}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
-                      padding: "8px 16px",
-                      border: "1px solid #e2e8f0",
-                      background: page >= meta.last_page ? "#f8fafc" : "#fff",
-                      color: page >= meta.last_page ? "#94a3b8" : "#1e293b",
-                      borderRadius: "8px",
-                      cursor: page >= meta.last_page ? "not-allowed" : "pointer",
-                      fontWeight: 500,
-                    }}
+                    aria-label="Next Page"
                   >
                     Next <FiChevronRight />
                   </button>
@@ -275,9 +179,10 @@ const Notification = () => {
               )}
             </>
           ) : (
-            <div className="EmptyState">
-              <h3>No notifications yet.</h3>
-              <p>You&apos;re all caught up!</p>
+            <div className="NotificationStateBox empty">
+              <FiBell className="StateIcon" />
+              <h3>No notifications yet</h3>
+              <p>You&apos;re completely caught up! We will notify you when exciting updates occur.</p>
             </div>
           )}
         </div>

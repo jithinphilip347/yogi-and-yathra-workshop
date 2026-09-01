@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import UserImg from "../../assets/images/user.webp";
 import Link from "next/link";
+import { useSelector } from "react-redux";
+import { useUnreadNotificationCount } from "@/hooks/useNotifications";
 import {
   MdClose,
   MdKeyboardArrowDown,
@@ -17,6 +19,13 @@ import Image from "next/image";
 
 const Sidnav = ({ isOpen, onClose }) => {
   const [isCourseOpen, setIsCourseOpen] = useState(false);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+  const { data: unreadCount = 0 } = useUnreadNotificationCount();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -24,6 +33,9 @@ const Sidnav = ({ isOpen, onClose }) => {
     } else {
       document.body.style.overflow = "unset";
     }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
   }, [isOpen]);
 
   const categories = [
@@ -55,8 +67,8 @@ const Sidnav = ({ isOpen, onClose }) => {
 
           <div className="UserNameDropIconBox">
             <div className="UserNameBox">
-              <p className="UserWelcome">Hi Welcome</p>
-              <p className="UserName">Achu Sivadasan</p>
+              <p className="UserWelcome">{isAuthenticated ? "Welcome back" : "Welcome"}</p>
+              <p className="UserName">{isAuthenticated ? user?.name || "User" : "Guest"}</p>
             </div>
           </div>
         </div>
@@ -127,8 +139,26 @@ const Sidnav = ({ isOpen, onClose }) => {
               </Link>
             </li>
             <li>
-              <Link href="/notifications" onClick={onClose}>
-                <IoMdNotificationsOutline /> Notifications
+              <Link href="/notifications" onClick={onClose} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <IoMdNotificationsOutline /> Notifications
+                </div>
+                {mounted && isAuthenticated && unreadCount > 0 && (
+                  <span
+                    style={{
+                      background: "var(--primaryColor, #ff725e)",
+                      color: "#fff",
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      padding: "2px 8px",
+                      borderRadius: "12px",
+                      minWidth: "20px",
+                      textAlign: "center",
+                    }}
+                  >
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </Link>
             </li>
           </ul>

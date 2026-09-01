@@ -1,4 +1,5 @@
 @import "daily-live-details.scss";
+@import "notification.scss";
 
 //navbar
 #Nav {
@@ -365,59 +366,265 @@
                 }
                 .NotificationIcon {
                     position: relative;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 22px;
+                    color: #000;
+                    transition: 0.3s;
+
+                    &:hover {
+                        color: var(--primaryColor);
+                    }
+
                     @media (max-width: 1024px) {
                         display: none;
                     }
+
                     .notifBadge {
                         position: absolute;
-                        top: 1px;
-                        right: 3px;
-                        background: red;
-                        color: #fff;
+                        top: -4px;
+                        right: -6px;
+                        background: var(--primaryColor, #ff725e);
+                        color: #ffffff;
                         font-size: 10px;
-                        width: 8px;
-                        height: 8px;
+                        font-weight: 700;
+                        min-width: 17px;
+                        height: 17px;
+                        border-radius: 10px;
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        border-radius: 50%;
+                        padding: 0 4px;
+                        line-height: 1;
                         pointer-events: none;
+                        box-shadow: 0 2px 5px rgba(255, 114, 94, 0.4);
                     }
                 }
-                .NotificationDropdown {
-                    position: absolute;
-                    top: 50px;
-                    right: -10px;
-                    width: 200px;
-                    background: #fff;
-                    border-radius: 10px;
-                    padding: 10px 0;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
-                    .notifItem {
-                        padding: 10px 14px;
-                        font-size: 14px;
-                        color: var(--textColor);
-                        cursor: pointer;
-                        transition: 0.3s;
-                        border-bottom: 1px solid #eee;
-                        font-family: myFont1;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        &:hover {
-                            background: rgba(0, 0, 0, 0.05);
+                .NotificationPopover {
+                    position: absolute;
+                    top: 48px;
+                    right: -10px;
+                    width: 380px;
+                    max-width: calc(100vw - 32px);
+                    background: #ffffff;
+                    border-radius: 16px;
+                    border: 1px solid #e2e8f0;
+                    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+                    z-index: 1100;
+                    overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
+                    cursor: default;
+                    text-align: left;
+                    animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+                    .PopoverHeader {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 14px 18px;
+                        border-bottom: 1px solid #f1f5f9;
+                        background: #ffffff;
+
+                        .HeaderTitleBox {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+
+                            h4 {
+                                font-size: 16px;
+                                font-weight: 700;
+                                color: #0f172a;
+                                margin: 0;
+                                font-family: var(--myFont1);
+                            }
+
+                            .UnreadCountPill {
+                                background: rgba(255, 114, 94, 0.12);
+                                color: var(--primaryColor, #ff725e);
+                                font-size: 11px;
+                                font-weight: 700;
+                                padding: 2px 8px;
+                                border-radius: 12px;
+                            }
+                        }
+
+                        .MarkAllBtn {
+                            display: flex;
+                            align-items: center;
+                            gap: 4px;
+                            background: transparent;
+                            border: none;
+                            color: #64748b;
+                            font-size: 12px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            transition: 0.2s;
+                            font-family: var(--myFont1);
+                            padding: 4px 8px;
+                            border-radius: 6px;
+
+                            &:hover {
+                                color: var(--primaryColor, #ff725e);
+                                background: #f8fafc;
+                            }
+
+                            &:disabled {
+                                opacity: 0.6;
+                                cursor: not-allowed;
+                            }
                         }
                     }
 
-                    .viewAll {
-                        display: block;
+                    .PopoverBody {
+                        max-height: 380px;
+                        min-height: 120px;
+                        overflow-y: auto;
+                        overscroll-behavior: contain;
+
+                        &::-webkit-scrollbar {
+                            width: 5px;
+                        }
+                        &::-webkit-scrollbar-track {
+                            background: transparent;
+                        }
+                        &::-webkit-scrollbar-thumb {
+                            background: #cbd5e1;
+                            border-radius: 4px;
+                        }
+
+                        .PopoverLoading {
+                            padding: 16px;
+                            display: flex;
+                            flex-direction: column;
+                            gap: 12px;
+
+                            .SkeletonItem {
+                                display: flex;
+                                flex-direction: column;
+                                gap: 8px;
+                                padding: 8px 0;
+
+                                .SkeletonLine {
+                                    height: 12px;
+                                    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+                                    background-size: 200% 100%;
+                                    animation: skeletonShimmer 1.5s infinite;
+                                    border-radius: 4px;
+
+                                    &.short {
+                                        width: 40%;
+                                        height: 10px;
+                                    }
+                                }
+                            }
+                        }
+
+                        .PopoverStateBox {
+                            padding: 32px 20px;
+                            text-align: center;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 8px;
+
+                            p {
+                                margin: 0;
+                                font-size: 14px;
+                                color: #64748b;
+                                font-weight: 500;
+                            }
+
+                            &.empty {
+                                .EmptyIcon {
+                                    font-size: 32px;
+                                    color: #cbd5e1;
+                                    margin-bottom: 4px;
+                                }
+                                .EmptyTitle {
+                                    font-size: 15px;
+                                    font-weight: 600;
+                                    color: #334155;
+                                }
+                                .EmptySubtitle {
+                                    font-size: 12px;
+                                    color: #94a3b8;
+                                }
+                            }
+
+                            .RetryBtn {
+                                display: flex;
+                                align-items: center;
+                                gap: 6px;
+                                margin-top: 6px;
+                                padding: 6px 14px;
+                                background: var(--primaryColor, #ff725e);
+                                color: #ffffff;
+                                border: none;
+                                border-radius: 6px;
+                                font-size: 12px;
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: 0.2s;
+
+                                &:hover {
+                                    opacity: 0.9;
+                                }
+                            }
+                        }
+
+                        .PopoverList {
+                            display: flex;
+                            flex-direction: column;
+                        }
+                    }
+
+                    .PopoverFooter {
+                        padding: 12px 18px;
+                        border-top: 1px solid #f1f5f9;
+                        background: #f8fafc;
                         text-align: center;
-                        padding: 10px 14px;
-                        font-size: 14px;
-                        color: var(--primaryColor);
-                        text-decoration: none;
-                        font-weight: 600;
+
+                        .ViewAllLink {
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 4px;
+                            color: var(--primaryColor, #ff725e);
+                            font-size: 13px;
+                            font-weight: 600;
+                            text-decoration: none;
+                            transition: 0.2s;
+
+                            &:hover {
+                                text-decoration: underline;
+                                gap: 6px;
+                            }
+                        }
+                    }
+                }
+
+                @keyframes popoverFadeIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(-6px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                @keyframes skeletonShimmer {
+                    0% {
+                        background-position: 200% 0;
+                    }
+                    100% {
+                        background-position: -200% 0;
                     }
                 }
             }

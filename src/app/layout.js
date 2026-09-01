@@ -1,5 +1,6 @@
 import "../assets/css/main.css";
 import "../assets/css/style.css";
+import "../assets/css/notification.css";
 import ClientLayout from "./ClientLayout";
 
 export const metadata = {

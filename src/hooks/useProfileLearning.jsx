@@ -169,45 +169,114 @@ export const useProfileLearning = () => {
 
   const liveClasses = rawDailyClasses.length > 0 ? rawDailyClasses : publicDailyClasses;
 
+  const formatLiveSessionItem = (item, isEnrollment = true) => {
+    const session = item.enrollable || item;
+
+    // Resolve instructor name
+    const instructorName =
+      session.instructor?.name ||
+      session.instructor_name ||
+      (typeof session.instructor === "string" ? session.instructor : null) ||
+      "Yogify Instructor";
+
+    // Format date: Prefer human_date ("01 Sep 2026"), human_start_date, then formatted date
+    let displayDate = session.human_date || session.human_start_date || "";
+    if (!displayDate && session.date) {
+      try {
+        const parsed = new Date(session.date);
+        if (!isNaN(parsed.getTime())) {
+          displayDate = parsed.toLocaleDateString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        } else {
+          displayDate = session.date;
+        }
+      } catch (_) {
+        displayDate = session.date;
+      }
+    }
+
+    // Format time: Prefer human_start_time ("02:30 PM"), human_class_time, start_time, or time
+    let displayTime = session.human_start_time || session.human_class_time || "";
+    if (!displayTime && session.start_time) {
+      try {
+        const [hours, mins] = session.start_time.split(":");
+        const h = parseInt(hours, 10);
+        const ampm = h >= 12 ? "PM" : "AM";
+        const h12 = h % 12 || 12;
+        const formattedH = h12 < 10 ? `0${h12}` : `${h12}`;
+        displayTime = `${formattedH}:${mins} ${ampm}`;
+      } catch (_) {
+        displayTime = session.start_time;
+      }
+    }
+    if (!displayTime && session.time) {
+      displayTime = session.time;
+    }
+    if (!displayTime) {
+      displayTime = "Scheduled";
+    }
+
+    // Dynamic countdown / relative label
+    let countdownText = "";
+    if (session.date) {
+      const timePart = session.start_time
+        ? session.start_time.length === 5
+          ? `${session.start_time}:00`
+          : session.start_time
+        : "00:00:00";
+      const sessionDate = new Date(`${session.date}T${timePart}`);
+      if (!isNaN(sessionDate.getTime())) {
+        const now = new Date();
+        const diffMs = sessionDate - now;
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+        if (diffMs > 0 && diffHours < 1) {
+          countdownText = "Starts in < 1 hour";
+        } else if (diffDays === 0) {
+          countdownText = "Starts today";
+        } else if (diffDays === 1) {
+          countdownText = "Starts tomorrow";
+        } else if (diffDays > 1) {
+          countdownText = `Starts in ${diffDays} days`;
+        }
+      }
+    }
+
+    return {
+      id: session.id || item.id,
+      enrollment_id: isEnrollment ? item.id : null,
+      title: session.title,
+      slug: session.slug || "live-session",
+      instructor: instructorName,
+      instructor_img: session.instructor?.avatar_url || session.instructor?.avatar || null,
+      date: displayDate,
+      time: displayTime,
+      duration: session.duration ? `${session.duration} Min` : "",
+      category: session.category?.name || (typeof session.category === "string" ? session.category : "Yoga"),
+      status: (isEnrollment ? item.status : null) || session.status || "upcoming",
+      countdown: countdownText,
+      image: session.thumbnail || session.banner_image || session.image || null,
+      meeting_link: `/live-stream/${session.id}/${session.slug || "live-session"}`,
+    };
+  };
+
   // Parse Live Sessions
   const rawLiveSessions = rawEnrollments
     .filter(
       (item) =>
         item.enrollable_type?.includes("LiveSection") ||
         item.product_type === "LiveSection" ||
-        item.product_type === "live_section"
+        item.product_type === "live_section" ||
+        item.product_type === "Live Section"
     )
-    .map((item) => {
-      const session = item.enrollable || item;
-      return {
-        id: session.id || item.id,
-        title: session.title,
-        instructor: session.instructor?.name || "Sarah Jenkins",
-        date: session.date || "25 Oct 2026",
-        time: session.time || "07:00 AM - 08:30 AM",
-        duration: session.duration || "90 Min",
-        category: session.category?.name || "Yoga",
-        status: item.status || session.status || "upcoming",
-        countdown: "Upcoming • Scheduled",
-        image: session.image || session.thumbnail || null,
-        meeting_link: `/live-stream/${session.id}/${session.slug || 'live-session'}`,
-      };
-    });
+    .map((item) => formatLiveSessionItem(item, true));
 
   const publicLiveSessions = Array.isArray(liveSectionsQuery.data)
-    ? liveSectionsQuery.data.map((session) => ({
-        id: session.id,
-        title: session.title,
-        instructor: session.instructor?.name || "Sarah Jenkins",
-        date: session.date || "25 Oct 2026",
-        time: session.time || "07:00 AM - 08:30 AM",
-        duration: session.duration || "90 Min",
-        category: session.category?.name || "Yoga",
-        status: session.status || "upcoming",
-        countdown: "Upcoming • Scheduled",
-        image: session.image || session.thumbnail || null,
-        meeting_link: `/live-stream/${session.id}/${session.slug || 'live-session'}`,
-      }))
+    ? liveSectionsQuery.data.map((session) => formatLiveSessionItem(session, false))
     : [];
 
   const liveSessions = rawLiveSessions.length > 0 ? rawLiveSessions : publicLiveSessions;

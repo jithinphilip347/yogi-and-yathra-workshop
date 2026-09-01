@@ -135,7 +135,7 @@ const LiveYoga = ({ sessionsData = [] }) => {
                       <div className="DropdownMenu">
                         {['upcoming', 'ready'].includes(session.status) && (
                           <>
-                            <Link href="/live-yoga-class">
+                            <Link href={`/live-stream/${session.id}/${session.slug || 'live-session'}`}>
                               <button>View Details</button>
                             </Link>
                             <button>Download Invoice</button>

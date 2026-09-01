@@ -773,6 +773,591 @@
   border-top: 1px solid #eee;
 }
 
+/* ==========================================================================
+   Notification System Styles (Shared NotificationItem, Center Page & Popover)
+   ========================================================================== */
+/* --------------------------------------------------------------------------
+   NotificationItem (Shared Component)
+   -------------------------------------------------------------------------- */
+.NotificationItem {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  transition: all 0.2s ease-in-out;
+  outline: none;
+  font-family: var(--myFont1, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  text-align: left;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+.NotificationItem * {
+  box-sizing: border-box;
+}
+
+.NotificationItem:focus-visible {
+  box-shadow: 0 0 0 2px var(--primaryColor, #ff725e);
+}
+
+.NotificationItem.is-clickable {
+  cursor: pointer;
+}
+
+.NotificationItem__unreadIndicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 3px;
+  background: var(--primaryColor, #ff725e);
+  border-radius: 4px 0 0 4px;
+}
+
+/* Compact Mode (for Navbar Popovers) */
+.NotificationItem--compact {
+  padding: 12px 16px;
+  gap: 12px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
+  width: 100%;
+}
+
+.NotificationItem--compact:hover {
+  background: #f8fafc;
+}
+
+.NotificationItem--compact.is-unread {
+  background: #fffcfb;
+}
+
+.NotificationItem--compact.is-unread .NotificationItem__title {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.NotificationItem--compact .NotificationItem__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.NotificationItem--compact .NotificationItem__metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.NotificationItem--compact .NotificationItem__title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 3px 0;
+  line-height: 1.35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.NotificationItem--compact .NotificationItem__body {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.NotificationItem--compact .NotificationItem__timestamp {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.NotificationItem--compact .NotificationItem__unreadDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--primaryColor, #ff725e);
+  display: inline-block;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+/* Card Mode (for Full Notification Center Page) */
+.NotificationItem--card {
+  padding: 16px 20px;
+  gap: 16px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  width: 100%;
+}
+
+.NotificationItem--card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transform: translateY(-1px);
+}
+
+.NotificationItem--card.is-unread {
+  background: #ffffff;
+  border-color: #fed7aa;
+  box-shadow: 0 2px 8px rgba(255, 114, 94, 0.08);
+}
+
+.NotificationItem--card.is-unread .NotificationItem__title {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.NotificationItem--card.is-read {
+  background: #fafafa;
+  opacity: 0.92;
+}
+
+.NotificationItem--card .NotificationItem__media {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.NotificationItem--card .NotificationItem__media .NotificationItem__thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.NotificationItem--card .NotificationItem__media .NotificationItem__iconBadge {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  font-size: 20px;
+}
+
+.NotificationItem--card .NotificationItem__media .NotificationItem__iconBadge.iconBadge--live {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.NotificationItem--card .NotificationItem__media .NotificationItem__iconBadge.iconBadge--daily {
+  background: #e0e7ff;
+  color: #6366f1;
+}
+
+.NotificationItem--card .NotificationItem__media .NotificationItem__iconBadge.iconBadge--course {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.NotificationItem--card .NotificationItem__media .NotificationItem__iconBadge.iconBadge--payment {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.NotificationItem--card .NotificationItem__media .NotificationItem__iconBadge.iconBadge--certificate {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+.NotificationItem--card .NotificationItem__media .NotificationItem__iconBadge.iconBadge--general {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.NotificationItem--card .NotificationItem__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.NotificationItem--card .NotificationItem__metaRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.NotificationItem--card .NotificationItem__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+  line-height: 1.4;
+}
+
+.NotificationItem--card .NotificationItem__body {
+  font-size: 13.5px;
+  color: #475569;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.NotificationItem--card .NotificationItem__timestamp {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.NotificationItem--card .NotificationItem__timestamp .NotificationItem__timeDetail {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.NotificationItem--card .NotificationItem__actions {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  margin-left: 12px;
+}
+
+.NotificationItem--card .NotificationItem__actions .NotificationItem__btnGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.NotificationItem--card .NotificationItem__actions .NotificationItem__actionBtn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.NotificationItem--card .NotificationItem__actions .NotificationItem__actionBtn--read {
+  color: #2563eb;
+}
+
+.NotificationItem--card .NotificationItem__actions .NotificationItem__actionBtn--read:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.NotificationItem--card .NotificationItem__actions .NotificationItem__actionBtn--delete {
+  color: #94a3b8;
+}
+
+.NotificationItem--card .NotificationItem__actions .NotificationItem__actionBtn--delete:hover {
+  color: #ef4444;
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+@media (max-width: 640px) {
+  .NotificationItem--card {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .NotificationItem--card .NotificationItem__actions {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+}
+/* Shared Category Tags */
+.NotificationItem__categoryTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  line-height: 1.3;
+}
+
+.NotificationItem__categoryTag .CategoryIcon {
+  font-size: 12px;
+}
+
+.NotificationItem__categoryTag.tag--live {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.NotificationItem__categoryTag.tag--daily {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.NotificationItem__categoryTag.tag--course {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.NotificationItem__categoryTag.tag--payment {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.NotificationItem__categoryTag.tag--certificate {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.NotificationItem__categoryTag.tag--general {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* --------------------------------------------------------------------------
+   Notification Center Page Layout
+   -------------------------------------------------------------------------- */
+#Notification {
+  padding: 50px 0 80px 0;
+  background: #f8fafc;
+  min-height: calc(100vh - 80px);
+  font-family: var(--myFont1, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+}
+
+@media (max-width: 768px) {
+  #Notification {
+    padding: 30px 0 60px 0;
+  }
+}
+#Notification .container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+#Notification .NotificationHeaderSection {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+#Notification .NotificationHeaderSection .HeaderTitleWrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#Notification .NotificationHeaderSection .HeaderTitleWrapper .PageHeading {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.2;
+}
+
+@media (max-width: 640px) {
+  #Notification .NotificationHeaderSection .HeaderTitleWrapper .PageHeading {
+    font-size: 22px;
+  }
+}
+#Notification .NotificationHeaderSection .HeaderTitleWrapper .UnreadPill {
+  background: rgba(255, 114, 94, 0.12);
+  color: var(--primaryColor, #ff725e);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+#Notification .NotificationHeaderSection .MarkAllBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#Notification .NotificationHeaderSection .MarkAllBtn:hover {
+  color: var(--primaryColor, #ff725e);
+  border-color: var(--primaryColor, #ff725e);
+  background: #fffcfb;
+}
+
+#Notification .NotificationHeaderSection .MarkAllBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+#Notification .NotificationList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Loading State */
+#Notification .NotificationLoadingList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#Notification .NotificationLoadingList .SkeletonCard {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+#Notification .NotificationLoadingList .SkeletonCard .SkeletonThumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+#Notification .NotificationLoadingList .SkeletonCard .SkeletonContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#Notification .NotificationLoadingList .SkeletonCard .SkeletonContent .SkeletonBar {
+  height: 12px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+}
+
+#Notification .NotificationLoadingList .SkeletonCard .SkeletonContent .SkeletonBar.short {
+  width: 30%;
+  height: 10px;
+}
+
+#Notification .NotificationLoadingList .SkeletonCard .SkeletonContent .SkeletonBar.medium {
+  width: 60%;
+}
+
+#Notification .NotificationLoadingList .SkeletonCard .SkeletonContent .SkeletonBar.long {
+  width: 90%;
+}
+
+/* Empty / Error / Login State Box */
+#Notification .NotificationStateBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+#Notification .NotificationStateBox .StateIcon {
+  font-size: 40px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+#Notification .NotificationStateBox h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+#Notification .NotificationStateBox p {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0;
+  max-width: 420px;
+  line-height: 1.5;
+}
+
+#Notification .NotificationStateBox .PrimaryActionBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 24px;
+  background: var(--primaryColor, #ff725e);
+  color: #ffffff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+#Notification .NotificationStateBox .PrimaryActionBtn:hover {
+  opacity: 0.9;
+}
+
+/* Pagination */
+#Notification .NotificationPagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+#Notification .NotificationPagination .PaginationBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #1e293b;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#Notification .NotificationPagination .PaginationBtn:hover:not(:disabled) {
+  border-color: var(--primaryColor, #ff725e);
+  color: var(--primaryColor, #ff725e);
+  background: #fffcfb;
+}
+
+#Notification .NotificationPagination .PaginationBtn:disabled {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border-color: #e2e8f0;
+  cursor: not-allowed;
+}
+
+#Notification .NotificationPagination .PaginationInfo {
+  font-size: 13.5px;
+  color: #64748b;
+  font-weight: 500;
+}
+
 #Nav {
   width: 100%;
   height: 80px;
@@ -815,8 +1400,7 @@
 #Nav .NavMain .LogoBox .NavLogo .logoImg {
   width: 100%;
   height: 100%;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 #Nav .NavMain .NavSearchContainer {
   position: relative;
@@ -854,36 +1438,32 @@
 }
 #Nav .NavMain .NavSearchContainer .SearchDropdown {
   position: absolute;
-  top: calc(100% + 10px);
+  top: 100%;
   left: 0;
   width: 100%;
-  min-width: 460px;
-  max-height: 480px;
-  overflow-y: auto;
-  background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
-  border: 1px solid #eef2f6;
-  padding: 12px;
+  background: #fff;
+  margin-top: 10px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  padding: 15px 0;
   z-index: 10000;
 }
 #Nav .NavMain .NavSearchContainer .SearchDropdown .SuggestionSection {
-  padding-bottom: 8px;
-  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
 }
 #Nav .NavMain .NavSearchContainer .SearchDropdown .SuggestionSection .SuggestItem {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 10px 20px;
   cursor: pointer;
   transition: 0.2s;
-  color: #64748b;
-  font-size: 13.5px;
-  border-radius: 8px;
+  color: #555;
+  font-size: 14px;
 }
 #Nav .NavMain .NavSearchContainer .SearchDropdown .SuggestionSection .SuggestItem:hover {
-  background: #f8fafc;
+  background: #f9f9f9;
   color: var(--primaryColor);
 }
 #Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection {
@@ -947,9 +1527,9 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 2px;
+  margin-bottom: 1px;
 }
-#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .TypeBadge {
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .TypeAndCategory .TypeBadge {
   display: inline-flex;
   align-items: center;
   font-size: 10px;
@@ -959,19 +1539,19 @@
   border-radius: 4px;
   letter-spacing: 0.3px;
 }
-#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .TypeBadge--course {
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .TypeAndCategory .TypeBadge--course {
   background: #e0f2fe;
   color: #0284c7;
 }
-#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .TypeBadge--live_section {
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .TypeAndCategory .TypeBadge--live_section {
   background: #fee2e2;
   color: #dc2626;
 }
-#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .TypeBadge--daily_class {
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .TypeAndCategory .TypeBadge--daily_class {
   background: #fef3c7;
   color: #d97706;
 }
-#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .CategoryTag {
+#Nav .NavMain .NavSearchContainer .SearchDropdown .RecommendedSection .SearchCourseBox .CourseDetails .TypeAndCategory .CategoryTag {
   font-size: 11px;
   color: #64748b;
   font-weight: 500;
@@ -1111,6 +1691,16 @@
 }
 #Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationIcon {
   position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #000;
+  transition: 0.3s;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationIcon:hover {
+  color: var(--primaryColor);
 }
 @media (max-width: 1024px) {
   #Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationIcon {
@@ -1119,52 +1709,220 @@
 }
 #Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationIcon .notifBadge {
   position: absolute;
-  top: 1px;
-  right: 3px;
-  background: red;
-  color: #fff;
+  top: -4px;
+  right: -6px;
+  background: var(--primaryColor, #ff725e);
+  color: #ffffff;
   font-size: 10px;
-  width: 8px;
-  height: 8px;
+  font-weight: 700;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  padding: 0 4px;
+  line-height: 1;
   pointer-events: none;
+  box-shadow: 0 2px 5px rgba(255, 114, 94, 0.4);
 }
-#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationDropdown {
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover {
   position: absolute;
-  top: 50px;
+  top: 48px;
   right: -10px;
-  width: 200px;
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px 0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationDropdown .notifItem {
-  padding: 10px 14px;
-  font-size: 14px;
-  color: var(--textColor);
-  cursor: pointer;
-  transition: 0.3s;
-  border-bottom: 1px solid #eee;
-  font-family: myFont1;
-  white-space: nowrap;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+  z-index: 1100;
   overflow: hidden;
-  text-overflow: ellipsis;
+  display: flex;
+  flex-direction: column;
+  cursor: default;
+  text-align: left;
+  animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationDropdown .notifItem:hover {
-  background: rgba(0, 0, 0, 0.05);
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #ffffff;
 }
-#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationDropdown .viewAll {
-  display: block;
-  text-align: center;
-  padding: 10px 14px;
-  font-size: 14px;
-  color: var(--primaryColor);
-  text-decoration: none;
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverHeader .HeaderTitleBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverHeader .HeaderTitleBox h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  font-family: var(--myFont1);
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverHeader .HeaderTitleBox .UnreadCountPill {
+  background: rgba(255, 114, 94, 0.12);
+  color: var(--primaryColor, #ff725e);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverHeader .MarkAllBtn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 12px;
   font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: var(--myFont1);
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverHeader .MarkAllBtn:hover {
+  color: var(--primaryColor, #ff725e);
+  background: #f8fafc;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverHeader .MarkAllBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody {
+  max-height: 380px;
+  min-height: 120px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody::-webkit-scrollbar {
+  width: 5px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody::-webkit-scrollbar-track {
+  background: transparent;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverLoading {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverLoading .SkeletonItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverLoading .SkeletonItem .SkeletonLine {
+  height: 12px;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+  border-radius: 4px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverLoading .SkeletonItem .SkeletonLine.short {
+  width: 40%;
+  height: 10px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverStateBox {
+  padding: 32px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverStateBox p {
+  margin: 0;
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverStateBox.empty .EmptyIcon {
+  font-size: 32px;
+  color: #cbd5e1;
+  margin-bottom: 4px;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverStateBox.empty .EmptyTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #334155;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverStateBox.empty .EmptySubtitle {
+  font-size: 12px;
+  color: #94a3b8;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverStateBox .RetryBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 6px 14px;
+  background: var(--primaryColor, #ff725e);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverStateBox .RetryBtn:hover {
+  opacity: 0.9;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverBody .PopoverList {
+  display: flex;
+  flex-direction: column;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverFooter {
+  padding: 12px 18px;
+  border-top: 1px solid #f1f5f9;
+  background: #f8fafc;
+  text-align: center;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverFooter .ViewAllLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--primaryColor, #ff725e);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.2s;
+}
+#Nav .NavMain .NavRightBox .searchCartWishlistBox .NotificationPopover .PopoverFooter .ViewAllLink:hover {
+  text-decoration: underline;
+  gap: 6px;
+}
+@keyframes popoverFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 #Nav .NavMain .NavRightBox .UserProfileBox {
   display: flex;
@@ -1182,8 +1940,7 @@
 #Nav .NavMain .NavRightBox .UserProfileBox .ProfileImageBox .UserImage {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #Nav .NavMain .NavRightBox .UserProfileBox .UserNameDropIconBox {
   display: flex;
@@ -1468,8 +2225,7 @@
 #Sidnav .UserProfileBox .ProfileImageBox .UserImage {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #Sidnav .UserProfileBox .UserNameDropIconBox {
   display: flex;
@@ -1760,8 +2516,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   border: 2px solid #fff;
   margin-left: -10px;
   z-index: 1;
@@ -1822,10 +2577,8 @@
 #HomeBanner .HomeBannerRight .ImageWrapper img {
   width: 100%;
   height: 100%;
-  -o-object-fit: contain;
-     object-fit: contain;
-  -o-object-position: bottom;
-     object-position: bottom;
+  object-fit: contain;
+  object-position: bottom;
 }
 
 #HomeLiveCourse {
@@ -1972,7 +2725,6 @@
   font-weight: 800;
   letter-spacing: 0.5px;
   border-radius: 50px;
-  width: -moz-fit-content;
   width: fit-content;
   font-family: var(--myFont1);
 }
@@ -2099,8 +2851,7 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .InstructorRow .InstructorInfo .ProfilePlaceholder {
   width: 26px;
@@ -2139,7 +2890,6 @@
   background: #ffedd5;
   padding: 6px 12px;
   border-radius: 6px;
-  width: -moz-fit-content;
   width: fit-content;
   font-family: var(--myFont1);
   display: flex;
@@ -2169,7 +2919,6 @@
   transition: 0.3s;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: var(--myFont1);
-  width: -moz-fit-content;
   width: fit-content;
 }
 @media (max-width: 480px) {
@@ -2209,8 +2958,7 @@
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .MainImage {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox {
   position: absolute;
@@ -2786,8 +3534,7 @@
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #HomeLiveClass .HomeLiveClassMain .swiper .swiper-slide .courseCard .TutorDetails {
   display: flex;
@@ -3221,8 +3968,7 @@
 #HomeTestimonial .ReviewerProfile .ProfileImg {
   width: 48px;
   height: 48px;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   border-radius: 50%;
 }
 #HomeTestimonial .ReviewerProfile .ReviewerInfo {
@@ -3383,8 +4129,7 @@
 #Footer .footerColumn.brandColumn .footerLogoBox .logoImg {
   width: auto;
   height: 40px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 #Footer .footerColumn.brandColumn p {
   font-size: 15px;
@@ -3558,9 +4303,6 @@
   font-family: myFont1;
   color: #333;
 }
-.NavSearchOverlay .SearchHeader .SearchInputWrapper input::-moz-placeholder {
-  color: #999;
-}
 .NavSearchOverlay .SearchHeader .SearchInputWrapper input::placeholder {
   color: #999;
 }
@@ -3649,7 +4391,7 @@
   gap: 6px;
   margin-bottom: 2px;
 }
-.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .TypeBadge {
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .TypeAndCategory .TypeBadge {
   display: inline-flex;
   align-items: center;
   font-size: 10.5px;
@@ -3659,19 +4401,19 @@
   border-radius: 4px;
   letter-spacing: 0.3px;
 }
-.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .TypeBadge--course {
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .TypeAndCategory .TypeBadge--course {
   background: #e0f2fe;
   color: #0284c7;
 }
-.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .TypeBadge--live_section {
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .TypeAndCategory .TypeBadge--live_section {
   background: #fee2e2;
   color: #dc2626;
 }
-.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .TypeBadge--daily_class {
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .TypeAndCategory .TypeBadge--daily_class {
   background: #fef3c7;
   color: #d97706;
 }
-.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .CategoryTag {
+.NavSearchOverlay .SearchContent .RecommendedSection .CourseList .SearchCourseBox .CourseDetails .TypeAndCategory .CategoryTag {
   font-size: 12px;
   color: #64748b;
   font-weight: 500;
@@ -3781,8 +4523,7 @@
 #Login .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
   width: 100px;
   height: 80px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 @media (max-width: 480px) {
   #Login .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
@@ -3940,8 +4681,7 @@
   border-color: #ccc;
 }
 #Login .LoginBox .LoginLeft .SocialLogin .SocialBtn img {
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 #Login .LoginBox .LoginLeft .SignUpTxt {
   text-align: center;
@@ -4045,8 +4785,7 @@
 #Signup .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
   width: 100px;
   height: 80px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 @media (max-width: 480px) {
   #Signup .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
@@ -4237,8 +4976,7 @@
   border-color: #ccc;
 }
 #Signup .LoginBox .LoginLeft .SocialLogin .SocialBtn img {
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 #Signup .LoginBox .LoginLeft .SignUpTxt {
   text-align: center;
@@ -4341,8 +5079,7 @@
 #ForgetPassword .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
   width: 100px;
   height: 80px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 @media (max-width: 480px) {
   #ForgetPassword .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
@@ -4508,8 +5245,7 @@
 #Otp .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
   width: 100px;
   height: 80px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 @media (max-width: 480px) {
   #Otp .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
@@ -4691,8 +5427,7 @@
 #ChangePassword .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
   width: 100px;
   height: 80px;
-  -o-object-fit: contain;
-     object-fit: contain;
+  object-fit: contain;
 }
 @media (max-width: 480px) {
   #ChangePassword .LoginBox .LoginLeft .LoginLogoBox .LoginImg {
@@ -4914,8 +5649,7 @@
 #Profile .ProfileMain .ProfileMainLeftNav .UserProfileImgBox img {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 @media (max-width: 1024px) {
   #Profile .ProfileMain .ProfileMainLeftNav .UserInfo {
@@ -5164,8 +5898,7 @@
 #Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Thumb img {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details {
   flex: 1;
@@ -5216,8 +5949,7 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter .Instructor span {
   font-size: 13px;
@@ -5481,8 +6213,7 @@
 #Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .PhotoUploadSection .BigProfileImg img {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #Profile .ProfileMain .ProfileMainRight .ContentCard .EditProfile .PhotoUploadSection .BigProfileImg .Overlay {
   position: absolute;
@@ -5932,8 +6663,7 @@
   overflow: hidden;
 }
 #Profile .ProfileMain .ProfileMainRight .ContentCard .LiveClasses .ClassList .ProgramCard .CardLeft .Header .Thumb .Img {
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #Profile .ProfileMain .ProfileMainRight .ContentCard .LiveClasses .ClassList .ProgramCard .CardLeft .Header .Thumb .Category {
   position: absolute;
@@ -6257,8 +6987,7 @@
 #Profile .ProfileMain .ProfileMainRight .ContentCard .LiveYoga .SessionsList .SessionCard .ThumbnailWrapper .Thumbnail {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #Profile .ProfileMain .ProfileMainRight .ContentCard .LiveYoga .SessionsList .SessionCard .ThumbnailWrapper .CategoryBadge {
   position: absolute;
@@ -6911,7 +7640,6 @@
   flex-shrink: 0;
   position: sticky;
   top: 100px;
-  height: -moz-fit-content;
   height: fit-content;
 }
 #CourseList .CourseFilter {
@@ -7221,8 +7949,7 @@
   #CourseDetails .CourseBanner .HeroSection .MobilePreviewCard .VideoThumb img {
     width: 100%;
     height: 100%;
-    -o-object-fit: cover;
-       object-fit: cover;
+    object-fit: cover;
   }
   #CourseDetails .CourseBanner .HeroSection .MobilePreviewCard .VideoThumb .PlayBtn {
     position: absolute;
@@ -7355,8 +8082,7 @@
   height: 45px;
   border-radius: 50%;
   border: 2px solid #fff;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #CourseDetails .CourseBanner .HeroSection .MetaInfo .InstructorInfo span {
   font-size: 15px;
@@ -7706,8 +8432,7 @@
   width: 110px;
   height: 110px;
   border-radius: 12px;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   border: 1px solid #e2e8f0;
 }
 @media (max-width: 480px) {
@@ -7869,8 +8594,7 @@
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #CourseDetails .CourseDetailsMain .DetailsLeft .ReviewsSection .ReviewList .SingleReview .ReviewTop .UserInfo .UserInfo h5 {
   color: #1a1a1a;
@@ -8045,8 +8769,7 @@
 #CourseDetails .CourseDetailsMain .DetailsRight .PreviewCard .VideoThumb img {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   transition: transform 0.5s ease;
 }
 #CourseDetails .CourseDetailsMain .DetailsRight .PreviewCard .VideoThumb:hover img {
@@ -8229,8 +8952,7 @@
 }
 #CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft img {
   border-radius: 6px;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo {
   width: 50%;
@@ -8660,8 +9382,7 @@
 }
 #DailyLiveClassDetails .LiveInfo .InstructorEnrollBox .InstructorCard img {
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #DailyLiveClassDetails .LiveInfo .InstructorEnrollBox .InstructorCard h4 {
   margin-bottom: 4px;
@@ -8769,8 +9490,7 @@
 }
 #DailyLiveClassDetails .RequirementsSection .ProductList .ProductItem .ProdLeft img {
   border-radius: 6px;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #DailyLiveClassDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo {
   width: 50%;
@@ -9178,8 +9898,7 @@
 #TeacherDetails .ProfileSidebar .ProfileImageWrapper img {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   transition: transform 0.6s ease;
 }
 #TeacherDetails .ProfileSidebar .ProfileImageWrapper .ImageOverlay {
@@ -9941,8 +10660,7 @@
 }
 #TeacherDetails .ProfileContent .ReviewsSection .ReviewsList .ReviewCard .ReviewHeader .ReviewUser .UserAvat {
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
 }
 #TeacherDetails .ProfileContent .ReviewsSection .ReviewsList .ReviewCard .ReviewHeader .ReviewUser .UserInfo h4 {
   font-size: 16px;
@@ -9997,8 +10715,7 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   margin: 0 auto 15px;
   border: 2px solid #f1f5f9;
 }
@@ -10361,8 +11078,7 @@
 #Cart .courseImgBox img {
   width: 100%;
   height: 100%;
-  -o-object-fit: cover;
-     object-fit: cover;
+  object-fit: cover;
   border-radius: 6px;
 }
 #Cart .CourseDetailsBox {
@@ -10899,4 +11615,6 @@
   color: #fff;
   font-size: 16px;
   font-weight: 700;
-}/*# sourceMappingURL=style.css.map */
+}
+
+/*# sourceMappingURL=style.css.map */
