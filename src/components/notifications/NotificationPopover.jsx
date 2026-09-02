@@ -9,12 +9,16 @@ import {
   useMarkNotificationRead,
   useMarkAllNotificationsRead,
 } from "@/hooks/useNotifications";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { getSafeActionUrl } from "@/utils/notificationHelpers";
 import NotificationItem from "./NotificationItem";
 
 const NotificationPopover = ({ isOpen, onClose }) => {
   const router = useRouter();
   const popoverRef = useRef(null);
+
+  // Initialize push notification subscription auto-sync for authenticated sessions
+  const { isSupported: isPushSupported, permission: pushPermission, subscribe: subscribePush } = usePushNotifications();
 
   const {
     data: notificationResponse,
@@ -100,6 +104,42 @@ const NotificationPopover = ({ isOpen, onClose }) => {
           </button>
         )}
       </div>
+
+      {/* Push Enable Banner if permission is default */}
+      {isPushSupported && pushPermission === "default" && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "8px 14px",
+            background: "#f0fdf4",
+            borderBottom: "1px solid #dcfce7",
+            gap: "10px",
+            fontSize: "12px",
+          }}
+        >
+          <span style={{ color: "#166534", fontWeight: "500" }}>
+            Enable desktop push alerts
+          </span>
+          <button
+            type="button"
+            onClick={() => subscribePush()}
+            style={{
+              padding: "4px 10px",
+              background: "#16a34a",
+              color: "#fff",
+              border: "none",
+              borderRadius: "4px",
+              fontSize: "11px",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+          >
+            Enable
+          </button>
+        </div>
+      )}
 
       {/* Body List */}
       <div className="PopoverBody">

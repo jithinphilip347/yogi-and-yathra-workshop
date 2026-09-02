@@ -191,6 +191,10 @@
   background: #f3e8ff;
   color: #9333ea;
 }
+.NotificationItem--card .NotificationItem__media .NotificationItem__iconBadge.iconBadge--communication {
+  background: #e0f2fe;
+  color: #0284c7;
+}
 .NotificationItem--card .NotificationItem__media .NotificationItem__iconBadge.iconBadge--general {
   background: #f1f5f9;
   color: #64748b;
@@ -330,6 +334,10 @@
 .NotificationItem__categoryTag.tag--certificate {
   background: #f3e8ff;
   color: #7e22ce;
+}
+.NotificationItem__categoryTag.tag--communication {
+  background: #e0f2fe;
+  color: #0369a1;
 }
 .NotificationItem__categoryTag.tag--general {
   background: #f1f5f9;

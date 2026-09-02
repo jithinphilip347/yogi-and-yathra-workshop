@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Image from "next/image";
-import { FiClock, FiCheck, FiX, FiVideo, FiCalendar, FiBookOpen, FiCreditCard, FiAward, FiBell } from "react-icons/fi";
+import { FiClock, FiCheck, FiX, FiVideo, FiCalendar, FiBookOpen, FiCreditCard, FiAward, FiBell, FiMessageSquare } from "react-icons/fi";
 import { formatRelativeTime, formatNotificationDateTime, getNotificationCategoryMeta, getSafeActionUrl } from "@/utils/notificationHelpers";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import defaultCourseImg from "@/assets/images/courseImg-1.webp";
@@ -21,6 +21,8 @@ const getCategoryIcon = (variant) => {
       return <FiCreditCard className="CategoryIcon" />;
     case "certificate":
       return <FiAward className="CategoryIcon" />;
+    case "communication":
+      return <FiMessageSquare className="CategoryIcon" />;
     default:
       return <FiBell className="CategoryIcon" />;
   }

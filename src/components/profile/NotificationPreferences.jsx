@@ -106,6 +106,52 @@ const NotificationPreferences = () => {
         </p>
       </div>
 
+      {isPushSupported && pushPermission === "default" && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "12px",
+            background: "#f0fdf4",
+            border: "1px solid #bbf7d0",
+            padding: "14px 18px",
+            borderRadius: "10px",
+            marginBottom: "20px",
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <FiBell style={{ fontSize: "20px", color: "#16a34a", flexShrink: 0 }} />
+            <div>
+              <p style={{ margin: 0, fontWeight: "600", fontSize: "14px", color: "#15803d" }}>
+                Enable Native Browser Notifications
+              </p>
+              <p style={{ margin: "2px 0 0 0", fontSize: "13px", color: "#166534" }}>
+                Get instant desktop and mobile push alerts for upcoming live sessions and replies.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => subscribePush()}
+            style={{
+              padding: "8px 16px",
+              background: "#16a34a",
+              color: "#fff",
+              border: "none",
+              borderRadius: "6px",
+              fontWeight: "600",
+              fontSize: "13px",
+              cursor: "pointer",
+              transition: "background 0.2s ease",
+            }}
+          >
+            Enable Push Alerts
+          </button>
+        </div>
+      )}
+
       {isPushSupported && pushPermission === "denied" && (
         <div
           style={{

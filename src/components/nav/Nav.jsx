@@ -36,6 +36,7 @@ import useGlobalSearch from "@/hooks/useGlobalSearch";
 import NotificationPopover from "../notifications/NotificationPopover";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
 import useNotificationRealtime from "@/hooks/useNotificationRealtime";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { useRouter } from "next/navigation";
 
 import { getSearchResultRoute, getSearchResultTypeLabel } from "@/utils/searchNavigation";
@@ -58,6 +59,9 @@ const Nav = () => {
 
   // Activate WebSocket real-time subscription for in-app notifications
   useNotificationRealtime();
+
+  // Auto-synchronize Web Push subscription for authenticated users
+  usePushNotifications();
 
   // Real notification unread count for badge
   const { data: unreadCount = 0 } = useUnreadNotificationCount();

@@ -113,6 +113,9 @@ export const getNotificationCategoryMeta = (category = "", type = "") => {
   if (cat === "payment" || t.includes("payment") || t.includes("order")) {
     return { label: "Payment", variant: "payment" };
   }
+  if (cat === "communication" || t.includes("communication") || t.includes("reply") || t.includes("message")) {
+    return { label: "Discussion", variant: "communication" };
+  }
   if (cat === "certificate" || t.includes("certificate")) {
     return { label: "Certificate", variant: "certificate" };
   }

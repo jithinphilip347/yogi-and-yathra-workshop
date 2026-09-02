@@ -18,27 +18,81 @@ export const usePushNotifications = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Synchronize initial browser support and permission
+  const syncSubscription = useCallback(async () => {
+    if (!isWebPushSupported()) {
+      return;
+    }
+
+    const currentPermission = getPushPermissionState();
+    setPermission(currentPermission);
+
+    if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) {
+      return;
+    }
+
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      const sub = await reg.pushManager.getSubscription();
+      setIsSubscribed(!!sub);
+
+      // If user is authenticated and browser permission is granted, ensure backend has active device subscription
+      if (isAuthenticated && currentPermission === "granted") {
+        const result = await subscribeToPushNotifications();
+        if (result.success) {
+          setIsSubscribed(true);
+          setError(null);
+        } else if (result.error) {
+          console.warn("Web Push auto-synchronization notice:", result.error);
+          setError(result.error);
+        }
+      }
+    } catch (err) {
+      console.warn("Web Push subscription check error:", err);
+      setIsSubscribed(false);
+    }
+  }, [isAuthenticated]);
+
+  // Synchronize initial browser support, permission, and listen for permission transitions
   useEffect(() => {
     const supported = isWebPushSupported();
     setIsSupported(supported);
 
-    if (supported) {
-      setPermission(getPushPermissionState());
-
-      // Check existing subscription
-      if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
-        navigator.serviceWorker.ready
-          .then((reg) => reg.pushManager.getSubscription())
-          .then((sub) => {
-            setIsSubscribed(!!sub);
-          })
-          .catch(() => {
-            setIsSubscribed(false);
-          });
-      }
+    if (!supported) {
+      return;
     }
-  }, [isAuthenticated]);
+
+    syncSubscription();
+
+    // Listen to permission state change via Permissions API if supported
+    let permissionStatusObj = null;
+    if (typeof navigator !== "undefined" && navigator.permissions?.query) {
+      navigator.permissions
+        .query({ name: "notifications" })
+        .then((permissionStatus) => {
+          permissionStatusObj = permissionStatus;
+          permissionStatus.onchange = () => {
+            syncSubscription();
+          };
+        })
+        .catch((e) => {
+          console.log(e)
+        });
+    }
+
+    // Also re-verify on window focus (e.g. when user changes permission in browser site settings)
+    const handleFocus = () => {
+      syncSubscription();
+    };
+
+    window.addEventListener("focus", handleFocus);
+
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      if (permissionStatusObj) {
+        permissionStatusObj.onchange = null;
+      }
+    };
+  }, [syncSubscription]);
 
   const subscribe = useCallback(
     async (deviceMetadata = {}) => {
@@ -61,7 +115,8 @@ export const usePushNotifications = () => {
           return false;
         }
       } catch (err) {
-        setError(err.message || "An unexpected error occurred.");
+        const errMsg = err?.message || "An unexpected error occurred during subscription.";
+        setError(errMsg);
         return false;
       } finally {
         setIsLoading(false);
@@ -88,7 +143,7 @@ export const usePushNotifications = () => {
         return false;
       }
     } catch (err) {
-      setError(err.message || "An unexpected error occurred.");
+      setError(err?.message || "An unexpected error occurred.");
       return false;
     } finally {
       setIsLoading(false);
@@ -103,6 +158,7 @@ export const usePushNotifications = () => {
     error,
     subscribe,
     unsubscribe,
+    syncSubscription,
   };
 };
 

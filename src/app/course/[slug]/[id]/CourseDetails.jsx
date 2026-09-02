@@ -19,6 +19,7 @@ import {
 } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
 import Image from "next/image";
+import Link from "next/link";
 import Inst1 from "@/assets/images/instructor-1.webp";
 import ThumbNail from "@/assets/images/live1.webp";
 
@@ -165,6 +166,34 @@ const CourseDetails = ({ courseDetails }) => {
   const modules = course?.sections || [];
   const instructor = course?.instructor;
 
+  const instructorName = instructor?.name || "Instructor";
+  const instructorRole = instructor?.professional_title || instructor?.role || "Instructor";
+  const instructorAvatar = instructor?.avatar_url || instructor?.avatar
+    ? resolveMediaUrl(instructor.avatar_url || instructor.avatar)
+    : null;
+
+  const instructorRatingVal = Number(
+    instructor?.instructor_rating ?? instructor?.average_rating ?? 0
+  );
+  const instructorRatingText = instructorRatingVal > 0
+    ? `${instructorRatingVal.toFixed(1)} Instructor Ratings`
+    : "5.0 Instructor Ratings";
+
+  const instructorStudents = Number(
+    instructor?.total_students ?? instructor?.students_count ?? 0
+  );
+  const instructorStudentsText = `${instructorStudents.toLocaleString()} ${
+    instructorStudents === 1 ? "Student" : "Students"
+  }`;
+
+  const instructorBio =
+    instructor?.bio_graphy ||
+    instructor?.short_bio ||
+    instructor?.full_biography ||
+    "";
+
+  const instructorSlug = instructor?.slug || instructor?.id || "";
+
   // Centralized CTA renderer — the only place purchase/access conditions live.
   // - loading:        skeleton so enrolled students never see a purchase flash
   // - watch-now / continue-watching / watch-again: single learning CTA
@@ -259,20 +288,20 @@ const CourseDetails = ({ courseDetails }) => {
             </p>
             <div className="MetaInfo">
               <div className="InstructorInfo">
-                {instructor?.avatar_url || instructor?.avatar ? (
+                {instructorAvatar ? (
                   <Image
-                    src={resolveMediaUrl(instructor.avatar_url || instructor.avatar)}
-                    alt="Instructor"
+                    src={instructorAvatar}
+                    alt={instructorName}
                     width={40}
                     height={40}
-                    style={{ borderRadius: "50%" }}
+                    style={{ borderRadius: "50%", objectFit: "cover" }}
                   />
                 ) : (
-                  <Image src={Inst1} alt="Instructor" />
+                  <Image src={Inst1} alt={instructorName} width={40} height={40} style={{ borderRadius: "50%" }} />
                 )}
                 <span>
                   Created by{" "}
-                  <strong>{instructor?.name || "Instructor Name"}</strong>
+                  <strong>{instructorName}</strong>
                 </span>
               </div>
               <div className="Ratings">
@@ -447,28 +476,28 @@ const CourseDetails = ({ courseDetails }) => {
             <div className="HighlightBox InstructorDetails">
               <h3>Instructor</h3>
               <div className="InstructorCard">
-                {instructor?.avatar_url || instructor?.avatar ? (
+                {instructorAvatar ? (
                   <Image
-                    src={resolveMediaUrl(instructor.avatar_url || instructor.avatar)}
-                    alt="Instructor"
+                    src={instructorAvatar}
+                    alt={instructorName}
                     width={100}
                     height={100}
-                    style={{ borderRadius: "50%" }}
+                    style={{ borderRadius: "50%", objectFit: "cover" }}
                   />
                 ) : (
-                  <Image src={Inst1} alt="Instructor" />
+                  <Image src={Inst1} alt={instructorName} width={100} height={100} style={{ borderRadius: "50%" }} />
                 )}
                 <div className="InsMeta">
-                  <h4>{instructor?.name || "Instructor Name"}</h4>
+                  <h4>{instructorName}</h4>
                   <p style={{ textTransform: "capitalize" }}>
-                    {instructor?.role || "Instructor"}
+                    {instructorRole}
                   </p>
                   <div className="Stats">
                     <span className="ratingStar">
-                      <FiStar /> 4.8 Instructor Ratings
+                      <FiStar /> {instructorRatingText}
                     </span>
                     <span>
-                      <FiUsers /> 1,234 Students
+                      <FiUsers /> {instructorStudentsText}
                     </span>
                   </div>
                 </div>
@@ -477,13 +506,16 @@ const CourseDetails = ({ courseDetails }) => {
                 className="Bio ContentText"
                 dangerouslySetInnerHTML={{
                   __html:
-                    instructor?.bio_graphy ||
+                    instructorBio ||
                     "Instructor biography not available.",
                 }}
               ></div>
-              <a href="#" className="MoreLink">
+              <Link
+                href={instructorSlug ? `/teacher-list/${instructorSlug}` : "#"}
+                className="MoreLink"
+              >
                 More about instructor
-              </a>
+              </Link>
             </div>
 
             <div className="HighlightBox ReviewsSection">

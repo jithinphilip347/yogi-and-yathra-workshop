@@ -104,9 +104,29 @@ export async function subscribeToPushNotifications(deviceMetadata = {}) {
       return { success: false, error: "Failed to register Service Worker" };
     }
 
-    // 4. Subscribe to PushManager
+    // 4. Subscribe to PushManager with active VAPID applicationServerKey
     const applicationServerKey = urlBase64ToUint8Array(publicKey);
     let subscription = await registration.pushManager.getSubscription();
+
+    // If existing subscription has mismatched applicationServerKey, renew it
+    if (subscription) {
+      try {
+        const currentKeyBuffer = subscription.options?.applicationServerKey;
+        if (currentKeyBuffer) {
+          const currentKeyArray = new Uint8Array(currentKeyBuffer);
+          const isKeyMatch =
+            currentKeyArray.length === applicationServerKey.length &&
+            currentKeyArray.every((val, idx) => val === applicationServerKey[idx]);
+
+          if (!isKeyMatch) {
+            await subscription.unsubscribe();
+            subscription = null;
+          }
+        }
+      } catch (e) {
+        // Fallback: continue with subscription check
+      }
+    }
 
     if (!subscription) {
       subscription = await registration.pushManager.subscribe({
@@ -124,8 +144,8 @@ export async function subscribeToPushNotifications(deviceMetadata = {}) {
         p256dh: subscriptionJson.keys?.p256dh || "",
         auth: subscriptionJson.keys?.auth || "",
       },
-      browser: deviceMetadata.browser || (typeof navigator !== "undefined" ? navigator.userAgent : null),
-      platform: deviceMetadata.platform || (typeof navigator !== "undefined" ? navigator.platform : null),
+      browser: deviceMetadata.browser || (typeof navigator !== "undefined" ? (navigator.userAgent.includes("Edg") ? "Edge" : navigator.userAgent.includes("Chrome") ? "Chrome" : navigator.userAgent.includes("Firefox") ? "Firefox" : navigator.userAgent.includes("Safari") ? "Safari" : "Browser") : "Browser"),
+      platform: deviceMetadata.platform || (typeof navigator !== "undefined" ? navigator.platform : "Web"),
       device_name: deviceMetadata.device_name || "Web Browser",
     });
 
