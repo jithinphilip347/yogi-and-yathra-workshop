@@ -7484,11 +7484,13 @@
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
+                        gap: 10px;
 
                         .SubmitBtn {
                             background: var(--primaryColor);
                             color: #fff;
                             padding: 12px 30px;
+                            
                             border: none;
                             border-radius: 6px;
                             font-weight: 500;

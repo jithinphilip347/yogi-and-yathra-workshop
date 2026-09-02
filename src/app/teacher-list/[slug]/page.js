@@ -148,19 +148,25 @@ const Page = () => {
   const reviews = Array.isArray(teacher.reviews) ? teacher.reviews : [];
 
   const ratingBreakdownObj = teacher.rating_breakdown || {};
-  const ratingBreakdown = [5, 4, 3, 2, 1].map((stars) => ({
-    stars,
-    count: ratingBreakdownObj[stars] || 0,
-  }));
+  const ratingBreakdown = [5, 4, 3, 2, 1].map((stars, idx) => {
+    const count = Array.isArray(ratingBreakdownObj)
+      ? (ratingBreakdownObj[idx] || 0)
+      : (ratingBreakdownObj[stars] || ratingBreakdownObj[String(stars)] || 0);
+    return { stars, count };
+  });
   const totalReviewsInBreakdown = ratingBreakdown.reduce((acc, curr) => acc + curr.count, 0);
+
+  const totalReviews = Number(teacher.review_count || teacher.total_reviews || totalReviewsInBreakdown || 0);
+  const reviewsText = `(${totalReviews} ${totalReviews === 1 ? "Review" : "Reviews"})`;
 
   // Stats for the ProfileStatsRight section
   const stats = [
-    { icon: <FaStar />, value: teacher.average_rating?.toString() || "0", label: "Rating" },
-    { icon: <FaUsers />, value: teacher.taught_courses_count?.toString() || "0", label: "Courses" },
-    { icon: <FaBookOpen />, value: teacher.taught_daily_classes_count?.toString() || "0", label: "Daily Classes" },
-    { icon: <FaMicrophone />, value: teacher.taught_live_sections_count?.toString() || "0", label: "Live Sessions" },
-    { icon: <FaTrophy />, value: teacher.years_of_experience ? `${teacher.years_of_experience}+ Years` : "N/A", label: "Experience" },
+    { icon: <FaStar />, value: teacher.average_rating ? Number(teacher.average_rating).toFixed(1) : "0.0", label: "Rating" },
+    { icon: <FaUserGraduate />, value: (teacher.total_students ?? teacher.students_count ?? 0).toLocaleString(), label: "Students" },
+    { icon: <FaBookOpen />, value: (teacher.taught_courses_count ?? courses.length ?? 0).toString(), label: "Courses" },
+    { icon: <FaRegClock />, value: (teacher.taught_daily_classes_count ?? dailyClasses.length ?? 0).toString(), label: "Daily Classes" },
+    { icon: <FaMicrophone />, value: (teacher.taught_live_sections_count ?? liveSections.length ?? 0).toString(), label: "Live Sessions" },
+    { icon: <FaTrophy />, value: teacher.years_of_experience ? `${teacher.years_of_experience}+ Years` : "Experienced", label: "Experience" },
   ];
 
   // Social links
@@ -197,7 +203,7 @@ const Page = () => {
                   <FaStar className="star-icon" />
                   <span>{teacher.average_rating || "0"}</span>
                 </div>
-                <div className="ReviewCount">({teacher.review_count || 0} Reviews)</div>
+                <div className="ReviewCount">{reviewsText}</div>
               </div>
               {teacher.is_featured && <div className="FeaturedBadge">Featured Instructor</div>}
 
@@ -313,12 +319,12 @@ const Page = () => {
                           )}
                           <span><FaRegClock /> {cls.human_class_time || cls.class_time || "TBD"}</span>
                           <span><FaVideo /> {cls.duration || "N/A"}</span>
-                          {(
-                            <span><FaUserGraduate />100</span>
-                          )}
+                          <span><FaUserGraduate /> {cls.enrollments_count ?? 0}</span>
                         </div>
                       </div>
-                      <button className="EnrollBtn">View Details</button>
+                      <Link href={`/daily-class/${cls.id}/${cls.slug || 'class'}`} className="EnrollBtn" style={{ display: 'inline-block', textAlign: 'center' }}>
+                        View Details
+                      </Link>
                     </div>
                   ))}
                 </div>
@@ -350,7 +356,9 @@ const Page = () => {
                             <div className="SeatsLeft">{ws.capacity} Seats</div>
                           )}
                         </div>
-                        <button className="PreBookBtn">Pre Book</button>
+                        <Link href={`/live-section/${ws.id}/${ws.slug || 'session'}`} className="PreBookBtn" style={{ display: 'inline-block', textAlign: 'center' }}>
+                          Pre Book
+                        </Link>
                       </div>
                     );
                   })}
@@ -368,7 +376,7 @@ const Page = () => {
                       <FaStar key={i} className={i < Math.floor(teacher.average_rating || 0) ? "star-active" : ""} />
                     ))}
                   </div>
-                  <p>{teacher.review_count || 0} Reviews</p>
+                  <p>{totalReviews} {totalReviews === 1 ? "Review" : "Reviews"}</p>
                 </div>
 
                 <div className="RatingBreakdown">

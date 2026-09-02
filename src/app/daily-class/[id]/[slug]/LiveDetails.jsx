@@ -123,9 +123,15 @@ const LiveDetails = ({ id, classDetails }) => {
   const learningOutcomes = dailyClass?.learning_outcomes || [];
   const requirements = dailyClass?.requirements || [];
 
-  const averageRating = dailyClass?.average_rating || 4.8;
-  const reviewCount = dailyClass?.review_count || 0;
-  const studentCount = dailyClass?.total_enrollments || 1234;
+  const averageRating = Number(
+    dailyClass?.average_rating ?? instructor?.average_rating ?? instructor?.instructor_rating ?? 5.0
+  );
+  const reviewCount = Number(
+    dailyClass?.review_count ?? (reviewsData.length || 0)
+  );
+  const studentCount = Number(
+    dailyClass?.total_enrollments ?? dailyClass?.enrollments_count ?? 0
+  );
 
   // Fallback image sources
   const thumbnailSrc = dailyClass?.thumbnail
@@ -136,10 +142,12 @@ const LiveDetails = ({ id, classDetails }) => {
     ? resolveMediaUrl(instructor.avatar_url || instructor.avatar)
     : Inst1;
 
-  const instructorName = instructor?.name || "Achu Sivadasan";
-  const instructorRole = instructor?.professional_title || instructor?.role || "Senior Yoga Teacher";
+  const instructorName = instructor?.name || "Instructor";
+  const instructorRole = instructor?.professional_title || instructor?.role || "Yoga Instructor";
   const instructorBio = instructor?.full_biography || instructor?.bio_graphy || "";
-  const instructorExperience = instructor?.years_of_experience || 5;
+  const instructorExperience = instructor?.years_of_experience
+    ? `${instructor.years_of_experience}+ Years`
+    : "Experienced";
 
   const [activeFaq, setActiveFaq] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -585,23 +593,15 @@ const LiveDetails = ({ id, classDetails }) => {
                         />
                       ))}
                     </div>
-                    <p>&quot;{rev.content || rev.text || ""}&quot;</p>
+                    <p>&quot;{rev.content || rev.text || rev.comment || ""}&quot;</p>
                     <div className="Reviewer">- {rev.user_name || rev.name || "Anonymous"}</div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="ReviewGrid">
-                <div className="ReviewCard">
-                  <div className="Stars">
-                    <AiFillStar /> <AiFillStar /> <AiFillStar /> <AiFillStar /> <AiFillStar />
-                  </div>
-                  <p>
-                    &quot;This daily class changed my morning routine. The instructor is
-                    incredible and really takes time to correct your posture.&quot;
-                  </p>
-                  <div className="Reviewer">- Arun K.</div>
-                </div>
+              <div className="NoReviewsState" style={{ textAlign: "center", padding: "30px 15px", color: "#666" }}>
+                <p style={{ fontSize: "16px", marginBottom: "6px" }}>No reviews yet for this daily class.</p>
+                <p style={{ fontSize: "14px", color: "#999" }}>Be the first to join and share your experience!</p>
               </div>
             )}
           </section>
@@ -620,41 +620,19 @@ const LiveDetails = ({ id, classDetails }) => {
                       </span>
                     </div>
                     {activeFaq === i && (
-                      <div className="FAQBody" dangerouslySetInnerHTML={{ __html: faq.answer || faq.a }}></div>
+                      <div
+                        className="FAQBody"
+                        dangerouslySetInnerHTML={{
+                          __html: faq.answer || faq.a || "",
+                        }}
+                      ></div>
                     )}
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="FAQList">
-                {[
-                  {
-                    q: "Can I join if I've never done yoga?",
-                    a: "Absolutely! This class is designed to be beginner friendly with step-by-step guidance.",
-                  },
-                  {
-                    q: "Will I get recordings if I miss a class?",
-                    a: "Recordings are available for Premium and VIP plan members.",
-                  },
-                  {
-                    q: "Is there a refund policy?",
-                    a: "Yes, we offer a 7-day money back guarantee if you are not satisfied.",
-                  },
-                  {
-                    q: "Do I need any special equipment?",
-                    a: "Just a good quality yoga mat, comfortable clothes, and a quiet space.",
-                  },
-                ].map((faq, i) => (
-                  <div className="FAQItem" key={i}>
-                    <div className="FAQHead" onClick={() => toggleFaq(i)}>
-                      <h4>{faq.q}</h4>
-                      <span className="Icon">
-                        {activeFaq === i ? <FiMinus /> : <FiPlus />}
-                      </span>
-                    </div>
-                    {activeFaq === i && <div className="FAQBody">{faq.a}</div>}
-                  </div>
-                ))}
+              <div className="NoFaqsState" style={{ textAlign: "center", padding: "30px 15px", color: "#999" }}>
+                No frequently asked questions available at this time.
               </div>
             )}
           </section>

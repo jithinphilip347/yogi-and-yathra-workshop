@@ -165,12 +165,14 @@ const CourseDetails = ({ courseDetails }) => {
   const products = course?.products || [];
   const modules = course?.sections || [];
   const instructor = course?.instructor;
+  
 
   const instructorName = instructor?.name || "Instructor";
   const instructorRole = instructor?.professional_title || instructor?.role || "Instructor";
   const instructorAvatar = instructor?.avatar_url || instructor?.avatar
     ? resolveMediaUrl(instructor.avatar_url || instructor.avatar)
     : null;
+  
 
   const instructorRatingVal = Number(
     instructor?.instructor_rating ?? instructor?.average_rating ?? 0
@@ -288,7 +290,11 @@ const CourseDetails = ({ courseDetails }) => {
             </p>
             <div className="MetaInfo">
               <div className="InstructorInfo">
+
+
                 {instructorAvatar ? (
+                  <>
+                  
                   <Image
                     src={instructorAvatar}
                     alt={instructorName}
@@ -296,6 +302,7 @@ const CourseDetails = ({ courseDetails }) => {
                     height={40}
                     style={{ borderRadius: "50%", objectFit: "cover" }}
                   />
+                  </>
                 ) : (
                   <Image src={Inst1} alt={instructorName} width={40} height={40} style={{ borderRadius: "50%" }} />
                 )}
