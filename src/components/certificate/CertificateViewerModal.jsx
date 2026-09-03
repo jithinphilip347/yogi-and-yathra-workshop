@@ -132,6 +132,8 @@ const loadBackgroundImage = async (url, mediaId) => {
 // spacing are stored in the SAME canonical space, so the renderer scales them
 // by (renderedContainerWidth / templateWidth) — the visual type scales
 // proportionally with the certificate at any display size.
+const DEFAULT_SIGNATURE_SVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 70" width="200" height="70"><path d="M 20 48 C 35 18, 45 12, 50 26 C 55 42, 38 56, 30 50 C 25 45, 60 22, 80 42 C 90 52, 105 36, 120 40 C 135 42, 140 28, 155 36 C 170 46, 180 32, 192 36" fill="none" stroke="%231a1a1a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
 function CertificateArtwork({ resolvedBgUrl, template, layoutConfig, variableValues, isFontsLoaded }) {
   const [imageError, setImageError] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -216,11 +218,12 @@ function CertificateArtwork({ resolvedBgUrl, template, layoutConfig, variableVal
 
       {/* Certificate Container sized to the template's real aspect ratio */}
       <div
-        ref={containerRef}          style={{
-            position: "relative",
-            width: "100%",
-            maxWidth: "600px",
-            aspectRatio: String(containerAspect),
+        ref={containerRef}
+        style={{
+          position: "relative",
+          width: "100%",
+          maxWidth: "600px",
+          aspectRatio: String(containerAspect),
           boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.15)",
           border: "1px solid #cbd5e1",
           backgroundColor: "#ffffff",
@@ -304,38 +307,54 @@ function CertificateArtwork({ resolvedBgUrl, template, layoutConfig, variableVal
           </div>
         )}
 
-        {/* ── Dynamic mapped fields (Sprint 3 + Sprint 4) ─────────────
-             Canonical contract: stored x/y are NORMALIZED PERCENTAGES of the
-             ORIGINAL template dimensions, origin top-left, anchor = top-left of
-             the field text — exactly how the Mapping Builder interprets them.
-             The container keeps the template's real aspect ratio, so a field
-             placed at 24.8% / 21.4% in the admin lands at the same relative
-             spot here at ANY display size.
-
-             Typography (Sprint 2/4): fontFamily, fontSize, fontWeight, fontColor,
-             textAlign, letterSpacing, lineHeight and maxWidth come straight from
-             the Mapping Builder style contract (certificateTypography.js).
-             fontSize/letterSpacing are scaled by `renderScale` (the single
-             authoritative scale shared with the canvas download) so they stay
-             proportional to the template. Long values wrap inside the
-             certificate width instead of destroying the layout (§16-18) —
-             single-line values render identically to the builder's nowrap
-             behavior. */}
+        {/* Dynamic mapped fields (Text & Image) */}
         {fieldsReady &&
           layoutConfig.map((field) => {
+            const isImage = field.type === "image" || field.key === "teacher_signature" || field.key === "signature_image";
             const varKey = field.key || field.id;
+            const xPct = Number(field.x) || 0;
+            const yPct = Number(field.y) || 0;
+
+            if (isImage) {
+              const src = field.src
+                ? resolveMediaUrl(field.src)
+                : template?.signature_image
+                ? resolveMediaUrl(template.signature_image)
+                : DEFAULT_SIGNATURE_SVG;
+              const widthPx = scaleDimension(field.width || 140, renderScale);
+              const heightPx = field.height ? scaleDimension(field.height, renderScale) : "auto";
+              const opacity = field.style?.opacity ?? 1;
+
+              return (
+                <div
+                  key={varKey}
+                  style={{
+                    position: "absolute",
+                    left: `${xPct}%`,
+                    top: `${yPct}%`,
+                    width: `${widthPx}px`,
+                    height: typeof heightPx === "number" ? `${heightPx}px` : heightPx,
+                    pointerEvents: "none",
+                    zIndex: 30,
+                    opacity,
+                  }}
+                >
+                  <img
+                    src={src}
+                    alt={field.label || "Signature"}
+                    style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    draggable={false}
+                  />
+                </div>
+              );
+            }
+
             const rawValue = variableValues[varKey] ?? field.label ?? varKey;
             if (rawValue === undefined || rawValue === null || rawValue === "") return null;
 
             const style = normalizeFieldStyle(field.style);
             const displayText = applyTextTransform(String(rawValue), style.textTransform);
 
-            // Percentages the builder saved; x% is the TOP-LEFT of the field.
-            const xPct = Number(field.x) || 0;
-            const yPct = Number(field.y) || 0;
-            // Keep the field's right edge inside the certificate (a max-width of
-            // (100 − x)% of the template width — same box the canvas download
-            // uses), so long values cannot overflow the artwork.
             const availablePct = Math.max(0, 100 - xPct);
 
             return (
@@ -352,9 +371,6 @@ function CertificateArtwork({ resolvedBgUrl, template, layoutConfig, variableVal
                   color: style.fontColor,
                   textAlign: style.textAlign,
                   letterSpacing: `${scaleDimension(style.letterSpacing, renderScale)}px`,
-                  // lineHeight is a ratio over the already-scaled fontSize;
-                  // a stored canonical maxWidth (%) is honoured (clamped to the
-                  // certificate's right edge), else the box derives from x.
                   lineHeight: style.lineHeight,
                   maxWidth: `${style.maxWidth ? Math.min(style.maxWidth, availablePct) : availablePct}%`,
                   whiteSpace: "normal",
@@ -373,14 +389,8 @@ function CertificateArtwork({ resolvedBgUrl, template, layoutConfig, variableVal
 }
 
 export default function CertificateViewerModal({ isOpen, onClose, certificate, course }) {
-  // Font readiness is tracked as the signature of the (template, families)
-  // config that has finished loading — derived, never reset synchronously in
-  // an effect, so a reopened modal with a different template does not show a
-  // partially-typed certificate with a late typeface swap (§33).
   const [fontsReadyKey, setFontsReadyKey] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
-  // Which export is currently running — "png" | "pdf" | null (drives the
-  // per-button Downloading… label so both buttons stay in sync).
   const [exportFormat, setExportFormat] = useState(null);
 
   const template = certificate?.template || course?.certificate_template;
@@ -395,7 +405,12 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
   // Extract variable values
   const studentName = certificate?.student_name || certificate?.student?.name || "Achu Sivadasan";
   const courseTitle = certificate?.course_title || course?.title || "Surya Namaskaram Workshop";
-  const instructorName = certificate?.instructor_name || course?.instructor?.name || template?.instructor_name || "Yogify Instructor";
+  const instructorName =
+    certificate?.instructor_name ||
+    certificate?.teacher_name ||
+    course?.instructor?.name ||
+    template?.instructor_name ||
+    "Sarah Jenkins";
   const certNumber = certificate?.certificate_number || "CERT-2026-98432";
   const issueDate = certificate?.issued_at
     ? new Date(certificate.issued_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
@@ -406,6 +421,7 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
     course_name: courseTitle,
     course_title: courseTitle,
     instructor_name: instructorName,
+    teacher_name: instructorName,
     issue_date: issueDate,
     completion_date: issueDate,
     certificate_number: certNumber,
@@ -484,11 +500,12 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
         const renderScale = computeRenderScale(canvasWidth, templateWidth);
 
         const drawTextOverlays = async () => {
-          // §25: never draw before the configured font is available — loading the
-          // stylesheet <link> is not enough, the actual face must be in the
-          // FontFaceSet before text is painted.
+          // never draw before the configured font is available
+          const textFields = layoutConfig.filter(
+            (f) => !(f.type === "image" || f.key === "teacher_signature" || f.key === "signature_image")
+          );
           const uniqueFontStrings = [...new Set(
-            layoutConfig.map((field) => {
+            textFields.map((field) => {
               const style = normalizeFieldStyle(field?.style);
               return buildCanvasFont(style, scaleDimension(style.fontSize, renderScale));
             })
@@ -497,24 +514,52 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
             await Promise.allSettled(uniqueFontStrings.map((fs) => document.fonts.load(fs)));
           }
 
-          layoutConfig.forEach((field) => {
+          for (const field of layoutConfig) {
+            const isImage = field.type === "image" || field.key === "teacher_signature" || field.key === "signature_image";
             const varKey = field.key || field.id;
+
+            if (isImage) {
+              const src = field.src
+                ? resolveMediaUrl(field.src)
+                : template?.signature_image
+                ? resolveMediaUrl(template.signature_image)
+                : DEFAULT_SIGNATURE_SVG;
+
+              const posX = (Number(field.x) / 100) * canvasWidth;
+              const posY = (Number(field.y) / 100) * canvasHeight;
+              const widthPx = scaleDimension(field.width || 140, renderScale);
+              const heightPx = field.height ? scaleDimension(field.height, renderScale) : (widthPx * 50) / 140;
+
+              try {
+                const img = await new Promise((res) => {
+                  const image = new Image();
+                  image.crossOrigin = "anonymous";
+                  image.onload = () => res(image);
+                  image.onerror = () => res(null);
+                  image.src = src;
+                });
+                if (img) {
+                  ctx.save();
+                  ctx.globalAlpha = field.style?.opacity ?? 1;
+                  ctx.drawImage(img, posX, posY, widthPx, heightPx);
+                  ctx.restore();
+                }
+              } catch (e) {
+                console.warn("Could not draw signature image onto canvas:", e);
+              }
+              continue;
+            }
+
             const textValue = variableValues[varKey] ?? field.label ?? varKey;
-            if (!textValue) return;
+            if (!textValue) continue;
 
             const style = normalizeFieldStyle(field.style);
             const fontSizePx = scaleDimension(style.fontSize, renderScale);
             const letterSpacingPx = scaleDimension(style.letterSpacing, renderScale);
             const displayText = applyTextTransform(String(textValue), style.textTransform);
 
-            // Canonical contract: x/y are percentages of the ORIGINAL template.
-            // Anchor = top-left of the field text, exactly like the Mapping
-            // Builder and the on-screen preview (Sprint 3 coordinate engine).
             const posX = (Number(field.x) / 100) * canvasWidth;
             const posY = (Number(field.y) / 100) * canvasHeight;
-            // Same wrap box as the preview's (100 − x)% max-width — a stored
-            // canonical maxWidth (%) is honoured, clamped to the certificate's
-            // right edge (identical math to the DOM preview, just in px).
             const availablePct = Math.max(0, 100 - Number(field.x));
             const maxWidthPct = style.maxWidth ? Math.min(style.maxWidth, availablePct) : availablePct;
             const maxWidthPx = (maxWidthPct / 100) * canvasWidth;
@@ -529,7 +574,7 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
               maxWidthPx,
               lineHeight: style.lineHeight,
             });
-          });
+          }
 
           const safeCourse = courseTitle.replace(/[^a-zA-Z0-9]/g, "-").replace(/-+/g, "-");
           const safeStudent = studentName.replace(/[^a-zA-Z0-9]/g, "-").replace(/-+/g, "-");

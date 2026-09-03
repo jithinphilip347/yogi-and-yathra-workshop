@@ -53,7 +53,7 @@ export const getEcho = (explicitToken = null) => {
       wssPort: parseInt(process.env.NEXT_PUBLIC_REVERB_PORT || '8080', 10),
       forceTLS: (process.env.NEXT_PUBLIC_REVERB_SCHEME || 'http') === 'https',
       enabledTransports: ['ws', 'wss'],
-      authEndpoint: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1'}/broadcasting/auth`,
+      authEndpoint: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'}/broadcasting/auth`,
       auth: {
         headers: {
           Authorization: `Bearer ${authToken}`,

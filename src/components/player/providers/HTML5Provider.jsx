@@ -32,7 +32,7 @@ export default function HTML5Provider({
       // Genuine source change — reload the media element. The key includes the
       // query string, so a refreshed signed URL (new signature/expiry) IS a
       // change and reloads; a different origin with the same path+search
-      // (e.g. localhost vs localhost:8001) is the same media and skips reload.
+      // (e.g. localhost vs localhost:8000) is the same media and skips reload.
       prevSrcRef.current = src;
       videoRef.current.load();
     }

@@ -7,7 +7,7 @@
 import axios from 'axios';
 import { store } from '../../../../store';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api/v1';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
 const getAuthHeaders = () => {
   const token = store.getState()?.auth?.token;
