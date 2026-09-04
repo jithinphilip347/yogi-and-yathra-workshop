@@ -14,29 +14,6 @@ import { FaChalkboardTeacher } from 'react-icons/fa';
 import Link from 'next/link';
 import { resolveMediaUrl } from '@/utils/mediaUrl';
 
-import LiveImg1 from '../../assets/images/live1.webp';
-import LiveImg2 from '../../assets/images/live2.webp';
-import LiveImg3 from '../../assets/images/live3.webp';
-import LiveImg4 from '../../assets/images/live4.webp';
-import CourseImg1 from '../../assets/images/courseImg-1.webp';
-import CourseImg2 from '../../assets/images/courseImg-2.webp';
-
-// Mock Data
-const MOCK_SESSIONS = [
-  {
-    id: 'LS1024',
-    title: 'Advanced Vinyasa Flow',
-    instructor: 'Sarah Jenkins',
-    date: '25 Oct 2026',
-    time: '07:00 AM - 08:30 AM',
-    duration: '90 Min',
-    category: 'Yoga',
-    status: 'upcoming', 
-    countdown: 'Starts in 2 Days',
-    image: LiveImg1,
-  }
-];
-
 const TABS = ['Upcoming', 'Live Now', 'Completed', 'Cancelled'];
 
 const LiveYoga = ({ sessionsData = [] }) => {
