@@ -37,6 +37,12 @@ const LiveYogaDetails = ({ liveSection }) => {
   const [timeLeft, setTimeLeft] = useState({ days: "00", hours: "00", minutes: "00", seconds: "00" });
   const [openFaq, setOpenFaq] = useState(null);
 
+  // Certificate state
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const [certEligibility, setCertEligibility] = useState(null);
+  const [isCertLoading, setIsCertLoading] = useState(false);
+
   useEffect(() => {
     if (user?.id && data.id) {
       courseApi.userEnrollments(user.id, 'live_section')
@@ -44,10 +50,75 @@ const LiveYogaDetails = ({ liveSection }) => {
           const list = res.data?.data || res.data || [];
           const enrolled = list.some(e => Number(e.enrollable_id) === Number(data.id) && e.status === 'active');
           setIsEnrolled(enrolled);
+
+          if (enrolled && (data.has_certificate || data.can_issue_certificate)) {
+            courseApi.getLiveSectionCertificateEligibility(data.id)
+              .then(eligRes => {
+                setCertEligibility(eligRes.data?.data || eligRes.data);
+              })
+              .catch(() => {});
+          }
         })
         .catch(() => {});
     }
-  }, [user?.id, data.id]);
+  }, [user?.id, data.id, data.has_certificate, data.can_issue_certificate]);
+
+  const handleClaimOrViewCertificate = async () => {
+    if (!data.id || isCertLoading) return;
+
+    setIsCertLoading(true);
+
+    try {
+      // 1. If already claimed, open viewer directly
+      if (certEligibility?.is_claimed && certEligibility?.certificate) {
+        setSelectedCertificate(certEligibility.certificate);
+        setIsViewerOpen(true);
+        setIsCertLoading(false);
+        return;
+      }
+
+      // 2. Refresh eligibility check
+      const eligRes = await courseApi.getLiveSectionCertificateEligibility(data.id);
+      const resData = eligRes.data?.data || eligRes.data;
+      setCertEligibility(resData);
+
+      if (!resData?.has_certificate) {
+        toast.error(resData?.reason || 'Certificate is not configured for this live session.');
+        setIsCertLoading(false);
+        return;
+      }
+
+      if (resData?.is_claimed && resData?.certificate) {
+        setSelectedCertificate(resData.certificate);
+        setIsViewerOpen(true);
+        setIsCertLoading(false);
+        return;
+      }
+
+      // 3. Claim if eligible
+      if (resData?.eligible) {
+        const claimRes = await courseApi.claimLiveSectionCertificate(data.id);
+        const certPayload = claimRes.data?.data || claimRes.data;
+
+        toast.success(claimRes.data?.message || 'Certificate claimed successfully!');
+        setCertEligibility({
+          ...resData,
+          is_claimed: true,
+          status: 'issued',
+          certificate: certPayload,
+        });
+        setSelectedCertificate(certPayload);
+        setIsViewerOpen(true);
+      } else {
+        toast.error(resData?.reason || 'You are not eligible for this certificate yet.');
+      }
+    } catch (err) {
+      console.error('Certificate claim error:', err);
+      toast.error(err.response?.data?.message || 'Failed to claim certificate.');
+    } finally {
+      setIsCertLoading(false);
+    }
+  };
 
   // ─── Compute derived values ──────────────────────────────────────────
 
@@ -468,14 +539,43 @@ const LiveYogaDetails = ({ liveSection }) => {
               )}
 
               {isEnrolled ? (
-                <Link
-                  href={`/live-stream/${data.id}/${data.slug}`}
-                  style={{ textDecoration: 'none', width: '100%' }}
-                >
-                  <button className="BookBtnSidebar">
-                    Go to Live Stream Portal <MdKeyboardArrowRight className="ArrowAnim" />
-                  </button>
-                </Link>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', width: '100%' }}>
+                  <Link
+                    href={`/live-stream/${data.id}/${data.slug}`}
+                    style={{ textDecoration: 'none', width: '100%' }}
+                  >
+                    <button className="BookBtnSidebar">
+                      Go to Live Stream Portal <MdKeyboardArrowRight className="ArrowAnim" />
+                    </button>
+                  </Link>
+
+                  {(data.has_certificate || data.can_issue_certificate || certEligibility?.has_certificate) && (
+                    <button
+                      className="AddToCartBtnSidebar"
+                      onClick={handleClaimOrViewCertificate}
+                      disabled={isCertLoading}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        backgroundColor: '#ffffff',
+                        border: '1px solid var(--primaryColor, #874429)',
+                        color: 'var(--primaryColor, #874429)',
+                        fontWeight: '600',
+                      }}
+                    >
+                      <FiAward />
+                      <span>
+                        {isCertLoading
+                          ? 'Checking Certificate...'
+                          : certEligibility?.is_claimed
+                          ? 'View Certificate'
+                          : 'Claim Certificate'}
+                      </span>
+                    </button>
+                  )}
+                </div>
               ) : isInCart(data?.id, 'LiveSection') ? (
                 <button
                   className="BookBtnSidebar"
@@ -505,6 +605,17 @@ const LiveYogaDetails = ({ liveSection }) => {
           </div>
         </div>
       </div>
+
+      {/* Certificate Viewer Modal */}
+      <CertificateViewerModal
+        isOpen={isViewerOpen}
+        onClose={() => {
+          setIsViewerOpen(false);
+          setSelectedCertificate(null);
+        }}
+        certificate={selectedCertificate}
+        entity={data}
+      />
 
     </div>
   )
