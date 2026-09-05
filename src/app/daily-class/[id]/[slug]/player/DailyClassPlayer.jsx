@@ -34,6 +34,8 @@ import { resolveMediaUrl } from "@/utils/mediaUrl";
 import courseApi from "@/libs/courseApi";
 import toast from "react-hot-toast";
 import useZoomMeeting from "@/hooks/useZoomMeeting";
+import CertificateViewerModal from "@/components/certificate/CertificateViewerModal";
+import { useDailyClassCertificate } from "@/hooks/useDailyClassCertificate";
 
 import "../../../../../assets/css/live-stream.scss";
 import "../../../../../assets/css/learning-player.scss";
@@ -174,6 +176,27 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
     instructorId: classData?.instructor_id,
     signatureEndpoint: `daily-classes/${classData?.id}/zoom-signature`,
   });
+
+  // ─── Authoritative Certificate State (Sprint 3) ──────────────────────
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const {
+    eligibility: certEligibility,
+    isLoading: isCertLoading,
+    isClaiming: isClaimingCert,
+    claimCertificate,
+    refetch: refetchCertificate,
+  } = useDailyClassCertificate(classData?.id, isEnrolled);
+
+  const handleClaimCertificate = async () => {
+    try {
+      const cert = await claimCertificate();
+      if (cert) {
+        setIsViewerOpen(true);
+      }
+    } catch (_) {
+      // Errors are already toasted in the hook
+    }
+  };
 
   // Client-side fallback fetch if initial data wasn't provided directly
   useEffect(() => {
@@ -691,12 +714,228 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
               />
               <div className="InfoPills">
                 <span className="Pill"><MdLiveTv className="PillIcon" /> Daily Live Session</span>
-                <span className="Pill"><MdCheckCircle className="PillIcon" /> Certificate Included</span>
+                {classData?.has_certificate ? (
+                  <span className="Pill"><MdCheckCircle className="PillIcon" /> Certificate Included</span>
+                ) : null}
                 <span className="Pill"><MdEvent className="PillIcon" /> Live Interaction</span>
                 <span className="Pill"><MdAccessTime className="PillIcon" /> Regular Practice</span>
                 <span className="Pill"><FaChalkboardTeacher className="PillIcon" /> Expert Instructor</span>
               </div>
             </section>
+
+            {/* Certificate & Attendance Status Section */}
+            {classData?.has_certificate && (
+              <section className="DetailSection" style={{ borderTop: "1px solid #eaeaea", paddingTop: "35px" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", marginBottom: "16px" }}>
+                  <h2 className="SectionTitle" style={{ margin: 0, display: "flex", alignItems: "center", gap: "10px" }}>
+                    <FiAward style={{ color: "var(--primaryColor, #874429)" }} />
+                    <span>Course Certificate & Attendance</span>
+                  </h2>
+                  {certEligibility?.status === "issued" && (
+                    <span style={{
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      padding: "4px 12px",
+                      borderRadius: "20px",
+                      backgroundColor: "#dcfce7",
+                      color: "#166534",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}>
+                      <FiCheck /> Certificate Issued
+                    </span>
+                  )}
+                  {certEligibility?.status === "eligible" && !certEligibility?.is_claimed && (
+                    <span style={{
+                      fontSize: "12px",
+                      fontWeight: "700",
+                      padding: "4px 12px",
+                      borderRadius: "20px",
+                      backgroundColor: "#dbeafe",
+                      color: "#1e40af",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px",
+                    }}>
+                      <FiAward /> Eligible to Claim
+                    </span>
+                  )}
+                </div>
+
+                {!isEnrolled ? (
+                  <div style={{
+                    background: "#f8fafc",
+                    padding: "20px 24px",
+                    borderRadius: "12px",
+                    border: "1px solid #e2e8f0",
+                    color: "#475569",
+                    fontSize: "14px",
+                    lineHeight: "1.6",
+                  }}>
+                    <p style={{ margin: "0 0 10px 0" }}>
+                      Earn an official <strong>Certificate of Completion</strong> upon meeting the required attendance criteria.
+                    </p>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#64748b" }}>
+                      <FiAward style={{ color: "var(--primaryColor)" }} />
+                      <span>Minimum Required Attendance: <strong>{classData.minimum_attendance_percentage || 70}%</strong></span>
+                    </div>
+                  </div>
+                ) : isCertLoading ? (
+                  <div style={{
+                    background: "#f8fafc",
+                    padding: "24px",
+                    borderRadius: "12px",
+                    border: "1px solid #e2e8f0",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "10px",
+                    color: "#64748b",
+                    fontSize: "14px",
+                  }}>
+                    <FiRefreshCw className="spin" style={{ fontSize: "18px", color: "var(--primaryColor)" }} />
+                    <span>Checking certificate eligibility & attendance...</span>
+                  </div>
+                ) : (
+                  <div style={{
+                    background: "#f8fafc",
+                    padding: "22px 24px",
+                    borderRadius: "12px",
+                    border: "1px solid #e2e8f0",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "18px",
+                  }}>
+                    {/* Attendance Statistics Grid */}
+                    <div style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                      gap: "14px",
+                    }}>
+                      <div style={{
+                        background: "#ffffff",
+                        padding: "14px 18px",
+                        borderRadius: "10px",
+                        border: "1px solid #e2e8f0",
+                      }}>
+                        <div style={{ fontSize: "12px", color: "#64748b", fontWeight: "600", textTransform: "uppercase" }}>
+                          Your Attendance
+                        </div>
+                        <div style={{ fontSize: "20px", fontWeight: "800", color: "#0f172a", marginTop: "4px" }}>
+                          {certEligibility?.attendance_percentage ?? 0}%
+                        </div>
+                        <div style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>
+                          {certEligibility?.qualifying_attendance_count ?? 0} of {certEligibility?.eligible_occurrence_count ?? 0} sessions attended
+                        </div>
+                      </div>
+
+                      <div style={{
+                        background: "#ffffff",
+                        padding: "14px 18px",
+                        borderRadius: "10px",
+                        border: "1px solid #e2e8f0",
+                      }}>
+                        <div style={{ fontSize: "12px", color: "#64748b", fontWeight: "600", textTransform: "uppercase" }}>
+                          Required Attendance
+                        </div>
+                        <div style={{ fontSize: "20px", fontWeight: "800", color: "var(--primaryColor, #874429)", marginTop: "4px" }}>
+                          {certEligibility?.minimum_attendance_percentage ?? (classData.minimum_attendance_percentage || 70)}%
+                        </div>
+                        <div style={{ fontSize: "12px", color: "#64748b", marginTop: "2px" }}>
+                          Threshold configured by instructor
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Informative explanation / reason from backend */}
+                    <div style={{
+                      padding: "12px 16px",
+                      borderRadius: "8px",
+                      backgroundColor: certEligibility?.is_claimed || certEligibility?.eligible ? "#f0fdf4" : "#fffbeb",
+                      border: `1px solid ${certEligibility?.is_claimed || certEligibility?.eligible ? "#bbf7d0" : "#fef3c7"}`,
+                      fontSize: "13.5px",
+                      color: certEligibility?.is_claimed || certEligibility?.eligible ? "#166534" : "#92400e",
+                      lineHeight: "1.5",
+                    }}>
+                      {certEligibility?.reason || (
+                        certEligibility?.is_claimed
+                          ? "Your certificate has been issued and is ready to view and download."
+                          : certEligibility?.eligible
+                          ? "You have satisfied all attendance and completion requirements. Ready to claim!"
+                          : "Attend required daily live sessions to build eligibility."
+                      )}
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div style={{ display: "flex", gap: "10px", alignItems: "center", flexWrap: "wrap" }}>
+                      {certEligibility?.is_claimed && certEligibility?.certificate ? (
+                        <button
+                          type="button"
+                          onClick={() => setIsViewerOpen(true)}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            padding: "10px 20px",
+                            fontSize: "14px",
+                            fontWeight: "700",
+                            borderRadius: "8px",
+                            border: "none",
+                            backgroundColor: "var(--primaryColor, #874429)",
+                            color: "#ffffff",
+                            cursor: "pointer",
+                            boxShadow: "0 2px 8px rgba(135, 68, 41, 0.25)",
+                          }}
+                        >
+                          <FiAward style={{ fontSize: "16px" }} />
+                          <span>View Certificate</span>
+                        </button>
+                      ) : certEligibility?.eligible ? (
+                        <button
+                          type="button"
+                          onClick={handleClaimCertificate}
+                          disabled={isClaimingCert}
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "8px",
+                            padding: "10px 22px",
+                            fontSize: "14px",
+                            fontWeight: "700",
+                            borderRadius: "8px",
+                            border: "none",
+                            backgroundColor: "#16a34a",
+                            color: "#ffffff",
+                            cursor: isClaimingCert ? "wait" : "pointer",
+                            boxShadow: "0 2px 8px rgba(22, 163, 74, 0.25)",
+                            opacity: isClaimingCert ? 0.7 : 1,
+                          }}
+                        >
+                          {isClaimingCert ? (
+                            <>
+                              <FiRefreshCw className="spin" style={{ fontSize: "16px" }} />
+                              <span>Claiming Certificate...</span>
+                            </>
+                          ) : (
+                            <>
+                              <FiAward style={{ fontSize: "16px" }} />
+                              <span>Claim Certificate</span>
+                            </>
+                          )}
+                        </button>
+                      ) : (
+                        <div style={{ fontSize: "13px", color: "#64748b", fontStyle: "italic" }}>
+                          {certEligibility?.status === "in_progress"
+                            ? "Certificate will unlock after class end date and requirements are satisfied."
+                            : "Meet the minimum attendance requirement across class sessions to claim."}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </section>
+            )}
 
             {/* Weekly Schedule Display */}
             <section className="DetailSection" style={{ borderTop: "1px solid #eaeaea", paddingTop: "35px" }}>
@@ -872,6 +1111,16 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
             {isLaunchingZoom ? "Launching..." : isLive ? (isHost ? "Enter as Host" : "Join Live Class") : (isHost ? "Start Daily Class" : "Enter Class Room")}
           </button>
         </div>
+      )}
+
+      {/* ═══ 4. CERTIFICATE VIEWER MODAL ═══ */}
+      {isViewerOpen && (
+        <CertificateViewerModal
+          isOpen={isViewerOpen}
+          onClose={() => setIsViewerOpen(false)}
+          certificate={certEligibility?.certificate}
+          entity={classData}
+        />
       )}
     </div>
   );

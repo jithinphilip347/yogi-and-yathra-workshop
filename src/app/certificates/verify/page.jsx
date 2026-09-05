@@ -368,6 +368,10 @@ function VerifyContent() {
                     }}>
                       {certData.entity.type === "LiveSection"
                         ? "Live Workshop Section"
+                        : certData.entity.type === "DailyClass"
+                        ? "Daily Live Class"
+                        : certData.entity.type === "Course"
+                        ? "On-Demand Course"
                         : certData.entity.type}
                     </span>
                   </div>
