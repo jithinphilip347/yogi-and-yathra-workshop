@@ -83,6 +83,10 @@ const courseApi = {
     apiClient.get(`live-sections/${liveSectionId}/certificate-eligibility`),
   claimLiveSectionCertificate: (liveSectionId) =>
     apiClient.post(`live-sections/${liveSectionId}/claim-certificate`),
+  getDailyClassCertificateEligibility: (dailyClassId) =>
+    apiClient.get(`daily-classes/${dailyClassId}/certificate-eligibility`),
+  claimDailyClassCertificate: (dailyClassId) =>
+    apiClient.post(`daily-classes/${dailyClassId}/claim-certificate`),
   getAssessmentStatus: (lessonId) => apiClient.get(`lesson/${lessonId}/assessment-status`),
 
   // Sprint P6: Learning Intelligence, Analytics & Telemetry
