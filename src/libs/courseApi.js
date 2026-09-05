@@ -79,6 +79,10 @@ const courseApi = {
   // Sprint P5: Assessment & Certificate Integration
   getCertificateEligibility: (courseId) => apiClient.get(`course/${courseId}/certificate-eligibility`),
   claimCertificate: (courseId) => apiClient.post(`course/${courseId}/claim-certificate`),
+  getLiveSectionCertificateEligibility: (liveSectionId) =>
+    apiClient.get(`live-sections/${liveSectionId}/certificate-eligibility`),
+  claimLiveSectionCertificate: (liveSectionId) =>
+    apiClient.post(`live-sections/${liveSectionId}/claim-certificate`),
   getAssessmentStatus: (lessonId) => apiClient.get(`lesson/${lessonId}/assessment-status`),
 
   // Sprint P6: Learning Intelligence, Analytics & Telemetry

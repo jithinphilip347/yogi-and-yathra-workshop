@@ -22,6 +22,8 @@ import {
 import { FiUsers, FiAward, FiClock, FiPlayCircle, FiCheck, FiXCircle, FiShoppingCart } from 'react-icons/fi';
 import { FaChalkboardTeacher, FaRegCalendarAlt } from 'react-icons/fa';
 import { resolveMediaUrl } from '@/utils/mediaUrl';
+import CertificateViewerModal from '@/components/certificate/CertificateViewerModal';
+import toast from 'react-hot-toast';
 import '../../../../assets/css/live-yoga-details.css';
 
 const LiveYogaDetails = ({ liveSection }) => {

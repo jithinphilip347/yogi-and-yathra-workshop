@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { 
@@ -11,13 +13,28 @@ import {
   MdLock
 } from 'react-icons/md';
 import { FaChalkboardTeacher } from 'react-icons/fa';
+import { FiAward, FiDownload, FiCheck, FiLoader } from 'react-icons/fi';
 import Link from 'next/link';
 import { resolveMediaUrl } from '@/utils/mediaUrl';
+import courseApi from '@/libs/courseApi';
+import CertificateViewerModal from '@/components/certificate/CertificateViewerModal';
+import { useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 
 const TABS = ['Upcoming', 'Live Now', 'Completed', 'Cancelled'];
 
 const LiveYoga = ({ sessionsData = [] }) => {
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState('Upcoming');
+
+  // Certificate Viewer Modal State
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const [activeEntity, setActiveEntity] = useState(null);
+
+  // Per-session certificate state cache and loading state
+  const [eligibilityMap, setEligibilityMap] = useState({});
+  const [loadingActionMap, setLoadingActionMap] = useState({});
 
   const sessionsList = Array.isArray(sessionsData) ? sessionsData : [];
 
@@ -43,14 +60,112 @@ const LiveYoga = ({ sessionsData = [] }) => {
     }
   };
 
+  /**
+   * Authoritative Certificate Action Handler
+   * Evaluates eligibility from backend, claims if eligible, or opens the viewer if already issued.
+   */
+  const handleCertificateAction = async (session) => {
+    if (!session?.id) return;
+
+    if (loadingActionMap[session.id]) {
+      return; // prevent duplicate clicks
+    }
+
+    setLoadingActionMap(prev => ({ ...prev, [session.id]: true }));
+
+    try {
+      // 1. Authoritative Eligibility Check
+      const eligRes = await courseApi.getLiveSectionCertificateEligibility(session.id);
+      const data = eligRes.data?.data || eligRes.data;
+
+      setEligibilityMap(prev => ({ ...prev, [session.id]: data }));
+
+      if (!data?.has_certificate) {
+        toast.error(data?.reason || 'Certificate is not configured for this live session.');
+        setLoadingActionMap(prev => ({ ...prev, [session.id]: false }));
+        return;
+      }
+
+      // 2. Already Claimed -> Open Viewer directly
+      if (data?.is_claimed && data?.certificate) {
+        setSelectedCertificate(data.certificate);
+        setActiveEntity(session);
+        setIsViewerOpen(true);
+        setLoadingActionMap(prev => ({ ...prev, [session.id]: false }));
+        return;
+      }
+
+      // 3. Eligible -> Claim Certificate
+      if (data?.eligible) {
+        const claimRes = await courseApi.claimLiveSectionCertificate(session.id);
+        const certPayload = claimRes.data?.data || claimRes.data;
+
+        toast.success(claimRes.data?.message || 'Certificate claimed successfully!');
+
+        // Update local eligibility cache
+        setEligibilityMap(prev => ({
+          ...prev,
+          [session.id]: {
+            ...data,
+            is_claimed: true,
+            status: 'issued',
+            certificate: certPayload,
+          }
+        }));
+
+        // Invalidate relevant queries
+        try {
+          queryClient.invalidateQueries({ queryKey: ['user-enrollments'] });
+          queryClient.invalidateQueries({ queryKey: ['certificates'] });
+        } catch (_) {}
+
+        setSelectedCertificate(certPayload);
+        setActiveEntity(session);
+        setIsViewerOpen(true);
+      } else {
+        // 4. Not Eligible -> Display authoritative reason
+        toast.error(data?.reason || 'You are not currently eligible for this certificate.');
+      }
+    } catch (err) {
+      console.error('Certificate claim/view error:', err);
+      const errorMsg = err.response?.data?.message || err.message || 'Failed to process certificate request.';
+      toast.error(errorMsg);
+    } finally {
+      setLoadingActionMap(prev => ({ ...prev, [session.id]: false }));
+    }
+  };
+
   const getActionButton = (session) => {
     const meetingUrl = session.meeting_link || '/live-stream';
+    const isActionLoading = Boolean(loadingActionMap[session.id]);
+    const cachedElig = eligibilityMap[session.id];
+
     switch(session.status) {
       case 'upcoming': return <Link href={meetingUrl} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
       case 'ready': return <Link href={meetingUrl} passHref><button className="ActionBtn primary">Join Waiting Room</button></Link>;
       case 'live': return <Link href={meetingUrl} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
-      case 'completed': return <button className="ActionBtn primary outline">Watch Recording</button>;
-      case 'expired': return <button className="ActionBtn secondary">View Details</button>;
+      case 'completed': 
+      case 'expired':
+        return (
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+            {session.status === 'completed' && (
+              <button className="ActionBtn primary outline">Watch Recording</button>
+            )}
+            <button 
+              className="ActionBtn secondary"
+              onClick={() => handleCertificateAction(session)}
+              disabled={isActionLoading}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+            >
+              <FiAward style={{ fontSize: '15px' }} />
+              <span>
+                {isActionLoading 
+                  ? 'Processing...' 
+                  : (cachedElig?.is_claimed ? 'View Certificate' : 'Certificate')}
+              </span>
+            </button>
+          </div>
+        );
       case 'cancelled': return <button className="ActionBtn disabled" disabled>Cancelled</button>;
       default: return <Link href={meetingUrl} passHref><button className="ActionBtn primary live-btn"><MdLiveTv style={{ marginRight: '6px' }} /> Join Live</button></Link>;
     }
@@ -89,6 +204,8 @@ const LiveYoga = ({ sessionsData = [] }) => {
         {filteredSessions.length > 0 ? (
           filteredSessions.map(session => {
             const statusInfo = getStatusDisplay(session);
+            const isActionLoading = Boolean(loadingActionMap[session.id]);
+            const cachedElig = eligibilityMap[session.id];
             
             return (
               <div key={session.id} className="SessionCard">
@@ -122,7 +239,14 @@ const LiveYoga = ({ sessionsData = [] }) => {
                         {['completed', 'expired'].includes(session.status) && (
                           <>
                             <button>Watch Recording</button>
-                            <button>Download Certificate</button>
+                            <button 
+                              onClick={() => handleCertificateAction(session)}
+                              disabled={isActionLoading}
+                            >
+                              {isActionLoading
+                                ? 'Checking Certificate...'
+                                : (cachedElig?.is_claimed ? 'View / Download Certificate' : 'Claim Certificate')}
+                            </button>
                             <button>Rate Session</button>
                           </>
                         )}
@@ -159,6 +283,18 @@ const LiveYoga = ({ sessionsData = [] }) => {
           </div>
         )}
       </div>
+
+      {/* Reused Certificate Viewer Modal */}
+      <CertificateViewerModal
+        isOpen={isViewerOpen}
+        onClose={() => {
+          setIsViewerOpen(false);
+          setSelectedCertificate(null);
+          setActiveEntity(null);
+        }}
+        certificate={selectedCertificate}
+        entity={activeEntity}
+      />
 
     </div>
   )

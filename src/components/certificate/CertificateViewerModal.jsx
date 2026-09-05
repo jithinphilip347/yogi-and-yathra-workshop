@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
-import { FiX, FiDownload, FiFileText, FiAward, FiAlertCircle, FiRefreshCw, FiLoader } from "react-icons/fi";
+import { FiX, FiDownload, FiFileText, FiAward, FiAlertCircle, FiRefreshCw, FiLoader, FiExternalLink } from "react-icons/fi";
 import { ensureFontsLoaded } from "./fontLoader";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import apiClient from "@/services/apiClient";
@@ -388,12 +388,13 @@ function CertificateArtwork({ resolvedBgUrl, template, layoutConfig, variableVal
   );
 }
 
-export default function CertificateViewerModal({ isOpen, onClose, certificate, course }) {
+export default function CertificateViewerModal({ isOpen, onClose, certificate, course, entity }) {
   const [fontsReadyKey, setFontsReadyKey] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [exportFormat, setExportFormat] = useState(null);
 
-  const template = certificate?.template || course?.certificate_template;
+  const activeEntity = entity || course;
+  const template = certificate?.template || activeEntity?.certificate_template;
   const layoutConfig = React.useMemo(
     () => (Array.isArray(template?.layout_config) ? template.layout_config : []),
     [template]
@@ -403,14 +404,19 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
   const resolvedBgUrl = resolveMediaUrl(rawBgUrl);
 
   // Extract variable values
-  const studentName = certificate?.student_name || certificate?.student?.name || "Achu Sivadasan";
-  const courseTitle = certificate?.course_title || course?.title || "Surya Namaskaram Workshop";
+  const studentName = certificate?.student_name || certificate?.student?.name || "Student";
+  const courseTitle =
+    certificate?.course_title ||
+    certificate?.certificateable?.title ||
+    activeEntity?.title ||
+    "Completion Certificate";
   const instructorName =
     certificate?.instructor_name ||
     certificate?.teacher_name ||
-    course?.instructor?.name ||
+    activeEntity?.instructor?.name ||
+    (typeof activeEntity?.instructor === "string" ? activeEntity.instructor : null) ||
     template?.instructor_name ||
-    "Sarah Jenkins";
+    "Instructor";
   const certNumber = certificate?.certificate_number || "CERT-2026-98432";
   const issueDate = certificate?.issued_at
     ? new Date(certificate.issued_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
@@ -704,7 +710,7 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
             </div>
             <div>
               <h3 style={{ fontSize: "16px", fontWeight: "700", color: "#0f172a", margin: 0 }}>
-                Course Completion Certificate
+                Certificate of Completion
               </h3>
               <p style={{ fontSize: "12px", color: "#64748b", margin: 0 }}>
                 {courseTitle} · Issued to {studentName}
@@ -759,8 +765,27 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
           gap: "10px",
           backgroundColor: "#ffffff",
         }}>
-          <div style={{ fontSize: "12px", color: "#64748b", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-            Certificate ID: <strong style={{ color: "#0f172a" }}>{certNumber}</strong>
+          <div style={{ fontSize: "12px", color: "#64748b", minWidth: 0, display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+            <span>Certificate ID: <strong style={{ color: "#0f172a" }}>{certNumber}</strong></span>
+            {certificate?.verification_code && (
+              <a
+                href={`/certificates/verify?verification_code=${certificate.verification_code}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "4px",
+                  color: "var(--primaryColor, #874429)",
+                  fontWeight: "600",
+                  textDecoration: "underline",
+                  fontSize: "12px",
+                }}
+              >
+                <span>Verify Publicly</span>
+                <FiExternalLink style={{ fontSize: "11px" }} />
+              </a>
+            )}
           </div>
 
           <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
