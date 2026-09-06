@@ -32,7 +32,10 @@ const Dashboard = ({
   }, []);
 
   const activeDailyClass = liveClasses && liveClasses.length > 0 ? liveClasses[0] : null;
-  const activeLiveSession = liveSessions && liveSessions.length > 0 ? liveSessions[0] : null;
+  const activeLiveSession =
+    liveSessions && liveSessions.length > 0
+      ? liveSessions.find((s) => ["upcoming", "ready", "live"].includes(s.status) && !s.is_past)
+      : null;
 
   return (
     <div className="DashBoard" style={{ width: '100%' }}>
@@ -314,8 +317,9 @@ const Dashboard = ({
                 <div className="SessionDetails">
                   <div className="CardHeader">
                     <div className="TitleArea">
-                      <span className="StatusBadge status-upcoming">
-                        {activeLiveSession.countdown || "Upcoming"}
+                      <span className={`StatusBadge status-${activeLiveSession.status || "upcoming"}`}>
+                        {activeLiveSession.status === "live" && <span className="LiveDot"></span>}
+                        {activeLiveSession.countdown || (activeLiveSession.status === "live" ? "LIVE NOW" : activeLiveSession.status === "ready" ? "Starts Soon" : "Upcoming")}
                       </span>
                       <h3 className="Title">{activeLiveSession.title}</h3>
                     </div>

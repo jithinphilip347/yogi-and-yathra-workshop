@@ -219,8 +219,12 @@ export const useProfileLearning = () => {
       displayTime = "Scheduled";
     }
 
-    // Dynamic countdown / relative label
+    // Temporal status & countdown calculation
+    let isPast = Boolean(session.is_ended);
+    let isLive = false;
+    let computedStatus = session.time_status || session.status || "upcoming";
     let countdownText = "";
+
     if (session.date) {
       const timePart = session.start_time
         ? session.start_time.length === 5
@@ -228,22 +232,42 @@ export const useProfileLearning = () => {
           : session.start_time
         : "00:00:00";
       const sessionDate = new Date(`${session.date}T${timePart}`);
-      if (!isNaN(sessionDate.getTime())) {
-        const now = new Date();
-        const diffMs = sessionDate - now;
-        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      const durationMins = parseInt(session.duration, 10) || 60;
+      const sessionEnd = new Date(sessionDate.getTime() + durationMins * 60 * 1000);
+      const now = new Date();
 
-        if (diffMs > 0 && diffHours < 1) {
-          countdownText = "Starts in < 1 hour";
-        } else if (diffDays === 0) {
-          countdownText = "Starts today";
-        } else if (diffDays === 1) {
-          countdownText = "Starts tomorrow";
-        } else if (diffDays > 1) {
-          countdownText = `Starts in ${diffDays} days`;
+      if (!isNaN(sessionDate.getTime())) {
+        const diffMs = sessionDate - now;
+        const diffEndMs = sessionEnd - now;
+
+        if (diffEndMs < 0 || session.is_ended) {
+          isPast = true;
+          computedStatus = "completed";
+          countdownText = "";
+        } else if (diffMs <= 15 * 60 * 1000 && diffEndMs >= 0) {
+          isLive = true;
+          computedStatus = diffMs <= 0 ? "live" : "ready";
+          countdownText = diffMs <= 0 ? "LIVE NOW" : "Starts Soon";
+        } else {
+          computedStatus = "upcoming";
+          const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+          const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+          if (diffHours < 1) {
+            countdownText = "Starts in < 1 hour";
+          } else if (diffDays === 0) {
+            countdownText = "Starts today";
+          } else if (diffDays === 1) {
+            countdownText = "Starts tomorrow";
+          } else if (diffDays > 1) {
+            countdownText = `Starts in ${diffDays} days`;
+          }
         }
       }
+    }
+
+    if (session.status === "cancelled" || session.status === "expired") {
+      computedStatus = session.status;
     }
 
     return {
@@ -257,7 +281,9 @@ export const useProfileLearning = () => {
       time: displayTime,
       duration: session.duration ? `${session.duration} Min` : "",
       category: session.category?.name || (typeof session.category === "string" ? session.category : "Yoga"),
-      status: session.status || (isEnrollment ? item.status : null) || "upcoming",
+      status: computedStatus,
+      is_past: isPast,
+      is_live: isLive,
       enrollment_status: isEnrollment ? item.status : null,
       has_certificate: Boolean(session.has_certificate),
       can_issue_certificate: Boolean(session.can_issue_certificate),
