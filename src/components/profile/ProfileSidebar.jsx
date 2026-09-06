@@ -10,6 +10,7 @@ import {
   MdHelpCenter,
   MdLogout,
 } from "react-icons/md";
+import { FiAward } from "react-icons/fi";
 import UserProfileImg from "@/assets/images/user-img.webp";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import { useDispatch } from "react-redux";
@@ -28,6 +29,7 @@ const ProfileSidebar = ({
     { name: "My Courses", icon: <MdMenuBook /> },
     { name: "Live Classes", icon: <MdVideoCameraFront /> },
     { name: "Live Sessions", icon: <MdVideoCameraFront /> },
+    { name: "Certificates", icon: <FiAward /> },
     { name: "Billing & Invoices", icon: <MdEvent /> },
   ];
 

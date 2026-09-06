@@ -392,9 +392,35 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
   const [fontsReadyKey, setFontsReadyKey] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [exportFormat, setExportFormat] = useState(null);
+  const [detailedCert, setDetailedCert] = useState(null);
 
   const activeEntity = entity || course;
-  const template = certificate?.template || activeEntity?.certificate_template;
+  const currentCert = detailedCert || certificate;
+  const template = currentCert?.template || activeEntity?.certificate_template;
+
+  useEffect(() => {
+    if (!isOpen) {
+      setDetailedCert(null);
+      return;
+    }
+
+    const hasBg = template?.background_image || template?.background_media?.url;
+    // If certificate ID exists but template details/asset are missing, fetch full certificate record
+    if (certificate?.id && !hasBg && !detailedCert) {
+      apiClient
+        .get(`certificates/${certificate.id}`)
+        .then((res) => {
+          const data = res.data?.data || res.data;
+          if (data) {
+            setDetailedCert(data);
+          }
+        })
+        .catch((err) => {
+          console.warn("Could not fetch full certificate details:", err);
+        });
+    }
+  }, [isOpen, certificate?.id, template, detailedCert]);
+
   const layoutConfig = React.useMemo(
     () => (Array.isArray(template?.layout_config) ? template.layout_config : []),
     [template]
@@ -404,22 +430,22 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
   const resolvedBgUrl = resolveMediaUrl(rawBgUrl);
 
   // Extract variable values
-  const studentName = certificate?.student_name || certificate?.student?.name || "Student";
+  const studentName = currentCert?.student_name || currentCert?.student?.name || "Student";
   const courseTitle =
-    certificate?.course_title ||
-    certificate?.certificateable?.title ||
+    currentCert?.course_title ||
+    currentCert?.certificateable?.title ||
     activeEntity?.title ||
     "Completion Certificate";
   const instructorName =
-    certificate?.instructor_name ||
-    certificate?.teacher_name ||
+    currentCert?.instructor_name ||
+    currentCert?.teacher_name ||
     activeEntity?.instructor?.name ||
     (typeof activeEntity?.instructor === "string" ? activeEntity.instructor : null) ||
     template?.instructor_name ||
     "Instructor";
-  const certNumber = certificate?.certificate_number || "CERT-2026-98432";
-  const issueDate = certificate?.issued_at
-    ? new Date(certificate.issued_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
+  const certNumber = currentCert?.certificate_number || "CERT-2026-98432";
+  const issueDate = currentCert?.issued_at
+    ? new Date(currentCert.issued_at).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" })
     : new Date().toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
 
   const variableValues = {
@@ -431,7 +457,7 @@ export default function CertificateViewerModal({ isOpen, onClose, certificate, c
     issue_date: issueDate,
     completion_date: issueDate,
     certificate_number: certNumber,
-    verification_code: certificate?.verification_code || "VERIFIED",
+    verification_code: currentCert?.verification_code || "VERIFIED",
   };
 
   // ── Font loading (Sprint 4 §7 / §33) ─────────────────────────────────

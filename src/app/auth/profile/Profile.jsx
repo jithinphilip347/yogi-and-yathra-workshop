@@ -28,6 +28,7 @@ import { resolveMediaUrl } from "@/utils/mediaUrl";
 import useCourse from "@/hooks/useCourse";
 import LiveYoga from "@/components/profile/LiveYoga";
 import StudentBilling from "@/components/profile/StudentBilling";
+import MyCertificates from "@/components/profile/MyCertificates";
 
 // const courses = [
 //   {
@@ -198,6 +199,8 @@ const Profile = () => {
         return <LiveClasses classesData={liveClasses} />;
       case "Live Sessions":
         return <LiveYoga sessionsData={liveSessions} />;
+      case "Certificates":
+        return <MyCertificates user={user} />;
       case "Billing & Invoices":
         return <StudentBilling />;
       case "Settings":
