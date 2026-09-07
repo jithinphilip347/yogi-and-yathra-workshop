@@ -8,18 +8,19 @@ import { fetchCategories } from '@/libs/course';
 const SubNav = () => {
   const pathname = usePathname();
   const [isCoursesOpen, setIsCoursesOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
 
   const mainLinks = [
     { name: "Home", path: "/" },
-    { name: "Courses", path: "#", hasDropdown: true }, 
+    { name: "Courses", path: "/course", hasDropdown: true }, 
     { name: "About", path: "/about" },
     { name: "Blog", path: "/blog" },
     { name: "Contact", path: "/contact" },
   ];
-  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
     fetchCategories().then((res) => {
-      setCategories(res)
+      setCategories(res || []);
     });
   }, []);
 
@@ -56,9 +57,14 @@ const SubNav = () => {
         <div className="CategoryStrip">
           <div className="container">
             <ul className="categoryUl">
+              <li>
+                <Link href="/course" onClick={() => setIsCoursesOpen(false)}>
+                  All Courses
+                </Link>
+              </li>
               {categories.map((cat, i) => (
-                <li key={i}>
-                  <Link href={`/course/${cat.slug}`} onClick={() => setIsCoursesOpen(false)}>
+                <li key={cat.id || i}>
+                  <Link href={`/course?category=${cat.id || cat.slug}`} onClick={() => setIsCoursesOpen(false)}>
                     {cat.name}
                   </Link>
                 </li>

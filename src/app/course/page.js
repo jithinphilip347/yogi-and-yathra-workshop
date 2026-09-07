@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import CourseCard from "../../components/coursebox/CourseCard";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import {
@@ -16,8 +17,20 @@ import FilterBox from "@/components/filter/FilterBox";
 import Breadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 import { fetchCategories } from "@/libs/course";
 
-const Page = () => {
+const CourseListContent = () => {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category") || searchParams.get("category_id");
+
   const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [level, setLevel] = useState("");
+  const [price, setPrice] = useState(5000);
+  const [sort, setSort] = useState("Newest");
+  const [sortValue, setSortValue] = useState("created_at");
+  const [page, setPage] = useState(1);
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [sortOpen, setSortOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     fetchCategories().then((data) => {
@@ -25,17 +38,26 @@ const Page = () => {
     });
   }, []);
 
-  const [categoryOpen, setCategoryOpen] = useState(false);
-  const [sortOpen, setSortOpen] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const category = React.useMemo(() => {
+    if (selectedCategory !== null) return selectedCategory;
+    if (!categoryParam) return "All";
+    if (categories.length > 0) {
+      const found = categories.find(
+        (c) =>
+          String(c.id) === String(categoryParam) ||
+          c.slug === categoryParam ||
+          c.name?.toLowerCase() === categoryParam.toLowerCase()
+      );
+      if (found) return found.id;
+    }
+    if (!isNaN(Number(categoryParam))) return Number(categoryParam);
+    return categoryParam;
+  }, [selectedCategory, categoryParam, categories]);
 
-  const [category, setCategory] = useState("All");
-  const [level, setLevel] = useState("");
-  const [price, setPrice] = useState(5000);
-  const [sort, setSort] = useState("Newest");
-  const [sortValue, setSortValue] = useState("created_at");
-  const [page, setPage] = useState(1);
-  const [coursesList, setCoursesList] = useState([]);
+  const setCategory = (newCat) => {
+    setSelectedCategory(newCat);
+    setPage(1);
+  };
 
   const handleSortChange = (item) => {
     const sorts = {
@@ -47,7 +69,6 @@ const Page = () => {
     setSortValue(sorts[item]);
     setSortOpen(false);
     setPage(1);
-    setCoursesList([]);
   };
 
   const categoryRef = useRef(null);
@@ -73,12 +94,6 @@ const Page = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isDrawerOpen]);
 
-  useEffect(() => {
-    setPage(1);
-    setCoursesList([]);
-    // console.log(category, level, price);
-  }, [category, level, price]);
-
   const queries = {
     sort: sortValue,
     category_id: category,
@@ -93,13 +108,12 @@ const Page = () => {
   const { courseQuery } = useCourse({ queries });
   const { data, isLoading, isFetching } = courseQuery;
 
+  const [coursesList, setCoursesList] = useState([]);
+
   useEffect(() => {
     if (data?.data?.data) {
-      if (page === 1) {
-        setCoursesList(data.data.data);
-      } else {
-        setCoursesList((prev) => [...prev, ...data.data.data]);
-      }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setCoursesList((prev) => (page === 1 ? data.data.data : [...prev, ...data.data.data]));
     }
   }, [data, page]);
 
@@ -221,6 +235,7 @@ const Page = () => {
                         type="course"
                         instructorLabel={course?.instructor?.role}
                         id={course?.id}
+                        slug={course?.slug}
                       />
                     ))
                   : !isLoading && (
@@ -250,6 +265,14 @@ const Page = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const Page = () => {
+  return (
+    <Suspense fallback={<div className="container" style={{ padding: "40px", textAlign: "center" }}>Loading courses...</div>}>
+      <CourseListContent />
+    </Suspense>
   );
 };
 

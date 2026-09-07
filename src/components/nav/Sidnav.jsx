@@ -4,6 +4,7 @@ import UserImg from "../../assets/images/user.webp";
 import Link from "next/link";
 import { useSelector } from "react-redux";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
+import { fetchCategories } from "@/libs/course";
 import {
   MdClose,
   MdKeyboardArrowDown,
@@ -19,12 +20,14 @@ import Image from "next/image";
 
 const Sidnav = ({ isOpen, onClose }) => {
   const [isCourseOpen, setIsCourseOpen] = useState(false);
+  const [categories, setCategories] = useState([]);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    fetchCategories().then((res) => {
+      setCategories(res || []);
+    });
   }, []);
 
   useEffect(() => {
@@ -37,15 +40,6 @@ const Sidnav = ({ isOpen, onClose }) => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
-
-  const categories = [
-    { name: "Development", slug: "development" },
-    { name: "Business", slug: "business" },
-    { name: "Design", slug: "design" },
-    { name: "Marketing", slug: "marketing" },
-    { name: "Health & Fitness", slug: "health-fitness" },
-    { name: "Music", slug: "music" },
-  ];
 
   return (
     <>
@@ -94,9 +88,14 @@ const Sidnav = ({ isOpen, onClose }) => {
               </div>
 
               <ul className={`SideSubMenu ${isCourseOpen ? "show" : ""}`}>
+                <li>
+                  <Link href="/course" onClick={onClose}>
+                    All Courses
+                  </Link>
+                </li>
                 {categories.map((cat, i) => (
-                  <li key={i}>
-                    <Link href={`/course/${cat.slug}`} onClick={onClose}>
+                  <li key={cat.id || i}>
+                    <Link href={`/course?category=${cat.id || cat.slug}`} onClick={onClose}>
                       {cat.name}
                     </Link>
                   </li>
