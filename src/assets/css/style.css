@@ -5998,18 +5998,27 @@
   color: #475569;
 }
 #Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter .ContinueBtn {
-  background: var(--primaryColor);
-  color: #fff;
+  background: var(--primaryColor, #874429);
+  color: #fff !important;
   border: none;
-  padding: 6px 16px;
+  padding: 8px 18px;
   border-radius: 6px;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 #Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter .ContinueBtn:hover {
-  background: var(--primaryHoverColor);
+  background: var(--primaryHoverColor, #6d331e);
+  color: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(135, 68, 41, 0.25);
+}
+#Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .ContinueWatchBox .ContinueGrid .ContinueCard .Details .CardFooter .ContinueBtn:active {
+  transform: translateY(0);
 }
 #Profile .ProfileMain .ProfileMainRight .ContentCard .DashBoard .LearningProgressBox {
   width: 100%;

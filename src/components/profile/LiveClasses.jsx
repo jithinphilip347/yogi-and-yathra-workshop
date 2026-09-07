@@ -48,8 +48,10 @@ const LiveClasses = ({ classesData = [] }) => {
 
   const handleActionBtnClick = (course) => {
     const actionType = course.todayStatus?.actionType || "primary";
-    if (actionType === "primary" || actionType === "secondary") {
+    if (actionType === "primary") {
       router.push(course.meeting_link || "/live-stream");
+    } else if (actionType === "secondary") {
+      handleViewDetails(course);
     }
   };
 
@@ -158,7 +160,18 @@ const LiveClasses = ({ classesData = [] }) => {
 
                   <div className="WeeklyChips">
                     {FULL_DAYS.map((fullDay, idx) => {
-                      const isActive = Array.isArray(course.days) && (course.days.includes(fullDay) || course.days.includes(WEEK_DAYS[idx]));
+                      const isActive = Array.isArray(course.days) && course.days.some((d) => {
+                        if (typeof d !== "string") return false;
+                        const norm = d.trim().toLowerCase();
+                        const targetFull = fullDay.toLowerCase();
+                        const targetShort = WEEK_DAYS[idx].toLowerCase();
+                        return (
+                          norm === targetFull ||
+                          norm === targetShort ||
+                          targetFull.startsWith(norm) ||
+                          norm.startsWith(targetShort)
+                        );
+                      });
                       return (
                         <span key={idx} className={`Chip ${isActive ? 'Active' : ''}`}>
                           {WEEK_DAYS[idx]}
