@@ -99,6 +99,9 @@ const courseApi = {
       lesson_id: lessonId,
       event_data: eventData,
     }),
+
+  // Contact Enquiry
+  submitContactEnquiry: (data) => apiClient.post("contact", data),
 };
 
 export default courseApi;

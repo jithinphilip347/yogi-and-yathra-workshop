@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import '../../assets/css/contact.css';
 import { FaRegEnvelope, FaPhoneAlt, FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from 'react-icons/fa';
+import courseApi from '@/libs/courseApi';
+import toast from 'react-hot-toast';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +14,8 @@ const Contact = () => {
     message: ''
   });
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,12 +40,33 @@ const Contact = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log('Form submitted successfully:', formData);
-      alert("Message sent successfully!");
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitSuccess(false);
+
+    try {
+      const response = await courseApi.submitContactEnquiry(formData);
+      toast.success(response?.data?.message || "Message sent successfully! We'll get back to you soon.");
+      setSubmitSuccess(true);
       setFormData({ name: '', email: '', phone: '', service: '', message: '' });
+      setErrors({});
+    } catch (err) {
+      console.error('Failed to submit contact enquiry:', err);
+      if (err.response?.status === 422 && err.response?.data?.errors) {
+        setErrors(err.response.data.errors);
+        toast.error("Please check the form for errors.");
+      } else if (err.response?.status === 429) {
+        toast.error("Too many attempts. Please wait a minute before submitting again.");
+      } else {
+        toast.error(err.response?.data?.message || "Failed to send message. Please try again later.");
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -132,7 +157,9 @@ const Contact = () => {
                 {errors.message && <span className="ErrorText">{errors.message}</span>}
               </div>
 
-              <button type="submit" className="SubmitBtn">Send message</button>
+              <button type="submit" className="SubmitBtn" disabled={isSubmitting}>
+                {isSubmitting ? "Sending..." : "Send message"}
+              </button>
             </form>
           </div>
         </div>

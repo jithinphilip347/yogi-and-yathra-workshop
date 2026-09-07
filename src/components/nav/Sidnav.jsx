@@ -21,10 +21,13 @@ import Image from "next/image";
 const Sidnav = ({ isOpen, onClose }) => {
   const [isCourseOpen, setIsCourseOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [mounted, setMounted] = useState(false);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
     fetchCategories().then((res) => {
       setCategories(res || []);
     });
