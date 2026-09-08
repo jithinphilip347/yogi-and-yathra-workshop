@@ -58,9 +58,10 @@
 
     <script>
         let client = null;
-        let joinLock = false;   // Prevents concurrent join operations
-        let leaveLock = false;  // Prevents concurrent leave operations
-        let currentConfig = null; // Tracks active configuration (stale protection)
+        let joinLock = false;          // Prevents concurrent join operations
+        let leaveLock = false;         // Prevents concurrent leave operations
+        let currentConfig = null;      // Tracks active configuration (stale protection)
+        let containerObserver = null;  // ResizeObserver for dynamic video sizing
 
         /* ─── Lifecycle States ─────────────────────────────────────────
          *
@@ -119,11 +120,86 @@
 
                 const targetElement = document.getElementById('meetingSDKElement');
 
+                /* ─── P0 FIX: Explicit video dimensions + chat anchoring ────────────
+                 *
+                 * Root cause of "small video": Zoom Component View does NOT infer its
+                 * canvas size from parent CSS. It requires explicit pixel values via
+                 * customize.video.viewSizes in client.init().
+                 *
+                 * We read the real rendered dimensions of #meetingSDKElement at init
+                 * time.  A ResizeObserver (below) calls client.updateVideoOptions()
+                 * whenever those dimensions change (resize, orientation change, etc.).
+                 *
+                 * customize.chat.popper anchors the chat panel inside our element so
+                 * it cannot drift outside the container boundaries.
+                 * ─────────────────────────────────────────────────────────────────── */
+                const elRect  = targetElement.getBoundingClientRect();
+                const elW     = Math.round(elRect.width)  || 1280;
+                const elH     = Math.round(elRect.height) || 720;
+
                 await client.init({
                     zoomAppRoot: targetElement,
                     zoomAppHeader: false,
-                    language: 'en-US'
+                    language: 'en-US',
+                    customize: {
+                        video: {
+                            /* Tell Zoom exactly how big its canvas should be.
+                             * Both "default" (gallery/speaker view) and "ribbon"
+                             * (speaker strip) are set to the same container size
+                             * so the SDK always fills the available space. */
+                            viewSizes: {
+                                default: { width: elW, height: elH },
+                                ribbon:  { width: elW, height: Math.round(elH * 0.12) },
+                            },
+                            isResizable: false,
+                        },
+                        chat: {
+                            /* Anchor the chat popover/panel to the root element so
+                             * it cannot float outside the container boundaries. */
+                            popper: {
+                                anchorElement: targetElement,
+                                placement: 'right-end',
+                            },
+                        },
+                    },
                 });
+
+                /* ─── ResizeObserver: keep Zoom canvas in sync with container ───────
+                 *
+                 * The parent iframe is sized by our LMS CSS.  Whenever it changes
+                 * (fullscreen toggle, orientation change, responsive breakpoint, etc.)
+                 * we must notify the Zoom SDK so it can re-layout its internal canvas.
+                 *
+                 * We tear the observer down in leaveMeeting() so we don't accumulate
+                 * stale observers across sessions.
+                 * ─────────────────────────────────────────────────────────────────── */
+                if (containerObserver) {
+                    containerObserver.disconnect();
+                    containerObserver = null;
+                }
+
+                containerObserver = new ResizeObserver((entries) => {
+                    for (const entry of entries) {
+                        const { width, height } = entry.contentRect;
+                        const w = Math.round(width);
+                        const h = Math.round(height);
+                        if (!client || w < 16 || h < 16) return; // Ignore degenerate sizes
+                        try {
+                            client.updateVideoOptions({
+                                viewSizes: {
+                                    default: { width: w, height: h },
+                                    ribbon:  { width: w, height: Math.round(h * 0.12) },
+                                },
+                            });
+                        } catch (e) {
+                            // updateVideoOptions may throw before the meeting is fully joined;
+                            // this is safe to swallow — it will be called again on next resize.
+                            console.warn('[Zoom ResizeObserver] updateVideoOptions skipped:', e.message);
+                        }
+                    }
+                });
+
+                containerObserver.observe(targetElement);
 
                 const joinParams = {
                     meetingNumber: String(config.meetingNumber),
@@ -165,6 +241,12 @@
             // ── Leave lock: prevent concurrent leave operations ──
             if (leaveLock) return;
             leaveLock = true;
+
+            // Tear down the resize observer so it does not outlive the meeting
+            if (containerObserver) {
+                containerObserver.disconnect();
+                containerObserver = null;
+            }
 
             if (client) {
                 try {
