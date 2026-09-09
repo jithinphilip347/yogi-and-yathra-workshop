@@ -18,6 +18,28 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleLogin = async () => {
+    if (googleLoading || loading) return;
+    setGoogleLoading(true);
+    try {
+      const res = await authApi.getGoogleAuthUrl();
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        toast.error("Unable to start Google sign-in. Please try again.");
+        setGoogleLoading(false);
+      }
+    } catch (error) {
+      console.error("Google Auth Init Error:", error);
+      toast.error(
+        error?.response?.data?.message ||
+          "Could not initialize Google login. Please try again."
+      );
+      setGoogleLoading(false);
+    }
+  };
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -142,9 +164,14 @@ const Login = () => {
           </div>
 
           <div className="SocialLogin">
-            <button className="SocialBtn" type="button">
+            <button
+              className="SocialBtn"
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={googleLoading || loading}
+            >
               <Image src={LoginGoogle} alt="Google" width={20} height={20} />
-              <span>Continue with Google</span>
+              <span>{googleLoading ? "Connecting..." : "Continue with Google"}</span>
             </button>
           </div>
 
