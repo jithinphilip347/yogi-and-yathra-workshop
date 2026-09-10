@@ -102,31 +102,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
     return () => clearInterval(timer);
   }, [data.class_date_time]);
 
-//new code added for size
-  useEffect(() => {
-    if (!isJoined || !iframeRef.current) return;
 
-    const checkIframeSize = () => {
-      const iframe = iframeRef.current;
-      const rect = iframe.getBoundingClientRect();
-
-      console.log("PARENT IFRAME RECT:", {
-        width: rect.width,
-        height: rect.height,
-      });
-
-      console.log("IFRAME CLIENT SIZE:", {
-        clientWidth: iframe.clientWidth,
-        clientHeight: iframe.clientHeight,
-      });
-    };
-
-    checkIframeSize();
-
-    const timer = setTimeout(checkIframeSize, 1000);
-
-    return () => clearTimeout(timer);
-  }, [isJoined]);
 
   // ─── Derived values ──────────────────────────────────────────────────
   const instructorName = instructor.name || "Instructor";

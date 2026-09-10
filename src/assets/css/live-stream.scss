@@ -12,9 +12,9 @@
     position: relative;
     background: #000;
     overflow: hidden;
-    height: clamp(400px, 56.25vw, 78vh);
-    height: clamp(400px, 56.25vw, 78dvh);
-
+    // height: clamp(400px, 56.25vw, 78vh);
+    // height: clamp(400px, 56.25vw, 78dvh);
+    height: 500px;
     @media (max-width: 1024px) {
       height: clamp(360px, 56.25vw, 70vh);
       height: clamp(360px, 56.25vw, 70dvh);

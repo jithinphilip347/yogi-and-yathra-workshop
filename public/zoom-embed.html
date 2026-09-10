@@ -5,25 +5,107 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zoom Class</title>
     <style>
-      /* html,
+      html,
       body {
         width: 100%;
         height: 100%;
         margin: 0;
         padding: 0;
-        background-color: #000000;
-        overflow: hidden;
-      } */
-
+        /* overflow: hidden; */
+      }
       #meetingSDKElement {
-        position: absolute;
-        width: 100%;
-        height: 100%;
+        position: relative;
+        width: 100% !important;
+        height: 100% !important;
+        min-width: 0;
+        min-height: 0;
         margin: 0;
         padding: 0;
-        background-color: #000000;
-     
+        /* overflow: hidden; */
       }
+   #meetingSDKElement div:has(> video-player-container) {
+    position: relative !important;
+    width: 100% !important;
+    height: 400px !important;
+    min-height: 0 !important;
+    max-height: 400px !important;
+    overflow: hidden !important;
+    
+
+  }
+
+  /* Zoom video container */
+  #meetingSDKElement video-player-container {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 400px !important;
+  }
+  #meetingSDKElement .react-draggable {
+  width: 100% !important;
+  height: 500px !important;
+  transform: none !important;
+}
+
+/* Zoom resizable wrapper */
+#meetingSDKElement .react-resizable {
+  width: 100% !important;
+  height: 100% !important;
+}
+#meetingSDKElement > div[aria-label="Zoom app container"] {
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+}
+/* Custom Zoom layout override */
+
+#meetingSDKElement .zoom-MuiPaper-root {
+  height: 400px !important;
+  max-height: 400px !important;
+}
+#meetingSDKElement .zoom-MuiPaper-root .css-108w4cc {
+  height: 400px !important;
+  max-height: 400px !important;
+}
+#meetingSDKElement .zoom-MuiPaper-root .css-1ju5x5d {
+  height: 400px !important;
+  max-height: 400px !important;
+}
+
+
+#meetingSDKElement .zoom-MuiPaper-root .css-woj72k{
+    height: 100px !important;
+}
+
+#meetingSDKElement .zoom-MuiListItem-root {
+  height: 400px !important;
+  /* max-height: 500px !important; */
+}
+#meetingSDKElement .css-anfozm {
+  height: 500px !important;
+  min-height: 400px !important;
+  max-height: 400px !important;
+}
+#meetingSDKElement .css-xm9rp1 {
+  height: 500px !important;
+  min-height: 500px !important;
+  max-height: 500px !important;
+}
+
+#meetingSDKElement video-player-container > div {
+  position: relative !important;
+  width: 100% !important;
+  height: 400px !important;
+  min-height: 400px !important;
+  max-height: 400px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
     </style>
   </head>
   <body>
@@ -106,9 +188,23 @@
 
           const targetElement = document.getElementById("meetingSDKElement");
 
-          const elRect = targetElement.getBoundingClientRect();
-          const elW = Math.round(elRect.width) || 1280;
-          const elH = Math.round(elRect.height) || 720;
+          // Wait until iframe layout has settled
+          await new Promise((resolve) => {
+            requestAnimationFrame(() => {
+              requestAnimationFrame(resolve);
+            });
+          });
+
+          const elW = Math.round(window.innerWidth);
+          const elH = Math.round(window.innerHeight);
+
+          targetElement.style.width = `${elW}px`;
+          targetElement.style.height = `${elH}px`;
+
+          console.log("ZOOM FINAL SIZE:", {
+            width: elW,
+            height: elH,
+          });
 
           await client.init({
             zoomAppRoot: targetElement,
@@ -116,9 +212,19 @@
             language: "en-US",
             customize: {
               video: {
+                // viewSizes: {
+                //   default: { width: elW, height: elH },
+                //   ribbon: { width: elW, height: Math.round(elH * 0.12) },
+                // },
                 viewSizes: {
-                  default: { width: elW, height: elH },
-                  ribbon: { width: elW, height: Math.round(elH * 0.12) },
+                  default: {
+                    width: elW,
+                    height: elH,
+                  },
+                  ribbon: {
+                    width: elW,
+                    height: elH,
+                  },
                 },
                 isResizable: false,
               },
