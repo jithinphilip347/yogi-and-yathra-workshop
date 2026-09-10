@@ -5,7 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zoom Class</title>
     <style>
-      /* html,
+      /*
+         * OUTER APPLICATION BOUNDARY — DO NOT ADD RULES BELOW THIS LINE
+         * THAT TARGET ZOOM INTERNAL DOM ELEMENTS.
+         *
+         * The Zoom SDK owns everything rendered inside #meetingSDKElement.
+         * This stylesheet only controls the document/body and the single
+         * root element that the SDK mounts into.  No descendant selectors
+         * that touch Zoom internal classes (zm-*, css-*, react-draggable,
+         * react-resizable, meeting-app, etc.) are permitted here.
+         */
+
+      html,
       body {
         width: 100%;
         height: 100%;
@@ -13,37 +24,56 @@
         padding: 0;
         background-color: #000000;
         overflow: hidden;
-      } */
+      }
 
+      /*
+         * #meetingSDKElement is the ONLY element the application owns.
+         * Give it the full viewport so Zoom has the correct dimensions
+         * to run its own internal layout engine.
+         *
+         * Do NOT add display:flex, align-items, justify-content, or any
+         * other layout properties that could interfere with Zoom's own
+         * root-level positioning.
+         */
       #meetingSDKElement {
-        position: absolute;
         width: 100%;
         height: 100%;
         margin: 0;
         padding: 0;
         background-color: #000000;
-     
       }
     </style>
   </head>
   <body>
     <div id="meetingSDKElement"></div>
 
+    <!-- Load Dependencies from Zoom CDN (v6.1.0) -->
     <script src="https://source.zoom.us/6.1.0/lib/vendor/react.min.js"></script>
     <script src="https://source.zoom.us/6.1.0/lib/vendor/react-dom.min.js"></script>
     <script src="https://source.zoom.us/6.1.0/lib/vendor/redux.min.js"></script>
     <script src="https://source.zoom.us/6.1.0/lib/vendor/redux-thunk.min.js"></script>
     <script src="https://source.zoom.us/6.1.0/lib/vendor/lodash.min.js"></script>
 
+    <!-- Load Zoom Embedded SDK Component View (v6.1.0) -->
     <script src="https://source.zoom.us/zoom-meeting-embedded-6.1.0.min.js"></script>
 
     <script>
       let client = null;
-      let joinLock = false;
-      let leaveLock = false;
-      let currentConfig = null;
-      let containerObserver = null;
+      let joinLock = false; // Prevents concurrent join operations
+      let leaveLock = false; // Prevents concurrent leave operations
+      let currentConfig = null; // Tracks active configuration (stale protection)
+      let containerObserver = null; // ResizeObserver for dynamic video sizing
 
+      /* ─── Lifecycle States ─────────────────────────────────────────
+       *
+       *   IDLE  →  JOINING  →  JOINED  →  LEAVING  →  IDLE
+       *              ↓                       ↑
+       *           JOIN_FAILED              LEFT
+       *              ↓                       ↑
+       *            IDLE  ←───────────────────*
+       * ─────────────────────────────────────────────────────────── */
+
+      // Normalize SDK error codes into structured human-readable messages
       const normalizeError = (err) => {
         const code = err.errorCode || err.code || 0;
         const type = err.type || "SDK_ERROR";
@@ -80,6 +110,7 @@
       };
 
       const joinMeeting = async (config) => {
+        // ── Join lock: prevent concurrent join operations ──
         if (joinLock) return;
         joinLock = true;
 
@@ -106,6 +137,19 @@
 
           const targetElement = document.getElementById("meetingSDKElement");
 
+          /* ─── P0 FIX: Explicit video dimensions + chat anchoring ────────────
+           *
+           * Root cause of "small video": Zoom Component View does NOT infer its
+           * canvas size from parent CSS. It requires explicit pixel values via
+           * customize.video.viewSizes in client.init().
+           *
+           * We read the real rendered dimensions of #meetingSDKElement at init
+           * time.  A ResizeObserver (below) calls client.updateVideoOptions()
+           * whenever those dimensions change (resize, orientation change, etc.).
+           *
+           * customize.chat.popper anchors the chat panel inside our element so
+           * it cannot drift outside the container boundaries.
+           * ─────────────────────────────────────────────────────────────────── */
           const elRect = targetElement.getBoundingClientRect();
           const elW = Math.round(elRect.width) || 1280;
           const elH = Math.round(elRect.height) || 720;
@@ -116,6 +160,10 @@
             language: "en-US",
             customize: {
               video: {
+                /* Tell Zoom exactly how big its canvas should be.
+                 * Both "default" (gallery/speaker view) and "ribbon"
+                 * (speaker strip) are set to the same container size
+                 * so the SDK always fills the available space. */
                 viewSizes: {
                   default: { width: elW, height: elH },
                   ribbon: { width: elW, height: Math.round(elH * 0.12) },
@@ -123,6 +171,8 @@
                 isResizable: false,
               },
               chat: {
+                /* Anchor the chat popover/panel to the root element so
+                 * it cannot float outside the container boundaries. */
                 popper: {
                   anchorElement: targetElement,
                   placement: "right-end",
@@ -131,6 +181,15 @@
             },
           });
 
+          /* ─── ResizeObserver: keep Zoom canvas in sync with container ───────
+           *
+           * The parent iframe is sized by our LMS CSS.  Whenever it changes
+           * (fullscreen toggle, orientation change, responsive breakpoint, etc.)
+           * we must notify the Zoom SDK so it can re-layout its internal canvas.
+           *
+           * We tear the observer down in leaveMeeting() so we don't accumulate
+           * stale observers across sessions.
+           * ─────────────────────────────────────────────────────────────────── */
           if (containerObserver) {
             containerObserver.disconnect();
             containerObserver = null;
@@ -141,7 +200,7 @@
               const { width, height } = entry.contentRect;
               const w = Math.round(width);
               const h = Math.round(height);
-              if (!client || w < 16 || h < 16) return;
+              if (!client || w < 16 || h < 16) return; // Ignore degenerate sizes
               try {
                 client.updateVideoOptions({
                   viewSizes: {
@@ -150,6 +209,8 @@
                   },
                 });
               } catch (e) {
+                // updateVideoOptions may throw before the meeting is fully joined;
+                // this is safe to swallow — it will be called again on next resize.
                 console.warn(
                   "[Zoom ResizeObserver] updateVideoOptions skipped:",
                   e.message,
@@ -169,10 +230,12 @@
             userEmail: config.userEmail || "",
           };
 
+          // Attach host ZAK token if provided for role 1
           if (config.zak) {
             joinParams.zak = config.zak;
           }
 
+          // Track current configuration (stale protection)
           currentConfig = {
             meetingNumber: config.meetingNumber,
             role: config.role,
@@ -200,9 +263,11 @@
       };
 
       const leaveMeeting = () => {
+        // ── Leave lock: prevent concurrent leave operations ──
         if (leaveLock) return;
         leaveLock = true;
 
+        // Tear down the resize observer so it does not outlive the meeting
         if (containerObserver) {
           containerObserver.disconnect();
           containerObserver = null;
@@ -211,7 +276,7 @@
         if (client) {
           try {
             client.leave();
-            currentConfig = null;
+            currentConfig = null; // Clear tracked config
             window.parent.postMessage({ event: "zoom_event_left" }, "*");
           } catch (e) {
             console.error("Error triggering client leave:", e);
@@ -225,6 +290,7 @@
         }
       };
 
+      // Listen for actions from the parent Next.js application
       window.addEventListener("message", (event) => {
         const data = event.data;
         if (!data) return;
@@ -236,6 +302,7 @@
         }
       });
 
+      // Inform the parent frame that the runtime iframe is loaded and ready
       window.addEventListener("DOMContentLoaded", () => {
         window.parent.postMessage({ event: "zoom_event_loaded" }, "*");
       });
