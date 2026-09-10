@@ -13,7 +13,8 @@
   position: relative;
   background: #000;
   overflow: hidden;
-  height: 500px;
+  height: clamp(500px, 56.25vw, 78vh);
+  height: clamp(500px, 56.25vw, 78dvh);
 }
 @media (max-width: 1024px) {
   #LiveStreamFull .VideoSection,
@@ -40,6 +41,7 @@
 #DailyClassPlayer .VideoSection .VideoPlaceholder {
   position: absolute;
   inset: 0;
+  overflow: hidden;
 }
 #LiveStreamFull .VideoSection .VideoPlaceholder iframe,
 #DailyClassPlayer .VideoSection .VideoPlaceholder iframe {
@@ -52,8 +54,8 @@
 #DailyClassPlayer .VideoSection .ZoomMeetingContainer {
   position: absolute;
   inset: 0;
-  background: #000;
   z-index: 5;
+  overflow: hidden;
 }
 #LiveStreamFull .VideoSection .ZoomMeetingContainer:not(.ZoomMeetingContainer--active),
 #DailyClassPlayer .VideoSection .ZoomMeetingContainer:not(.ZoomMeetingContainer--active) {
@@ -65,17 +67,16 @@
   width: 100vw;
   height: 100vh;
   height: 100dvh;
-  background: #000;
+  background: #067062;
   margin: 0;
   padding: 0;
 }
 #LiveStreamFull .VideoSection .ZoomMeetingContainer .ZoomIframe,
 #DailyClassPlayer .VideoSection .ZoomMeetingContainer .ZoomIframe {
   width: 100%;
-  height: 100%;
   border: none;
   display: block;
-  background: #000;
+  overflow: hidden;
 }
 #LiveStreamFull .VideoSection .ZoomMeetingContainer .FitScreenBtn,
 #DailyClassPlayer .VideoSection .ZoomMeetingContainer .FitScreenBtn {

@@ -2957,6 +2957,16 @@
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   background: #bc6b4b;
 }
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .PrimaryBtn:disabled, #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .PrimaryBtn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #94a3b8;
+  box-shadow: none;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .PrimaryBtn:disabled:hover, #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .PrimaryBtn.disabled:hover {
+  background: #94a3b8;
+  box-shadow: none;
+}
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .CtaWrapper .CtaSubtext {
   font-size: 12px;
   color: #64748b;
