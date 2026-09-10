@@ -17,6 +17,28 @@ const Signup = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [selectedIssue, setSelectedIssue] = useState("");
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleLogin = async () => {
+    if (googleLoading || loading) return;
+    setGoogleLoading(true);
+    try {
+      const res = await authApi.getGoogleAuthUrl();
+      if (res.data?.url) {
+        window.location.href = res.data.url;
+      } else {
+        toast.error("Unable to start Google sign-in. Please try again.");
+        setGoogleLoading(false);
+      }
+    } catch (error) {
+      console.error("Google Auth Init Error:", error);
+      toast.error(
+        error?.response?.data?.message ||
+          "Could not initialize Google sign-in. Please try again."
+      );
+      setGoogleLoading(false);
+    }
+  };
   
   const [formData, setFormData] = useState({
     name: "", email: "", mobile: "", password: "", confirmPassword: "",
@@ -203,9 +225,14 @@ const Signup = () => {
 
           <div className="OrText"><span>OR</span></div>
           <div className="SocialLogin">
-            <button className="SocialBtn">
+            <button
+              className="SocialBtn"
+              type="button"
+              onClick={handleGoogleLogin}
+              disabled={googleLoading || loading}
+            >
               <Image src={LoginGoogle} alt="Google" width={20} height={20} />
-              <span>Continue with Google</span>
+              <span>{googleLoading ? "Connecting..." : "Continue with Google"}</span>
             </button>
           </div>
 
