@@ -11,9 +11,8 @@
         height: 100%;
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
+        overflow: hidden;
         /* background: yellow; */
-        /* overflow: hidden; */
       }
       #meetingSDKElement {
         position: relative;
@@ -23,12 +22,11 @@
         min-height: 0;
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
-        /* overflow: hidden; */
+        overflow: hidden;
       }
    #meetingSDKElement div:has(> video-player-container) {
     position: relative !important;
-    width: 100%;
+    width: 100% !important;
     height: calc(100vh - 80px) !important;
     min-height: 0 !important;
     max-height: calc(100vh - 80px) !important;
@@ -111,7 +109,7 @@
 
 #meetingSDKElement video-player-container > div {
   position: relative !important;
-  width: 100%;
+  width: 100% !important;
   height: calc(100vh - 80px) !important;
   min-height: calc(100vh - 80px) !important;
   max-height: calc(100vh - 80px) !important;
@@ -120,7 +118,7 @@
 }
 
 #meetingSDKElement .css-tnxfbw {
-  width: 100%;
+  width: 100% !important;
   height: calc(100vh - 80px) !important;
   min-height: calc(100vh - 80px) !important;
   max-height: calc(100vh - 80px) !important;
@@ -129,12 +127,57 @@
 }
 
 #meetingSDKElement .css-itr7u6{
-  width: 100%;
+  width: 100% !important;
   height: calc(100vh - 80px) !important;
   min-height: calc(100vh - 80px) !important;
   max-height: calc(100vh - 80px) !important;
   margin: 0 !important;
   padding: 0 !important;
+}
+
+/* Override Popper.js positioning to enforce precise gaps and prevent cutoffs */
+div[data-popper-placement^="right"] {
+  position: fixed !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  right: 8px !important;
+  left: auto !important;
+  transform: none !important;
+  height: 100vh !important;
+  z-index: 9999 !important;
+}
+
+/* Chat box overrides */
+div[data-popper-placement^="right"] .zoom-MuiPaper-root {
+  border-radius: 12px !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  width: 280px !important;
+  max-width: 280px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+  background-color: #1a1a1a !important;
+}
+
+/* Enforce video container shrinking using CSS to prevent React overrides */
+body.chat-is-open #meetingSDKElement {
+  width: calc(100% - 296px) !important;
+}
+
+/* Chat inner backgrounds for header and typing area to match the top bar (#1a1a1a) */
+div[data-popper-placement^="right"] .zoom-MuiPaper-root > div:first-child,
+div[data-popper-placement^="right"] .zoom-MuiPaper-root > div:last-child,
+div[data-popper-placement^="right"] .zoom-MuiPaper-root > div > div:first-child,
+div[data-popper-placement^="right"] .zoom-MuiPaper-root > div > div:last-child {
+  background-color: #1a1a1a !important;
+}
+
+/* Messages area slightly darker to differentiate */
+#chat-list-content,
+.chat-list-content {
+  background-color: #111 !important;
 }
     </style>
   </head>
@@ -150,11 +193,14 @@
     <script src="https://source.zoom.us/zoom-meeting-embedded-6.1.0.min.js"></script>
 
     <script>
-      let client = null;
+      let client;
       let joinLock = false;
       let leaveLock = false;
       let currentConfig = null;
       let containerObserver = null;
+      let chatObserver = null;
+      let isChatOpen = false;
+      const CHAT_SPACE = 310; // 280px chat + 15px gap on right + 15px gap on left
 
       const normalizeError = (err) => {
         const code = err.errorCode || err.code || 0;
@@ -228,8 +274,8 @@
           const elW = Math.round(window.innerWidth);
           const elH = Math.round(window.innerHeight);
 
-          targetElement.style.width = `${elW}px`;
-          targetElement.style.height = `${elH}px`;
+          targetElement.style.width = "100%";
+          targetElement.style.height = "100%";
 
           console.log("ZOOM FINAL SIZE:", {
             width: elW,
@@ -278,6 +324,7 @@
               const w = Math.round(width);
               const h = Math.round(height);
               if (!client || w < 16 || h < 16) return;
+              
               try {
                 client.updateVideoOptions({
                   viewSizes: {
@@ -295,6 +342,83 @@
           });
 
           containerObserver.observe(targetElement);
+
+          if (chatObserver) {
+            chatObserver.disconnect();
+            chatObserver = null;
+          }
+
+          chatObserver = new MutationObserver(() => {
+            let currentlyOpen = false;
+            let chatPopupNode = null;
+            
+            // 1. Check known selectors
+            const chatList = document.querySelector('.chat-content, .chat-container, .zoom-chat-container, #chat-list-content');
+            if (chatList) {
+              currentlyOpen = true;
+              chatPopupNode = chatList.closest('div[role="dialog"], div[data-popper-placement] .zoom-MuiPaper-root') || chatList;
+            } else {
+              // 2. Check text content of potential dialogs/poppers
+              const popups = document.querySelectorAll('div[role="dialog"], div[role="presentation"], div[style*="position: absolute"]');
+              for (const popup of popups) {
+                const text = popup.textContent || "";
+                if (text.includes("Type message here") || text.includes("Who can see your messages") || text.includes("To: Everyone")) {
+                  currentlyOpen = true;
+                  chatPopupNode = popup;
+                  break;
+                }
+              }
+            }
+            
+            if (currentlyOpen !== isChatOpen) {
+              isChatOpen = currentlyOpen;
+              if (isChatOpen) {
+                document.body.classList.add('chat-is-open');
+                targetElement.style.width = `calc(100% - ${CHAT_SPACE}px)`;
+              } else {
+                document.body.classList.remove('chat-is-open');
+                targetElement.style.width = '100%';
+              }
+              
+              if (isChatOpen && chatPopupNode) {
+                if (!document.getElementById('custom-chat-close-btn')) {
+                  const closeBtn = document.createElement('div');
+                  closeBtn.id = 'custom-chat-close-btn';
+                  closeBtn.innerHTML = '<svg fill="#fff" viewBox="0 0 24 24" width="20px" height="20px"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+                  closeBtn.style.cssText = 'position: absolute; top: 12px; right: 40px; z-index: 9999; cursor: pointer; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); border-radius: 50%; transition: 0.2s;';
+                  
+                  closeBtn.onmouseover = () => closeBtn.style.background = 'rgba(255,255,255,0.2)';
+                  closeBtn.onmouseout = () => closeBtn.style.background = 'rgba(255,255,255,0.1)';
+                  
+                  closeBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const chatToggleBtn = document.querySelector('[aria-label="Chat"], [aria-label="open chat"], [aria-label="close chat"], button[title="Chat"]');
+                    if (chatToggleBtn) {
+                      chatToggleBtn.click();
+                      chatToggleBtn.dispatchEvent(new MouseEvent('mousedown', {bubbles: true}));
+                      chatToggleBtn.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}));
+                    } else {
+                      const buttons = document.querySelectorAll('button');
+                      for(let b of buttons) {
+                         if(b.innerText && b.innerText.toLowerCase().includes("chat")) { 
+                           b.click(); 
+                           b.dispatchEvent(new MouseEvent('mousedown', {bubbles: true}));
+                           b.dispatchEvent(new MouseEvent('mouseup', {bubbles: true}));
+                           break; 
+                         }
+                      }
+                    }
+                  };
+                  
+                  chatPopupNode.style.position = 'relative';
+                  chatPopupNode.appendChild(closeBtn);
+                }
+              }
+            }
+          });
+
+          // Observe the body or targetElement for added/removed chat DOM nodes
+          chatObserver.observe(document.body, { childList: true, subtree: true });
 
           const joinParams = {
             meetingNumber: String(config.meetingNumber),
