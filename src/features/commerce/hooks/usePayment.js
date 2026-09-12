@@ -11,6 +11,7 @@
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   startPayment,
   startVerification,
@@ -25,6 +26,7 @@ import { commerceApi } from '../services/commerceApi';
 export function usePayment() {
   const dispatch = useDispatch();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const paymentState = useSelector((state) => state.payment || {});
   const status = paymentState.status || 'idle';
@@ -113,9 +115,17 @@ export function usePayment() {
 
           if (verifyRes.success || verifyRes.status === 'success') {
             dispatch(paymentSuccess(verifyRes.data || verifyRes));
+            if (queryClient) {
+              queryClient.invalidateQueries({ queryKey: ['user-enrollments'] });
+              queryClient.invalidateQueries({ queryKey: ['course-access'] });
+              queryClient.invalidateQueries({ queryKey: ['course-resume'] });
+              queryClient.invalidateQueries({ queryKey: ['student-continue-learning'] });
+              queryClient.invalidateQueries({ queryKey: ['dashboard-upcoming-events'] });
+              queryClient.invalidateQueries({ queryKey: ['profile'] });
+            }
             dispatch(clearCart());
             dispatch(clearCheckoutItems());
-            router.push('/checkout/success');
+            router.replace('/checkout/success');
           } else {
             throw new Error(verifyRes.message || 'Payment signature verification failed.');
           }

@@ -48,11 +48,13 @@ export default function Checkout() {
 
   const router = useRouter();
 
+  const isPaymentInProgressOrComplete = paymentStatus === 'verifying' || paymentStatus === 'completed';
+
   useEffect(() => {
-    if (items.length === 0) {
+    if (items.length === 0 && !isPaymentInProgressOrComplete) {
       router.replace('/cart');
     }
-  }, [items, router]);
+  }, [items, router, isPaymentInProgressOrComplete]);
 
   const [prevUser, setPrevUser] = useState(user);
   if (prevUser !== user) {
@@ -65,6 +67,14 @@ export default function Checkout() {
   }
 
   if (items.length === 0) {
+    if (isPaymentInProgressOrComplete) {
+      return (
+        <div className="CheckoutEmptyState">
+          <h2>Payment Verified!</h2>
+          <p>Redirecting to your order confirmation…</p>
+        </div>
+      );
+    }
     return (
       <div className="CheckoutEmptyState">
         <h2>Redirecting to your cart…</h2>

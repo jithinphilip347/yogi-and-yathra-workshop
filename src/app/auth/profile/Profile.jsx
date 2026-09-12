@@ -24,6 +24,7 @@ import Events from "@/components/profile/Events";
 import Settings from "@/components/profile/Settings";
 import HelpSupport from "@/components/profile/HelpSupport";
 import { useSelector } from "react-redux";
+import { useSearchParams } from "next/navigation";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import useCourse from "@/hooks/useCourse";
 import LiveYoga from "@/components/profile/LiveYoga";
@@ -162,6 +163,35 @@ const Profile = () => {
       setProfileImg(resolveMediaUrl(user.avatar_url || user.avatar));
     }
   }, [user?.avatar]);
+
+  const searchParams = useSearchParams();
+  const tabParam = searchParams?.get("tab");
+
+  useEffect(() => {
+    if (tabParam) {
+      const normalized = tabParam.toLowerCase().replace(/[-_]/g, "");
+      if (
+        normalized === "mycourses" ||
+        normalized === "courses" ||
+        normalized === "mylearning"
+      ) {
+        setActiveTab("My Courses");
+        setMobileView("content");
+      } else if (normalized === "liveclasses") {
+        setActiveTab("Live Classes");
+        setMobileView("content");
+      } else if (normalized === "livesessions" || normalized === "liveyoga") {
+        setActiveTab("Live Sessions");
+        setMobileView("content");
+      } else if (normalized === "billing" || normalized === "invoices") {
+        setActiveTab("Billing & Invoices");
+        setMobileView("content");
+      } else if (normalized === "certificates") {
+        setActiveTab("Certificates");
+        setMobileView("content");
+      }
+    }
+  }, [tabParam]);
 
   const { courses, continueCourses, liveClasses, liveSessions, upcomingEvents } = useProfileLearning();
 

@@ -48,6 +48,7 @@ const MyCourses = ({ courses = [] }) => {
                 }
                 instructorLabel={course?.instructor?.role}
                 id={course?.id}
+                slug={course?.slug || "course"}
                 type="course"
               />
             </div>
