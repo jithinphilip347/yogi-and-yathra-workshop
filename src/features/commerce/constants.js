@@ -10,6 +10,7 @@ export const PRODUCT_TYPES = {
   MEMBERSHIP: 'Membership',
   WORKSHOP: 'Workshop',
   PRODUCT: 'Product',
+  COMBO: 'Combo',
 };
 
 export const PAYMENT_GATEWAYS = {
