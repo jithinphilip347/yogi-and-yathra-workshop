@@ -24,6 +24,8 @@ export const API_BASE_URL = `${IMAGE_URL}/api/v1/`;
 export const MEDIA_BASE_URL = `${IMAGE_URL}/storage/`;
 
 
-// Separate commerce/product backend — NOT the main LMS storage.
-export const PRODUCT_API_BASE_URL = "https://api.yogiandyathra.com/public/api/";
-export const PRODUCT_MEDIA_BASE_URL = "https://api.yogiandyathra.com/public";
+// E-commerce API calls are proxied through Workshop Backend (Sprint 1 S2S boundary)
+export const PRODUCT_API_BASE_URL = `${API_BASE_URL}ecommerce/`;
+export const PRODUCT_MEDIA_BASE_URL =
+  process.env.NEXT_PUBLIC_ECOMMERCE_MEDIA_URL || "https://api.yogiandyathra.com/public";
+
