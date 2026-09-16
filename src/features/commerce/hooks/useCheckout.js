@@ -24,6 +24,7 @@ import {
   selectCheckoutOriginalTotal,
   selectCheckoutDiscounts,
 } from '../selectors/commerceSelectors';
+import { classifyCartItems } from '../utils/cartClassification';
 import { commerceApi } from '../services/commerceApi';
 
 export function useCheckout() {
@@ -38,6 +39,9 @@ export function useCheckout() {
 
   // Use active checkout session items snapshot; if missing but cart has items, fallback to cart items
   const items = checkoutSessionItems.length > 0 ? checkoutSessionItems : cartItems;
+
+  const sessionId = checkoutState.sessionId || null;
+  const classifiedItems = classifyCartItems(items);
 
   const itemCount = items.reduce((total, item) => total + (item.quantity || 1), 0);
   const subtotal = items.reduce((total, item) => total + (Number(item.price) || 0) * (item.quantity || 1), 0);
@@ -58,7 +62,7 @@ export function useCheckout() {
   const changePaymentMethod = (method) => dispatch(setPaymentMethod(method));
 
   /**
-   * Create Order via Backend Order Engine (never calculates price locally)
+   * Create Order via Backend Order Engine (for single Workshop learning item flows)
    */
   const initiateOrder = async () => {
     if (items.length === 0) {
@@ -68,19 +72,18 @@ export function useCheckout() {
     dispatch(createOrderStart());
 
     try {
-      // Primary item or polymorphic payload
       const primaryItem = items[0];
       
-      // Map frontend normalized type to backend expected product_type enum (course, daily_class, live_section)
       let productType = (primaryItem.productable_type || 'course').toLowerCase();
       if (productType === 'coursedetails' || productType === 'course') productType = 'course';
       if (productType === 'dailyclass' || productType === 'daily_class') productType = 'daily_class';
       if (productType === 'livesection' || productType === 'live_section') productType = 'live_section';
 
       const payload = {
+        session_id: sessionId,
         product_type: productType,
         product_id: Number(primaryItem.productable_id),
-        user_id: user?.id || undefined, // Backend falls back to the authenticated user
+        user_id: user?.id || undefined,
         pricing_plan_id: primaryItem.meta?.pricing_plan_id || null,
         coupon_code: appliedCoupon?.code || null,
         billing_address: billingAddress,
@@ -104,6 +107,9 @@ export function useCheckout() {
 
   return {
     items,
+    sessionId,
+    classifiedItems,
+    isMixed: classifiedItems.isMixedCart,
     itemCount,
     subtotal,
     originalTotal,

@@ -1,8 +1,8 @@
 /**
  * Commerce Product Adapters
  *
- * Normalizes heterogeneous backend entity models (Course, LiveSection, DailyClass, FeeCollection)
- * into a single unified CommerceProduct model.
+ * Normalizes heterogeneous backend entity models (Course, LiveSection, DailyClass, FeeCollection, Product, Combo)
+ * into a single unified CommerceProduct model with deterministic cart_key and domain tagging.
  */
 
 import { PRODUCT_TYPES } from '../constants';
@@ -18,6 +18,7 @@ export class CommerceAdapter {
     const origPriceVal = Number(course.price ?? course.original_price ?? priceVal);
 
     return {
+      cart_key: `course:${course.id}`,
       id: `course_${course.id}`,
       productable_type: PRODUCT_TYPES.COURSE,
       productable_id: course.id,
@@ -27,6 +28,7 @@ export class CommerceAdapter {
       price: priceVal,
       original_price: origPriceVal,
       currency: 'INR',
+      domain: 'workshop',
       meta: {
         slug: course.slug,
         lessons_count: course.lessons_count || 0,
@@ -41,6 +43,7 @@ export class CommerceAdapter {
   static fromLiveSection(liveSection) {
     if (!liveSection) return null;
     return {
+      cart_key: `live_section:${liveSection.id}`,
       id: `live_${liveSection.id}`,
       productable_type: PRODUCT_TYPES.LIVE_SECTION,
       productable_id: liveSection.id,
@@ -50,6 +53,7 @@ export class CommerceAdapter {
       price: Number(liveSection.price || 0),
       original_price: Number(liveSection.original_price || liveSection.price || 0),
       currency: 'INR',
+      domain: 'workshop',
       meta: {
         start_date: liveSection.start_date,
         schedule_time: liveSection.schedule_time,
@@ -63,6 +67,7 @@ export class CommerceAdapter {
   static fromDailyClass(dailyClass) {
     if (!dailyClass) return null;
     return {
+      cart_key: `daily_class:${dailyClass.id}`,
       id: `daily_${dailyClass.id}`,
       productable_type: PRODUCT_TYPES.DAILY_CLASS,
       productable_id: dailyClass.id,
@@ -72,6 +77,7 @@ export class CommerceAdapter {
       price: Number(dailyClass.price || 0),
       original_price: Number(dailyClass.original_price || dailyClass.price || 0),
       currency: 'INR',
+      domain: 'workshop',
       meta: {
         schedule: dailyClass.schedule,
       },
@@ -84,6 +90,7 @@ export class CommerceAdapter {
   static fromFeeDemand(feeDemand) {
     if (!feeDemand) return null;
     return {
+      cart_key: `fee_collection:${feeDemand.id}`,
       id: `fee_${feeDemand.id}`,
       productable_type: PRODUCT_TYPES.FEE_COLLECTION,
       productable_id: feeDemand.id,
@@ -93,6 +100,7 @@ export class CommerceAdapter {
       price: Number(feeDemand.balance_due || feeDemand.final_amount || 0),
       original_price: Number(feeDemand.final_amount || 0),
       currency: 'INR',
+      domain: 'workshop',
       meta: {
         invoice_number: feeDemand.invoice_number,
         due_date: feeDemand.due_date,
@@ -106,29 +114,79 @@ export class CommerceAdapter {
   static fromProduct(product) {
     if (!product) return null;
 
-    // Resolve image to a plain string URL when possible.
-    // LiveDetails may pass imported assets (objects with .src) or { src } wrappers.
+    if (product.is_combo || product.type === 'combo') {
+      return this.fromCombo(product);
+    }
+
     const rawImage =
       product.image && typeof product.image === 'object' && product.image !== null
         ? product.image.src || product.image.image || product.image.url
-        : product.image;
+        : product.image || product.image_path;
 
     let image = null;
     if (typeof rawImage === 'string' && rawImage.length > 0) {
       image = resolveProductMediaUrl(rawImage);
     }
 
+    const id = product.value ?? product.id;
+    const price = Number(product.sale_price ?? product.price ?? 0);
+    const originalPrice = Number(product.original_price ?? product.price ?? price);
+
     return {
-      id: `product_${product.value ?? product.id}`,
+      cart_key: `product:${id}`,
+      id: `product_${id}`,
       productable_type: PRODUCT_TYPES.PRODUCT,
-      productable_id: product.value ?? product.id,
+      productable_id: id,
       title: product.label || product.title || product.name || 'Yoga Product',
       subtitle: product.subtitle || '',
       image,
-      price: Number(product.price || 0),
-      original_price: Number(product.original_price || product.price || 0),
+      price,
+      original_price: originalPrice,
       currency: 'INR',
-      meta: {},
+      domain: 'ecommerce',
+      meta: {
+        stock: product.stock,
+        in_stock: product.in_stock,
+      },
+    };
+  }
+
+  /**
+   * Normalize a Combo Bundle package into CommerceProduct
+   */
+  static fromCombo(combo) {
+    if (!combo) return null;
+
+    const rawImage =
+      combo.image && typeof combo.image === 'object' && combo.image !== null
+        ? combo.image.src || combo.image.image || combo.image.url
+        : combo.image || combo.image_path;
+
+    let image = null;
+    if (typeof rawImage === 'string' && rawImage.length > 0) {
+      image = resolveProductMediaUrl(rawImage);
+    }
+
+    const id = combo.id ?? combo.value;
+    const price = Number(combo.combo_price ?? combo.sale_price ?? combo.price ?? 0);
+    const originalPrice = Number(combo.original_price ?? combo.price ?? price);
+
+    return {
+      cart_key: `combo:${id}`,
+      id: `combo_${id}`,
+      productable_type: PRODUCT_TYPES.COMBO,
+      productable_id: id,
+      title: combo.title || combo.name || combo.label || 'Combo Offer',
+      subtitle: combo.subtitle || 'Bundle Package',
+      image,
+      price,
+      original_price: originalPrice,
+      currency: 'INR',
+      domain: 'ecommerce',
+      meta: {
+        is_combo: true,
+        combo_items: combo.products || combo.comboItems || [],
+      },
     };
   }
 
@@ -138,6 +196,7 @@ export class CommerceAdapter {
   static fromMembership(membership) {
     if (!membership) return null;
     return {
+      cart_key: `membership:${membership.id}`,
       id: `membership_${membership.id}`,
       productable_type: PRODUCT_TYPES.MEMBERSHIP,
       productable_id: membership.id,
@@ -147,6 +206,7 @@ export class CommerceAdapter {
       price: Number(membership.price || 0),
       original_price: Number(membership.original_price || membership.price || 0),
       currency: 'INR',
+      domain: 'workshop',
       meta: {
         billing_interval: membership.billing_interval || 'monthly',
       },
@@ -159,6 +219,7 @@ export class CommerceAdapter {
   static fromWorkshop(workshop) {
     if (!workshop) return null;
     return {
+      cart_key: `workshop:${workshop.id}`,
       id: `workshop_${workshop.id}`,
       productable_type: PRODUCT_TYPES.WORKSHOP,
       productable_id: workshop.id,
@@ -168,6 +229,7 @@ export class CommerceAdapter {
       price: Number(workshop.price || 0),
       original_price: Number(workshop.original_price || workshop.price || 0),
       currency: 'INR',
+      domain: 'workshop',
       meta: {
         schedule: workshop.schedule,
       },
@@ -178,23 +240,31 @@ export class CommerceAdapter {
    * Generic normalize fallback
    */
   static normalize(item, type = PRODUCT_TYPES.COURSE) {
-    switch (type) {
-      case PRODUCT_TYPES.COURSE:
-        return this.fromCourse(item);
-      case PRODUCT_TYPES.LIVE_SECTION:
-        return this.fromLiveSection(item);
-      case PRODUCT_TYPES.DAILY_CLASS:
-        return this.fromDailyClass(item);
-      case PRODUCT_TYPES.FEE_COLLECTION:
-        return this.fromFeeDemand(item);
-      case PRODUCT_TYPES.MEMBERSHIP:
-        return this.fromMembership(item);
-      case PRODUCT_TYPES.WORKSHOP:
-        return this.fromWorkshop(item);
-      case PRODUCT_TYPES.PRODUCT:
-        return this.fromProduct(item);
-      default:
-        return this.fromCourse(item);
+    if (!item) return null;
+    const cleanType = String(type).trim().toLowerCase();
+
+    if (cleanType === 'combo' || cleanType === 'comboproduct' || item.is_combo) {
+      return this.fromCombo(item);
     }
+    if (cleanType === 'product') {
+      return this.fromProduct(item);
+    }
+    if (cleanType === 'livesection' || cleanType === 'live_section') {
+      return this.fromLiveSection(item);
+    }
+    if (cleanType === 'dailyclass' || cleanType === 'daily_class') {
+      return this.fromDailyClass(item);
+    }
+    if (cleanType === 'feecollection' || cleanType === 'fee_collection') {
+      return this.fromFeeDemand(item);
+    }
+    if (cleanType === 'membership') {
+      return this.fromMembership(item);
+    }
+    if (cleanType === 'workshop') {
+      return this.fromWorkshop(item);
+    }
+
+    return this.fromCourse(item);
   }
 }

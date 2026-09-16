@@ -67,7 +67,7 @@ const Footer = () => {
                 <FaPhoneAlt /> +91 1800-3232-8686
               </p>
               <p className="contactRow">
-                <FaMapMarkerAlt /> 123 Wellness Avenue, Kerala, India
+                <FaMapMarkerAlt /> Yogify, Elavoor Kavala, Karukutty, Angamaly, Kerala Pin: 683576
               </p>
             </div>
           </div>

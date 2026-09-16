@@ -16,6 +16,26 @@ const getAuthHeaders = () => {
 
 export const commerceApi = {
   /**
+   * Authoritative Live Cart Validation across Workshop & E-commerce domains
+   */
+  async validateCart(items = []) {
+    const formattedItems = (items || []).map((item) => ({
+      cart_key: item.cart_key || undefined,
+      type: (item.productable_type || item.type || 'course').toLowerCase(),
+      id: item.productable_id ?? item.id ?? item.value,
+      quantity: item.quantity || 1,
+      price: Number(item.price || 0),
+    }));
+
+    const res = await axios.post(
+      `${API_BASE_URL}/cart/validate`,
+      { items: formattedItems },
+      { headers: getAuthHeaders() }
+    );
+    return res.data;
+  },
+
+  /**
    * Validate a promotional coupon code against backend Coupon Engine
    */
   async validateCoupon(code, amount = 0, userId = null) {
