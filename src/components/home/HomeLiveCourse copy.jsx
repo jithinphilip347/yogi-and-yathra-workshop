@@ -14,7 +14,6 @@ import {
   FiClock,
   FiUser,
   FiGlobe,
-  FiLock,
 } from "react-icons/fi";
 import { useQuery } from "@tanstack/react-query";
 import courseApi from "@/libs/courseApi";
@@ -191,6 +190,8 @@ const EventSlide = ({ event }) => {
           {event?.category?.name || event?.type || "LIVE WORKSHOP"}
         </div>
 
+        <h2>{event?.title}</h2>
+
         {event?.short_description ? (
           <p className="desc">{event.short_description}</p>
         ) : event?.description ? (
@@ -306,16 +307,15 @@ const EventSlide = ({ event }) => {
           width={1000}
           height={1000}
         />
-        <div className="ImageOverlay"></div>
-        <div className="ImageCenterContent">
-          <h2>{event?.title}</h2>
-          <div className="LockIconWrapper">
-            <FiLock />
-          </div>
-        </div>
 
         <div className="TimingBox">
-
+          <div className="TimeTitle">
+            {isEnded
+              ? "SESSION ENDED"
+              : isLive
+                ? "SESSION LIVE"
+                : "REMAINING TIME"}
+          </div>
           <div className="TimerGrid">
             {["days", "hours", "minutes", "seconds"].map((label, i) => (
               <div className="TimerItem" key={i}>
