@@ -2820,51 +2820,6 @@
   opacity: 0.9;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox {
-  position: absolute;
-  bottom: 24px;
-  left: 24px;
-  right: 24px;
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGlassPill {
-  display: flex;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 100px;
-  padding: 12px 24px;
-  gap: 16px;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGlassPill .TimerUnit {
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGlassPill .TimerUnit .Number {
-  font-size: 20px;
-  font-weight: 800;
-  color: #fff;
-  font-family: myFont2;
-  line-height: 1;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGlassPill .TimerUnit .Label {
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  text-transform: uppercase;
-  font-family: var(--myFont1);
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventImageWrapper .TimingBox .TimerGlassPill .TimerDivider {
-  color: rgba(255, 255, 255, 0.3);
-  font-weight: 800;
-  font-size: 18px;
-  line-height: 1;
-  margin-top: -4px;
-}
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard {
   /* RIGHT: CONTENT & DETAILS */
 }
@@ -2881,26 +2836,60 @@
     padding: 30px 24px;
   }
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .DetailsHeader {
-  margin-bottom: 12px;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .DetailsHeader .InfoChips {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox {
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .DetailsHeader .InfoChips .Chip {
-  font-size: 13px;
-  font-weight: 600;
-  color: #64748b;
-  display: flex;
+  width: 100%;
   align-items: center;
-  gap: 6px;
+  background: #8b533e;
+  color: #fff;
+  border-radius: 12px;
+  padding: 14px 24px;
+  margin-bottom: 24px;
+  gap: 24px;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox .TicketDate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox .TicketDate .TDay {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+  font-family: myFont2;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox .TicketDate .TMonth {
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-top: 4px;
+  opacity: 0.9;
   font-family: var(--myFont1);
 }
-#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .DetailsHeader .InfoChips .Chip .icon {
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox .TicketDivider {
+  width: 1px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.3);
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox .TicketInfo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox .TicketInfo .TTime, #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox .TicketInfo .TDuration {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: var(--myFont1);
+}
+#HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox .TicketInfo .TTime .icon, #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .TicketBox .TicketInfo .TDuration .icon {
   font-size: 16px;
-  color: var(--primaryColor);
+  opacity: 0.8;
 }
 #HomeLiveCourse .HomeLiveCourseMain .LiveCourseMainBox .LiveEventCard .EventDetails .EventTitle {
   font-size: 26px;

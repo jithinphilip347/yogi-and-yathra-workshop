@@ -37,53 +37,6 @@ const EventSlide = ({ event }) => {
     seconds: "00",
   });
 
-  // Calculate target date from class_date_time or date + start_time
-  const targetDate = useMemo(() => {
-    if (!event) return null;
-    if (event.class_date_time) {
-      const parsed = new Date(event.class_date_time).getTime();
-      if (!isNaN(parsed)) return parsed;
-    }
-    if (event.date) {
-      const timeStr = event.start_time || "00:00:00";
-      const fullDateStr = `${event.date}T${timeStr}`;
-      const parsed = new Date(fullDateStr).getTime();
-      if (!isNaN(parsed)) return parsed;
-      const fallbackParsed = new Date(event.date).getTime();
-      if (!isNaN(fallbackParsed)) return fallbackParsed;
-    }
-    return null;
-  }, [event?.class_date_time, event?.date, event?.start_time]);
-
-  useEffect(() => {
-    if (!targetDate) return;
-
-    const format = (v) => String(v).padStart(2, "0");
-
-    const calcTimeLeft = () => {
-      const now = Date.now();
-      const distance = targetDate - now;
-
-      if (distance <= 0) {
-        return { days: "00", hours: "00", minutes: "00", seconds: "00" };
-      }
-
-      return {
-        days: format(Math.floor(distance / (1000 * 60 * 60 * 24))),
-        hours: format(Math.floor((distance / (1000 * 60 * 60)) % 24)),
-        minutes: format(Math.floor((distance / (1000 * 60)) % 60)),
-        seconds: format(Math.floor((distance / 1000) % 60)),
-      };
-    };
-
-    setTimeLeft(calcTimeLeft());
-    const timer = setInterval(() => {
-      setTimeLeft(calcTimeLeft());
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [targetDate]);
-
   // Status & CTA determination
   const isEnded = Boolean(event?.is_ended || event?.time_status === "completed");
   const isLive = Boolean(event?.time_status === "live" || event?.can_join);
@@ -176,6 +129,10 @@ const EventSlide = ({ event }) => {
         })
       : null);
 
+  const dateParts = formattedDate ? formattedDate.split(" ") : ["--", "---"];
+  const ticketDay = dateParts[0];
+  const ticketMonth = dateParts[1];
+
   // Formatted start time string
   const formattedTime =
     event?.human_start_time ||
@@ -217,54 +174,10 @@ const EventSlide = ({ event }) => {
               </div>
             )}
         </div>
-
-        <div className="TimingBox">
-          <div className="TimerGlassPill">
-            <div className="TimerUnit">
-              <span className="Number">{timeLeft.days}</span>
-              <span className="Label">d</span>
-            </div>
-            <div className="TimerDivider">:</div>
-            <div className="TimerUnit">
-              <span className="Number">{timeLeft.hours}</span>
-              <span className="Label">h</span>
-            </div>
-            <div className="TimerDivider">:</div>
-            <div className="TimerUnit">
-              <span className="Number">{timeLeft.minutes}</span>
-              <span className="Label">m</span>
-            </div>
-            <div className="TimerDivider">:</div>
-            <div className="TimerUnit">
-              <span className="Number">{timeLeft.seconds}</span>
-              <span className="Label">s</span>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* RIGHT: CONTENT & DETAILS */}
       <div className="EventDetails">
-        <div className="DetailsHeader">
-          <div className="InfoChips">
-            {formattedDate && (
-              <span className="Chip">
-                <FiCalendar className="icon" /> {formattedDate}
-              </span>
-            )}
-            {formattedTime && (
-              <span className="Chip">
-                <FiClock className="icon" /> {formattedTime}
-              </span>
-            )}
-            {event?.duration && (
-              <span className="Chip">
-                <MdOutlineTimer className="icon" /> {event.duration} Min
-              </span>
-            )}
-          </div>
-        </div>
-
         <h3 className="EventTitle">{event?.title || "Upcoming Live Session"}</h3>
 
         {event?.short_description ? (
@@ -275,6 +188,26 @@ const EventSlide = ({ event }) => {
             dangerouslySetInnerHTML={{ __html: event.description }}
           />
         ) : null}
+
+        <div className="TicketBox">
+          <div className="TicketDate">
+            <span className="TDay">{ticketDay}</span>
+            <span className="TMonth">{ticketMonth}</span>
+          </div>
+          <div className="TicketDivider"></div>
+          <div className="TicketInfo">
+            {formattedTime && (
+              <span className="TTime">
+                <FiClock className="icon" /> {formattedTime}
+              </span>
+            )}
+            {event?.duration && (
+              <span className="TDuration">
+                <MdOutlineTimer className="icon" /> {event.duration} Min
+              </span>
+            )}
+          </div>
+        </div>
 
         <div className="MetaRow1">
           {Number(event?.review_count) > 0 || Number(event?.average_rating) > 0 ? (
