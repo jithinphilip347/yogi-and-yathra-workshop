@@ -185,11 +185,87 @@ const EventSlide = ({ event }) => {
 
   return (
     <div className="LiveEventCard" onClick={handleCardClick}>
-      <div className="EventDetails">
-        <div className="CategoryBadge">
-          <FiRadio className="icon" />{" "}
-          {event?.category?.name || event?.type || "LIVE WORKSHOP"}
+      {/* LEFT: IMAGE & TIMER */}
+      <div className="EventImageWrapper">
+        <Image
+          src={mainImageSrc}
+          alt={event?.title || "Live Session"}
+          className="MainImage"
+          priority
+          width={1000}
+          height={1000}
+        />
+        <div className="ImageOverlay"></div>
+        
+        <div className="TopBadges">
+          <div className="CategoryBadge">
+            <FiRadio className="icon" />{" "}
+            {event?.category?.name || event?.type || "LIVE"}
+          </div>
+          {difficultyBadge && (
+             <div className="Badge difficulty">
+               <FiTarget className="icon" /> {difficultyBadge}
+             </div>
+          )}
         </div>
+
+        <div className="ImageCenterContent">
+            {/* Kept this just in case they still want the lock on the image */}
+            {isRegistrationClosed && (
+              <div className="LockIconWrapper">
+                <FiLock />
+              </div>
+            )}
+        </div>
+
+        <div className="TimingBox">
+          <div className="TimerGlassPill">
+            <div className="TimerUnit">
+              <span className="Number">{timeLeft.days}</span>
+              <span className="Label">d</span>
+            </div>
+            <div className="TimerDivider">:</div>
+            <div className="TimerUnit">
+              <span className="Number">{timeLeft.hours}</span>
+              <span className="Label">h</span>
+            </div>
+            <div className="TimerDivider">:</div>
+            <div className="TimerUnit">
+              <span className="Number">{timeLeft.minutes}</span>
+              <span className="Label">m</span>
+            </div>
+            <div className="TimerDivider">:</div>
+            <div className="TimerUnit">
+              <span className="Number">{timeLeft.seconds}</span>
+              <span className="Label">s</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* RIGHT: CONTENT & DETAILS */}
+      <div className="EventDetails">
+        <div className="DetailsHeader">
+          <div className="InfoChips">
+            {formattedDate && (
+              <span className="Chip">
+                <FiCalendar className="icon" /> {formattedDate}
+              </span>
+            )}
+            {formattedTime && (
+              <span className="Chip">
+                <FiClock className="icon" /> {formattedTime}
+              </span>
+            )}
+            {event?.duration && (
+              <span className="Chip">
+                <MdOutlineTimer className="icon" /> {event.duration} Min
+              </span>
+            )}
+          </div>
+        </div>
+
+        <h3 className="EventTitle">{event?.title || "Upcoming Live Session"}</h3>
 
         {event?.short_description ? (
           <p className="desc">{event.short_description}</p>
@@ -202,70 +278,42 @@ const EventSlide = ({ event }) => {
 
         <div className="MetaRow1">
           {Number(event?.review_count) > 0 || Number(event?.average_rating) > 0 ? (
-            <div className="Badge">
+            <div className="Badge rating">
               <AiFillStar className="icon star" />{" "}
-              {Number(event?.average_rating || 5).toFixed(1)} (
-              {event?.review_count}{" "}
-              {Number(event?.review_count) === 1 ? "Review" : "Reviews"})
+              <span>{Number(event?.average_rating || 5).toFixed(1)}</span>
+              <span className="dim">({event?.review_count})</span>
             </div>
           ) : (
-            <div className="Badge">
+            <div className="Badge new">
               <AiFillStar className="icon star" /> New Session
             </div>
           )}
 
           {Number(event?.booked_seats) > 0 ? (
-            <>
-              <span className="dot">•</span>
-              <div className="Badge">
-                <FiUsers className="icon" /> {event.booked_seats} Joined
-              </div>
-            </>
+            <div className="Badge users">
+              <FiUsers className="icon" /> {event.booked_seats} Joined
+            </div>
           ) : Number(event?.available_seats) > 0 ? (
-            <>
-              <span className="dot">•</span>
-              <div className="Badge">
-                <FiUsers className="icon" /> {event.available_seats} Seats Left
-              </div>
-            </>
+            <div className="Badge users">
+              <FiUsers className="icon" /> {event.available_seats} Seats Left
+            </div>
           ) : null}
-
-          {difficultyBadge && (
-            <>
-              <span className="dot">•</span>
-              <div className="Badge difficulty">
-                <FiTarget className="icon" /> {difficultyBadge}
-              </div>
-            </>
+          
+          {eventLanguage && (
+            <div className="Badge lang">
+               <FiGlobe className="icon" /> {eventLanguage}
+            </div>
           )}
         </div>
 
-        <div className="InfoChips">
-          {formattedDate && (
-            <span className="Chip">
-              <FiCalendar className="icon" /> {formattedDate}
-            </span>
-          )}
-          {formattedTime && (
-            <span className="Chip">
-              <FiClock className="icon" /> {formattedTime}
-            </span>
-          )}
-          {event?.duration && (
-            <span className="Chip">
-              <MdOutlineTimer className="icon" /> {event.duration} Min
-            </span>
-          )}
-        </div>
-
-        <div className="InstructorRow">
+        <div className="BottomRow">
           <div className="InstructorInfo">
             {instructorAvatar ? (
               <Image
                 src={instructorAvatar}
                 alt={instructorName}
-                width={28}
-                height={28}
+                width={44}
+                height={44}
                 className="ProfileImg"
               />
             ) : (
@@ -273,58 +321,21 @@ const EventSlide = ({ event }) => {
                 <FiUser />
               </div>
             )}
-            <span className="Name">{instructorName}</span>
+            <div className="HostDetails">
+              <span className="HostLabel">Hosted by</span>
+              <span className="Name">{instructorName}</span>
+            </div>
           </div>
-          {eventLanguage && (
-            <>
-              <span className="dot">•</span>
-              <span className="Language">
-                <FiGlobe className="icon" /> {eventLanguage}
-              </span>
-            </>
-          )}
-        </div>
 
-        <div className="CtaWrapper">
-          <button
-            className={`PrimaryBtn ${isButtonDisabled ? "disabled" : ""}`}
-            onClick={handleButtonClick}
-            disabled={isButtonDisabled}
-          >
-            {getCtaText()}
-            <RiArrowRightUpLine className="arrowAnim" />
-          </button>
-        </div>
-      </div>
-
-      <div className="EventImageWrapper">
-        <Image
-          src={mainImageSrc}
-          alt={event?.title || "Live Yoga"}
-          className="MainImage"
-          priority
-          width={1000}
-          height={1000}
-        />
-        <div className="ImageOverlay"></div>
-        <div className="ImageCenterContent">
-          <h2>{event?.title}</h2>
-          <div className="LockIconWrapper">
-            <FiLock />
-          </div>
-        </div>
-
-        <div className="TimingBox">
-
-          <div className="TimerGrid">
-            {["days", "hours", "minutes", "seconds"].map((label, i) => (
-              <div className="TimerItem" key={i}>
-                <div className="TimerCard">
-                  <span className="TimerNumber">{timeLeft[label]}</span>
-                </div>
-                <p>{label.toUpperCase()}</p>
-              </div>
-            ))}
+          <div className="CtaWrapper">
+            <button
+              className={`PrimaryBtn ${isButtonDisabled ? "disabled" : ""}`}
+              onClick={handleButtonClick}
+              disabled={isButtonDisabled}
+            >
+              {getCtaText()}
+              <RiArrowRightUpLine className="arrowAnim" />
+            </button>
           </div>
         </div>
       </div>
