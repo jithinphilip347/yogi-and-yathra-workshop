@@ -1,0 +1,196 @@
+/**
+ * Unified Cart Component Styling (Sprint 4)
+ */
+#Cart .CartDomainSection {
+  margin-bottom: 40px;
+}
+#Cart .CartDomainSection:last-child {
+  margin-bottom: 20px;
+}
+#Cart .CartSectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f3f5;
+  margin-bottom: 20px;
+}
+#Cart .CartSectionHeader h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1a1a1a;
+  font-family: myFont1, sans-serif;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+#Cart .CartSectionHeader .DomainTag {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #f1f5f9;
+  color: #475569;
+}
+#Cart .CartSectionHeader .DomainTag.learning {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+#Cart .CartSectionHeader .DomainTag.physical {
+  background: #fef3c7;
+  color: #b45309;
+}
+#Cart .CartItem {
+  position: relative;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+#Cart .CartItem.hasIssue {
+  border-left: 3px solid #ef4444;
+  padding-left: 15px;
+  background: #fffafa;
+}
+#Cart .CartItem.hasPriceChange {
+  border-left: 3px solid #f59e0b;
+  padding-left: 15px;
+  background: #fffdf5;
+}
+#Cart .ItemActionRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+#Cart .QuantityControl {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  height: 34px;
+  overflow: hidden;
+}
+#Cart .QuantityControl .qtyBtn {
+  background: #f9fafb;
+  border: none;
+  width: 32px;
+  height: 100%;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+#Cart .QuantityControl .qtyBtn:hover:not(:disabled) {
+  background: #e5e7eb;
+  color: #111827;
+}
+#Cart .QuantityControl .qtyBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+#Cart .QuantityControl .qtyValue {
+  min-width: 34px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+#Cart .QtyBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+#Cart .ValidationBadge {
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+#Cart .ValidationBadge.priceChanged {
+  background: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+#Cart .ValidationBadge.outOfStock {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  font-weight: 600;
+}
+#Cart .ValidationBadge.insufficientStock {
+  background: #fff7ed;
+  color: #c2410c;
+  border: 1px solid #ffedd5;
+}
+#Cart .ValidationBadge.unavailable {
+  background: #f9fafb;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+}
+#Cart .CartAlertBanner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+  font-size: 14px;
+}
+#Cart .CartAlertBanner.warning {
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+#Cart .CartAlertBanner.error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+#Cart .SummaryDomainRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #4b5563;
+  margin-bottom: 10px;
+  font-family: myFont1, sans-serif;
+}
+#Cart .SummaryDomainRow span {
+  font-weight: 500;
+  color: #111827;
+}
+#Cart .CheckoutBlockNotice {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #dc2626;
+  text-align: center;
+  font-weight: 500;
+}
+#Cart .checkoutBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+#Cart .checkoutBtn:disabled {
+  background: #9ca3af !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}/*# sourceMappingURL=unifiedCart.css.map */

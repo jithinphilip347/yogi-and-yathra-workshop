@@ -14,7 +14,6 @@ import {
   FiClock,
   FiUser,
   FiGlobe,
-  FiLock,
 } from "react-icons/fi";
 import { useQuery } from "@tanstack/react-query";
 import courseApi from "@/libs/courseApi";
@@ -36,6 +35,53 @@ const EventSlide = ({ event }) => {
     minutes: "00",
     seconds: "00",
   });
+
+  // Calculate target date from class_date_time or date + start_time
+  const targetDate = useMemo(() => {
+    if (!event) return null;
+    if (event.class_date_time) {
+      const parsed = new Date(event.class_date_time).getTime();
+      if (!isNaN(parsed)) return parsed;
+    }
+    if (event.date) {
+      const timeStr = event.start_time || "00:00:00";
+      const fullDateStr = `${event.date}T${timeStr}`;
+      const parsed = new Date(fullDateStr).getTime();
+      if (!isNaN(parsed)) return parsed;
+      const fallbackParsed = new Date(event.date).getTime();
+      if (!isNaN(fallbackParsed)) return fallbackParsed;
+    }
+    return null;
+  }, [event?.class_date_time, event?.date, event?.start_time]);
+
+  useEffect(() => {
+    if (!targetDate) return;
+
+    const format = (v) => String(v).padStart(2, "0");
+
+    const calcTimeLeft = () => {
+      const now = Date.now();
+      const distance = targetDate - now;
+
+      if (distance <= 0) {
+        return { days: "00", hours: "00", minutes: "00", seconds: "00" };
+      }
+
+      return {
+        days: format(Math.floor(distance / (1000 * 60 * 60 * 24))),
+        hours: format(Math.floor((distance / (1000 * 60 * 60)) % 24)),
+        minutes: format(Math.floor((distance / (1000 * 60)) % 60)),
+        seconds: format(Math.floor((distance / 1000) % 60)),
+      };
+    };
+
+    setTimeLeft(calcTimeLeft());
+    const timer = setInterval(() => {
+      setTimeLeft(calcTimeLeft());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [targetDate]);
 
   // Status & CTA determination
   const isEnded = Boolean(event?.is_ended || event?.time_status === "completed");
@@ -129,10 +175,6 @@ const EventSlide = ({ event }) => {
         })
       : null);
 
-  const dateParts = formattedDate ? formattedDate.split(" ") : ["--", "---"];
-  const ticketDay = dateParts[0];
-  const ticketMonth = dateParts[1];
-
   // Formatted start time string
   const formattedTime =
     event?.human_start_time ||
@@ -142,43 +184,13 @@ const EventSlide = ({ event }) => {
 
   return (
     <div className="LiveEventCard" onClick={handleCardClick}>
-      {/* LEFT: IMAGE & TIMER */}
-      <div className="EventImageWrapper">
-        <Image
-          src={mainImageSrc}
-          alt={event?.title || "Live Session"}
-          className="MainImage"
-          priority
-          width={1000}
-          height={1000}
-        />
-        <div className="ImageOverlay"></div>
-        
-        <div className="TopBadges">
-          <div className="CategoryBadge">
-            <FiRadio className="icon" />{" "}
-            {event?.category?.name || event?.type || "LIVE"}
-          </div>
-          {difficultyBadge && (
-             <div className="Badge difficulty">
-               <FiTarget className="icon" /> {difficultyBadge}
-             </div>
-          )}
-        </div>
-
-        <div className="ImageCenterContent">
-            {/* Kept this just in case they still want the lock on the image */}
-            {isRegistrationClosed && (
-              <div className="LockIconWrapper">
-                <FiLock />
-              </div>
-            )}
-        </div>
-      </div>
-
-      {/* RIGHT: CONTENT & DETAILS */}
       <div className="EventDetails">
-        <h3 className="EventTitle">{event?.title || "Upcoming Live Session"}</h3>
+        <div className="CategoryBadge">
+          <FiRadio className="icon" />{" "}
+          {event?.category?.name || event?.type || "LIVE WORKSHOP"}
+        </div>
+
+        <h2>{event?.title}</h2>
 
         {event?.short_description ? (
           <p className="desc">{event.short_description}</p>
@@ -189,64 +201,72 @@ const EventSlide = ({ event }) => {
           />
         ) : null}
 
-        <div className="TicketBox">
-          <div className="TicketDate">
-            <span className="TDay">{ticketDay}</span>
-            <span className="TMonth">{ticketMonth}</span>
-          </div>
-          <div className="TicketDivider"></div>
-          <div className="TicketInfo">
-            {formattedTime && (
-              <span className="TTime">
-                <FiClock className="icon" /> {formattedTime}
-              </span>
-            )}
-            {event?.duration && (
-              <span className="TDuration">
-                <MdOutlineTimer className="icon" /> {event.duration} Min
-              </span>
-            )}
-          </div>
-        </div>
-
         <div className="MetaRow1">
           {Number(event?.review_count) > 0 || Number(event?.average_rating) > 0 ? (
-            <div className="Badge rating">
+            <div className="Badge">
               <AiFillStar className="icon star" />{" "}
-              <span>{Number(event?.average_rating || 5).toFixed(1)}</span>
-              <span className="dim">({event?.review_count})</span>
+              {Number(event?.average_rating || 5).toFixed(1)} (
+              {event?.review_count}{" "}
+              {Number(event?.review_count) === 1 ? "Review" : "Reviews"})
             </div>
           ) : (
-            <div className="Badge new">
+            <div className="Badge">
               <AiFillStar className="icon star" /> New Session
             </div>
           )}
 
           {Number(event?.booked_seats) > 0 ? (
-            <div className="Badge users">
-              <FiUsers className="icon" /> {event.booked_seats} Joined
-            </div>
+            <>
+              <span className="dot">•</span>
+              <div className="Badge">
+                <FiUsers className="icon" /> {event.booked_seats} Joined
+              </div>
+            </>
           ) : Number(event?.available_seats) > 0 ? (
-            <div className="Badge users">
-              <FiUsers className="icon" /> {event.available_seats} Seats Left
-            </div>
+            <>
+              <span className="dot">•</span>
+              <div className="Badge">
+                <FiUsers className="icon" /> {event.available_seats} Seats Left
+              </div>
+            </>
           ) : null}
-          
-          {eventLanguage && (
-            <div className="Badge lang">
-               <FiGlobe className="icon" /> {eventLanguage}
-            </div>
+
+          {difficultyBadge && (
+            <>
+              <span className="dot">•</span>
+              <div className="Badge difficulty">
+                <FiTarget className="icon" /> {difficultyBadge}
+              </div>
+            </>
           )}
         </div>
 
-        <div className="BottomRow">
+        <div className="InfoChips">
+          {formattedDate && (
+            <span className="Chip">
+              <FiCalendar className="icon" /> {formattedDate}
+            </span>
+          )}
+          {formattedTime && (
+            <span className="Chip">
+              <FiClock className="icon" /> {formattedTime}
+            </span>
+          )}
+          {event?.duration && (
+            <span className="Chip">
+              <MdOutlineTimer className="icon" /> {event.duration} Min
+            </span>
+          )}
+        </div>
+
+        <div className="InstructorRow">
           <div className="InstructorInfo">
             {instructorAvatar ? (
               <Image
                 src={instructorAvatar}
                 alt={instructorName}
-                width={44}
-                height={44}
+                width={28}
+                height={28}
                 className="ProfileImg"
               />
             ) : (
@@ -254,21 +274,57 @@ const EventSlide = ({ event }) => {
                 <FiUser />
               </div>
             )}
-            <div className="HostDetails">
-              <span className="HostLabel">Hosted by</span>
-              <span className="Name">{instructorName}</span>
-            </div>
+            <span className="Name">{instructorName}</span>
           </div>
+          {eventLanguage && (
+            <>
+              <span className="dot">•</span>
+              <span className="Language">
+                <FiGlobe className="icon" /> {eventLanguage}
+              </span>
+            </>
+          )}
+        </div>
 
-          <div className="CtaWrapper">
-            <button
-              className={`PrimaryBtn ${isButtonDisabled ? "disabled" : ""}`}
-              onClick={handleButtonClick}
-              disabled={isButtonDisabled}
-            >
-              {getCtaText()}
-              <RiArrowRightUpLine className="arrowAnim" />
-            </button>
+        <div className="CtaWrapper">
+          <button
+            className={`PrimaryBtn ${isButtonDisabled ? "disabled" : ""}`}
+            onClick={handleButtonClick}
+            disabled={isButtonDisabled}
+          >
+            {getCtaText()}
+            <RiArrowRightUpLine className="arrowAnim" />
+          </button>
+        </div>
+      </div>
+
+      <div className="EventImageWrapper">
+        <Image
+          src={mainImageSrc}
+          alt={event?.title || "Live Yoga"}
+          className="MainImage"
+          priority
+          width={1000}
+          height={1000}
+        />
+
+        <div className="TimingBox">
+          <div className="TimeTitle">
+            {isEnded
+              ? "SESSION ENDED"
+              : isLive
+                ? "SESSION LIVE"
+                : "REMAINING TIME"}
+          </div>
+          <div className="TimerGrid">
+            {["days", "hours", "minutes", "seconds"].map((label, i) => (
+              <div className="TimerItem" key={i}>
+                <div className="TimerCard">
+                  <span className="TimerNumber">{timeLeft[label]}</span>
+                </div>
+                <p>{label.toUpperCase()}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
