@@ -30,6 +30,7 @@ import useCourse from "@/hooks/useCourse";
 import LiveYoga from "@/components/profile/LiveYoga";
 import StudentBilling from "@/components/profile/StudentBilling";
 import MyCertificates from "@/components/profile/MyCertificates";
+import MyOrders from "@/components/profile/MyOrders";
 
 // const courses = [
 //   {
@@ -186,6 +187,9 @@ const Profile = () => {
       } else if (normalized === "billing" || normalized === "invoices") {
         setActiveTab("Billing & Invoices");
         setMobileView("content");
+      } else if (normalized === "orders" || normalized === "myorders" || normalized === "history") {
+        setActiveTab("My Orders");
+        setMobileView("content");
       } else if (normalized === "certificates") {
         setActiveTab("Certificates");
         setMobileView("content");
@@ -211,6 +215,7 @@ const Profile = () => {
             liveSessions={liveSessions}
             upcomingEvents={upcomingEvents}
             user={user}
+            onNavigateToTab={handleTabChange}
           />
         );
       case "Edit Profile":
@@ -231,6 +236,8 @@ const Profile = () => {
         return <LiveYoga sessionsData={liveSessions} />;
       case "Certificates":
         return <MyCertificates user={user} />;
+      case "My Orders":
+        return <MyOrders />;
       case "Billing & Invoices":
         return <StudentBilling />;
       case "Settings":

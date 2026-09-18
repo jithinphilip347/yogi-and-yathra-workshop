@@ -60,12 +60,63 @@ export const commerceApi = {
   },
 
   /**
+   * Delegate physical product order creation to E-commerce backend (Sprint 5)
+   */
+  async delegatePhysicalOrder(payload) {
+    const res = await axios.post(
+      `${API_BASE_URL}/checkout/delegate-physical-order`,
+      payload,
+      { headers: getAuthHeaders() }
+    );
+    return res.data;
+  },
+
+  /**
+   * Create a UNIFIED checkout order (learning + delegated physical) — Sprint 7.
+   *
+   * The backend resolves learning pricing from the Workshop database, verifies
+   * the delegated physical order against the e-commerce store, and creates the
+   * Razorpay order backend-only. The browser receives only the public
+   * `order_id` + `key_id` (zero secret leakage).
+   */
+  async createUnifiedOrder(payload) {
+    const res = await axios.post(
+      `${API_BASE_URL}/payments/unified-order`,
+      payload,
+      { headers: getAuthHeaders() }
+    );
+    return res.data;
+  },
+
+  /**
    * Verify Razorpay Payment Signature
+   *
+   * `checkout_session_id` and `delegated_order_id` are forwarded (when known)
+   * so the backend can bind the payment to the originating checkout session and
+   * synchronize the delegated physical order during verification.
    */
   async verifyPayment(paymentPayload) {
     const res = await axios.post(
       `${API_BASE_URL}/payments/verify`,
       paymentPayload,
+      { headers: getAuthHeaders() }
+    );
+    return res.data;
+  },
+
+  /**
+   * Release the physical inventory hold for an abandoned checkout (Sprint 8).
+   *
+   * Best-effort only: the backend proves ownership of the checkout session,
+   * refuses to release an already-paid order, and is idempotent, so this is safe
+   * to fire on every dismissal. If the call never lands, the E-commerce
+   * reservation TTL reclaims the units anyway. The browser never talks to
+   * E-commerce inventory directly.
+   */
+  async releaseInventory(checkoutSessionId, reason = 'checkout_cancelled') {
+    const res = await axios.post(
+      `${API_BASE_URL}/payments/release-inventory`,
+      { checkout_session_id: checkoutSessionId, reason },
       { headers: getAuthHeaders() }
     );
     return res.data;

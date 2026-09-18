@@ -94,12 +94,17 @@ export function classifyCartItems(items = []) {
     }
   }
 
+  const hasWorkshop = workshopItems.length > 0;
+  const hasEcommerce = ecommerceItems.length > 0;
+
   return {
     workshopItems,
     ecommerceItems,
-    hasWorkshopItems: workshopItems.length > 0,
-    hasEcommerceItems: ecommerceItems.length > 0,
-    isMixedCart: workshopItems.length > 0 && ecommerceItems.length > 0,
+    hasWorkshopItems: hasWorkshop,
+    hasEcommerceItems: hasEcommerce,
+    hasLearningItems: hasWorkshop,
+    hasPhysicalItems: hasEcommerce,
+    isMixedCart: hasWorkshop && hasEcommerce,
     totalItems: safeItems.length,
   };
 }

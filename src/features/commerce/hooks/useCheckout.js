@@ -10,11 +10,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useCoupon } from './useCommerceHooks';
 import {
   setBillingAddress,
+  setShippingAddress,
+  setSameAsBilling,
   setPaymentMethod,
   setActiveStep,
   createOrderStart,
   createOrderSuccess,
   createOrderFailure,
+  delegateOrderStart,
+  delegateOrderSuccess,
+  delegateOrderFailure,
   resetCheckout,
 } from '../slices/checkoutSlice';
 import {
@@ -50,16 +55,162 @@ export function useCheckout() {
 
   const activeStep = checkoutState.activeStep || 1;
   const billingAddress = checkoutState.billingAddress || {};
+  const shippingAddress = checkoutState.shippingAddress || {};
+  const sameAsBilling = checkoutState.sameAsBilling ?? true;
   const paymentMethod = checkoutState.paymentMethod || 'razorpay';
   const activeOrder = checkoutState.activeOrder;
-  const isProcessing = checkoutState.isProcessing;
-  const error = checkoutState.error;
+  const delegatedPhysicalOrder = checkoutState.delegatedPhysicalOrder;
+  const isDelegating = checkoutState.isDelegating || false;
+  const delegationError = checkoutState.delegationError || null;
+  const isProcessing = checkoutState.isProcessing || false;
+  const error = checkoutState.error || null;
 
   const user = authState.user;
 
   const updateBilling = (addressData) => dispatch(setBillingAddress(addressData));
+  const updateShipping = (addressData) => dispatch(setShippingAddress(addressData));
+  const toggleSameAsBilling = (val) => dispatch(setSameAsBilling(val));
   const changeStep = (step) => dispatch(setActiveStep(step));
   const changePaymentMethod = (method) => dispatch(setPaymentMethod(method));
+
+  /**
+   * Delegate physical order creation to authoritative E-commerce backend (Sprint 5)
+   */
+  const delegateOrder = async (customShipping = null) => {
+    if (!classifiedItems.hasPhysicalItems) {
+      return { success: true, delegated: false, order: null };
+    }
+
+    const finalShipping = customShipping || (sameAsBilling ? billingAddress : shippingAddress);
+
+    if (!finalShipping.address || !finalShipping.city || !finalShipping.state || !finalShipping.zip) {
+      const msg = 'Please complete all shipping address fields before proceeding.';
+      dispatch(delegateOrderFailure(msg));
+      throw new Error(msg);
+    }
+
+    dispatch(delegateOrderStart());
+
+    try {
+      const payload = {
+        checkout_session_id: sessionId,
+        customer: {
+          name: finalShipping.name || user?.name || 'Customer',
+          email: finalShipping.email || user?.email || '',
+          phone: finalShipping.phone || user?.phone || '',
+        },
+        shipping_address: {
+          address: finalShipping.address,
+          city: finalShipping.city,
+          state: finalShipping.state,
+          pincode: finalShipping.zip,
+          country: finalShipping.country || 'India',
+        },
+        billing_address: billingAddress.address ? {
+          address: billingAddress.address,
+          city: billingAddress.city,
+          state: billingAddress.state,
+          pincode: billingAddress.zip,
+          country: billingAddress.country || 'India',
+        } : undefined,
+        items: items.map((item) => ({
+          id: item.productable_id ?? item.id ?? item.value,
+          type: (item.productable_type || item.type || 'product').toLowerCase(),
+          quantity: item.quantity || 1,
+          price: Number(item.price || 0),
+          unit_price: Number(item.price || 0),
+          domain: item.domain,
+        })),
+        shipping_fee: 0,
+      };
+
+      const response = await commerceApi.delegatePhysicalOrder(payload);
+
+      if (response.success && response.order) {
+        dispatch(delegateOrderSuccess(response));
+        return response;
+      } else {
+        const errorMsg = response.message || 'Delegated order creation failed';
+        dispatch(delegateOrderFailure(errorMsg));
+        throw new Error(errorMsg);
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || 'Failed to create delegated physical order';
+      dispatch(delegateOrderFailure(msg));
+      throw new Error(msg);
+    }
+  };
+
+  /**
+   * Create the UNIFIED order (Sprint 7) — a single Razorpay order covering the
+   * learning and/or delegated physical portions of this checkout session.
+   *
+   * Server-authoritative: the backend re-prices the learning item from the
+   * database and re-verifies the delegated physical order in e-commerce before
+   * the Razorpay order is created.
+   *
+   * @param {object|null} delegatedOrder Order returned by delegateOrder().
+   *   Passed explicitly because Redux state may not have re-rendered yet.
+   */
+  const initiateUnifiedOrder = async (delegatedOrder = null) => {
+    if (items.length === 0) {
+      throw new Error('Your cart is empty');
+    }
+
+    if (!sessionId) {
+      throw new Error('Missing checkout session. Please return to your cart and retry.');
+    }
+
+    dispatch(createOrderStart());
+
+    try {
+      const physicalTypes = ['product', 'combo', 'combos'];
+      const learningItem = (items || []).find((item) => {
+        const type = (item.productable_type || item.type || '').toLowerCase();
+        const domain = (item.domain || '').toLowerCase();
+        return domain !== 'ecommerce' && !physicalTypes.includes(type);
+      });
+
+      const delegated = delegatedOrder || delegatedPhysicalOrder;
+
+      if (!learningItem && !delegated?.id) {
+        throw new Error('No payable items were found for this checkout session.');
+      }
+
+      const payload = {
+        checkout_session_id: sessionId,
+        ecommerce_order_id: delegated?.id ? Number(delegated.id) : undefined,
+        coupon_code: appliedCoupon?.code || null,
+        billing_address: billingAddress,
+        shipping_address: shippingAddress,
+        payment_method: paymentMethod,
+      };
+
+      if (learningItem) {
+        let productType = (learningItem.productable_type || 'course').toLowerCase();
+        if (productType === 'coursedetails' || productType === 'course') productType = 'course';
+        if (productType === 'dailyclass' || productType === 'daily_class') productType = 'daily_class';
+        if (productType === 'livesection' || productType === 'live_section') productType = 'live_section';
+
+        payload.product_type = productType;
+        payload.product_id = Number(learningItem.productable_id ?? learningItem.id ?? learningItem.value);
+        payload.pricing_plan_id = learningItem.meta?.pricing_plan_id || null;
+      }
+
+      const response = await commerceApi.createUnifiedOrder(payload);
+
+      if (response.success && response.data) {
+        dispatch(createOrderSuccess(response.data));
+        return response.data;
+      }
+
+      throw new Error(response.message || 'Order generation failed');
+    } catch (err) {
+      const msg = err.response?.data?.message || err.message || 'Failed to initiate order';
+      dispatch(createOrderFailure(msg));
+      throw new Error(msg);
+    }
+  };
 
   /**
    * Create Order via Backend Order Engine (for single Workshop learning item flows)
@@ -109,6 +260,8 @@ export function useCheckout() {
     items,
     sessionId,
     classifiedItems,
+    hasPhysicalItems: classifiedItems.hasPhysicalItems,
+    hasLearningItems: classifiedItems.hasLearningItems,
     isMixed: classifiedItems.isMixedCart,
     itemCount,
     subtotal,
@@ -117,15 +270,25 @@ export function useCheckout() {
     appliedCoupon,
     activeStep,
     billingAddress,
+    shippingAddress,
+    sameAsBilling,
     paymentMethod,
     activeOrder,
+    delegatedPhysicalOrder,
+    ecommerceCustomer: checkoutState.ecommerceCustomer || { id: null, status: null },
+    isDelegating,
+    delegationError,
     isProcessing,
     error,
     user,
     updateBilling,
+    updateShipping,
+    toggleSameAsBilling,
     changeStep,
     changePaymentMethod,
+    delegateOrder,
     initiateOrder,
+    initiateUnifiedOrder,
     validateAndApplyCoupon: (code) => validateAndApply(code, subtotal),
     removeCoupon: detachCoupon,
     reset: () => dispatch(resetCheckout()),

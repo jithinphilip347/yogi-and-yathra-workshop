@@ -5,9 +5,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  sessionId: null, // Unified Checkout Session ID (correlates Workshop & future E-commerce orders)
+  sessionId: null, // Unified Checkout Session ID (correlates Workshop & E-commerce orders)
   items: [], // Checkout Session snapshot (created from cart or Buy Now product)
-  activeStep: 1, // 1: Order Review, 2: Student Details & Billing, 3: Payment
+  activeStep: 1, // 1: Order Review, 2: Student Details & Shipping/Billing, 3: Payment
   billingAddress: {
     name: '',
     email: '',
@@ -16,9 +16,30 @@ const initialState = {
     city: '',
     state: '',
     zip: '',
+    country: 'India',
   },
+  shippingAddress: {
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    state: '',
+    zip: '',
+    country: 'India',
+  },
+  sameAsBilling: true,
   paymentMethod: 'razorpay',
   activeOrder: null,
+  delegatedPhysicalOrder: null,
+  ecommerceCustomer: {
+    id: null,
+    email: '',
+    name: '',
+    status: null, // 'existing' | 'created'
+  },
+  isDelegating: false,
+  delegationError: null,
   isProcessing: false,
   error: null,
 };
@@ -41,6 +62,10 @@ const checkoutSlice = createSlice({
         : `cs_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
       state.activeStep = 1;
       state.activeOrder = null;
+      state.delegatedPhysicalOrder = null;
+      state.ecommerceCustomer = { id: null, email: '', name: '', status: null };
+      state.isDelegating = false;
+      state.delegationError = null;
       state.isProcessing = false;
       state.error = null;
     },
@@ -50,9 +75,26 @@ const checkoutSlice = createSlice({
     clearCheckoutItems: (state) => {
       state.items = [];
       state.sessionId = null;
+      state.delegatedPhysicalOrder = null;
+      state.ecommerceCustomer = { id: null, email: '', name: '', status: null };
     },
     setBillingAddress: (state, action) => {
       state.billingAddress = { ...state.billingAddress, ...action.payload };
+      if (state.sameAsBilling) {
+        state.shippingAddress = { ...state.shippingAddress, ...action.payload };
+      }
+    },
+    setShippingAddress: (state, action) => {
+      state.shippingAddress = { ...state.shippingAddress, ...action.payload };
+    },
+    setSameAsBilling: (state, action) => {
+      state.sameAsBilling = action.payload;
+      if (action.payload) {
+        state.shippingAddress = { ...state.billingAddress };
+      }
+    },
+    setEcommerceCustomer: (state, action) => {
+      state.ecommerceCustomer = { ...state.ecommerceCustomer, ...action.payload };
     },
     setPaymentMethod: (state, action) => {
       state.paymentMethod = action.payload;
@@ -73,11 +115,34 @@ const checkoutSlice = createSlice({
       state.isProcessing = false;
       state.error = action.payload;
     },
+    delegateOrderStart: (state) => {
+      state.isDelegating = true;
+      state.delegationError = null;
+    },
+    delegateOrderSuccess: (state, action) => {
+      state.isDelegating = false;
+      const payload = action.payload || {};
+      state.delegatedPhysicalOrder = payload.order || payload;
+      if (payload.customer || payload.customer_account_status) {
+        state.ecommerceCustomer = {
+          ...(payload.customer || {}),
+          status: payload.customer_account_status || 'resolved',
+        };
+      }
+    },
+    delegateOrderFailure: (state, action) => {
+      state.isDelegating = false;
+      state.delegationError = action.payload;
+    },
     resetCheckout: (state) => {
       state.sessionId = null;
       state.items = [];
       state.activeStep = 1;
       state.activeOrder = null;
+      state.delegatedPhysicalOrder = null;
+      state.ecommerceCustomer = { id: null, email: '', name: '', status: null };
+      state.isDelegating = false;
+      state.delegationError = null;
       state.isProcessing = false;
       state.error = null;
     },
@@ -88,11 +153,17 @@ export const {
   createCheckout,
   clearCheckoutItems,
   setBillingAddress,
+  setShippingAddress,
+  setSameAsBilling,
+  setEcommerceCustomer,
   setPaymentMethod,
   setActiveStep,
   createOrderStart,
   createOrderSuccess,
   createOrderFailure,
+  delegateOrderStart,
+  delegateOrderSuccess,
+  delegateOrderFailure,
   resetCheckout,
 } = checkoutSlice.actions;
 

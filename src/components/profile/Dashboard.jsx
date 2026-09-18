@@ -10,6 +10,7 @@ import courseApi from "@/libs/courseApi";
 import useWishlist from "@/hooks/useWishlist";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import CourseCard from "@/components/coursebox/CourseCard";
+import RecentOrders from "@/components/profile/RecentOrders";
 import LiveThumb1 from "../../assets/images/live2.webp";
 import LiveImg1 from "../../assets/images/live1.webp";
 
@@ -19,6 +20,7 @@ const Dashboard = ({
   liveClasses = [],
   liveSessions = [],
   user,
+  onNavigateToTab = null,
 }) => {
   const { findWishlistIcon } = useWishlist();
   const [analytics, setAnalytics] = useState(null);
@@ -146,6 +148,11 @@ const Dashboard = ({
         </div>
       )}
       
+      {/* Recent Orders — learning + physical purchases in one view (Sprint 9) */}
+      <div className="RecentOrdersBox" style={{ marginBottom: "28px" }}>
+        <RecentOrders onViewAll={onNavigateToTab ? () => onNavigateToTab("My Orders") : null} />
+      </div>
+
       {/* Continue Learning */}
       <div className="ContinueWatchBox">
         <div className="DashBoardHead">

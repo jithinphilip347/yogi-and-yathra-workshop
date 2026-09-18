@@ -9,6 +9,7 @@
  * /payments/verify endpoint for server-side signature verification.
  */
 
+import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
@@ -22,11 +23,27 @@ import {
 import { clearCart } from '../slices/cartSlice';
 import { clearCheckoutItems } from '../slices/checkoutSlice';
 import { commerceApi } from '../services/commerceApi';
+import { buildVerificationPayload } from '../utils/verificationPayload';
+import {
+  createInventoryHoldReleaser,
+  RELEASE_REASON_CHECKOUT_CANCELLED,
+  RELEASE_REASON_PAYMENT_FAILED,
+} from '../utils/inventoryHold';
 
 export function usePayment() {
   const dispatch = useDispatch();
   const router = useRouter();
   const queryClient = useQueryClient();
+
+  // Guarantees a single verification submission per payment attempt, so a
+  // double-click / re-fired SDK callback can never dispatch two verifications.
+  const verificationGuard = useRef(false);
+
+  // Guarantees at most one inventory-release request per checkout attempt.
+  const holdReleaser = useRef(null);
+  if (!holdReleaser.current) {
+    holdReleaser.current = createInventoryHoldReleaser(commerceApi.releaseInventory);
+  }
 
   const paymentState = useSelector((state) => state.payment || {});
   const status = paymentState.status || 'idle';
@@ -81,6 +98,21 @@ export function usePayment() {
       throw new Error(msg);
     }
 
+    // Sprint 8 — physical inventory hold. `createUnifiedOrder` may have reserved
+    // E-commerce stock for this session with a 15-minute TTL. If the customer
+    // walks away (modal dismissed / payment declined), we ask the Workshop
+    // backend to release the hold immediately instead of making other shoppers
+    // wait out the TTL. Fire-and-forget by design: the response changes nothing
+    // in the UI, and the server TTL is the real backstop.
+    const checkoutSessionId =
+      orderData?.checkout_session_id || orderData?.order?.checkout_session_id || null;
+
+    const releaseInventoryHold = (reason) => {
+      // Fire-and-forget: never awaited, never surfaces an error, and a re-fired
+      // callback can never issue a second request.
+      holdReleaser.current.release(checkoutSessionId, reason);
+    };
+
     const options = {
       // key_id is returned by the backend (never hardcoded in source)
       key: keyId,
@@ -99,22 +131,30 @@ export function usePayment() {
         color: '#1a56db',
       },
       handler: async function (response) {
+        if (verificationGuard.current) {
+          return; // Duplicate callback — a verification is already in flight.
+        }
+        verificationGuard.current = true;
+
         dispatch(startVerification());
         try {
           // Server-side verification — never trust the frontend alone.
           // The backend validates the HMAC signature and fetches the
           // payment from Razorpay to confirm it was captured.
-          const verificationPayload = {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            payment_id: paymentId,
-          };
+          const verificationPayload = buildVerificationPayload(response, orderData);
 
           const verifyRes = await commerceApi.verifyPayment(verificationPayload);
 
           if (verifyRes.success || verifyRes.status === 'success') {
-            dispatch(paymentSuccess(verifyRes.data || verifyRes));
+            const result = verifyRes.data || verifyRes;
+            const syncStatus = result.synchronization?.status || null;
+
+            dispatch(paymentSuccess({
+              ...result,
+              payment_id: paymentId,
+              synchronization_status: syncStatus,
+            }));
+
             if (queryClient) {
               queryClient.invalidateQueries({ queryKey: ['user-enrollments'] });
               queryClient.invalidateQueries({ queryKey: ['course-access'] });
@@ -122,14 +162,23 @@ export function usePayment() {
               queryClient.invalidateQueries({ queryKey: ['student-continue-learning'] });
               queryClient.invalidateQueries({ queryKey: ['dashboard-upcoming-events'] });
               queryClient.invalidateQueries({ queryKey: ['profile'] });
+              queryClient.invalidateQueries({ queryKey: ['user-orders'] });
             }
+
             dispatch(clearCart());
             dispatch(clearCheckoutItems());
+
+            // NOTE: `partially_synchronized` is NOT a failure — the customer's
+            // payment is captured and Workshop access is fulfilled. The physical
+            // order sync is retried server-side (idempotently) via the webhook
+            // reconciliation path, so the user still lands on success.
             router.replace('/checkout/success');
           } else {
             throw new Error(verifyRes.message || 'Payment signature verification failed.');
           }
         } catch (err) {
+          // Allow a legitimate retry after a failed verification.
+          verificationGuard.current = false;
           const msg = err.response?.data?.message || err.message || 'Verification Error';
           dispatch(paymentFailure(msg));
           router.push('/checkout/failure');
@@ -137,6 +186,9 @@ export function usePayment() {
       },
       modal: {
         ondismiss: function () {
+          verificationGuard.current = false;
+          // Abandoned checkout: hand the reserved units straight back.
+          releaseInventoryHold(RELEASE_REASON_CHECKOUT_CANCELLED);
           dispatch(paymentFailure('Payment cancelled by user.'));
         },
       },
@@ -146,6 +198,9 @@ export function usePayment() {
 
     // Surface payment failures reported by the SDK (e.g. bank declined)
     rzp.on('payment.failed', function (response) {
+      verificationGuard.current = false;
+      // Declined payment: the customer will not be charged, so the hold goes back.
+      releaseInventoryHold(RELEASE_REASON_PAYMENT_FAILED);
       const description = response?.error?.description || 'Payment failed. Please try again.';
       dispatch(paymentFailure(description));
     });

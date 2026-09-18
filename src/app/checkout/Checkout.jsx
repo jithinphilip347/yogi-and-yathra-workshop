@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { FaCheckCircle, FaTag, FaCreditCard, FaLock, FaArrowLeft, FaArrowRight, FaShieldAlt } from 'react-icons/fa';
+import { FaCheckCircle, FaTag, FaCreditCard, FaLock, FaArrowLeft, FaArrowRight, FaShieldAlt, FaBoxOpen, FaTruck } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useCheckout } from '@/features/commerce/hooks/useCheckout';
 import { usePayment } from '@/features/commerce/hooks/usePayment';
@@ -17,20 +17,32 @@ export default function Checkout() {
     appliedCoupon,
     activeStep,
     billingAddress,
+    shippingAddress,
+    sameAsBilling,
+    hasPhysicalItems,
+    hasLearningItems,
+    isMixed,
     paymentMethod,
     activeOrder,
+    delegatedPhysicalOrder,
+    ecommerceCustomer,
+    isDelegating,
+    delegationError,
     isProcessing,
     error,
     user,
     updateBilling,
+    updateShipping,
+    toggleSameAsBilling,
     changeStep,
     changePaymentMethod,
-    initiateOrder,
+    delegateOrder,
+    initiateUnifiedOrder,
     validateAndApplyCoupon,
     removeCoupon,
   } = useCheckout();
 
-  const { executeRazorpay, status: paymentStatus } = usePayment();
+  const { executeRazorpay, status: paymentStatus, paymentError } = usePayment();
 
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setCouponError] = useState('');
@@ -44,7 +56,22 @@ export default function Checkout() {
     city: billingAddress.city || '',
     state: billingAddress.state || '',
     zip: billingAddress.zip || '',
+    country: billingAddress.country || 'India',
   });
+
+  const [shippingForm, setShippingForm] = useState({
+    name: user?.name || shippingAddress.name || '',
+    email: user?.email || shippingAddress.email || '',
+    phone: user?.phone || shippingAddress.phone || '',
+    address: shippingAddress.address || '',
+    city: shippingAddress.city || '',
+    state: shippingAddress.state || '',
+    zip: shippingAddress.zip || '',
+    country: shippingAddress.country || 'India',
+  });
+
+  const [useSeparateBilling, setUseSeparateBilling] = useState(!sameAsBilling);
+  const [localError, setLocalError] = useState('');
 
   const router = useRouter();
 
@@ -60,6 +87,11 @@ export default function Checkout() {
   if (prevUser !== user) {
     setPrevUser(user);
     setForm((prev) => ({
+      ...prev,
+      name: prev.name || user?.name || '',
+      email: prev.email || user?.email || '',
+    }));
+    setShippingForm((prev) => ({
       ...prev,
       name: prev.name || user?.name || '',
       email: prev.email || user?.email || '',
@@ -98,21 +130,55 @@ export default function Checkout() {
     }
   };
 
-  const handleFormChange = (field, val) => {
+  const handleBillingChange = (field, val) => {
     const updated = { ...form, [field]: val };
     setForm(updated);
     updateBilling(updated);
   };
 
+  const handleShippingChange = (field, val) => {
+    const updated = { ...shippingForm, [field]: val };
+    setShippingForm(updated);
+    updateShipping(updated);
+  };
+
   const handleProceedToPayment = async () => {
+    setLocalError('');
+
+    // 1. Validation check
+    const activeShipping = useSeparateBilling ? shippingForm : form;
+    if (hasPhysicalItems) {
+      if (!activeShipping.address || !activeShipping.city || !activeShipping.state || !activeShipping.zip || !activeShipping.phone) {
+        setLocalError('Please fill in all required shipping address fields (address, city, state, PIN code, and phone).');
+        return;
+      }
+    }
+
+    if (!form.name || !form.email) {
+      setLocalError('Please enter your full name and email address.');
+      return;
+    }
+
     try {
-      await initiateOrder();
+      // 2. Delegate physical order to the E-commerce store if physical items exist
+      let delegated = null;
+      if (hasPhysicalItems) {
+        delegated = await delegateOrder(activeShipping);
+      }
+
+      // 3. Create the unified Workshop billing + Razorpay order covering the
+      //    learning and/or delegated physical portions. Learning-only,
+      //    physical-only and mixed carts all flow through one orchestration
+      //    endpoint, so the Razorpay order always exists before step 3.
+      await initiateUnifiedOrder(delegated?.order || null);
     } catch (err) {
-      console.error(err);
+      console.error('Checkout error:', err);
+      setLocalError(err.message || 'Unable to proceed with checkout.');
     }
   };
 
   const orderNum = activeOrder?.order_number || activeOrder?.id || activeOrder?.order?.order_number || activeOrder?.order?.id;
+  const delegatedId = delegatedPhysicalOrder?.id;
   const finalPayable = Math.max(0, subtotal - (Number(appliedCoupon?.discount) || 0));
 
   return (
@@ -126,7 +192,7 @@ export default function Checkout() {
         <div className={`StepLine ${activeStep > 1 ? 'active' : ''}`} />
         <div className={`StepItem ${activeStep >= 2 ? 'active' : ''} ${activeStep > 2 ? 'completed' : ''}`}>
           <span className="StepNum">2</span>
-          <span className="StepTitle">Student Details & Billing</span>
+          <span className="StepTitle">{hasPhysicalItems ? 'Shipping & Details' : 'Student Details & Billing'}</span>
         </div>
         <div className={`StepLine ${activeStep > 2 ? 'active' : ''}`} />
         <div className={`StepItem ${activeStep >= 3 ? 'active' : ''}`}>
@@ -138,9 +204,9 @@ export default function Checkout() {
       <div className="CheckoutContainer">
         {/* Left Column: Form & Options */}
         <div className="CheckoutLeft">
-          {error && (
+          {(error || delegationError || localError) && (
             <div className="CheckoutErrorMessage">
-              {error}
+              {localError || delegationError || error}
             </div>
           )}
 
@@ -149,39 +215,44 @@ export default function Checkout() {
             <section className="CheckoutSection CourseReviewSection">
               <h2 className="SectionTitle">Order Items ({itemCount})</h2>
               <div className="CourseList">
-                {items.map((item) => (
-                  <div className="CourseReviewCard" key={item.id}>
-                    <div className="CourseThumb">
-                      {item.image && <Image src={item.image} alt={item.title} width={140} height={90} className="Img" />}
-                    </div>
-                    <div className="CourseInfo">
-                      <span className="Category">{item.productable_type || 'Course'}</span>
-                      <h3>{item.title}</h3>
-                      <p className="Instructor">{item.subtitle}</p>
-                    </div>
-                    <div className="CoursePrice">
-                      <span className="CurrentPrice">
-                        ₹{(Number(item.price || 0) * Number(item.quantity || 1)).toLocaleString()}
-                      </span>
-                      {Number(item.original_price || 0) > Number(item.price || 0) && (
-                        <span className="OriginalPrice">
-                          ₹{(Number(item.original_price || 0) * Number(item.quantity || 1)).toLocaleString()}
+                {items.map((item) => {
+                  const isPhysical = item.type === 'product' || item.type === 'combo' || item.domain === 'ecommerce';
+                  return (
+                    <div className="CourseReviewCard" key={item.id || item.cart_key}>
+                      <div className="CourseThumb">
+                        {item.image && <Image src={item.image} alt={item.title} width={140} height={90} className="Img" />}
+                      </div>
+                      <div className="CourseInfo">
+                        <span className={`Category ${isPhysical ? 'PhysicalBadge' : 'LearningBadge'}`}>
+                          {isPhysical ? (item.type === 'combo' ? 'Bundle / Combo' : 'Physical Product') : (item.productable_type || 'Course')}
                         </span>
-                      )}
+                        <h3>{item.title}</h3>
+                        <p className="Instructor">{item.subtitle || (isPhysical ? `Qty: ${item.quantity || 1}` : '')}</p>
+                      </div>
+                      <div className="CoursePrice">
+                        <span className="CurrentPrice">
+                          ₹{(Number(item.price || 0) * Number(item.quantity || 1)).toLocaleString()}
+                        </span>
+                        {Number(item.original_price || 0) > Number(item.price || 0) && (
+                          <span className="OriginalPrice">
+                            ₹{(Number(item.original_price || 0) * Number(item.quantity || 1)).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               <button onClick={() => changeStep(2)} className="ProceedBtn StepBtn">
-                Next: Student Details <FaArrowRight />
+                Next: {hasPhysicalItems ? 'Shipping & Details' : 'Student Details'} <FaArrowRight />
               </button>
             </section>
           )}
 
-          {/* STEP 2: STUDENT DETAILS & BILLING */}
+          {/* STEP 2: STUDENT DETAILS & SHIPPING/BILLING */}
           {activeStep === 2 && (
             <section className="CheckoutSection">
-              <h2 className="SectionTitle">Student & Billing Details</h2>
+              <h2 className="SectionTitle">Customer Information</h2>
               <div className="FormGrid">
                 <div className="FormGroup">
                   <label className="FormLabel">Full Name *</label>
@@ -189,7 +260,7 @@ export default function Checkout() {
                     type="text"
                     required
                     value={form.name}
-                    onChange={(e) => handleFormChange('name', e.target.value)}
+                    onChange={(e) => handleBillingChange('name', e.target.value)}
                     className="FormInput"
                     placeholder="Enter your full name"
                   />
@@ -200,56 +271,177 @@ export default function Checkout() {
                     type="email"
                     required
                     value={form.email}
-                    onChange={(e) => handleFormChange('email', e.target.value)}
+                    onChange={(e) => handleBillingChange('email', e.target.value)}
                     className="FormInput"
                     placeholder="Enter your email address"
                   />
                 </div>
                 <div className="FormGroup">
-                  <label className="FormLabel">Phone Number</label>
+                  <label className="FormLabel">Phone Number *</label>
                   <input
                     type="text"
+                    required
                     value={form.phone}
-                    onChange={(e) => handleFormChange('phone', e.target.value)}
+                    onChange={(e) => handleBillingChange('phone', e.target.value)}
                     className="FormInput"
-                    placeholder="Enter phone number"
-                  />
-                </div>
-                <div className="FormGroup">
-                  <label className="FormLabel">State / Province</label>
-                  <input
-                    type="text"
-                    value={form.state}
-                    onChange={(e) => handleFormChange('state', e.target.value)}
-                    className="FormInput"
-                    placeholder="Enter state or province"
+                    placeholder="10-digit mobile number"
                   />
                 </div>
               </div>
+
+              {/* Physical Product Shipping Address */}
+              {hasPhysicalItems && (
+                <div style={{ marginTop: '28px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                    <FaTruck style={{ color: 'var(--primaryColor)' }} />
+                    <h3 style={{ margin: 0, fontSize: '17px', fontWeight: 600 }}>Shipping Address (for Physical Delivery)</h3>
+                  </div>
+
+                  <div className="FormGrid">
+                    <div className="FormGroup" style={{ gridColumn: '1 / -1' }}>
+                      <label className="FormLabel">Street Address / House No. *</label>
+                      <input
+                        type="text"
+                        required
+                        value={useSeparateBilling ? shippingForm.address : form.address}
+                        onChange={(e) => {
+                          if (useSeparateBilling) {
+                            handleShippingChange('address', e.target.value);
+                          } else {
+                            handleBillingChange('address', e.target.value);
+                          }
+                        }}
+                        className="FormInput"
+                        placeholder="House no., Building name, Street area"
+                      />
+                    </div>
+                    <div className="FormGroup">
+                      <label className="FormLabel">City *</label>
+                      <input
+                        type="text"
+                        required
+                        value={useSeparateBilling ? shippingForm.city : form.city}
+                        onChange={(e) => {
+                          if (useSeparateBilling) {
+                            handleShippingChange('city', e.target.value);
+                          } else {
+                            handleBillingChange('city', e.target.value);
+                          }
+                        }}
+                        className="FormInput"
+                        placeholder="City"
+                      />
+                    </div>
+                    <div className="FormGroup">
+                      <label className="FormLabel">State *</label>
+                      <input
+                        type="text"
+                        required
+                        value={useSeparateBilling ? shippingForm.state : form.state}
+                        onChange={(e) => {
+                          if (useSeparateBilling) {
+                            handleShippingChange('state', e.target.value);
+                          } else {
+                            handleBillingChange('state', e.target.value);
+                          }
+                        }}
+                        className="FormInput"
+                        placeholder="State / Province"
+                      />
+                    </div>
+                    <div className="FormGroup">
+                      <label className="FormLabel">PIN Code / ZIP *</label>
+                      <input
+                        type="text"
+                        required
+                        value={useSeparateBilling ? shippingForm.zip : form.zip}
+                        onChange={(e) => {
+                          if (useSeparateBilling) {
+                            handleShippingChange('zip', e.target.value);
+                          } else {
+                            handleBillingChange('zip', e.target.value);
+                          }
+                        }}
+                        className="FormInput"
+                        placeholder="6-digit PIN code"
+                      />
+                    </div>
+                    <div className="FormGroup">
+                      <label className="FormLabel">Country</label>
+                      <input
+                        type="text"
+                        value={useSeparateBilling ? (shippingForm.country || 'India') : (form.country || 'India')}
+                        onChange={(e) => {
+                          if (useSeparateBilling) {
+                            handleShippingChange('country', e.target.value);
+                          } else {
+                            handleBillingChange('country', e.target.value);
+                          }
+                        }}
+                        className="FormInput"
+                        placeholder="Country"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="FormActions">
                 <button onClick={() => changeStep(1)} className="BackBtn">
                   <FaArrowLeft /> Back to Review
                 </button>
-                <button onClick={handleProceedToPayment} disabled={isProcessing} className="ProceedBtn StepBtn">
-                  {isProcessing ? 'Initiating Order...' : 'Proceed to Payment →'}
+                <button
+                  onClick={handleProceedToPayment}
+                  disabled={isProcessing || isDelegating}
+                  className="ProceedBtn StepBtn"
+                >
+                  {isProcessing || isDelegating ? 'Preparing Order...' : 'Proceed to Payment →'}
                 </button>
               </div>
             </section>
           )}
 
-          {/* STEP 3: PAYMENT SELECTION */}
+          {/* STEP 3: PAYMENT SELECTION & ORDER CONFIRMATION */}
           {activeStep === 3 && (
             <section className="CheckoutSection PaymentSection">
-              <h2 className="SectionTitle">Payment Execution</h2>
+              <h2 className="SectionTitle">Payment & Confirmation</h2>
               
-              <div className="OrderAlertBox">
-                <div className="OrderAlertHeader">
-                  <FaCheckCircle className="AlertIcon" />
-                  <span>Order Created {orderNum ? `#${orderNum}` : ''}</span>
+              {/* Workshop Order Card if created */}
+              {orderNum && (
+                <div className="OrderAlertBox">
+                  <div className="OrderAlertHeader">
+                    <FaCheckCircle className="AlertIcon" />
+                    <span>Workshop Order #{orderNum}</span>
+                  </div>
+                  <p className="OrderAlertText">Learning order successfully initiated.</p>
                 </div>
-                <p className="OrderAlertText">Your billing order has been successfully initiated in the Payment Domain.</p>
-              </div>
+              )}
+
+              {/* Delegated E-commerce Physical Order Card */}
+              {delegatedId && (
+                <div className="OrderAlertBox" style={{ borderColor: '#3b82f6', background: '#eff6ff' }}>
+                  <div className="OrderAlertHeader" style={{ color: '#1d4ed8' }}>
+                    <FaBoxOpen className="AlertIcon" style={{ color: '#2563eb' }} />
+                    <span>E-commerce Physical Order #{delegatedId}</span>
+                  </div>
+                  <p className="OrderAlertText" style={{ color: '#1e40af' }}>
+                    Physical products delegated to store (Status: Pending Fulfillment).
+                  </p>
+                </div>
+              )}
+
+              {/* Account Provisioning Notice for New E-commerce Customers */}
+              {ecommerceCustomer?.status === 'created' && (
+                <div className="OrderAlertBox" style={{ borderColor: '#10b981', background: '#ecfdf5' }}>
+                  <div className="OrderAlertHeader" style={{ color: '#047857' }}>
+                    <FaCheckCircle className="AlertIcon" style={{ color: '#10b981' }} />
+                    <span>E-commerce Account Provisioned</span>
+                  </div>
+                  <p className="OrderAlertText" style={{ color: '#065f46' }}>
+                    An account has been created for your physical delivery. An email has been sent to set your password for shipment tracking.
+                  </p>
+                </div>
+              )}
 
               <div className="PaymentOptionsList">
                 <label className={`PaymentOptionCard ${paymentMethod === 'razorpay' ? 'selected' : ''}`}>
@@ -270,12 +462,31 @@ export default function Checkout() {
                 </label>
               </div>
 
+              {/* Verification / failure status — prevents blind double submission */}
+              {paymentStatus === 'verifying' && (
+                <p style={{ marginTop: '14px', color: '#1d4ed8', fontWeight: 500 }}>
+                  Verifying your payment with the gateway. Please do not close or refresh this window…
+                </p>
+              )}
+              {paymentStatus === 'failed' && (
+                <p style={{ marginTop: '14px', color: '#b91c1c', fontWeight: 500 }}>
+                  {paymentError || 'Payment failed. Please try again.'}
+                </p>
+              )}
+
               <button
                 onClick={() => executeRazorpay(activeOrder, user)}
-                disabled={!activeOrder || paymentStatus === 'initiating' || paymentStatus === 'verifying'}
+                disabled={
+                  isProcessing ||
+                  paymentStatus === 'initiating' ||
+                  paymentStatus === 'verifying' ||
+                  paymentStatus === 'completed'
+                }
                 className="ProceedBtn PayButton"
               >
-                <FaLock /> {paymentStatus === 'verifying' ? 'Verifying Payment Signature...' : `Pay ₹${(Number(activeOrder?.order?.amount) || finalPayable).toLocaleString()} via Razorpay`}
+                <FaLock /> {paymentStatus === 'verifying'
+                  ? 'Verifying Payment Signature...'
+                  : `Pay ₹${(Number(activeOrder?.order?.amount) || finalPayable).toLocaleString()} via Razorpay`}
               </button>
             </section>
           )}
