@@ -1,4 +1,5 @@
 import { MEDIA_BASE_URL, PRODUCT_MEDIA_BASE_URL } from "./constants";
+import { joinUrl } from "./url";
 
 /**
  * Keys inspected when a media *object* (from the Media Library / DAM API) is
@@ -66,8 +67,8 @@ export function resolveMediaUrl(value, fallback = "", base) {
     .replace(/^\/+/, "")
     .replace(/^storage\//i, "")
     .replace(/^\/+/, "");
-  const baseUrl = (base || MEDIA_BASE_URL).replace(/\/+$/, "");
-  return `${baseUrl}/${cleanPath}`;
+  const baseUrl = base || MEDIA_BASE_URL;
+  return joinUrl(baseUrl, cleanPath);
 }
 
 /**
