@@ -37,7 +37,7 @@ import {
 } from '../selectors/commerceSelectors';
 import { createCheckout } from '../slices/checkoutSlice';
 import { commerceApi } from '../services/commerceApi';
-import { buildCartTarget } from '../utils/cartClassification';
+import { buildCartTarget, getCartKey, normalizeItemType } from '../utils/cartClassification';
 
 export function useCart() {
   const dispatch = useDispatch();
@@ -176,15 +176,19 @@ export function useCart() {
   const emptyCart = () => dispatch(clearCart());
   const toggleDrawer = (isOpen) => dispatch(toggleCartDrawer(isOpen));
 
+  /**
+   * Whether a cart line exists for a `type:id` identity.
+   *
+   * Identity is always `type:id` (Sprint 18). The type is normalized through
+   * `normalizeItemType` so that `DailyClass` / `LiveSection` / `ComboProduct` match
+   * the canonical keys the reducer stores (`daily_class:10`, `live_section:10`,
+   * `combo:10`) instead of silently missing them. The previous numeric-id fallback
+   * is deliberately gone: a bare id is not an identity — `Course 10` is not
+   * `product:10`, and a combo shares the id namespace with normal products.
+   */
   const isInCart = (productable_id, productable_type = 'Course') => {
-    const targetKey = productable_type
-      ? `${String(productable_type).toLowerCase()}:${productable_id}`
-      : String(productable_id);
-
-    return items.some((item) => {
-      const itemKey = item.cart_key || `${String(item.productable_type || '').toLowerCase()}:${item.productable_id}`;
-      return itemKey === targetKey || String(item.productable_id) === String(productable_id);
-    });
+    const targetKey = `${normalizeItemType(productable_type)}:${productable_id}`;
+    return items.some((item) => getCartKey(item) === targetKey);
   };
 
   const sanitizeCart = () => dispatch(sanitizePersistedCart());

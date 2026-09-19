@@ -199,6 +199,28 @@ describe("Sprint 18 — Unified Cart Integration", () => {
       expect(items[0].productable_type).toBe(PRODUCT_TYPES.COMBO);
     });
 
+    it("merges in the reverse direction too (Live Section → Daily Class → Course)", () => {
+      let state = emptyCart();
+      state = addViaLiveSection(state, hydrated({ id: 10, value: 10 }));
+      state = addViaDailyClass(state, hydrated({ id: 10, value: 10 }));
+      state = addViaCourse(state, hydrated({ id: 10, value: 10 }));
+
+      const productItems = selectCartItems({ cart: state });
+      expect(productItems).toHaveLength(1);
+      expect(productItems[0].cart_key).toBe("product:10");
+      expect(productItems[0].quantity).toBe(3);
+
+      let combos = emptyCart();
+      combos = addViaLiveSection(combos, hydratedCombo({ id: 14, value: 14 }));
+      combos = addViaDailyClass(combos, hydratedCombo({ id: 14, value: 14 }));
+      combos = addViaCourse(combos, hydratedCombo({ id: 14, value: 14 }));
+
+      const comboItems = selectCartItems({ cart: combos });
+      expect(comboItems).toHaveLength(1);
+      expect(comboItems[0].cart_key).toBe("combo:14");
+      expect(comboItems[0].quantity).toBe(3);
+    });
+
     it("keeps product:10 and combo:10 as two separate lines", () => {
       let state = emptyCart();
       state = addViaDailyClass(state, hydrated({ id: 10 }));
@@ -210,9 +232,12 @@ describe("Sprint 18 — Unified Cart Integration", () => {
 
     it("builds a mixed cart of product:10, combo:10 and product:20", () => {
       let state = emptyCart();
-      state = addViaDailyClass(state, hydrated({ id: 10, value: 10, price: 999 }));
-      state = addViaLiveSection(state, hydratedCombo({ id: 10, value: 10, price: 1500 }));
-      state = addViaCourse(state, hydrated({ id: 20, value: 20, price: 500 }));
+      state = addViaDailyClass(state, hydrated({ id: 10, value: 10 }));
+      state = addViaLiveSection(state, hydratedCombo({ id: 10, value: 10 }));
+      state = addViaCourse(
+        state,
+        hydrated({ id: 20, value: 20, price: 500, sale_price: 500, oldPrice: 500 })
+      );
 
       const items = selectCartItems({ cart: state });
 
@@ -338,6 +363,31 @@ describe("Sprint 18 — Unified Cart Integration", () => {
       expect(getCartKey(restored.items[0])).not.toBe("comboproduct:14");
     });
 
+    it("repairs a legacy stored cart key prefix without ever demoting a combo to a product", () => {
+      // Sprint 20: a persisted key whose prefix is a legacy spelling must be
+      // re-derived as the canonical `type:id` — and canonicalising must never
+      // turn `combo:10` into `product:10` (or vice versa).
+      const legacyCombo = {
+        cart_key: "comboproduct:10",
+        productable_type: "ComboProduct",
+        productable_id: 10,
+        title: "Legacy Combo Ten",
+        price: 500,
+        quantity: 2,
+      };
+
+      const restored = cartReducer(
+        { ...emptyCart(), items: [legacyCombo] },
+        sanitizePersistedCart()
+      );
+
+      expect(getCartKey(restored.items[0])).toBe("combo:10");
+      expect(getCartKey(restored.items[0])).not.toBe("product:10");
+      expect(restored.items[0].productable_type).toBe(PRODUCT_TYPES.COMBO);
+      expect(restored.items[0].domain).toBe("ecommerce");
+      expect(restored.items[0].quantity).toBe(2);
+    });
+
     it("keeps quantity merging working on sanitized items", () => {
       let state = addViaDailyClass(emptyCart(), hydrated());
       state = cartReducer(
@@ -377,9 +427,12 @@ describe("Sprint 18 — Unified Cart Integration", () => {
       axios.post.mockResolvedValue({ data: { success: true, valid: true } });
 
       let state = emptyCart();
-      state = addViaDailyClass(state, hydrated({ id: 10, value: 10, price: 999 }));
-      state = addViaLiveSection(state, hydratedCombo({ id: 10, value: 10, price: 1500 }));
-      state = addViaCourse(state, hydrated({ id: 20, value: 20, price: 500 }));
+      state = addViaDailyClass(state, hydrated({ id: 10, value: 10 }));
+      state = addViaLiveSection(state, hydratedCombo({ id: 10, value: 10 }));
+      state = addViaCourse(
+        state,
+        hydrated({ id: 20, value: 20, price: 500, sale_price: 500, oldPrice: 500 })
+      );
 
       await commerceApi.validateCart(selectCartItems({ cart: state }));
 
@@ -484,10 +537,15 @@ describe("Sprint 18 — Unified Cart Integration", () => {
   });
 
   describe("Product card identity in remaining surfaces", () => {
-    it("Course product card resolves added-state by type:id, not numeric id", () => {
-      expect(courseDetailsSource).toMatch(/relatedProductCartIdentity/);
-      expect(courseDetailsSource).toMatch(/isRelatedProductInCart/);
-      expect(courseDetailsSource).not.toMatch(/isInCart\(prod\.value, ['"]Product['"]\)/);
+    it("Course product cards resolve added-state through the shared component", () => {
+      // Sprint 19: Course no longer owns a product card at all — it renders the
+      // shared RelatedProducts component, which resolves identity as `type:id` via
+      // isRelatedProductInCart. What matters here is that Course holds no
+      // numeric-id-only product lookup of its own.
+      expect(courseDetailsSource).toMatch(/<RelatedProducts/);
+      expect(courseDetailsSource).not.toMatch(/isInCart\(prod/);
+      expect(courseDetailsSource).not.toMatch(/isInCart\(product/);
+      expect(relatedProductsComponentSource).toMatch(/isRelatedProductInCart/);
     });
 
     it("learning-player product card resolves added-state by type:id", () => {
@@ -511,6 +569,47 @@ describe("Sprint 18 — Unified Cart Integration", () => {
       });
 
       expect(getCartKey(sanitized)).toBe("product:10");
+    });
+
+    it("the shared isInCart lookup is type-qualified, never numeric-id only", () => {
+      // A bare id is not an identity: `Course 10` is not `product:10`, and a combo
+      // shares the id namespace with normal products. The old lookup fell back to
+      // comparing ids, so it reported "already added" for unrelated lines.
+      const lookup = commerceHooksSource.slice(
+        commerceHooksSource.indexOf("const isInCart"),
+        commerceHooksSource.indexOf("const sanitizeCart")
+      );
+
+      expect(lookup).toMatch(/normalizeItemType\(productable_type\)/);
+      expect(lookup).toMatch(/getCartKey\(item\) === targetKey/);
+      expect(lookup).not.toMatch(/String\(item\.productable_id\) === String\(productable_id\)/);
+    });
+
+    it("resolves DailyClass/LiveSection added-state to the canonical cart key", () => {
+      // The pages pass the human spelling (`DailyClass`); the adapter and reducer
+      // store the canonical one (`daily_class`). A raw toLowerCase would never
+      // match, which is exactly why the numeric fallback used to exist.
+      const learning = (entity) =>
+        cartReducer(emptyCart(), cartAddToCart(entity));
+
+      const classState = learning(
+        CommerceAdapter.fromDailyClass({ id: 10, title: "Sunrise Flow" })
+      );
+      const sectionState = learning(
+        CommerceAdapter.fromLiveSection({ id: 10, title: "Breathwork Live" })
+      );
+
+      expect(cartKeys(classState)).toEqual(["daily_class:10"]);
+      expect(cartKeys(sectionState)).toEqual(["live_section:10"]);
+      expect(`${normalizeItemType("DailyClass")}:10`).toBe(getCartKey(classState.items[0]));
+      expect(`${normalizeItemType("LiveSection")}:10`).toBe(getCartKey(sectionState.items[0]));
+    });
+
+    it("does not confuse a learning item with a physical product of the same id", () => {
+      let state = cartReducer(emptyCart(), cartAddToCart(CommerceAdapter.fromCourse({ id: 10 })));
+      state = addViaDailyClass(state, hydrated({ id: 10, value: 10 }));
+
+      expect(cartKeys(state)).toEqual(["course:10", "product:10"]);
     });
   });
 });

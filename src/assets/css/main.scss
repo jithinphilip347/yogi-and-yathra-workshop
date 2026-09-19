@@ -504,6 +504,9 @@ main {
                 box-shadow: 0 4px 12px rgba(var(--primaryColorRGB), 0.3);
                 &:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(var(--primaryColorRGB), 0.4); }
                 &.added { background: #ef4444; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+                // Sprint 20: out-of-stock product — the cart action is disabled.
+                // Server-side cart validation remains the final authority.
+                &:disabled { opacity: 0.55; cursor: not-allowed; box-shadow: none; &:hover { transform: none; box-shadow: none; } }
             }
         }
     }

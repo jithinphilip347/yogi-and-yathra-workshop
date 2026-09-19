@@ -244,3 +244,29 @@ export function isRelatedProductInCart(cartItems, viewModel) {
     return String(key).toLowerCase() === String(viewModel.cartKey).toLowerCase();
   });
 }
+
+/**
+ * What the card's cart button should do for a related product (Sprint 20).
+ *
+ *   "remove"      — already in the cart, so it must always stay removable
+ *   "unavailable" — E-commerce says it cannot be bought right now
+ *   "add"         — normal add-to-cart
+ *
+ * The precedence matters: an item already in the cart is ALWAYS removable, even
+ * after it goes out of stock — otherwise a customer could never take it out.
+ * Only an explicitly unavailable product (`inStock === false`) is blocked; an
+ * unknown/absent availability flag is treated as purchasable, so an older payload
+ * cannot make every product look sold out.
+ *
+ * This is a presentation guard only. The cart's server-side validation remains
+ * the authority on whether an out-of-stock line can actually be ordered.
+ *
+ * @param {object}  viewModel  view model from computeRelatedProducts()
+ * @param {boolean} isInCart   whether this exact `type:id` is already in the cart
+ * @returns {"add"|"remove"|"unavailable"}
+ */
+export function relatedProductCartAction(viewModel, isInCart) {
+  if (isInCart) return "remove";
+  if (viewModel && viewModel.inStock === false) return "unavailable";
+  return "add";
+}

@@ -11076,3 +11076,151 @@
   font-size: 16px;
   font-weight: 700;
 }
+
+/* ==========================================================================
+   Sprint 19 — Related Products on the Course detail page.
+   Course now renders the shared RelatedProducts component (the same one Daily
+   Class and Live Section use). The component's markup is content-agnostic, so
+   it is styled here for the Course page's own design language instead of
+   reusing another page's scoped selectors.
+   ========================================================================== */
+#CourseDetails {
+  .RelatedProducts {
+    .ProductList {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+      }
+
+      .ProductItem {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        background: #fafafa;
+
+        .ProdLeft {
+          display: flex;
+          gap: 15px;
+          align-items: center;
+
+          .ProdImage {
+            width: 60px;
+            height: 60px;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+          }
+
+          .ProdInfo {
+            min-width: 0;
+
+            h4 {
+              font-size: 15px;
+              font-weight: 600;
+              margin-bottom: 4px;
+              color: #2d3436;
+              display: flex;
+              align-items: center;
+              flex-wrap: wrap;
+              gap: 6px;
+            }
+
+            .TypeBadge {
+              padding: 2px 6px;
+              border-radius: 4px;
+              background: #eef2ff;
+              color: #4338ca;
+              font-size: 10px;
+              font-weight: 600;
+              text-transform: uppercase;
+              letter-spacing: 0.4px;
+            }
+
+            .PriceRow {
+              display: flex;
+              align-items: baseline;
+              gap: 6px;
+              font-weight: 700;
+              font-size: 14px;
+              color: var(--primaryColor);
+
+              .Old {
+                font-size: 12px;
+                font-weight: 500;
+                color: #9ca3af;
+                text-decoration: line-through;
+              }
+            }
+
+            .StockNote {
+              display: inline-block;
+              margin-top: 4px;
+              font-size: 12px;
+              font-weight: 600;
+              color: #b91c1c;
+            }
+          }
+        }
+
+        .ActionArea {
+          display: flex;
+          gap: 10px;
+
+          .ViewDetailsBtn {
+            flex: 1;
+            padding: 8px;
+            background: transparent;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+          }
+
+          .AddToCartBtn {
+            flex: 1;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--primaryColor);
+            background: transparent;
+            color: var(--primaryColor);
+            transition: 0.3s;
+
+            &:hover {
+              background: var(--primaryColor);
+              color: #fff;
+            }
+
+            &.added {
+              background: var(--primaryColor);
+              color: #fff;
+            }
+
+            // Sprint 20: an out-of-stock related product cannot be added. An item
+            // already in the cart is never disabled (it must stay removable).
+            &:disabled {
+              opacity: 0.55;
+              cursor: not-allowed;
+              border-color: #cbd5e1;
+              color: #64748b;
+
+              &:hover {
+                background: transparent;
+                color: #64748b;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

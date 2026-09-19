@@ -567,6 +567,17 @@ main {
   background: #ef4444;
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
+/* Sprint 20: out-of-stock product — the cart action is disabled. Server-side cart
+   validation remains the final authority. */
+.ProductPopupOverlay .ProductPopupContent .PopupFixedBottom .PopupCartBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.ProductPopupOverlay .ProductPopupContent .PopupFixedBottom .PopupCartBtn:disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
 
 @keyframes popupFade {
   from {

@@ -805,6 +805,18 @@
               background: var(--primaryColor);
               color: #fff;
             }
+            // Sprint 20: an out-of-stock related product cannot be added. An item
+            // already in the cart is never disabled (it must stay removable).
+            &:disabled {
+              opacity: 0.55;
+              cursor: not-allowed;
+              border-color: #cbd5e1;
+              color: #64748b;
+              &:hover {
+                background: transparent;
+                color: #64748b;
+              }
+            }
           }
         }
       }

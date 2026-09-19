@@ -29,7 +29,7 @@ import {
   selectCheckoutOriginalTotal,
   selectCheckoutDiscounts,
 } from '../selectors/commerceSelectors';
-import { classifyCartItems } from '../utils/cartClassification';
+import { classifyCartItems, normalizeItemType } from '../utils/cartClassification';
 import { commerceApi } from '../services/commerceApi';
 
 export function useCheckout() {
@@ -115,7 +115,9 @@ export function useCheckout() {
         } : undefined,
         items: items.map((item) => ({
           id: item.productable_id ?? item.id ?? item.value,
-          type: (item.productable_type || item.type || 'product').toLowerCase(),
+          // Canonical type: the delegated order endpoint accepts `product`/`combo`,
+          // so a legacy spelling must not be forwarded verbatim.
+          type: normalizeItemType(item.productable_type || item.type || 'product'),
           quantity: item.quantity || 1,
           price: Number(item.price || 0),
           unit_price: Number(item.price || 0),

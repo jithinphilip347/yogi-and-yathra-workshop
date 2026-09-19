@@ -15,6 +15,10 @@ import { AiFillStar } from 'react-icons/ai';
 import { resolveMediaUrl, resolveProductMediaUrl } from '@/utils/mediaUrl';
 import courseApi from '@/libs/courseApi';
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
+import {
+  isRelatedProductInCart,
+  relatedProductCartIdentity,
+} from "@/features/commerce/utils/relatedProducts";
 import CertificateViewerModal from "@/components/certificate/CertificateViewerModal";
 import toast from "react-hot-toast";
 
@@ -26,7 +30,7 @@ export default function OverviewTab({ course, currentLesson, completionSummary, 
   const [isViewerOpen, setIsViewerOpen] = useState(false);
 
   // Commerce hooks
-  const { addItem, removeItem, isInCart } = useCart();
+  const { items: cartItems, addItem, removeItem } = useCart();
 
   // The server is only re-consulted once, when the course crosses the 100%
   // completion threshold, to verify the certificate state transition — never
@@ -275,7 +279,10 @@ export default function OverviewTab({ course, currentLesson, completionSummary, 
               Recommended Gear:
             </h4>
             {products.map((prod, index) => {
-              const isAdded = isInCart(prod.value, 'Product');
+              // Identity is `type:id` (Sprint 18) — a numeric id alone cannot
+              // distinguish a normal product from a combo sharing that id.
+              const identity = relatedProductCartIdentity(prod);
+              const isAdded = Boolean(identity) && isRelatedProductInCart(cartItems, identity);
               return (
                 <div key={index} className="ProductItem">
                   <div className="ProductLeft">
@@ -292,7 +299,11 @@ export default function OverviewTab({ course, currentLesson, completionSummary, 
                   <div className="ProductActions">
                     <button
                       className={`AddToCartBtn ${isAdded ? "added" : ""}`}
-                      onClick={() => isAdded ? removeItem('Product', prod.value) : addItem(prod, 'Product')}
+                      onClick={() =>
+                        isAdded
+                          ? removeItem(identity.productableType, identity.productableId)
+                          : addItem(prod, 'Product')
+                      }
                     >
                       <FiShoppingCart />
                       <span>{isAdded ? "Remove" : "Add to Cart"}</span>

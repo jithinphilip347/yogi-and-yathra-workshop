@@ -3,7 +3,10 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import ProductDetailPopup from "@/components/popup/ProductDetailPopup";
-import { isRelatedProductInCart } from "../utils/relatedProducts";
+import {
+  isRelatedProductInCart,
+  relatedProductCartAction,
+} from "../utils/relatedProducts";
 
 /**
  * Shared customer-facing related-products presentation.
@@ -49,13 +52,24 @@ export default function RelatedProducts({
 
   const isAdded = (product) => isRelatedProductInCart(cartItems, product);
 
+  /**
+   * `add` | `remove` | `unavailable` — see relatedProductCartAction().
+   *
+   * Presentation guard only: the cart's server-side validation stays the final
+   * authority on whether an out-of-stock line can actually be ordered. This just
+   * stops the UI from offering an action that cannot succeed.
+   */
+  const actionFor = (product) => relatedProductCartAction(product, isAdded(product));
+
   const toggleCart = (product) => {
     if (!product) return;
-    if (isAdded(product)) {
+    const action = actionFor(product);
+    if (action === "remove") {
       onRemoveFromCart?.(product);
-    } else {
+    } else if (action === "add") {
       onAddToCart?.(product);
     }
+    // "unavailable" is a deliberate no-op — the popup and the card share it.
   };
 
   const imageFor = (product, index) => {
@@ -69,7 +83,8 @@ export default function RelatedProducts({
       <h2>{title}</h2>
       <div className="ProductList">
         {list.map((product, index) => {
-          const added = isAdded(product);
+          const action = actionFor(product);
+          const added = action === "remove";
           const image = imageFor(product, index);
 
           return (
@@ -96,7 +111,7 @@ export default function RelatedProducts({
                       <span className="Old">₹{product.oldPrice}</span>
                     )}
                   </div>
-                  {product.inStock === false && (
+                  {action === "unavailable" && (
                     <span className="StockNote">Out of stock</span>
                   )}
                 </div>
@@ -113,8 +128,14 @@ export default function RelatedProducts({
                   type="button"
                   className={`AddToCartBtn ${added ? "added" : ""}`}
                   onClick={() => toggleCart(product)}
+                  disabled={action === "unavailable"}
+                  aria-disabled={action === "unavailable"}
                 >
-                  {added ? "Remove from Cart" : "Add to Cart"}
+                  {action === "remove"
+                    ? "Remove from Cart"
+                    : action === "unavailable"
+                      ? "Out of Stock"
+                      : "Add to Cart"}
                 </button>
               </div>
             </div>
@@ -124,12 +145,17 @@ export default function RelatedProducts({
 
       {/* Shared product detail popup. Toggling uses the selected view model, so
           identity stays `type:id` even when a product and a combo share an id. */}
+      {/* The popup routes through the same guarded toggle and the same
+          availability decision, so an out-of-stock product cannot be added from
+          the detail view either — while an item already in the cart stays
+          removable. */}
       {selected && (
         <ProductDetailPopup
           product={selected}
           onClose={() => setSelected(null)}
           onToggleCart={() => toggleCart(selected)}
           isAdded={isAdded(selected)}
+          isAvailable={actionFor(selected) !== "unavailable"}
         />
       )}
     </section>

@@ -13,7 +13,16 @@ import 'swiper/css/effect-fade';
 import useProduct from '@/hooks/useProduct';
 import { resolveProductMediaUrl } from "@/utils/mediaUrl"
 
-const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
+/**
+ * Product detail popup.
+ *
+ * `isAvailable` mirrors the shared related-product availability decision: when
+ * E-commerce reports the product as out of stock the cart action is disabled, so
+ * the UI cannot offer an action that will fail. An item already in the cart is
+ * always removable, so `isAdded` takes precedence. Server-side cart validation
+ * remains the ultimate authority.
+ */
+const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded, isAvailable = true }) => {
   const [thumbsSwiper, setThumbsSwiper] = useState(null);
  
   // Call hook unconditionally
@@ -230,9 +239,13 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded }) => {
           <button 
             className={`PopupCartBtn ${isAdded ? 'added' : ''}`}
             onClick={() => onToggleCart(product.id || product.value)}
+            disabled={!isAdded && !isAvailable}
+            aria-disabled={!isAdded && !isAvailable}
           >
             {isAdded ? (
                 <><FiShoppingCart /> Remove from Cart</>
+            ) : !isAvailable ? (
+                <><FiShoppingCart /> Out of Stock</>
             ) : (
                 <><FiShoppingCart /> Add to Cart</>
             )}

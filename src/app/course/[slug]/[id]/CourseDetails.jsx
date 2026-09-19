@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import Skeleton from "react-loading-skeleton";
@@ -25,17 +25,18 @@ import ThumbNail from "@/assets/images/live1.webp";
 
 import ReviewPopup from "@/components/popup/ReviewPopup";
 import VideoPreviewPopup from "@/components/popup/VideoPreviewPopup";
-import ProductDetailPopup from "@/components/popup/ProductDetailPopup";
+import RelatedProducts from "@/features/commerce/components/RelatedProducts";
+import { computeRelatedProducts } from "@/features/commerce/utils/relatedProducts";
 import { useCourseReviews, formatReviewDate } from "@/components/reviews/useCourseReviews";
 import { reviewApi } from "@/services/reviewApi";
-import { resolveMediaUrl, resolveProductMediaUrl } from "@/utils/mediaUrl";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
+
+// Local placeholder used by the shared RelatedProducts component when a product
+// has no live E-commerce media (never a constructed/broken URL).
+const courseFallbackImages = [ThumbNail];
 
 const CourseDetails = ({ courseDetails }) => {
   const course = courseDetails;
-
-  useEffect(() => {
-    console.log(course);
-  }, [course]);
 
   // Purchase/access-aware CTA state (see useCourseAccess for the state machine).
   const { ctaState, watchPath } = useCourseAccess(course);
@@ -44,7 +45,6 @@ const CourseDetails = ({ courseDetails }) => {
   const [showReviewPopup, setShowReviewPopup] = useState(false);
   const [showPreviewPopup, setShowPreviewPopup] = useState(false);
   const [showCartDrawer, setShowCartDrawer] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState(null);
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
   const [isEditingReview, setIsEditingReview] = useState(false);
@@ -149,20 +149,15 @@ const CourseDetails = ({ courseDetails }) => {
     }
   };
 
-  const toggleCartItem = (value) => {
-    // Resolve the full product (from the list, or the popup's selected product)
-    // so both the popup and the inline buttons normalize identically.
-    const prod =
-      products.find((p) => String(p.value) === String(value)) || selectedProduct;
-    const key = prod?.value ?? value;
-    if (isInCart(key, 'Product')) {
-      removeItem('Product', key);
-    } else if (prod) {
-      addItem(prod, 'Product');
-    }
-  };
+  // Related products (Sprint 19) — derived from the server-hydrated `products[]`
+  // in server order, and rendered through the shared RelatedProducts component.
+  // Nothing here re-fetches products, and cart identity stays `type:id` so a combo
+  // is never confused with a normal product sharing its numeric id.
+  const relatedProducts = useMemo(
+    () => computeRelatedProducts(course?.products),
+    [course?.products]
+  );
 
-  const products = course?.products || [];
   const modules = course?.sections || [];
   const instructor = course?.instructor;
   
@@ -391,52 +386,24 @@ const CourseDetails = ({ courseDetails }) => {
                   </li>
                 )}
               </ul>
-
-              <div className="ProductList">
-                {products.map((prod, index) => (
-                  <div className="ProductItem" key={index}>
-                    <div className="ProdLeft">
-                      <Image
-                        src={
-                          prod.image
-                            ? resolveProductMediaUrl(prod.image)
-                            : ThumbNail
-                        }
-                        alt="Product"
-                        width={60}
-                        height={60}
-                      />
-                      <div className="ProdInfo">
-                        <h4>{prod.label}</h4>
-                        <div className="PriceRow">
-                          <span className="Curr">₹{prod.price}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="ActionArea">
-                      <button
-                        className="ViewDetailsBtn"
-                        onClick={() => setSelectedProduct(prod)}
-                      >
-                        View Details
-                      </button>
-                      <button
-                        className={`AddToCartBtn ${isInCart(prod.value, 'Product') ? "added" : ""}`}
-                        onClick={() =>
-                          isInCart(prod.value, 'Product')
-                            ? removeItem('Product', prod.value)
-                            : addItem(prod, 'Product')
-                        }
-                      >
-                        {isInCart(prod.value, 'Product')
-                          ? "Remove from Cart"
-                          : "Add to Cart"}
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
+
+            {/* Related products — Sprint 19: the same shared presentation Daily
+                Class and Live Section use. The view models come from the
+                server-hydrated `products[]` (one batched S2S request); nothing
+                here fetches products. Course keeps its own heading wording, and
+                the section hides itself when there is nothing to show. */}
+            <RelatedProducts
+              products={relatedProducts}
+              title="Recommended Gear for this Course"
+              id="course-recommended-gear"
+              cartItems={cartItems}
+              fallbackImages={courseFallbackImages}
+              onAddToCart={(product) => addItem(product.raw, "Product")}
+              onRemoveFromCart={(product) =>
+                removeItem(product.productableType, product.productableId)
+              }
+            />
 
             <div className="HighlightBox CourseContent">
               <h3>Course Content</h3>
@@ -806,14 +773,8 @@ const CourseDetails = ({ courseDetails }) => {
           )}
         </div>
       </div>
-      {selectedProduct && (
-        <ProductDetailPopup
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onToggleCart={toggleCartItem}
-          isAdded={isInCart(selectedProduct.value, 'Product')}
-        />
-      )}
+      {/* The product detail popup is owned by the shared RelatedProducts
+          component, so Course no longer keeps a second, duplicated instance. */}
       {showReviewPopup && (
         <ReviewPopup
           reviews={reviews}
