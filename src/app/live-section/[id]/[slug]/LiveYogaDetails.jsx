@@ -1,8 +1,10 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from "next/navigation";
 import { useSelector } from 'react-redux';
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
+import { computeRelatedProducts } from "@/features/commerce/utils/relatedProducts";
+import RelatedProducts from "@/features/commerce/components/RelatedProducts";
 import courseApi from '@/libs/courseApi';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -24,11 +26,17 @@ import { FaChalkboardTeacher, FaRegCalendarAlt } from 'react-icons/fa';
 import { resolveMediaUrl } from '@/utils/mediaUrl';
 import CertificateViewerModal from '@/components/certificate/CertificateViewerModal';
 import toast from 'react-hot-toast';
+import Yoga1 from "@/assets/images/yoga-1.jpg";
+import Yoga2 from "@/assets/images/yoga-2.jpg";
+import Yoga3 from "@/assets/images/yoga-3.jpg";
 import '../../../../assets/css/live-yoga-details.css';
+
+// Local placeholders used only when a related product has no media of its own.
+const relatedFallbackImages = [Yoga1, Yoga2, Yoga3];
 
 const LiveYogaDetails = ({ liveSection }) => {
   const router = useRouter();
-  const { addItem, buyNow, isInCart } = useCart();
+  const { items: cartItems, addItem, removeItem, buyNow, isInCart } = useCart();
   const data = liveSection || {};
   const instructor = data.instructor || {};
 
@@ -159,6 +167,18 @@ const LiveYogaDetails = ({ liveSection }) => {
     : typeof instructor.expertise === "string"
       ? instructor.expertise.split(",").map((s) => s.trim())
       : [];
+
+  // ─── Related products (server-hydrated `products[]`) ───────────────────
+  // The Live Section public detail response already carries live E-commerce data,
+  // batched server-side (one S2S request). Nothing here re-fetches products: the
+  // view models are derived straight from the detail payload, in server order, and
+  // rendered through the shared RelatedProducts component, whose cart identity comes
+  // from the shared CommerceAdapter — so a product added here is the same physical
+  // cart item as the same product added from Course or Daily Class.
+  const relatedProducts = useMemo(
+    () => computeRelatedProducts(data.products),
+    [data.products]
+  );
 
   // Reviews
   const reviews = Array.isArray(data.reviews) ? data.reviews : [];
@@ -430,6 +450,18 @@ const LiveYogaDetails = ({ liveSection }) => {
               </div>
             </section>
           )}
+
+          {/* Related Products — live E-commerce data from the detail response */}
+          <RelatedProducts
+            products={relatedProducts}
+            title="Recommended for this Section"
+            cartItems={cartItems}
+            fallbackImages={relatedFallbackImages}
+            onAddToCart={(product) => addItem(product.raw, "Product")}
+            onRemoveFromCart={(product) =>
+              removeItem(product.productableType, product.productableId)
+            }
+          />
 
           {/* Joining Guide & Refund Policy (STATIC) */}
           <div className="InfoSplitGrid">

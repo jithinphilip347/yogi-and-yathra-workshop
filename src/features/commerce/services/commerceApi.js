@@ -6,6 +6,7 @@
 
 import axios from 'axios';
 import { store } from '../../../../store';
+import { normalizeItemType } from '../utils/cartClassification';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
 
@@ -21,7 +22,10 @@ export const commerceApi = {
   async validateCart(items = []) {
     const formattedItems = (items || []).map((item) => ({
       cart_key: item.cart_key || undefined,
-      type: (item.productable_type || item.type || 'course').toLowerCase(),
+      // Canonicalised via the shared classifier so a legacy/variant spelling
+      // (`ComboProduct`, `combo_product`) reaches the backend as `combo` instead
+      // of being rejected as an unsupported item type.
+      type: normalizeItemType(item.productable_type || item.type || 'course'),
       id: item.productable_id ?? item.id ?? item.value,
       quantity: item.quantity || 1,
       price: Number(item.price || 0),

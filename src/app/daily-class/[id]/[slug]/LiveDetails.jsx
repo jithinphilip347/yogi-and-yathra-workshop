@@ -1,9 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useSelector } from "react-redux";
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import { useSubscription } from "@/features/commerce/hooks/useSubscription";
+import { computeRelatedProducts } from "@/features/commerce/utils/relatedProducts";
+import RelatedProducts from "@/features/commerce/components/RelatedProducts";
 import {
   FiClock,
   FiCalendar,
@@ -42,6 +44,8 @@ const dayMap = {
   fri: 5, friday: 5,
   sat: 6, saturday: 6,
 };
+
+const relatedFallbackImages = [Yoga1, Yoga2, Yoga3];
 
 const parseTimeString = (timeStr) => {
   if (!timeStr) return { hours: 7, minutes: 0 };
@@ -119,7 +123,6 @@ const LiveDetails = ({ id, classDetails }) => {
   const subscriptionPlans = dailyClass?.subscription_plans || [];
   const faqs = dailyClass?.active_faqs || dailyClass?.faqs || [];
   const reviewsData = dailyClass?.reviews || dailyClass?.approved_reviews || [];
-  const products = dailyClass?.products || [];
   const learningOutcomes = dailyClass?.learning_outcomes || [];
   const requirements = dailyClass?.requirements || [];
 
@@ -160,8 +163,19 @@ const LiveDetails = ({ id, classDetails }) => {
     isLive: false,
   });
   const router = useRouter();
-  const { addItem, removeItem, isInCart } = useCart();
+  const { items: cartItems, addItem, removeItem, isInCart } = useCart();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
+
+  // ─── Related products (server-hydrated `products[]`) ──────────────────
+  // The Daily Class detail response already carries live E-commerce data,
+  // batched server-side (one S2S request). Nothing here re-fetches products:
+  // the view models are derived straight from the detail payload, in server
+  // order, and rendered through the shared RelatedProducts component (see
+  // features/commerce/components/RelatedProducts.jsx).
+  const relatedProducts = useMemo(
+    () => computeRelatedProducts(dailyClass?.products),
+    [dailyClass?.products]
+  );
 
   // ─── Instructor / host detection (mirrors DailyClassPlayer pattern) ──
   const isHost = Boolean(
@@ -524,57 +538,17 @@ const LiveDetails = ({ id, classDetails }) => {
             </section>
           )}
 
-          {/* 9. Related Products */}
-          {products && products.length > 0 && (
-            <section className="card">
-              <h2>Recommended for this Class</h2>
-              <div className="ProductList">
-                {products.map((prod, index) => {
-                  const productImage =
-                    prod.image?.src || prod.image || [Yoga1, Yoga2, Yoga3][index % 3];
-                  return (
-                    <div className="ProductItem" key={index}>
-                      <div className="ProdLeft">
-                        <div className="ProdImage">
-                          <Image
-                            src={productImage}
-                            alt={prod.label || prod.name || "Product"}
-                            fill
-                            style={{ objectFit: "cover" }}
-                          />
-                        </div>
-                        <div className="ProdInfo">
-                          <h4>{prod.label || prod.name}</h4>
-                          <div className="PriceRow">₹{prod.price}</div>
-                        </div>
-                      </div>
-                      <div className="ActionArea">
-                        <button className="ViewDetailsBtn">View Details</button>
-                        <button
-                          className="AddToCartBtn"
-                          onClick={() =>
-                            isInCart(prod.value || prod.id, 'Product')
-                              ? removeItem('Product', prod.value || prod.id)
-                              : addItem(prod, 'Product')
-                          }
-                          style={{
-                            background: isInCart(prod.value || prod.id, 'Product')
-                              ? "var(--primaryColor)"
-                              : "transparent",
-                            color: isInCart(prod.value || prod.id, 'Product')
-                              ? "#fff"
-                              : "var(--primaryColor)",
-                          }}
-                        >
-                          {isInCart(prod.value || prod.id, 'Product') ? "Added" : "Add to Cart"}
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </section>
-          )}
+          {/* 9. Related Products — live E-commerce data from the detail response */}
+          <RelatedProducts
+            products={relatedProducts}
+            title="Recommended for this Class"
+            cartItems={cartItems}
+            fallbackImages={relatedFallbackImages}
+            onAddToCart={(product) => addItem(product.raw, "Product")}
+            onRemoveFromCart={(product) =>
+              removeItem(product.productableType, product.productableId)
+            }
+          />
 
           {/* 10. Reviews */}
           <section className="card">

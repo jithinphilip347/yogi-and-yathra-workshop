@@ -37,6 +37,7 @@ import {
 } from '../selectors/commerceSelectors';
 import { createCheckout } from '../slices/checkoutSlice';
 import { commerceApi } from '../services/commerceApi';
+import { buildCartTarget } from '../utils/cartClassification';
 
 export function useCart() {
   const dispatch = useDispatch();
@@ -152,12 +153,24 @@ export function useCart() {
     return res;
   };
 
+  /**
+   * Remove a cart line.
+   *
+   * Accepts either an item type + id (product cards) or a complete cart key (the
+   * cart page holds `item.cart_key`), because a cart key forwarded through the
+   * (type, id) shape would become `${cart_key}:${id}` and match nothing.
+   */
   const removeItem = (productable_type_or_key, productable_id) => {
-    dispatch(removeFromCart({ productable_type: productable_type_or_key, productable_id }));
+    dispatch(removeFromCart(buildCartTarget(productable_type_or_key, productable_id)));
   };
 
   const setItemQuantity = (productable_type_or_key, productable_id, quantity) => {
-    dispatch(updateQuantity({ productable_type: productable_type_or_key, productable_id, quantity }));
+    dispatch(
+      updateQuantity({
+        ...buildCartTarget(productable_type_or_key, productable_id),
+        quantity,
+      })
+    );
   };
 
   const emptyCart = () => dispatch(clearCart());

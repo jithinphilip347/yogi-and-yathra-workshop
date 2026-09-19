@@ -717,11 +717,41 @@
             font-weight: 600;
             margin-bottom: 4px;
             color: #2d3436;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+          }
+          .TypeBadge {
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #eef2ff;
+            color: #4338ca;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
           }
           .PriceRow {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
             font-weight: 700;
             font-size: 14px;
             color: var(--primaryColor);
+            .Old {
+              font-size: 12px;
+              font-weight: 500;
+              color: #9ca3af;
+              text-decoration: line-through;
+            }
+          }
+          .StockNote {
+            display: inline-block;
+            margin-top: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #b91c1c;
           }
         }
       }
@@ -751,6 +781,10 @@
           color: var(--primaryColor);
           transition: 0.3s;
           &:hover {
+            background: var(--primaryColor);
+            color: #fff;
+          }
+          &.added {
             background: var(--primaryColor);
             color: #fff;
           }

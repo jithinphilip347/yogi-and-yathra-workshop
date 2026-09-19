@@ -34,8 +34,39 @@ export function normalizeItemType(type) {
   if (clean === 'coursedetails') return 'course';
   if (clean === 'dailyclass') return 'daily_class';
   if (clean === 'livesection') return 'live_section';
-  if (clean === 'comboproduct') return 'combo';
+  // Both recorded spellings of a combo fold to the canonical `combo`, matching
+  // PHYSICAL_TYPES — otherwise a legacy item would keep a non-canonical key and
+  // the backend cart validator (which accepts only `product` / `combo`) would
+  // reject a perfectly valid combo line.
+  if (clean === 'comboproduct' || clean === 'combo_product') return 'combo';
   return clean;
+}
+
+/**
+ * Whether a value is a complete cart identity (e.g. `product:10`) rather than a
+ * bare item type (e.g. `Product`).
+ */
+export function isCartKey(value) {
+  return typeof value === 'string' && value.includes(':');
+}
+
+/**
+ * Build the addressing payload the cart reducers expect.
+ *
+ * Consumers address cart lines two different ways — the cart page holds each
+ * item's full `cart_key`, while product cards on content pages pass the item type
+ * plus id. Forwarding a cart key through the (type, id) shape would build the key
+ * `${cart_key}:${id}` (e.g. `product:10:10`), which matches nothing, so a complete
+ * key is forwarded as a key instead.
+ *
+ * @returns {{cart_key: string}|{productable_type: *, productable_id: *}}
+ */
+export function buildCartTarget(typeOrKey, productableId) {
+  if (isCartKey(typeOrKey)) {
+    return { cart_key: typeOrKey };
+  }
+
+  return { productable_type: typeOrKey, productable_id: productableId };
 }
 
 /**
@@ -125,7 +156,16 @@ export function sanitizeCartItem(rawItem) {
   }
 
   const domain = PHYSICAL_TYPES.includes(normType) ? 'ecommerce' : 'workshop';
-  const cartKey = rawItem.cart_key || `${normType}:${id}`;
+
+  // Keep a stored key only while its prefix is already canonical; a legacy prefix
+  // (e.g. `comboproduct:14`) is re-derived so identity stays `product:{id}` /
+  // `combo:{id}` and can never drift away from what the backend validates.
+  const storedKey = typeof rawItem.cart_key === 'string' ? rawItem.cart_key : '';
+  const storedPrefix = storedKey.split(':')[0];
+  const cartKey =
+    storedKey && normalizeItemType(storedPrefix) === storedPrefix
+      ? storedKey
+      : `${normType}:${id}`;
   const price = Number(rawItem.price || 0);
   const originalPrice = Number(rawItem.original_price || price);
 
@@ -141,7 +181,13 @@ export function sanitizeCartItem(rawItem) {
     ...rawItem,
     cart_key: cartKey,
     id: rawItem.id || `item_${cartKey.replace(':', '_')}`,
-    productable_type: rawItem.productable_type || (domain === 'ecommerce' ? (normType === 'combo' ? 'Combo' : 'Product') : 'Course'),
+    // Physical types are canonicalised (`Combo` / `Product`) so every downstream
+    // consumer — validation payloads, delegated orders, classification — agrees on
+    // one spelling. Learning types keep whatever they were stored with.
+    productable_type:
+      domain === 'ecommerce'
+        ? (normType === 'combo' ? 'Combo' : 'Product')
+        : (rawItem.productable_type || 'Course'),
     productable_id: id,
     title: rawItem.title || rawItem.name || rawItem.label || 'Item',
     subtitle: rawItem.subtitle || '',
