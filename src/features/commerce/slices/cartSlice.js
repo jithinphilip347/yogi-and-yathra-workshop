@@ -14,20 +14,23 @@ import {
   sanitizeCartItem,
 } from '../utils/cartClassification';
 
+/** Live server-validation state (checkout session, per-item status, summary). */
+const createValidationState = () => ({
+  isValidating: false,
+  lastValidated: null,
+  checkoutSessionId: null,
+  hasErrors: false,
+  hasChanges: false,
+  summary: null,
+});
+
 const initialState = {
   items: [],
   isDrawerOpen: false,
   appliedCoupon: null,
   isProcessing: false,
   error: null,
-  validation: {
-    isValidating: false,
-    lastValidated: null,
-    checkoutSessionId: null,
-    hasErrors: false,
-    hasChanges: false,
-    summary: null,
-  },
+  validation: createValidationState(),
 };
 
 const cartSlice = createSlice({
@@ -97,14 +100,7 @@ const cartSlice = createSlice({
       state.items = [];
       state.appliedCoupon = null;
       state.error = null;
-      state.validation = {
-        isValidating: false,
-        lastValidated: null,
-        checkoutSessionId: null,
-        hasErrors: false,
-        hasChanges: false,
-        summary: null,
-      };
+      state.validation = createValidationState();
     },
 
     toggleCartDrawer: (state, action) => {
@@ -170,14 +166,7 @@ const cartSlice = createSlice({
     },
 
     clearValidationState: (state) => {
-      state.validation = {
-        isValidating: false,
-        lastValidated: null,
-        checkoutSessionId: null,
-        hasErrors: false,
-        hasChanges: false,
-        summary: null,
-      };
+      state.validation = createValidationState();
       for (const item of state.items) {
         delete item.validationStatus;
         delete item.validationMessage;
@@ -228,4 +217,47 @@ export const {
   sanitizePersistedCart,
 } = cartSlice.actions;
 
-export default cartSlice.reducer;
+const cartReducer = cartSlice.reducer;
+
+/**
+ * Repair a cart state that is missing fields this slice writes to.
+ *
+ * redux-persist rehydrates a persisted slice OVER the slice's initial state, so a
+ * cart stored by an older build — from before `validation` existed — comes back with
+ * the key simply absent (a key that was never written stays missing in JSON). Every
+ * reducer that touches `state.validation.*` then throws
+ * "Cannot set properties of undefined (setting 'hasErrors')" and the item is never
+ * added. `items` has the same failure mode if storage was truncated or hand-edited.
+ *
+ * Returns the SAME object when the shape is already sound, so the normal path costs
+ * nothing, and never mutates its input (rehydrated state is frozen in development).
+ *
+ * @param {object|undefined} state
+ * @returns {object} a state object safe for the reducers
+ */
+export function ensureCartShape(state) {
+  if (!state || typeof state !== 'object') return initialState;
+
+  const itemsMissing = !Array.isArray(state.items);
+  const validationMissing =
+    !state.validation || typeof state.validation !== 'object';
+
+  if (!itemsMissing && !validationMissing) return state;
+
+  return {
+    ...initialState,
+    ...state,
+    items: itemsMissing ? initialState.items : state.items,
+    validation: validationMissing
+      ? createValidationState()
+      : { ...createValidationState(), ...state.validation },
+  };
+}
+
+/**
+ * Public cart reducer: repair the shape before Immer and the reducers see it, so a
+ * cart persisted before a field existed can never break the very next action.
+ */
+export default function reducer(state, action) {
+  return cartReducer(ensureCartShape(state), action);
+}

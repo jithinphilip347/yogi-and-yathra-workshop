@@ -124,11 +124,13 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded, isAvailab
               {productImages.map((img, i) => (
                 <SwiperSlide key={i}>
                   <div className='MainSlideImg'>
+                    {/* next/image 13+ API: `fill` + inline objectFit (the legacy
+                        layout/objectFit props are deprecated and warn). */}
                     <Image 
                       src={resolveProductMediaUrl(img)} 
                       alt={`${displayData.title} ${i}`} 
-                      layout="fill" 
-                      objectFit="contain" 
+                      fill 
+                      style={{ objectFit: "contain" }} 
                     />
                   </div>
                 </SwiperSlide>
@@ -161,7 +163,7 @@ const ProductDetailPopup = ({ product, onClose, onToggleCart, isAdded, isAvailab
                         alt="thumb" 
                         width={80} 
                         height={80} 
-                        objectFit="cover" 
+                        style={{ objectFit: "cover" }} 
                       />
                     </div>
                   </SwiperSlide>

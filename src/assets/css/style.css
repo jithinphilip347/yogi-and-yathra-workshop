@@ -8966,128 +8966,6 @@
 #CourseDetails .RequirementsSection .ReqList li svg {
   color: #2ecc71;
 }
-#CourseDetails .RequirementsSection .ProductList {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  border: 1px solid #f1f5f9;
-  border-radius: 10px;
-  background: #fafafa;
-}
-@media (max-width: 480px) {
-  #CourseDetails .RequirementsSection .ProductList .ProductItem {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft {
-  display: flex;
-  gap: 15px;
-  width: 50%;
-}
-@media (max-width: 480px) {
-  #CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft {
-    width: 100%;
-  }
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft img {
-  border-radius: 6px;
-  -o-object-fit: cover;
-     object-fit: cover;
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo {
-  width: 50%;
-}
-@media (max-width: 480px) {
-  #CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo {
-    width: auto;
-    flex: 1;
-  }
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo h4 {
-  font-size: 15px;
-  font-weight: 600;
-  margin-bottom: 2px;
-  color: #000;
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo p {
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 4px;
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo .PriceRow .Curr {
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--primaryColor);
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ProdLeft .ProdInfo .PriceRow del {
-  font-size: 12px;
-  color: #94a3b8;
-  margin-left: 5px;
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea {
-  display: flex;
-  gap: 10px;
-}
-@media (max-width: 480px) {
-  #CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-  }
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .ViewDetailsBtn {
-  padding: 8px 15px;
-  background: transparent;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-}
-@media (max-width: 480px) {
-  #CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .ViewDetailsBtn {
-    padding: 10px;
-    text-align: center;
-  }
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn {
-  padding: 10px 20px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: 0.3s ease;
-  border: 1.5px solid var(--primaryColor);
-  background: transparent;
-  color: var(--primaryColor);
-}
-@media (max-width: 480px) {
-  #CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn {
-    padding: 10px;
-    text-align: center;
-  }
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn:hover {
-  background: var(--primaryColor);
-  color: #fff;
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn.added {
-  background: #fee2e2;
-  border-color: #ef4444;
-  color: #ef4444;
-}
-#CourseDetails .RequirementsSection .ProductList .ProductItem .ActionArea .AddToCartBtn.added:hover {
-  background: #ef4444;
-  color: #fff;
-}
 #CourseDetails {
   /* FIXED BOTTOM BAR */
 }
@@ -11672,12 +11550,67 @@
   font-weight: 700;
 }
 /* ==========================================================================
-   Sprint 19 — Related Products on the Course detail page.
-   Course now renders the shared RelatedProducts component (the same one Daily
-   Class and Live Section use). The component's markup is content-agnostic, so
-   it is styled here for the Course page's own design language instead of
-   reusing another page's scoped selectors.
+   Course detail — Related Products.
+
+   Course renders the SAME content-agnostic component as Daily Class and Live
+   Section (features/commerce/components/RelatedProducts.jsx). Only presentation
+   is defined here, in the Course page's own design language.
+
+   The section is a first-class card on this page: it takes the same shell as the
+   page's other content boxes (.HighlightBox — white, 12px radius, 1px border,
+   identical responsive padding and rhythm), so it no longer sits unstyled
+   between the requirements box and "Course Content".
    ========================================================================== */
+#CourseDetails .RelatedProducts {
+  background: #fff;
+  border-radius: 12px;
+  padding: 35px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 30px;
+}
+@media (max-width: 1024px) {
+  #CourseDetails .RelatedProducts {
+    padding: 20px;
+  }
+}
+@media (max-width: 768px) {
+  #CourseDetails .RelatedProducts {
+    padding: 16px;
+  }
+}
+@media (max-width: 480px) {
+  #CourseDetails .RelatedProducts {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+}
+/* The component renders an <h2> while the neighbouring Course cards use <h3>.
+   Matched to the .HighlightBox h3 scale so the heading reads as a card title
+   instead of a page-level heading. */
+#CourseDetails .RelatedProducts h2 {
+  font-size: 24px;
+  margin-bottom: 25px;
+  font-weight: 600;
+  color: #1a1a1a;
+  font-family: myFont1;
+}
+@media (max-width: 1024px) {
+  #CourseDetails .RelatedProducts h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+}
+@media (max-width: 768px) {
+  #CourseDetails .RelatedProducts h2 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+}
+@media (max-width: 480px) {
+  #CourseDetails .RelatedProducts h2 {
+    margin-bottom: 12px;
+  }
+}
 #CourseDetails .RelatedProducts .ProductList {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -11691,37 +11624,63 @@
 #CourseDetails .RelatedProducts .ProductList .ProductItem {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  justify-content: space-between;
+  gap: 14px;
   padding: 15px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #e8edf3;
   border-radius: 10px;
-  background: #fafafa;
+  background: #f8fafc;
 }
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft {
   display: flex;
-  gap: 15px;
   align-items: center;
+  gap: 14px;
+  min-width: 0;
 }
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft .ProdImage {
-  width: 60px;
-  height: 60px;
-  border-radius: 6px;
+  width: 84px;
+  height: 84px;
+  border-radius: 8px;
   overflow: hidden;
   position: relative;
   flex-shrink: 0;
+  background: #eef2f7;
+  border: 1px solid #e8edf3;
 }
+#CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft .ProdImage img {
+  width: 100%;
+  height: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+@media (max-width: 480px) {
+  #CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft {
+    gap: 12px;
+  }
+  #CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft .ProdImage {
+    width: 64px;
+    height: 64px;
+  }
+}
+/* The info column must consume the rest of the row. With only `min-width: 0` it
+   sized to its content, leaving a large dead gap between thumbnail and text. */
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft .ProdInfo {
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
   min-width: 0;
 }
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft .ProdInfo h4 {
   font-size: 15px;
   font-weight: 600;
-  margin-bottom: 4px;
+  line-height: 1.35;
+  margin-bottom: 6px;
   color: #2d3436;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 6px;
+  overflow-wrap: anywhere;
 }
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft .ProdInfo .TypeBadge {
   padding: 2px 6px;
@@ -11736,9 +11695,9 @@
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft .ProdInfo .PriceRow {
   display: flex;
   align-items: baseline;
-  gap: 6px;
+  gap: 8px;
   font-weight: 700;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--primaryColor);
 }
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft .ProdInfo .PriceRow .Old {
@@ -11754,23 +11713,36 @@
   font-weight: 600;
   color: #b91c1c;
 }
+/* Buttons wrap onto a second row on very narrow screens rather than overflowing. */
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ActionArea {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ActionArea .ViewDetailsBtn {
-  flex: 1;
-  padding: 8px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 140px;
+          flex: 1 1 140px;
+  min-height: 40px;
+  padding: 10px 12px;
   background: transparent;
   border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
+  color: #2d3436;
   cursor: pointer;
+  transition: 0.3s;
+}
+#CourseDetails .RelatedProducts .ProductList .ProductItem .ActionArea .ViewDetailsBtn:hover {
+  background: #f5f5f5;
 }
 #CourseDetails .RelatedProducts .ProductList .ProductItem .ActionArea .AddToCartBtn {
-  flex: 1;
-  padding: 8px;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 1 140px;
+          flex: 1 1 140px;
+  min-height: 40px;
+  padding: 10px 12px;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
@@ -11800,4 +11772,5 @@
   background: transparent;
   color: #64748b;
 }
+
 /*# sourceMappingURL=style.css.map */

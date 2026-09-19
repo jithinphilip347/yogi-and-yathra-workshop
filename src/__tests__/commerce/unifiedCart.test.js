@@ -5,7 +5,9 @@ import cartReducer, {
   updateQuantity,
   clearCart,
   setValidationSuccess,
+  setValidationStart,
   sanitizePersistedCart,
+  ensureCartShape,
 } from '@/features/commerce/slices/cartSlice';
 import {
   selectCartItems,
@@ -316,6 +318,92 @@ describe('Sprint 4 — Unified Multi-Item Cart', () => {
       expect(state.items[1].cart_key).toBe('product:40');
       expect(state.items[1].domain).toBe('ecommerce');
       expect(state.items[1].quantity).toBe(3);
+    });
+  });
+
+  /**
+   * A cart persisted by an older build reaches the store WITHOUT fields added
+   * later: redux-persist merges a persisted slice over the slice's initial state,
+   * and a key that was never written stays missing in JSON. Every reducer that
+   * writes `state.validation.*` then threw
+   * "Cannot set properties of undefined (setting 'hasErrors')" and the item was
+   * silently never added — the first Add to Cart click on a stale cart looked dead.
+   */
+  describe('Legacy / rehydrated cart shape', () => {
+    const physical = () => ({
+      productable_type: PRODUCT_TYPES.PRODUCT,
+      productable_id: 10,
+      title: 'Organic Cotton Yoga Mat',
+      price: 999,
+      quantity: 1,
+    });
+
+    /** Exactly what an older build left in storage: no `validation` key at all. */
+    const legacyCart = () => ({
+      items: [],
+      isDrawerOpen: false,
+      appliedCoupon: null,
+      isProcessing: false,
+      error: null,
+    });
+
+    it('adds to a cart persisted before `validation` existed', () => {
+      const state = cartReducer(legacyCart(), addToCart(physical()));
+
+      expect(state.items.map((i) => i.cart_key)).toEqual(['product:10']);
+      expect(state.validation).toBeTruthy();
+      expect(state.validation.hasErrors).toBe(false);
+      expect(state.isDrawerOpen).toBe(true);
+    });
+
+    it('keeps merging re-adds from a legacy cart', () => {
+      let state = cartReducer(legacyCart(), addToCart(physical()));
+      state = cartReducer(state, addToCart(physical()));
+
+      expect(state.items).toHaveLength(1);
+      expect(state.items[0].quantity).toBe(2);
+    });
+
+    it('does not throw when other cart actions run on a legacy cart', () => {
+      const legacy = legacyCart();
+
+      expect(() => cartReducer(legacy, setValidationStart())).not.toThrow();
+      expect(cartReducer(legacy, setValidationStart()).validation.isValidating).toBe(true);
+      expect(() =>
+        cartReducer(legacy, setValidationSuccess({ valid: true, items: [] }))
+      ).not.toThrow();
+      expect(() =>
+        cartReducer(legacy, removeFromCart({ productable_type: 'product', productable_id: 10 }))
+      ).not.toThrow();
+      expect(() =>
+        cartReducer(legacy, updateQuantity({ productable_type: 'product', productable_id: 10, quantity: 3 }))
+      ).not.toThrow();
+      expect(() => cartReducer(legacy, sanitizePersistedCart())).not.toThrow();
+      expect(() => cartReducer(legacy, clearCart())).not.toThrow();
+    });
+
+    it('repairs a truncated `items` instead of trusting it', () => {
+      const corrupted = { ...legacyCart(), items: 'nonsense', validation: null };
+      const state = cartReducer(corrupted, addToCart(physical()));
+
+      expect(Array.isArray(state.items)).toBe(true);
+      expect(state.items.map((i) => i.cart_key)).toEqual(['product:10']);
+      expect(state.validation.hasErrors).toBe(false);
+    });
+
+    it('leaves a well-formed cart object untouched', () => {
+      const sound = initialState;
+
+      // Same reference: the healthy path must not clone on every action.
+      expect(ensureCartShape(sound)).toBe(sound);
+      expect(cartReducer(sound, addToCart(physical())).items).toHaveLength(1);
+    });
+
+    it('still initialises normally when there is no persisted state', () => {
+      const state = cartReducer(undefined, { type: '@@INIT' });
+
+      expect(state.items).toEqual([]);
+      expect(state.validation.hasErrors).toBe(false);
     });
   });
 });

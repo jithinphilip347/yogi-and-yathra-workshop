@@ -1,18 +1,17 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { configuredBaseUrl, joinUrl, normalizeBaseUrl } from "@/utils/url";
-import {
-  API_BASE_URL,
-  PRODUCT_API_BASE_URL,
-  PRODUCT_MEDIA_BASE_URL,
-} from "@/utils/constants";
-import { resolveProductMediaUrl } from "@/utils/mediaUrl";
 
 /**
  * Sprint — Product API Base URL & Product Media Base URL configuration.
  *
  * The product API base and the product media base are two independent,
  * environment-driven values. These tests pin the canonical defaults, the URL
- * normalization and the proof that the two bases can point at different hosts.
+ * normalization, and the proof that the two bases can point at different hosts.
+ *
+ * A real checkout may supply NEXT_PUBLIC_PRODUCT_* (Next.js loads `.env.local`
+ * into process.env), so every test that asserts a *default* first clears both
+ * variables — that is what "unconfigured" means. Tests that assert configured
+ * behaviour stub them explicitly.
  */
 
 const ENV_KEYS = [
@@ -20,6 +19,30 @@ const ENV_KEYS = [
   "NEXT_PUBLIC_PRODUCT_MEDIA_BASE_URL",
   "NEXT_PUBLIC_ECOMMERCE_MEDIA_URL",
 ];
+
+/**
+ * Documented default, which INCLUDES the shop's /storage segment: the E-commerce
+ * backend serves uploaded files from `APP_URL . '/storage'`, and the shared
+ * resolver strips a leading `storage/` from the API path before joining. Without
+ * the segment every product image resolves to <host>/products/... and 404s.
+ */
+const DEFAULT_PRODUCT_MEDIA_BASE_URL =
+  "https://api.yogiandyathra.com/public/storage";
+
+/**
+ * Import the config modules with a controlled product environment.
+ * @param {Record<string,string>} [env] - values to stub; omitted keys are cleared
+ */
+async function importConfig(env = {}) {
+  for (const key of ENV_KEYS) {
+    vi.stubEnv(key, env[key] === undefined ? "" : env[key]);
+  }
+  vi.resetModules();
+
+  const constants = await import("@/utils/constants");
+  const mediaUrl = await import("@/utils/mediaUrl");
+  return { ...constants, ...mediaUrl };
+}
 
 describe("URL helpers", () => {
   describe("normalizeBaseUrl", () => {
@@ -60,7 +83,7 @@ describe("URL helpers", () => {
       );
     });
 
-    it("never emits a double slash after a non-protocol base", () => {
+    it("never emits a double slash after a nested base path", () => {
       const base = "https://admin.varixialabs.com/workshopapi/public/api/v1/ecommerce/";
       expect(joinUrl(base, "products-list")).toBe(
         "https://admin.varixialabs.com/workshopapi/public/api/v1/ecommerce/products-list"
@@ -115,17 +138,28 @@ describe("URL helpers", () => {
 });
 
 describe("Product configuration constants", () => {
-  it("keeps the Workshop proxy default for the product API base", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
+  it("keeps the Workshop proxy default for the product API base", async () => {
+    const { PRODUCT_API_BASE_URL, API_BASE_URL } = await importConfig();
+
     expect(PRODUCT_API_BASE_URL).toBe(`${API_BASE_URL}ecommerce/`);
     expect(PRODUCT_API_BASE_URL).toContain("/api/v1/ecommerce/");
   });
 
-  it("never exposes the E-commerce host or an internal endpoint as the product API base", () => {
+  it("never exposes the E-commerce host or an internal endpoint as the product API base", async () => {
+    const { PRODUCT_API_BASE_URL } = await importConfig();
+
     expect(PRODUCT_API_BASE_URL).not.toMatch(/yogiandyathra/);
     expect(PRODUCT_API_BASE_URL).not.toMatch(/\/internal\//);
   });
 
-  it("keeps a single trailing slash and no double slash inside the base", () => {
+  it("keeps a single trailing slash and no double slash inside the base", async () => {
+    const { PRODUCT_API_BASE_URL } = await importConfig();
+
     expect(PRODUCT_API_BASE_URL.endsWith("/")).toBe(true);
     expect(PRODUCT_API_BASE_URL).not.toMatch(/\/\/$/);
 
@@ -134,12 +168,16 @@ describe("Product configuration constants", () => {
     expect(path).not.toContain("//");
   });
 
-  it("exposes the product media base without trailing slashes", () => {
-    expect(PRODUCT_MEDIA_BASE_URL).toBe("https://api.yogiandyathra.com/public");
+  it("exposes the product media base without trailing slashes", async () => {
+    const { PRODUCT_MEDIA_BASE_URL } = await importConfig();
+
+    expect(PRODUCT_MEDIA_BASE_URL).toBe(DEFAULT_PRODUCT_MEDIA_BASE_URL);
     expect(PRODUCT_MEDIA_BASE_URL.endsWith("/")).toBe(false);
   });
 
-  it("keeps the two bases as independent values", () => {
+  it("keeps the two bases as independent values", async () => {
+    const { PRODUCT_API_BASE_URL, PRODUCT_MEDIA_BASE_URL } = await importConfig();
+
     expect(PRODUCT_API_BASE_URL).not.toBe(PRODUCT_MEDIA_BASE_URL);
     // The media base must never be derived from the API base.
     expect(PRODUCT_MEDIA_BASE_URL.startsWith(PRODUCT_API_BASE_URL)).toBe(false);
@@ -147,96 +185,109 @@ describe("Product configuration constants", () => {
 });
 
 describe("Product media resolution", () => {
-  it("resolves a relative product image against the media base", () => {
-    expect(resolveProductMediaUrl("products/mat-10.webp")).toBe(
-      `${PRODUCT_MEDIA_BASE_URL}/products/mat-10.webp`
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
+  });
+
+  it("resolves a relative product image against the media base", async () => {
+    const { resolveProductMediaUrl: resolve } = await importConfig();
+
+    expect(resolve("products/mat-10.webp")).toBe(
+      `${DEFAULT_PRODUCT_MEDIA_BASE_URL}/products/mat-10.webp`
     );
-    expect(resolveProductMediaUrl("/products/mat-10.webp")).toBe(
-      `${PRODUCT_MEDIA_BASE_URL}/products/mat-10.webp`
+    expect(resolve("/products/mat-10.webp")).toBe(
+      `${DEFAULT_PRODUCT_MEDIA_BASE_URL}/products/mat-10.webp`
     );
   });
 
-  it("never double-prefixes an already absolute media URL", () => {
+  it("never double-prefixes an already absolute media URL", async () => {
+    const { resolveProductMediaUrl: resolve } = await importConfig();
     const absolute = "https://cdn.example.com/products/mat-10.webp";
-    expect(resolveProductMediaUrl(absolute)).toBe(absolute);
-    expect(resolveProductMediaUrl(absolute)).not.toContain(PRODUCT_MEDIA_BASE_URL);
+
+    expect(resolve(absolute)).toBe(absolute);
+    expect(resolve(absolute)).not.toContain(DEFAULT_PRODUCT_MEDIA_BASE_URL);
   });
 
-  it("preserves the existing fallback behaviour for missing media", () => {
-    expect(resolveProductMediaUrl(null)).toBe("");
-    expect(resolveProductMediaUrl(undefined)).toBe("");
-    expect(resolveProductMediaUrl("")).toBe("");
-    expect(resolveProductMediaUrl(null, "/images/placeholder.webp")).toBe(
-      "/images/placeholder.webp"
-    );
+  it("preserves the existing fallback behaviour for missing media", async () => {
+    const { resolveProductMediaUrl: resolve } = await importConfig();
+
+    expect(resolve(null)).toBe("");
+    expect(resolve(undefined)).toBe("");
+    expect(resolve("")).toBe("");
+    expect(resolve(null, "/images/placeholder.webp")).toBe("/images/placeholder.webp");
   });
 });
 
 describe("Environment-driven configuration (independent hosts)", () => {
-  const original = {};
-
-  beforeEach(() => {
-    for (const key of ENV_KEYS) original[key] = process.env[key];
-    vi.resetModules();
-  });
-
   afterEach(() => {
-    for (const key of ENV_KEYS) {
-      if (original[key] === undefined) delete process.env[key];
-      else process.env[key] = original[key];
-    }
+    vi.unstubAllEnvs();
     vi.resetModules();
   });
 
   it("resolves API and media from DIFFERENT hosts without deriving one from the other", async () => {
-    process.env.NEXT_PUBLIC_PRODUCT_API_BASE_URL = "https://api.example.test/api/v1/ecommerce";
-    process.env.NEXT_PUBLIC_PRODUCT_MEDIA_BASE_URL = "https://media.example.test";
+    const { PRODUCT_API_BASE_URL, PRODUCT_MEDIA_BASE_URL, resolveProductMediaUrl: resolve } =
+      await importConfig({
+        NEXT_PUBLIC_PRODUCT_API_BASE_URL: "https://api.example.test/api/v1/ecommerce",
+        NEXT_PUBLIC_PRODUCT_MEDIA_BASE_URL: "https://media.example.test",
+      });
 
-    const constants = await import("@/utils/constants");
+    expect(PRODUCT_API_BASE_URL).toBe("https://api.example.test/api/v1/ecommerce/");
+    expect(PRODUCT_MEDIA_BASE_URL).toBe("https://media.example.test");
 
-    expect(constants.PRODUCT_API_BASE_URL).toBe("https://api.example.test/api/v1/ecommerce/");
-    expect(constants.PRODUCT_MEDIA_BASE_URL).toBe("https://media.example.test");
-
-    const { resolveProductMediaUrl: resolve } = await import("@/utils/mediaUrl");
     // Product image must come from the media host, never from the API host.
     expect(resolve("products/mat-10.webp")).toBe("https://media.example.test/products/mat-10.webp");
     expect(resolve("products/mat-10.webp")).not.toContain("api.example.test");
   });
 
   it("normalizes a configured API base that is supplied with trailing slashes", async () => {
-    process.env.NEXT_PUBLIC_PRODUCT_API_BASE_URL = "https://api.example.test/api/v1/ecommerce///";
+    const { PRODUCT_API_BASE_URL } = await importConfig({
+      NEXT_PUBLIC_PRODUCT_API_BASE_URL: "https://api.example.test/api/v1/ecommerce///",
+    });
 
-    const constants = await import("@/utils/constants");
-    expect(constants.PRODUCT_API_BASE_URL).toBe("https://api.example.test/api/v1/ecommerce/");
+    expect(PRODUCT_API_BASE_URL).toBe("https://api.example.test/api/v1/ecommerce/");
+  });
+
+  it("points the product API client at the configured base", async () => {
+    await importConfig({
+      NEXT_PUBLIC_PRODUCT_API_BASE_URL: "https://api.example.test/api/v1/ecommerce",
+    });
+    const { default: productApiClient } = await import("@/services/productApi");
+
+    expect(productApiClient.defaults.baseURL).toBe("https://api.example.test/api/v1/ecommerce/");
+    expect(productApiClient.defaults.baseURL).not.toMatch(/\/internal\//);
+    expect(productApiClient.defaults.headers["X-Internal-Service-Key"]).toBeUndefined();
   });
 
   it("honours the deprecated NEXT_PUBLIC_ECOMMERCE_MEDIA_URL alias", async () => {
-    process.env.NEXT_PUBLIC_PRODUCT_MEDIA_BASE_URL = "";
-    process.env.NEXT_PUBLIC_ECOMMERCE_MEDIA_URL = "https://legacy-media.example.test";
+    const { PRODUCT_MEDIA_BASE_URL } = await importConfig({
+      NEXT_PUBLIC_ECOMMERCE_MEDIA_URL: "https://legacy-media.example.test",
+    });
 
-    const constants = await import("@/utils/constants");
-    expect(constants.PRODUCT_MEDIA_BASE_URL).toBe("https://legacy-media.example.test");
+    expect(PRODUCT_MEDIA_BASE_URL).toBe("https://legacy-media.example.test");
   });
 
   it("prefers the canonical media variable over the deprecated alias", async () => {
-    process.env.NEXT_PUBLIC_PRODUCT_MEDIA_BASE_URL = "https://media.example.test";
-    process.env.NEXT_PUBLIC_ECOMMERCE_MEDIA_URL = "https://legacy-media.example.test";
+    const { PRODUCT_MEDIA_BASE_URL } = await importConfig({
+      NEXT_PUBLIC_PRODUCT_MEDIA_BASE_URL: "https://media.example.test",
+      NEXT_PUBLIC_ECOMMERCE_MEDIA_URL: "https://legacy-media.example.test",
+    });
 
-    const constants = await import("@/utils/constants");
-    expect(constants.PRODUCT_MEDIA_BASE_URL).toBe("https://media.example.test");
+    expect(PRODUCT_MEDIA_BASE_URL).toBe("https://media.example.test");
   });
 
   it("falls back to the defaults when configuration is invalid rather than emitting undefined URLs", async () => {
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    process.env.NEXT_PUBLIC_PRODUCT_API_BASE_URL = "undefined";
-    process.env.NEXT_PUBLIC_PRODUCT_MEDIA_BASE_URL = "not a url";
 
-    const constants = await import("@/utils/constants");
+    const { PRODUCT_API_BASE_URL, PRODUCT_MEDIA_BASE_URL } = await importConfig({
+      NEXT_PUBLIC_PRODUCT_API_BASE_URL: "undefined",
+      NEXT_PUBLIC_PRODUCT_MEDIA_BASE_URL: "not a url",
+    });
 
-    expect(constants.PRODUCT_API_BASE_URL).toContain("/api/v1/ecommerce/");
-    expect(constants.PRODUCT_API_BASE_URL).not.toContain("undefined");
-    expect(constants.PRODUCT_MEDIA_BASE_URL).toBe("https://api.yogiandyathra.com/public");
-    expect(constants.PRODUCT_MEDIA_BASE_URL).not.toContain("undefined");
+    expect(PRODUCT_API_BASE_URL).toContain("/api/v1/ecommerce/");
+    expect(PRODUCT_API_BASE_URL).not.toContain("undefined");
+    expect(PRODUCT_MEDIA_BASE_URL).toBe(DEFAULT_PRODUCT_MEDIA_BASE_URL);
+    expect(PRODUCT_MEDIA_BASE_URL).not.toContain("undefined");
     warn.mockRestore();
   });
 });

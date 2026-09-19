@@ -155,8 +155,19 @@ describe("resolveMediaUrl — fallback handling", () => {
 
 describe("resolveProductMediaUrl — separate commerce backend", () => {
   it("resolves relative paths against the product base", () => {
-    expect(resolveProductMediaUrl("images/gear.jpg")).toBe(
-      "https://api.yogiandyathra.com/public/images/gear.jpg"
+    // The product media base includes the shop's /storage segment, because that
+    // is where the E-commerce backend serves uploaded files. Asserting the tail
+    // keeps this independent of the configured host while still pinning the
+    // segment that makes the URL actually resolve.
+    expect(resolveProductMediaUrl("images/gear.jpg")).toMatch(/\/storage\/images\/gear\.jpg$/);
+  });
+
+  it("resolves the API's /storage/... image paths without doubling the segment", () => {
+    expect(resolveProductMediaUrl("/storage/products/gear.jpg")).toMatch(
+      /\/storage\/products\/gear\.jpg$/
+    );
+    expect(resolveProductMediaUrl("/storage/products/gear.jpg")).not.toMatch(
+      /\/storage\/storage\//
     );
   });
 

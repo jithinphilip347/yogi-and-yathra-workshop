@@ -412,4 +412,143 @@ describe("Sprint 19 — Course related products", () => {
       expect(courseDetailsCode).not.toMatch(/localStorage/);
     });
   });
+
+  /**
+   * Presentation regression (Course UI fix).
+   *
+   * The shared component renders `<section className="card RelatedProducts">`,
+   * but on the Course page `.card` is only defined per page — `#DailyLiveClassDetails
+   * .card` exists, `#CourseDetails .card` never did. So the section had no shell at
+   * all and read as an unstyled block wedged between two real cards. These tests
+   * pin the shell, its responsive rhythm and the image-path fix that made product
+   * photos resolve at all.
+   */
+  describe("Course product section presentation", () => {
+    const styleCss = read("../../assets/css/style.css");
+    const styleScss = read("../../assets/css/style.scss");
+    const constantsSource = read("../../utils/constants.js");
+    const envExample = read("../../../.env.example");
+    const popupSource = read("../../components/popup/ProductDetailPopup.jsx");
+
+    /**
+     * Extract `selector { … }` by brace matching, so an assertion can never be
+     * satisfied by an unrelated rule that happens to share a value elsewhere in
+     * the stylesheet.
+     */
+    const blockAt = (source, selector) => {
+      const start = source.indexOf(selector);
+      if (start === -1) return "";
+      const open = source.indexOf("{", start);
+      let depth = 0;
+      for (let i = open; i < source.length; i += 1) {
+        if (source[i] === "{") depth += 1;
+        else if (source[i] === "}") {
+          depth -= 1;
+          if (depth === 0) return source.slice(start, i + 1);
+        }
+      }
+      return "";
+    };
+
+    it("gives the section the same card shell as the page's other content boxes", () => {
+      const shell = blockAt(styleCss, "#CourseDetails .RelatedProducts {");
+
+      expect(shell).not.toBe("");
+      expect(shell).toMatch(/background: #fff;/);
+      expect(shell).toMatch(/border-radius: 12px;/);
+      expect(shell).toMatch(/padding: 35px;/);
+      expect(shell).toMatch(/border: 1px solid #e2e8f0;/);
+      expect(shell).toMatch(/margin-bottom: 30px;/);
+    });
+
+    it("mirrors the HighlightBox rhythm at every breakpoint", () => {
+      expect(styleCss).toMatch(
+        /@media \(max-width: 1024px\) \{\s*#CourseDetails \.RelatedProducts \{\s*padding: 20px;/
+      );
+      expect(styleCss).toMatch(
+        /@media \(max-width: 768px\) \{\s*#CourseDetails \.RelatedProducts \{\s*padding: 16px;/
+      );
+      expect(styleCss).toMatch(
+        /@media \(max-width: 480px\) \{\s*#CourseDetails \.RelatedProducts \{\s*padding: 12px;\s*margin-bottom: 16px;/
+      );
+    });
+
+    it("styles the component heading as a card title, not a page heading", () => {
+      const heading = blockAt(styleCss, "#CourseDetails .RelatedProducts h2 {");
+
+      expect(heading).not.toBe("");
+      expect(heading).toMatch(/font-size: 24px;/);
+      expect(heading).toMatch(/margin-bottom: 25px;/);
+      expect(heading).toMatch(/font-weight: 600;/);
+    });
+
+    it("makes the info column consume the row instead of leaving dead space", () => {
+      const info = blockAt(
+        styleCss,
+        "#CourseDetails .RelatedProducts .ProductList .ProductItem .ProdLeft .ProdInfo {"
+      );
+
+      expect(info).toMatch(/flex: 1 1 auto;/);
+      expect(info).toMatch(/min-width: 0;/);
+      // The half-width column forced the title/price text into ~150px of the row.
+      expect(info).not.toMatch(/width: 50%/);
+    });
+
+    it("collapses the product grid and lets the action buttons wrap", () => {
+      expect(styleCss).toMatch(
+        /@media \(max-width: 768px\) \{\s*#CourseDetails \.RelatedProducts \.ProductList \{\s*grid-template-columns: 1fr;/
+      );
+      expect(
+        blockAt(
+          styleCss,
+          "#CourseDetails .RelatedProducts .ProductList .ProductItem .ActionArea {"
+        )
+      ).toMatch(/flex-wrap: wrap;/);
+    });
+
+    it("drops the dead RequirementsSection product rules but leaves other pages alone", () => {
+      // Sprint 19 moved the product list out of .RequirementsSection, so those
+      // ~130 lines could never match again — and carried conflicting values.
+      expect(styleCss).not.toMatch(/#CourseDetails \.RequirementsSection \.ProductList/);
+      expect(blockAt(styleScss, ".RequirementsSection {")).not.toMatch(/\.ProductList/);
+      // The Daily Class / Live Section page rules are untouched.
+      expect(styleCss).toMatch(/#DailyLiveClassDetails \.RequirementsSection \.ProductList/);
+    });
+
+    it("keeps the SCSS source and the built CSS in sync", () => {
+      expect(blockAt(styleScss, ".RelatedProducts {")).toMatch(/padding: 35px;/);
+      expect(blockAt(styleCss, "#CourseDetails .RelatedProducts {")).toMatch(/padding: 35px;/);
+      expect(styleScss).not.toMatch(/#CourseDetails \{[\s\S]{0,80}#course-recommended-gear/);
+    });
+
+    it("serves product media from the shop's storage segment", () => {
+      // The shared resolver strips a leading `storage/` from API paths, so the
+      // configured base must INCLUDE it. Without `/storage` every product image
+      // resolved to <host>/products/... and 404'd (the broken-image cards).
+      const resolved = resolveProductMediaUrl("/storage/products/mat-10.webp");
+
+      expect(resolved).toMatch(/\/storage\/products\/mat-10\.webp$/);
+      expect(resolved).not.toMatch(/\/storage\/storage\//);
+
+      expect(constantsSource).toMatch(
+        /DEFAULT_PRODUCT_MEDIA_BASE_URL =\s*"https:\/\/api\.yogiandyathra\.com\/public\/storage"/
+      );
+      expect(envExample).toMatch(
+        /NEXT_PUBLIC_PRODUCT_MEDIA_BASE_URL=https:\/\/api\.yogiandyathra\.com\/public\/storage/
+      );
+    });
+
+    it("leaves absolute media URLs untouched", () => {
+      expect(resolveProductMediaUrl("https://cdn.example.com/products/mat-10.webp")).toBe(
+        "https://cdn.example.com/products/mat-10.webp"
+      );
+    });
+
+    it("uses the current next/image API in the shared product popup", () => {
+      // The legacy `layout`/`objectFit` props warn on every render of the popup.
+      expect(popupSource).not.toMatch(/layout="/);
+      expect(popupSource).not.toMatch(/objectFit=/);
+      expect(popupSource).toMatch(/style=\{\{ objectFit: "contain" \}\}/);
+    });
+  });
 });

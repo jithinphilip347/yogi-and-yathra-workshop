@@ -40,8 +40,18 @@ export const MEDIA_BASE_URL = `${IMAGE_URL}/storage/`;
  * service key stays on the Workshop backend only.
  */
 
-/** Documented default so an unconfigured environment keeps working as before. */
-const DEFAULT_PRODUCT_MEDIA_BASE_URL = "https://api.yogiandyathra.com/public";
+/**
+ * Documented default so an unconfigured environment keeps working.
+ *
+ * The E-commerce backend serves uploaded files from its public disk, whose URL
+ * is `APP_URL . '/storage'` (see the shop's config/filesystems.php) — so the
+ * media base INCLUDES the `/storage` segment. That is also what the shared
+ * resolver expects: it strips a leading `storage/` from an API path such as
+ * `/storage/products/x.webp` before joining, exactly as it does for
+ * MEDIA_BASE_URL. Omitting `/storage` here makes every product image 404.
+ */
+const DEFAULT_PRODUCT_MEDIA_BASE_URL =
+  "https://api.yogiandyathra.com/public/storage";
 
 /**
  * Product API base URL.
