@@ -1,0 +1,807 @@
+/* ============================================================================
+   WORKSHOP ORDERS  —  WORKSHOP-DS-07D
+   Order list + order detail visual system
+   ============================================================================
+
+   WHY THIS FILE EXISTS AT ALL
+
+   `MyOrders.jsx` and `OrderDetail.jsx` had no stylesheet. Both carried a
+   hardcoded DARK palette in inline styles — `color: #fff` headings,
+   `rgba(255,255,255,0.03)` card surfaces, `rgba(255,255,255,0.07)` borders,
+   `#E5E7EB` values, `#9CA3AF` metadata — while both render inside the profile's
+   `.ContentCard`, which is a WHITE surface on a `#f8fafc` page.
+
+   That single mismatch explains every symptom reported against these pages:
+
+     "flat text list, no card hierarchy"  → card backgrounds at
+                                             rgba(255,255,255,0.03) are
+                                             invisible on white
+     "minimal separation between orders"  → borders at
+                                             rgba(255,255,255,0.07) are invisible
+                                             on white
+     "very light text"                    → #9CA3AF / #6B7280 metadata, and
+                                             #E5E7EB values (near-white on white)
+     "status labels floating"             → no surface or border behind them
+     "invisible buttons"                  → Retry/pagination used
+                                             rgba(255,255,255,0.15) borders with
+                                             #E5E7EB text
+
+   So this is not a restyle exercise: the dark theme was simply wrong for the
+   surface. Everything below resolves through the DS-02 tokens and nothing else.
+
+   Tokens used:
+     surfaces  --surface / --surface-muted / --surface-subtle / --surface-accent-subtle
+     borders   --color-border / --color-border-muted / --color-border-strong
+               / --color-border-accent
+     radius    --radius-sm / --radius-md / --radius-lg / --radius-pill / --radius-circle
+     text      --color-heading / --color-text / --color-text-muted / --color-text-subtle
+     status    --color-success(+surface/border) / --color-warning(+surface/border)
+               / --color-error(+surface/border) / --color-primary
+     space     --space-1 … --space-7, --section-gap
+     type      --text-h3 / --text-body-lg / --text-body / --text-body-sm
+               / --text-caption / --text-micro
+     focus     --focus-ring-color / --focus-ring-width / --focus-ring-offset
+   ============================================================================ */
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SHARED BADGE
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.OrderBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-subtle);
+  color: var(--color-text-muted);
+  font-size: var(--text-micro);
+  font-weight: var(--weight-semibold);
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+
+  &.is-success {
+    background: var(--color-success-surface);
+    border-color: var(--color-success-border);
+    color: var(--color-success);
+  }
+
+  &.is-warning {
+    background: var(--color-warning-surface);
+    border-color: var(--color-warning-border);
+    color: var(--color-warning);
+  }
+
+  &.is-danger {
+    background: var(--color-error-surface);
+    border-color: var(--color-error-border);
+    color: var(--color-error);
+  }
+
+  /* "info" (refunded) has no dedicated token family in DS-02, so it borrows the
+     brand's warm accent rather than inventing a second hue — the workshop palette
+     has no blue, and the blue/purple this page used before was not in it. */
+  &.is-info {
+    background: var(--surface-accent-subtle);
+    border-color: var(--color-border-accent);
+    color: var(--color-primary);
+  }
+
+  &.is-muted {
+    background: var(--surface-subtle);
+    border-color: var(--color-border);
+    color: var(--color-text-muted);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ALERTS  (degraded store, load failure)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.OrderAlert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-subtle);
+  color: var(--color-text);
+  font-size: var(--text-body-sm);
+
+  svg {
+    flex: 0 0 auto;
+  }
+
+  &.is-warning {
+    background: var(--color-warning-surface);
+    border-color: var(--color-warning-border);
+    color: var(--color-warning);
+  }
+
+  &.is-error {
+    background: var(--color-error-surface);
+    border-color: var(--color-error-border);
+    color: var(--color-error);
+  }
+}
+
+.OrderAlertText {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* An alert stacked above the content it describes. */
+.OrderAlert--spaced {
+  margin-bottom: var(--space-5);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   BUTTONS  (secondary / ghost only — the brand primary lives in DS-05)
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.OrderButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-5);
+  border: var(--border-width) solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--color-primary);
+  font-family: inherit;
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    background: var(--surface-accent-subtle);
+    border-color: var(--color-border-accent);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--disabled-text);
+    background: var(--disabled-surface);
+    border-color: var(--disabled-border);
+  }
+
+  &.is-ghost {
+    padding: var(--space-1) 0;
+    border-color: transparent;
+    background: transparent;
+    color: var(--color-text-muted);
+
+    &:hover:not(:disabled) {
+      background: transparent;
+      border-color: transparent;
+      color: var(--color-primary);
+    }
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ORDER LIST
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.OrderHistory {
+  width: 100%;
+  padding: var(--space-7);
+
+  @media (max-width: 1024px) {
+    padding: var(--space-6);
+  }
+
+  @media (max-width: 480px) {
+    padding: var(--space-5) var(--space-4);
+  }
+}
+
+.OrderHistoryHead {
+  margin-bottom: var(--space-7);
+}
+
+.OrderHistoryTitle {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-h3);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-heading);
+
+  @media (max-width: 768px) {
+    font-size: var(--text-card-title-sm);
+  }
+}
+
+.OrderHistorySub {
+  margin: 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}
+
+.OrderList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ── Order card ─────────────────────────────────────────────────────────── */
+
+.OrderCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  padding: var(--space-5);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+
+  &:hover {
+    background: var(--surface-accent-subtle);
+    border-color: var(--color-border-accent);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* Consistent icon container for every order type. The glyph differs (book,
+   package, layers); the treatment does not. */
+.OrderCardIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--surface-subtle);
+  color: var(--color-primary);
+  font-size: var(--text-h3);
+}
+
+.OrderCardBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.OrderCardTitleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.OrderCardRef {
+  font-size: var(--text-body-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  letter-spacing: 0.01em;
+}
+
+.OrderCardName {
+  font-size: var(--text-body);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.OrderCardMeta {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+.OrderCardSide {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.OrderCardAmount {
+  font-size: var(--text-body-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.OrderCardChevron {
+  flex: 0 0 auto;
+  color: var(--color-text-subtle);
+  font-size: var(--text-h3);
+}
+
+/* ── Pagination ─────────────────────────────────────────────────────────── */
+
+.OrderPagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-5);
+  margin-top: var(--space-7);
+}
+
+.OrderPaginationStatus {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+/* ── Empty / loading ────────────────────────────────────────────────────── */
+
+.OrderEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-9) var(--space-6);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-muted);
+  text-align: center;
+
+  svg {
+    font-size: var(--text-h2);
+    color: var(--color-text-subtle);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+  }
+}
+
+.OrderSkeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.OrderSkeletonRow {
+  display: block;
+  height: 84px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-subtle);
+  animation: orderHistoryPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes orderHistoryPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .OrderSkeletonRow {
+    animation: none;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ORDER DETAIL
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.OrderDetail {
+  width: 100%;
+  padding: var(--space-7);
+
+  @media (max-width: 1024px) {
+    padding: var(--space-6);
+  }
+
+  @media (max-width: 480px) {
+    padding: var(--space-5) var(--space-4);
+  }
+}
+
+.OrderDetailBack {
+  margin-bottom: var(--space-6);
+}
+
+.OrderDetailHead {
+  padding-bottom: var(--space-5);
+  margin-bottom: var(--space-6);
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.OrderDetailTitleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  margin-bottom: var(--space-3);
+}
+
+.OrderDetailTitle {
+  margin: 0;
+  font-size: var(--text-h3);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-heading);
+
+  @media (max-width: 768px) {
+    font-size: var(--text-card-title-sm);
+  }
+}
+
+.OrderDetailBadges {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.OrderDetailMeta {
+  margin: 0;
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+}
+
+/* ── Sections ───────────────────────────────────────────────────────────── */
+
+.OrderSectionStack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+
+.OrderSection {
+  padding: var(--space-6);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-muted);
+
+  @media (max-width: 480px) {
+    padding: var(--space-5) var(--space-4);
+  }
+}
+
+.OrderSectionTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+
+  svg {
+    color: var(--color-text-subtle);
+  }
+}
+
+/* The section's leading statement (fulfillment stage, product title). */
+.OrderSectionLead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  overflow-wrap: anywhere;
+
+  svg {
+    flex: 0 0 auto;
+    color: var(--color-primary);
+  }
+}
+
+/* ── Label / value rows ─────────────────────────────────────────────────── */
+
+.OrderRows {
+  display: flex;
+  flex-direction: column;
+}
+
+.OrderRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-5);
+  padding: var(--space-3) 0;
+  border-bottom: var(--border-width) solid var(--color-border-muted);
+  font-size: var(--text-body-sm);
+
+  &:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  &:first-child {
+    padding-top: 0;
+  }
+}
+
+.OrderRowLabel {
+  flex: 0 0 auto;
+  color: var(--color-text-muted);
+}
+
+.OrderRowValue {
+  min-width: 0;
+  color: var(--color-text);
+  font-weight: var(--weight-medium);
+  text-align: right;
+  overflow-wrap: anywhere;
+
+  &.is-strong {
+    color: var(--color-heading);
+    font-weight: var(--weight-semibold);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.OrderTrackLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+  color: var(--color-primary);
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* ── Progress timeline ──────────────────────────────────────────────────── */
+
+.OrderTimeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.OrderTimelineStep {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding-bottom: var(--space-5);
+
+  /* The connector runs from this marker to the next one and stops at the end. */
+  &:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: 22px;
+    bottom: 0;
+    left: 11px;
+    width: var(--border-width-strong);
+    background: var(--color-border);
+  }
+
+  &.is-done::before {
+    background: var(--color-success-border);
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+}
+
+.OrderTimelineMarker {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border: var(--border-width-strong) solid var(--color-border-strong);
+  border-radius: var(--radius-circle);
+  background: var(--surface);
+  color: var(--color-text-subtle);
+  font-size: var(--text-micro);
+}
+
+.is-done .OrderTimelineMarker {
+  border-color: var(--color-success);
+  background: var(--color-success);
+  color: var(--text-inverse);
+}
+
+/* The current step is a solid brand dot — no glyph, so it reads as "here now"
+   rather than as another completed check. */
+.is-current .OrderTimelineMarker {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+/* A done-but-negative terminal step (cancelled / failed / refunded) keeps its
+   `is-done` position in the sequence but must not read as a success. */
+.is-done.is-error .OrderTimelineMarker {
+  border-color: var(--color-error);
+  background: var(--color-error);
+  color: var(--text-inverse);
+}
+
+.OrderTimelineBody {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  min-width: 0;
+  padding-top: 2px;
+}
+
+.OrderTimelineLabel {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+
+  .is-done & {
+    color: var(--color-text);
+  }
+
+  .is-current & {
+    color: var(--color-heading);
+    font-weight: var(--weight-semibold);
+  }
+}
+
+.OrderTimelineDate {
+  font-size: var(--text-caption);
+  color: var(--color-text-subtle);
+}
+
+/* ── Items ──────────────────────────────────────────────────────────────── */
+
+.OrderItems {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.OrderItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+  border-bottom: var(--border-width) solid var(--color-border-muted);
+
+  &:first-child {
+    padding-top: 0;
+  }
+
+  &:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+}
+
+/* The backend returns no product image for order items, so the slot is a
+   labelled placeholder using the shared icon container — not a new style. */
+.OrderItemThumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--color-text-subtle);
+  font-size: var(--text-body-lg);
+}
+
+/* A combo is a bundle, so it carries the brand accent rather than the neutral
+   single-item treatment. */
+.OrderItemThumb.is-combo {
+  border-color: var(--color-border-accent);
+  background: var(--surface-muted);
+  color: var(--color-primary);
+}
+
+.OrderItemBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.OrderItemName {
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  overflow-wrap: anywhere;
+}
+
+.OrderItemMeta {
+  font-size: var(--text-caption);
+  color: var(--color-text-muted);
+}
+
+.OrderItemTotal {
+  flex: 0 0 auto;
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Shipping address ───────────────────────────────────────────────────── */
+
+.OrderAddress {
+  margin: 0;
+  /* <address> is italic by user-agent default; a postal address is not prose. */
+  font-style: normal;
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text);
+}
+
+/* ── Mobile ─────────────────────────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  /* The order card stacks: identity and status stay together, the action line
+     moves under them. Nothing is squeezed into a rigid horizontal row. */
+  .OrderCard {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .OrderCardIcon {
+    width: 40px;
+    height: 40px;
+    font-size: var(--text-body-lg);
+  }
+
+  .OrderCardBody {
+    flex: 1 1 calc(100% - 56px);
+  }
+
+  .OrderCardSide {
+    flex: 1 1 100%;
+    align-items: flex-start;
+    text-align: left;
+    padding-left: 56px;
+  }
+
+  .OrderCardChevron {
+    display: none;
+  }
+}

@@ -1,0 +1,973 @@
+{
+  "results": [
+    {
+      "case": "billing",
+      "width": 1440,
+      "__viewport": {
+        "vw": 1440,
+        "scrollW": 1440,
+        "overflow": 0,
+        "scrollH": 1458
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 32,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "12px",
+      "wrapBorderColor": "rgb(226, 232, 240)",
+      "wrapBorderWidth": "1px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "billing",
+      "width": 1024,
+      "__viewport": {
+        "vw": 1024,
+        "scrollW": 1024,
+        "overflow": 0,
+        "scrollH": 1703
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 50,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "12px",
+      "wrapBorderColor": "rgb(226, 232, 240)",
+      "wrapBorderWidth": "1px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "billing",
+      "width": 900,
+      "__viewport": {
+        "vw": 900,
+        "scrollW": 900,
+        "overflow": 0,
+        "scrollH": 1703
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 50,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "12px",
+      "wrapBorderColor": "rgb(226, 232, 240)",
+      "wrapBorderWidth": "1px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "billing",
+      "width": 800,
+      "__viewport": {
+        "vw": 800,
+        "scrollW": 800,
+        "overflow": 0,
+        "scrollH": 1703
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 50,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "12px",
+      "wrapBorderColor": "rgb(226, 232, 240)",
+      "wrapBorderWidth": "1px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "billing",
+      "width": 768,
+      "__viewport": {
+        "vw": 768,
+        "scrollW": 768,
+        "overflow": 0,
+        "scrollH": 2080
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 32,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "0px",
+      "wrapBorderColor": "rgb(0, 0, 0)",
+      "wrapBorderWidth": "0px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "billing",
+      "width": 640,
+      "__viewport": {
+        "vw": 640,
+        "scrollW": 640,
+        "overflow": 0,
+        "scrollH": 2080
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 32,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "0px",
+      "wrapBorderColor": "rgb(0, 0, 0)",
+      "wrapBorderWidth": "0px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "billing",
+      "width": 430,
+      "__viewport": {
+        "vw": 430,
+        "scrollW": 430,
+        "overflow": 0,
+        "scrollH": 2604
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 32,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "0px",
+      "wrapBorderColor": "rgb(0, 0, 0)",
+      "wrapBorderWidth": "0px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "billing",
+      "width": 390,
+      "__viewport": {
+        "vw": 390,
+        "scrollW": 390,
+        "overflow": 0,
+        "scrollH": 2623
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 32,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "0px",
+      "wrapBorderColor": "rgb(0, 0, 0)",
+      "wrapBorderWidth": "0px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "billing",
+      "width": 360,
+      "__viewport": {
+        "vw": 360,
+        "scrollW": 360,
+        "overflow": 0,
+        "scrollH": 2669
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 32,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "0px",
+      "wrapBorderColor": "rgb(0, 0, 0)",
+      "wrapBorderWidth": "0px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "billing",
+      "width": 320,
+      "__viewport": {
+        "vw": 320,
+        "scrollW": 320,
+        "overflow": 0,
+        "scrollH": 2706
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [
+        {
+          "order": "#ORD-2026-00007",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00101",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00102",
+          "note": null
+        },
+        {
+          "order": "#ORD-2026-00009",
+          "status": "Cancelled",
+          "action": null,
+          "meta": null,
+          "note": "This invoice was cancelled"
+        },
+        {
+          "order": "#ORD-2026-00010",
+          "status": "Pending",
+          "action": null,
+          "meta": null,
+          "note": "Receipt not issued yet"
+        },
+        {
+          "order": "#5005",
+          "status": "Completed",
+          "action": "View Receipt",
+          "meta": "Invoice INV-2026-00204",
+          "note": null
+        }
+      ],
+      "btnPadding": "6px 12px",
+      "btnRadius": "6px",
+      "btnColor": "rgb(135, 68, 41)",
+      "btnShadow": "none",
+      "btnHeight": 32,
+      "chipRadius": "50px",
+      "chipBg": "rgb(236, 253, 245)",
+      "wrapRadius": "0px",
+      "wrapBorderColor": "rgb(0, 0, 0)",
+      "wrapBorderWidth": "0px",
+      "tableHeadBg": "rgb(241, 245, 249)",
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "loading",
+      "width": 390,
+      "__viewport": {
+        "vw": 390,
+        "scrollW": 390,
+        "overflow": 0,
+        "scrollH": 2143
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [],
+      "btnPadding": null,
+      "btnRadius": null,
+      "btnColor": null,
+      "btnShadow": null,
+      "btnHeight": null,
+      "chipRadius": null,
+      "chipBg": null,
+      "wrapRadius": null,
+      "wrapBorderColor": null,
+      "wrapBorderWidth": null,
+      "tableHeadBg": null,
+      "skeletonRows": 3,
+      "alertText": null,
+      "emptyText": null,
+      "subText": "Loading your purchases and receipts…",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "error",
+      "width": 390,
+      "__viewport": {
+        "vw": 390,
+        "scrollW": 390,
+        "overflow": 0,
+        "scrollH": 2143
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [],
+      "btnPadding": null,
+      "btnRadius": null,
+      "btnColor": null,
+      "btnShadow": null,
+      "btnHeight": null,
+      "chipRadius": null,
+      "chipBg": null,
+      "wrapRadius": null,
+      "wrapBorderColor": null,
+      "wrapBorderWidth": null,
+      "tableHeadBg": null,
+      "skeletonRows": 0,
+      "alertText": "Could not retrieve billing and order history. Please try again.Try again",
+      "emptyText": null,
+      "subText": "Your Workshop purchases and the receipts issued against them.",
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "signed-out",
+      "width": 390,
+      "__viewport": {
+        "vw": 390,
+        "scrollW": 390,
+        "overflow": 0,
+        "scrollH": 2143
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": "Billing & Order History",
+      "titleColor": "rgb(26, 26, 26)",
+      "titleBg": "rgba(0, 0, 0, 0)",
+      "rows": [],
+      "btnPadding": null,
+      "btnRadius": null,
+      "btnColor": null,
+      "btnShadow": null,
+      "btnHeight": null,
+      "chipRadius": null,
+      "chipBg": null,
+      "wrapRadius": null,
+      "wrapBorderColor": null,
+      "wrapBorderWidth": null,
+      "tableHeadBg": null,
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": "Please sign in to view your billing history and receipts.",
+      "subText": null,
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED",
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' fa"
+      ]
+    },
+    {
+      "case": "profile-billing",
+      "width": 1440,
+      "__viewport": {
+        "vw": 1440,
+        "scrollW": 1440,
+        "overflow": 0,
+        "scrollH": 671
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": null,
+      "titleColor": null,
+      "titleBg": null,
+      "rows": [],
+      "btnPadding": null,
+      "btnRadius": null,
+      "btnColor": null,
+      "btnShadow": null,
+      "btnHeight": null,
+      "chipRadius": null,
+      "chipBg": null,
+      "wrapRadius": null,
+      "wrapBorderColor": null,
+      "wrapBorderWidth": null,
+      "tableHeadBg": null,
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": null,
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' f",
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+      ]
+    },
+    {
+      "case": "profile-billing",
+      "width": 768,
+      "__viewport": {
+        "vw": 768,
+        "scrollW": 768,
+        "overflow": 0,
+        "scrollH": 668
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": null,
+      "titleColor": null,
+      "titleBg": null,
+      "rows": [],
+      "btnPadding": null,
+      "btnRadius": null,
+      "btnColor": null,
+      "btnShadow": null,
+      "btnHeight": null,
+      "chipRadius": null,
+      "chipBg": null,
+      "wrapRadius": null,
+      "wrapBorderColor": null,
+      "wrapBorderWidth": null,
+      "tableHeadBg": null,
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": null,
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+      ]
+    },
+    {
+      "case": "profile-billing",
+      "width": 390,
+      "__viewport": {
+        "vw": 390,
+        "scrollW": 390,
+        "overflow": 0,
+        "scrollH": 661
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": null,
+      "titleColor": null,
+      "titleBg": null,
+      "rows": [],
+      "btnPadding": null,
+      "btnRadius": null,
+      "btnColor": null,
+      "btnShadow": null,
+      "btnHeight": null,
+      "chipRadius": null,
+      "chipBg": null,
+      "wrapRadius": null,
+      "wrapBorderColor": null,
+      "wrapBorderWidth": null,
+      "tableHeadBg": null,
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": null,
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+      ]
+    },
+    {
+      "case": "profile-billing",
+      "width": 320,
+      "__viewport": {
+        "vw": 320,
+        "scrollW": 320,
+        "overflow": 0,
+        "scrollH": 680
+      },
+      "__textOverflow": 0,
+      "__clippedNodes": [],
+      "title": null,
+      "titleColor": null,
+      "titleBg": null,
+      "rows": [],
+      "btnPadding": null,
+      "btnRadius": null,
+      "btnColor": null,
+      "btnShadow": null,
+      "btnHeight": null,
+      "chipRadius": null,
+      "chipBg": null,
+      "wrapRadius": null,
+      "wrapBorderColor": null,
+      "wrapBorderWidth": null,
+      "tableHeadBg": null,
+      "skeletonRows": 0,
+      "alertText": null,
+      "emptyText": null,
+      "subText": null,
+      "downloadRequests": 0,
+      "__consoleErrors": [
+        "Failed to load resource: net::ERR_CONNECTION_REFUSED"
+      ]
+    }
+  ]
+}

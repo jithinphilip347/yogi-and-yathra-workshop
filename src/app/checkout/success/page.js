@@ -5,6 +5,8 @@ import { FaCheckCircle, FaBookOpen, FaBoxOpen, FaArrowRight, FaTruck, FaExclamat
 import { useSelector } from 'react-redux';
 import { useQueryClient } from '@tanstack/react-query';
 import { courierPartnerLabel } from '@/features/commerce/utils/courierPartners';
+import ReceiptActions from '@/components/commerce/ReceiptActions';
+import useOrderReceipt from '@/features/commerce/hooks/useOrderReceipt';
 import {
   CONFIRMATION_DOMAIN,
   CONFIRMATION_ROUTES,
@@ -64,6 +66,11 @@ export default function CheckoutSuccessPage() {
     transactionId: paymentState.activeTransactionId,
   });
   const nextSteps = buildNextSteps(domain);
+
+  /* The receipt, from the same unified order-detail endpoint the Orders tab
+     uses. A lookup failure yields null and simply renders no receipt actions —
+     it can never block or contradict the confirmation above. */
+  const receipt = useOrderReceipt(refs.orderNumber);
 
   const hasLearning = domain === CONFIRMATION_DOMAIN.LEARNING || domain === CONFIRMATION_DOMAIN.MIXED;
   const hasPhysical = domain === CONFIRMATION_DOMAIN.PHYSICAL || domain === CONFIRMATION_DOMAIN.MIXED;
@@ -209,6 +216,19 @@ export default function CheckoutSuccessPage() {
                   </li>
                 ))}
               </ol>
+            </section>
+          )}
+
+          {/* ── Receipt ────────────────────────────────────────────────
+             Rendered by the shared component, so the same rule governs this
+             page as the billing history and the order detail. The document is
+             only offered once the server has actually produced it. */}
+          {receipt && (
+            <section className="SuccessSection">
+              <h2 className="SuccessSectionTitle">Your Receipt</h2>
+              <div className="SuccessReceipt">
+                <ReceiptActions receipt={receipt} label={refs.orderNumber ? `order ${refs.orderNumber}` : null} />
+              </div>
             </section>
           )}
 

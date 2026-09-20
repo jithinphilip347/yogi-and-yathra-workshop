@@ -538,3 +538,24 @@
     }
   }
 }
+
+/* ── Receipt (WORKSHOP-DS-07E) ──────────────────────────────────────────────
+   The receipt actions come from the shared `.ReceiptActions` component
+   (assets/css/receipt.scss) so the success page, the billing history and the
+   order detail offer the identical pair of actions. This rule only gives the
+   block enough room to breathe next to the section heading. */
+
+.SuccessReceipt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  background: var(--surface-muted);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  @media (max-width: 600px) {
+    padding: var(--space-4);
+  }
+}
+

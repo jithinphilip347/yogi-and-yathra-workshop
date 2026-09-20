@@ -232,7 +232,11 @@ const LiveYoga = ({ sessionsData = [] }) => {
                             <Link href={`/live-stream/${session.id}/${session.slug || 'live-session'}`}>
                               <button>View Details</button>
                             </Link>
-                            <button>Download Invoice</button>
+                            {/* A "Download Invoice" entry used to sit here with no handler and no
+                                data behind it. The learning payload carries no order or invoice
+                                reference, so there is nothing to gate a per-session receipt on —
+                                see WORKSHOP_INVOICE_DYNAMIC_UI_AUDIT_REPORT.md. Receipts live in
+                                the profile's Billing & Invoices tab. */}
                             <button className="danger">Cancel Booking</button>
                           </>
                         )}

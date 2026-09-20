@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>DS-07D contact sheet</title>
+    <style>
+      html, body { margin: 0; background: #1c1c1c; color: #ddd; font: 11px ui-monospace, monospace; }
+      .row { display: flex; gap: 8px; padding: 8px; align-items: flex-start; }
+      figure { margin: 0; }
+      figcaption { background: #111; color: #9f9; padding: 3px 5px; }
+      img { display: block; background: #fff; border: 1px solid #444; }
+      .d { width: 620px; }
+      .m { width: 300px; }
+    </style>
+  </head>
+  <body>
+    <div id="out"></div>
+    <script>
+      const groups = [
+        ['detail-header.png', 'd'],
+        ['detail-items-address.png', 'd'],
+        ['detail-cancelled.png', 'd'],
+        ['list-cards.png', 'd'],
+        ['detail-mobile-390.png', 'm'],
+        ['detail-mobile-320.png', 'm'],
+        ['list-mobile-390.png', 'm'],
+      ];
+      const out = document.getElementById('out');
+      for (const [file, cls] of groups) {
+        const f = document.createElement('figure');
+        const cap = document.createElement('figcaption');
+        cap.textContent = 'focus/' + file;
+        const img = document.createElement('img');
+        img.className = cls;
+        img.src = '/ds07d/focus/' + file;
+        f.appendChild(img);
+        f.appendChild(cap);
+        out.appendChild(f);
+      }
+      document.title = 'ready';
+    </script>
+  </body>
+</html>

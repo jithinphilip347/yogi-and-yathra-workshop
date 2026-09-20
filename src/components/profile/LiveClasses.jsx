@@ -119,7 +119,9 @@ const LiveClasses = ({ classesData = [] }) => {
                     <div className="DropdownMenu">
                       <button onClick={() => handleViewDetails(course)}>View Details</button>
                       <button>View Schedule</button>
-                      <button>Download Invoice</button>
+                      {/* The non-functional "Download Invoice" button that used to sit here was
+                          removed: this payload has no order or invoice reference to gate it on.
+                          See WORKSHOP_INVOICE_DYNAMIC_UI_AUDIT_REPORT.md. */}
                       <button>Need Help</button>
                       {course.status === "active" && (
                         <button className="CancelBtn">Cancel Enrollment</button>

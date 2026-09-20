@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>DS-07D screenshot review</title>
+    <style>
+      html, body { margin: 0; padding: 0; background: #2b2b2b; }
+      #meta {
+        position: fixed; top: 0; left: 0; right: 0;
+        font: 11px/1.5 ui-monospace, monospace;
+        background: #111; color: #9f9; padding: 3px 6px; z-index: 9;
+      }
+      #pan { overflow: auto; }
+      img { display: block; background: #fff; }
+    </style>
+  </head>
+  <body>
+    <div id="meta">loading…</div>
+    <div id="pan"><img id="shot" alt="" /></div>
+    <script>
+      const p = new URLSearchParams(location.search);
+      const file = p.get('f') || 'list-1440.png';
+      const scale = Number(p.get('s') || 1);
+      const x = Number(p.get('x') || 0);
+      const y = Number(p.get('y') || 0);
+      const img = document.getElementById('shot');
+      const pan = document.getElementById('pan');
+      const meta = document.getElementById('meta');
+
+      img.onload = () => {
+        img.style.width = (img.naturalWidth * scale) + 'px';
+        pan.style.position = 'fixed';
+        pan.style.top = '18px';
+        pan.style.left = '0';
+        pan.style.right = '0';
+        pan.style.bottom = '0';
+        pan.scrollLeft = x;
+        pan.scrollTop = y;
+        meta.textContent =
+          file + ' | natural ' + img.naturalWidth + 'x' + img.naturalHeight +
+          ' | scale ' + scale + ' | pan ' + x + ',' + y;
+      };
+      // The v= param busts the *image* cache too: these PNGs are rewritten in
+      // place by the capture scripts and Chrome would otherwise keep serving
+      // the previous bytes for the same URL.
+      const bust = p.get('v') || Date.now();
+      img.src = '/ds07d/' + file + '?v=' + bust;
+    </script>
+  </body>
+</html>

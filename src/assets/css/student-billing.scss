@@ -1,0 +1,349 @@
+/* ============================================================================
+   STUDENT BILLING & ORDER HISTORY  —  WORKSHOP-DS-07C
+   ============================================================================
+
+   This tab renders inside `.ContentCard` (style.scss) — a plain white, 15px-radius
+   surface with NO padding of its own — so the section supplies its own rhythm.
+
+   Before this file the component had no stylesheet at all. It carried a dark
+   palette in inline styles (`color: #fff` heading, `#ddd` body, white-on-white
+   `rgba(255,255,255,0.03)` empty state) and Tailwind utility classes
+   (`p-6 text-center text-gray-400`) for the loading state. This project ships no
+   Tailwind, so both halves were broken: the heading was invisible white-on-white
+   and the loading text was unstyled. Everything below is a DS-02 token.
+
+   Tokens used, and nothing else:
+     surfaces  --surface / --surface-muted / --surface-subtle
+     borders   --color-border / --color-border-muted / --color-border-accent
+     radius    --radius-sm / --radius-md / --radius-lg / --radius-pill
+     text      --color-heading / --color-text / --color-text-muted / --color-text-subtle
+     status    --color-success(-surface/-border) / --color-warning(…) / --color-error(…)
+     space     --space-*        type  --text-h3 / --text-body / --text-body-sm /
+                                    --text-caption / --text-micro
+     focus     --focus-ring-color / --focus-ring-width / --focus-ring-offset
+   ============================================================================ */
+
+.StudentBilling {
+  width: 100%;
+  padding: var(--space-7);
+
+  @media (max-width: 1024px) {
+    padding: var(--space-6);
+  }
+
+  @media (max-width: 480px) {
+    padding: var(--space-5) var(--space-4);
+  }
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+
+.StudentBillingHead {
+  margin-bottom: var(--space-7);
+}
+
+.StudentBillingTitle {
+  font-size: var(--text-h3);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-heading);
+  margin: 0 0 var(--space-2);
+
+  @media (max-width: 768px) {
+    font-size: var(--text-card-title-sm);
+  }
+}
+
+.StudentBillingSub {
+  font-size: var(--text-body-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+/* ── Alerts (load failure, receipt failure) ─────────────────────────────── */
+
+.StudentBillingAlert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-6);
+  background: var(--color-error-surface);
+  border: var(--border-width) solid var(--color-error-border);
+  border-radius: var(--radius-md);
+  color: var(--color-error);
+  font-size: var(--text-body-sm);
+}
+
+.StudentBillingRetry {
+  flex: 0 0 auto;
+  padding: var(--space-2) var(--space-4);
+  background: var(--surface);
+  border: var(--border-width) solid var(--color-error-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-error);
+  font-family: inherit;
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: var(--color-error-surface);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* ── Empty / signed-out state ───────────────────────────────────────────── */
+
+.StudentBillingEmpty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-9) var(--space-6);
+  text-align: center;
+  background: var(--surface-muted);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  svg {
+    font-size: var(--text-h2);
+    color: var(--color-text-subtle);
+  }
+
+  p {
+    margin: 0;
+    font-size: var(--text-body-sm);
+    color: var(--color-text-muted);
+  }
+}
+
+/* ── Loading skeleton ───────────────────────────────────────────────────── */
+
+.StudentBillingSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.SkeletonRow {
+  display: block;
+  height: 56px;
+  border-radius: var(--radius-md);
+  background: var(--surface-subtle);
+  animation: studentBillingPulse 1.6s ease-in-out infinite;
+}
+
+@keyframes studentBillingPulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .SkeletonRow {
+    animation: none;
+  }
+}
+
+/* ── Table ──────────────────────────────────────────────────────────────── */
+
+.StudentBillingTableWrap {
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+
+  @media (max-width: 768px) {
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+  }
+}
+
+.StudentBillingTable {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead th {
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface-subtle);
+    border-bottom: var(--border-width) solid var(--color-border);
+    text-align: left;
+    font-size: var(--text-micro);
+    font-weight: var(--weight-semibold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--color-text-subtle);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: var(--space-5);
+    border-bottom: var(--border-width) solid var(--color-border-muted);
+    font-size: var(--text-body-sm);
+    color: var(--color-text);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  tbody tr:hover td {
+    background: var(--surface-muted);
+  }
+}
+
+.CellOrder {
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  white-space: nowrap;
+}
+
+.CellItem {
+  min-width: 0;
+}
+
+.CellAmount {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.CellStatus {
+  white-space: nowrap;
+}
+
+.CellInvoice {
+  text-align: right;
+}
+
+/* ── Status chip ────────────────────────────────────────────────────────── */
+
+.StatusChip {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--surface-subtle);
+  color: var(--color-text-muted);
+  font-size: var(--text-micro);
+  font-weight: var(--weight-semibold);
+  text-transform: capitalize;
+
+  &.is-success {
+    background: var(--color-success-surface);
+    border-color: var(--color-success-border);
+    color: var(--color-success);
+  }
+
+  &.is-warning {
+    background: var(--color-warning-surface);
+    border-color: var(--color-warning-border);
+    color: var(--color-warning);
+  }
+
+  &.is-error {
+    background: var(--color-error-surface);
+    border-color: var(--color-error-border);
+    color: var(--color-error);
+  }
+}
+
+/* ── Receipt cell ───────────────────────────────────────────────────────── */
+
+/* The receipt cell hosts the shared `.ReceiptActions` component
+   (assets/css/receipt.scss). The cell only positions it; the buttons, receipt
+   number, issued date and non-actionable notes all belong to that component, so
+   the same markup renders identically here, on Order Detail and on Checkout
+   Success. Nothing receipt-specific is re-declared in this file. */
+
+.InvoiceCell {
+  /* The column is the widest cell on the row (two actions + receipt identity),
+     so it is allowed to size to its content without squeezing the order number. */
+  min-width: 168px;
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    min-width: 0;
+    white-space: normal;
+  }
+}
+
+/* ── Screen-reader-only (caption) ───────────────────────────────────────── */
+
+.StudentBilling .VisuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Mobile: the table becomes stacked rows, so nothing can overflow at 320px ── */
+
+@media (max-width: 768px) {
+  .StudentBillingTable {
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      display: block;
+      padding: var(--space-5);
+      margin-bottom: var(--space-4);
+      background: var(--surface);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-lg);
+    }
+
+    tbody tr:last-child {
+      margin-bottom: 0;
+    }
+
+    tbody tr:hover td {
+      background: transparent;
+    }
+
+    tbody td {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--space-5);
+      padding: var(--space-2) 0;
+      border-bottom: 0;
+    }
+
+    tbody td::before {
+      content: attr(data-label);
+      flex: 0 0 auto;
+      font-size: var(--text-micro);
+      font-weight: var(--weight-semibold);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--color-text-subtle);
+    }
+  }
+
+  .CellInvoice {
+    text-align: left;
+  }
+
+  .CellInvoice::before {
+    align-self: center;
+  }
+}

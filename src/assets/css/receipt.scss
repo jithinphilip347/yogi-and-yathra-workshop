@@ -1,0 +1,165 @@
+/* ============================================================================
+   RECEIPT ACTIONS  —  WORKSHOP-DS-07E
+   ============================================================================
+
+   The shared receipt presentation used by Billing & Order History, Order Detail
+   and Checkout Success. One rule for when a customer may open or save a receipt,
+   so the three surfaces cannot drift apart.
+
+   Every value below is a DS-02 token — no hex, no rgba, no receipt-specific
+   radius/border/shadow. Colour is used only for the two semantically meaningful
+   cases: a voided document (error) and a failed action (error). An available
+   receipt is an ordinary DS-05 control, not a special visual language.
+   ============================================================================ */
+
+.ReceiptActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+
+  /* Table cells right-align their content; pages left-align. */
+  &.is-row {
+    align-items: flex-end;
+  }
+
+  &.is-stack {
+    align-items: flex-start;
+  }
+}
+
+.ReceiptActionsButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* ── Actions (DS-05 hierarchy: one primary, one secondary) ───────────────── */
+
+.ReceiptBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 34px;
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid transparent;
+  font-family: inherit;
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  &:disabled {
+    cursor: progress;
+    opacity: var(--disabled-opacity);
+  }
+
+  &.is-primary {
+    background: var(--surface);
+    border-color: var(--color-border-accent);
+    color: var(--color-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--surface-accent-subtle);
+    }
+  }
+
+  &.is-secondary {
+    background: transparent;
+    border-color: var(--color-border-strong);
+    color: var(--color-text-muted);
+
+    &:hover:not(:disabled) {
+      background: var(--surface-muted);
+      color: var(--color-text);
+    }
+  }
+}
+
+/* ── Receipt identity (number + issue date) ──────────────────────────────── */
+
+.ReceiptMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  font-size: var(--text-micro);
+  color: var(--color-text-subtle);
+}
+
+.ReceiptNumber {
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+.ReceiptDate {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Non-actionable states ───────────────────────────────────────────────── */
+
+.ReceiptNone {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--color-text-subtle);
+
+  &.is-error {
+    color: var(--color-error);
+  }
+}
+
+/* A failed open/save is recoverable information, not a page-level error. */
+.ReceiptError {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: var(--color-error);
+  cursor: pointer;
+}
+
+/* ── Motion ─────────────────────────────────────────────────────────────── */
+
+.ReceiptSpin {
+  animation: receiptSpin 0.9s linear infinite;
+}
+
+@keyframes receiptSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ReceiptSpin {
+    animation: none;
+  }
+}
+
+/* ── Mobile: actions go full width so the 34px target is easy to hit ─────── */
+
+@media (max-width: 640px) {
+  .ReceiptActions.is-row {
+    align-items: flex-start;
+  }
+
+  .ReceiptActionsButtons {
+    width: 100%;
+  }
+
+  .ReceiptBtn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}

@@ -1,119 +1,203 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { FaReceipt, FaDownload, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
-import { API_BASE_URL } from '@/utils/constants';
-import apiClient from '@/services/apiClient';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { FaReceipt, FaLock } from "react-icons/fa";
+import ReceiptActions from "@/components/commerce/ReceiptActions";
+import { billingApi } from "@/features/commerce/services/billingApi";
+import {
+  formatInvoiceAmount,
+  invoiceStateForOrder,
+  isOrderPaid,
+  orderItemLabel,
+  orderReference,
+  orderStatusMeta,
+} from "@/features/commerce/utils/invoiceAvailability";
+import "@/assets/css/student-billing.scss";
 
+/**
+ * Billing & Order History.
+ *
+ * The receipt column is driven entirely by `invoiceStateForOrder` — one decision
+ * per order, from the customer's own invoice rows. An order on its own is never
+ * sufficient grounds to show a receipt action, and no receipt state is shared
+ * between rows.
+ *
+ * WORKSHOP-DS-07E: the cell now renders the shared `ReceiptActions` component
+ * (View + Download) instead of a single button, so Billing, Order Detail and
+ * Checkout Success offer the same two actions through the same code. The
+ * document fetch moved into that component, which means this page no longer owns
+ * a second implementation of it.
+ *
+ * The previous implementation hardcoded a dark palette onto the profile's light
+ * content card (`color: #fff` for the heading, `#ddd` for the body) and used
+ * Tailwind utility classes that this project does not ship — so the tab rendered
+ * as near-invisible text. Styling comes from `student-billing.scss` and the
+ * DS-02 tokens.
+ */
 export default function StudentBilling() {
-  const { token, user } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
+
   const [orders, setOrders] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchBillingHistory = async () => {
-      try {
-        setLoading(true);
+  const signedIn = Boolean(user?.id || isAuthenticated);
 
-        // Fetch User Orders & Invoices in parallel using apiClient
-        const [ordersRes, invoicesRes] = await Promise.all([
-          apiClient.get(`billing/orders?user_id=${user?.id}`),
-          apiClient.get(`billing/invoices?user_id=${user?.id}`),
-        ]);
-
-        setOrders(ordersRes.data?.data?.data || ordersRes.data?.data || []);
-        setInvoices(invoicesRes.data?.data?.data || invoicesRes.data?.data || []);
-      } catch (err) {
-        console.error('Failed to load billing history:', err);
-        setError('Could not retrieve billing and order history.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (user?.id) {
-      fetchBillingHistory();
+  const loadBillingHistory = useCallback(async () => {
+    if (!signedIn) {
+      setLoading(false);
+      return;
     }
-  }, [user]);
 
-  const handleDownloadInvoice = (invoiceId, invoiceNumber) => {
-    const cleanBaseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
-    window.open(`${cleanBaseUrl}/billing/invoices/${invoiceId}/download`, '_blank');
-  };
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Both are authenticated workshop endpoints; neither is public.
+      const [orderList, invoiceList] = await Promise.all([
+        billingApi.fetchOrders(),
+        billingApi.fetchInvoices(),
+      ]);
+
+      setOrders(orderList);
+      setInvoices(invoiceList);
+    } catch (err) {
+      // billingApi already normalised this into customer-facing copy (see
+      // `describeRequestError`); the raw error is never rendered.
+      setError(err?.message || 'Could not retrieve billing and order history. Please try again.');
+      if (process.env.NODE_ENV !== 'production') {
+        // Log the useful fields, not the whole AxiosError — the full object dumps
+        // request config (including the bearer token) into the console.
+        const cause = err?.cause || err;
+        console.error(
+          '[StudentBilling] billing history failed:',
+          cause?.message,
+          '| status:',
+          cause?.response?.status ?? 'none',
+          '| code:',
+          cause?.code ?? 'none',
+          '| url:',
+          cause?.config?.url ?? 'unknown'
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [signedIn]);
+
+  useEffect(() => {
+    loadBillingHistory();
+  }, [loadBillingHistory]);
+
+  /**
+   * One availability decision per order, recomputed only when data changes.
+   * `paid` only picks the wording of a non-actionable note.
+   */
+  const rows = useMemo(
+    () =>
+      (orders || []).map((order) => ({
+        order,
+        receipt: invoiceStateForOrder(invoices, order.id, { paid: isOrderPaid(order) }),
+      })),
+    [orders, invoices]
+  );
 
   if (loading) {
-    return <div className="p-6 text-center text-gray-400">Loading your purchase & billing history...</div>;
+    return (
+      <section className="StudentBilling" aria-busy="true">
+        <header className="StudentBillingHead">
+          <h2 className="StudentBillingTitle">Billing &amp; Order History</h2>
+          <p className="StudentBillingSub">Loading your purchases and receipts…</p>
+        </header>
+        <div className="StudentBillingSkeleton" aria-hidden="true">
+          {[0, 1, 2].map((i) => (
+            <span className="SkeletonRow" key={i} />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (!signedIn) {
+    return (
+      <section className="StudentBilling">
+        <header className="StudentBillingHead">
+          <h2 className="StudentBillingTitle">Billing &amp; Order History</h2>
+        </header>
+        <div className="StudentBillingEmpty">
+          <FaLock aria-hidden="true" />
+          <p>Please sign in to view your billing history and receipts.</p>
+        </div>
+      </section>
+    );
   }
 
   return (
-    <div className="StudentBillingTab">
-      <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '20px', color: '#fff' }}>
-        Billing & Order History
-      </h2>
+    <section className="StudentBilling">
+      <header className="StudentBillingHead">
+        <h2 className="StudentBillingTitle">Billing &amp; Order History</h2>
+        <p className="StudentBillingSub">
+          Your Workshop purchases and the receipts issued against them.
+        </p>
+      </header>
 
-      {error && <div className="ErrorMessage" style={{ color: '#ef4444', marginBottom: '15px' }}>{error}</div>}
+      {error && (
+        <div className="StudentBillingAlert" role="alert">
+          <span>{error}</span>
+          <button type="button" className="StudentBillingRetry" onClick={loadBillingHistory}>
+            Try again
+          </button>
+        </div>
+      )}
 
-      {orders.length === 0 ? (
-        <div className="EmptyState" style={{ padding: '30px', textAlign: 'center', background: 'rgba(255,255,255,0.03)', borderRadius: '8px' }}>
-          <p style={{ color: '#aaa' }}>No past purchases or orders found.</p>
+      {/* A failed load must not also claim there is nothing to show: we do not
+          know that. The alert above is the whole message until a load succeeds. */}
+      {error ? null : rows.length === 0 ? (
+        <div className="StudentBillingEmpty">
+          <FaReceipt aria-hidden="true" />
+          <p>No past purchases or orders found.</p>
         </div>
       ) : (
-        <div className="OrdersTableWrapper" style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', color: '#ddd', fontSize: '14px' }}>
+        <div className="StudentBillingTableWrap">
+          <table className="StudentBillingTable">
+            <caption className="VisuallyHidden">Billing and order history</caption>
             <thead>
-              <tr style={{ borderBottom: '2px solid rgba(255,255,255,0.1)', textTransform: 'uppercase', fontSize: '12px', color: '#888' }}>
-                <th style={{ padding: '12px', textAlign: 'left' }}>Order #</th>
-                <th style={{ padding: '12px', textAlign: 'left' }}>Product</th>
-                <th style={{ padding: '12px', textAlign: 'left' }}>Amount</th>
-                <th style={{ padding: '12px', textAlign: 'left' }}>Status</th>
-                <th style={{ padding: '12px', textAlign: 'right' }}>Invoice / Receipt</th>
+              <tr>
+                <th scope="col">Order</th>
+                <th scope="col">Item</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Status</th>
+                <th scope="col" className="CellInvoice">
+                  Receipt
+                </th>
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => {
-                const matchingInvoice = invoices.find((inv) => inv.order_id === order.id);
+              {rows.map(({ order, receipt }) => {
+                const status = orderStatusMeta(order.status);
+
                 return (
-                  <tr key={order.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                    <td style={{ padding: '12px', fontWeight: 'bold' }}>#{order.order_number || order.id}</td>
-                    <td style={{ padding: '12px' }}>{order.orderable?.title || order.metadata?.product_type || 'Course Purchase'}</td>
-                    <td style={{ padding: '12px' }}>₹{Number(order.total_amount || 0).toLocaleString()}</td>
-                    <td style={{ padding: '12px' }}>
-                      <span style={{
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        fontSize: '11px',
-                        fontWeight: 'bold',
-                        background: order.status === 'completed' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                        color: order.status === 'completed' ? '#10B981' : '#EF4444',
-                      }}>
-                        {order.status?.toUpperCase()}
-                      </span>
+                  <tr key={order.id}>
+                    <td data-label="Order" className="CellOrder">
+                      {orderReference(order)}
                     </td>
-                    <td style={{ padding: '12px', textAlign: 'right' }}>
-                      {matchingInvoice ? (
-                        <button
-                          onClick={() => handleDownloadInvoice(matchingInvoice.id, matchingInvoice.invoice_number)}
-                          style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '6px 12px',
-                            background: '#4F46E5',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontSize: '12px',
-                          }}
-                        >
-                          <FaDownload /> Receipt PDF
-                        </button>
-                      ) : (
-                        <span style={{ color: '#666', fontSize: '12px' }}>N/A</span>
-                      )}
+                    <td data-label="Item" className="CellItem">
+                      {orderItemLabel(order)}
+                    </td>
+                    <td data-label="Amount" className="CellAmount">
+                      {formatInvoiceAmount(order.total_amount, order.currency)}
+                    </td>
+                    <td data-label="Status" className="CellStatus">
+                      <span className={`StatusChip is-${status.tone}`}>{status.label}</span>
+                    </td>
+                    <td data-label="Receipt" className="CellInvoice">
+                      <ReceiptActions
+                        receipt={receipt}
+                        layout="row"
+                        label={orderReference(order)}
+                      />
                     </td>
                   </tr>
                 );
@@ -122,6 +206,6 @@ export default function StudentBilling() {
           </table>
         </div>
       )}
-    </div>
+    </section>
   );
 }

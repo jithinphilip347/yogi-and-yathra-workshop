@@ -222,6 +222,44 @@ export function buildOrderTimeline(order) {
 }
 
 /**
+ * Terminal outcomes that are `done` but are not successes.
+ *
+ * A cancelled or failed physical order did genuinely reach that step, so
+ * `buildOrderTimeline` correctly marks it `done` — but rendering it with the
+ * success check would read as "this order completed", which is the opposite of
+ * what happened. These keys keep `done` and only change the tone.
+ */
+const NEGATIVE_TERMINAL_KEYS = new Set(['cancelled', 'canceled', 'failed', 'refunded']);
+
+/**
+ * Annotate timeline steps for presentation (WORKSHOP-DS-07D).
+ *
+ * `buildOrderTimeline` already decides which steps the authoritative backend
+ * established (`done`). This adds only the *visual* state on top of that
+ * decision, and never changes it:
+ *
+ *   done      the backend confirmed the step happened
+ *   current   the first step that has NOT happened — where the order is now
+ *   upcoming  steps after it
+ *
+ * `tone` is `"error"` for a done-but-negative terminal step, so the timeline can
+ * drop the success check without contradicting the backend. If every step is
+ * done there is no current step (the order is finished), and an empty timeline
+ * stays empty. No state is ever inferred from a date or a label.
+ */
+export function annotateTimelineSteps(steps) {
+  const list = Array.isArray(steps) ? steps : [];
+  const currentIndex = list.findIndex((step) => !step?.done);
+
+  return list.map((step, index) => {
+    const state = step?.done ? 'done' : index === currentIndex ? 'current' : 'upcoming';
+    const negative = state === 'done' && NEGATIVE_TERMINAL_KEYS.has(String(step?.key || '').toLowerCase());
+
+    return { ...step, state, tone: negative ? 'error' : null };
+  });
+}
+
+/**
  * Normalize one order from the unified history payload into a view model.
  */
 export function normalizeOrder(order) {
@@ -268,9 +306,31 @@ export function normalizeOrder(order) {
         }
       : null,
     ecommerceState: order.ecommerce_state || null,
+    // The detail payload already carries this order's receipt documents
+    // (`UnifiedOrderAggregator::findForUser`); the list payload does not. Passed
+    // through so the receipt rule has real data instead of a guess.
+    invoices: Array.isArray(order.invoices) ? order.invoices : [],
     fulfillment,
     timeline: buildOrderTimeline(order),
+    timelineSteps: annotateTimelineSteps(buildOrderTimeline(order)),
+    isPaid: isPaidOrder(order),
   };
+}
+
+/**
+ * Whether the authoritative payload says this order is settled.
+ *
+ * Used only to word a non-actionable receipt note — never to decide that a
+ * receipt exists. `UnifiedOrderAggregator` reports `paid_amount`/`total` and the
+ * E-commerce payment status; either is sufficient evidence of payment.
+ */
+function isPaidOrder(order) {
+  if (!order) return false;
+  if (String(order.status ?? '').toLowerCase() === 'completed') return true;
+  if (String(order.ecommerce?.payment_status ?? '').toLowerCase() === 'paid') return true;
+  const total = Number(order.total ?? 0);
+  const paid = Number(order.paid_amount ?? 0);
+  return total > 0 && paid >= total;
 }
 
 /**
@@ -325,18 +385,27 @@ export function normalizeStudentSummary(response) {
   };
 }
 
-/** Format an amount for display using the order's own currency. */
+/**
+ * Format an amount for display using the order's own currency.
+ *
+ * A whole amount drops the decimals (`₹2,499`, not `₹2,499.00`) while a genuine
+ * fractional price still shows paise (`₹249.50`). This matches how the Cart and
+ * Checkout already render money, and stops every order card carrying a visually
+ * noisy `.00`.
+ */
 export function formatAmount(amount, currency = 'INR') {
   const value = Number(amount || 0);
+  const whole = Number.isInteger(value);
 
   try {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: currency || 'INR',
-      maximumFractionDigits: 2,
+      minimumFractionDigits: whole ? 0 : 2,
+      maximumFractionDigits: whole ? 0 : 2,
     }).format(value);
   } catch {
-    return `${currency || 'INR'} ${value.toFixed(2)}`;
+    return `${currency || 'INR'} ${whole ? value : value.toFixed(2)}`;
   }
 }
 
