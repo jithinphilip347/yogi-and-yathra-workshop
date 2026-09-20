@@ -3,6 +3,7 @@
  */
 
 import { createSlice } from '@reduxjs/toolkit';
+import { DEFAULT_COURIER_PARTNER } from '../utils/courierPartners';
 
 const initialState = {
   sessionId: null, // Unified Checkout Session ID (correlates Workshop & E-commerce orders)
@@ -29,6 +30,10 @@ const initialState = {
     country: 'India',
   },
   sameAsBilling: true,
+  // Courier partner for the physical portion of this checkout. The fee it implies
+  // is never stored — it is derived from the catalogue subtotal, and E-commerce
+  // remains authoritative for what is actually charged.
+  courierPartner: DEFAULT_COURIER_PARTNER,
   paymentMethod: 'razorpay',
   activeOrder: null,
   delegatedPhysicalOrder: null,
@@ -64,6 +69,7 @@ const checkoutSlice = createSlice({
       state.activeOrder = null;
       state.delegatedPhysicalOrder = null;
       state.ecommerceCustomer = { id: null, email: '', name: '', status: null };
+      state.courierPartner = DEFAULT_COURIER_PARTNER;
       state.isDelegating = false;
       state.delegationError = null;
       state.isProcessing = false;
@@ -92,6 +98,9 @@ const checkoutSlice = createSlice({
       if (action.payload) {
         state.shippingAddress = { ...state.billingAddress };
       }
+    },
+    setCourierPartner: (state, action) => {
+      state.courierPartner = action.payload;
     },
     setEcommerceCustomer: (state, action) => {
       state.ecommerceCustomer = { ...state.ecommerceCustomer, ...action.payload };
@@ -141,6 +150,7 @@ const checkoutSlice = createSlice({
       state.activeOrder = null;
       state.delegatedPhysicalOrder = null;
       state.ecommerceCustomer = { id: null, email: '', name: '', status: null };
+      state.courierPartner = DEFAULT_COURIER_PARTNER;
       state.isDelegating = false;
       state.delegationError = null;
       state.isProcessing = false;
@@ -155,6 +165,7 @@ export const {
   setBillingAddress,
   setShippingAddress,
   setSameAsBilling,
+  setCourierPartner,
   setEcommerceCustomer,
   setPaymentMethod,
   setActiveStep,

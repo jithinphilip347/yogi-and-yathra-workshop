@@ -36,6 +36,7 @@ import {
   selectHasCartBlockingErrors,
 } from '../selectors/commerceSelectors';
 import { createCheckout } from '../slices/checkoutSlice';
+import { resetPaymentState } from '../slices/paymentSlice';
 import { commerceApi } from '../services/commerceApi';
 import { buildCartTarget, getCartKey, normalizeItemType } from '../utils/cartClassification';
 
@@ -63,6 +64,20 @@ export function useCart() {
     if (normalizedProduct && normalizedProduct.productable_id) {
       dispatch(addToCart(normalizedProduct));
     }
+  };
+
+  /**
+   * Begin a checkout session.
+   *
+   * The payment status is a transient flag that store.js persists along with the
+   * rest of the root state, so a previous attempt's `completed` (or a crashed
+   * attempt's `initiating`) otherwise rehydrates straight into a brand-new
+   * checkout and leaves the Pay button disabled before the customer has done
+   * anything. Every new session therefore starts from a clean payment state.
+   */
+  const startCheckoutSession = (payload) => {
+    dispatch(resetPaymentState());
+    dispatch(createCheckout(payload));
   };
 
   /**
@@ -106,10 +121,10 @@ export function useCart() {
           const validatedItem = validationRes.items?.[0]
             ? { ...normalizedProduct, ...validationRes.items[0] }
             : normalizedProduct;
-          dispatch(createCheckout({
+          startCheckoutSession({
             items: [validatedItem],
             sessionId: validationRes.checkout_session_id,
-          }));
+          });
           if (router && typeof router.push === 'function') {
             router.push('/checkout');
           }
@@ -123,7 +138,7 @@ export function useCart() {
         }
       } catch (e) {
         // Fallback to client snapshot checkout if offline
-        dispatch(createCheckout([normalizedProduct]));
+        startCheckoutSession([normalizedProduct]);
         if (router && typeof router.push === 'function') {
           router.push('/checkout');
         }
@@ -146,7 +161,7 @@ export function useCart() {
     }
 
     const sessionId = res.data?.checkout_session_id;
-    dispatch(createCheckout({ items, sessionId }));
+    startCheckoutSession({ items, sessionId });
     if (router && typeof router.push === 'function') {
       router.push('/checkout');
     }

@@ -12,6 +12,7 @@ import {
   setBillingAddress,
   setShippingAddress,
   setSameAsBilling,
+  setCourierPartner as setCourierPartnerAction,
   setPaymentMethod,
   setActiveStep,
   createOrderStart,
@@ -30,6 +31,7 @@ import {
   selectCheckoutDiscounts,
 } from '../selectors/commerceSelectors';
 import { classifyCartItems, normalizeItemType } from '../utils/cartClassification';
+import { DEFAULT_COURIER_PARTNER, computeCourierFee } from '../utils/courierPartners';
 import { commerceApi } from '../services/commerceApi';
 
 export function useCheckout() {
@@ -47,6 +49,20 @@ export function useCheckout() {
 
   const sessionId = checkoutState.sessionId || null;
   const classifiedItems = classifyCartItems(items);
+
+  // ─── Courier / shipping fee ────────────────────────────────────────────
+  // The threshold is applied to the physical items only: a learning product is
+  // not shipped, so its price must never make a small shipment qualify as free.
+  // E-commerce derives and applies the charged fee itself from the partner sent
+  // with the delegated order; this is the figure the customer is shown first.
+  const courierPartner = checkoutState.courierPartner || DEFAULT_COURIER_PARTNER;
+  const physicalSubtotal = classifiedItems.ecommerceItems.reduce(
+    (total, item) => total + (Number(item.price) || 0) * (Number(item.quantity) || 1),
+    0
+  );
+  const courierFee = classifiedItems.hasPhysicalItems
+    ? computeCourierFee(physicalSubtotal, courierPartner)
+    : 0;
 
   const itemCount = items.reduce((total, item) => total + (item.quantity || 1), 0);
   const subtotal = items.reduce((total, item) => total + (Number(item.price) || 0) * (item.quantity || 1), 0);
@@ -70,6 +86,7 @@ export function useCheckout() {
   const updateBilling = (addressData) => dispatch(setBillingAddress(addressData));
   const updateShipping = (addressData) => dispatch(setShippingAddress(addressData));
   const toggleSameAsBilling = (val) => dispatch(setSameAsBilling(val));
+  const changeCourierPartner = (partner) => dispatch(setCourierPartnerAction(partner));
   const changeStep = (step) => dispatch(setActiveStep(step));
   const changePaymentMethod = (method) => dispatch(setPaymentMethod(method));
 
@@ -123,7 +140,11 @@ export function useCheckout() {
           unit_price: Number(item.price || 0),
           domain: item.domain,
         })),
-        shipping_fee: 0,
+        // The courier selection travels as a partner, never as a fee: E-commerce
+        // derives the shipping charge from its own catalogue prices and rejects an
+        // unrecognised partner. Sending a fee here would let the client — or us —
+        // decide what shipping costs.
+        delivery_partner: courierPartner,
       };
 
       const response = await commerceApi.delegatePhysicalOrder(payload);
@@ -269,6 +290,9 @@ export function useCheckout() {
     subtotal,
     originalTotal,
     discountTotal,
+    courierPartner,
+    courierFee,
+    physicalSubtotal,
     appliedCoupon,
     activeStep,
     billingAddress,
@@ -286,6 +310,7 @@ export function useCheckout() {
     updateBilling,
     updateShipping,
     toggleSameAsBilling,
+    changeCourierPartner,
     changeStep,
     changePaymentMethod,
     delegateOrder,

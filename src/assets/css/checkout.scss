@@ -496,21 +496,120 @@
     }
   }
 
+  /* ─── Courier / Delivery Partner Selection ─── */
+  .CourierSelector {
+    margin-top: 28px;
+
+    .CourierHeading {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+
+      h3 {
+        margin: 0;
+        font-size: 17px;
+        font-weight: 600;
+        color: #1c1d1f;
+        letter-spacing: -0.2px;
+      }
+    }
+
+    .CourierOptions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+
+      @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .CourierOption {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+
+      &:hover {
+        border-color: #d7dee8;
+      }
+
+      &.selected {
+        border-color: var(--primaryColor, #874429);
+        background: #fdf7f4;
+        box-shadow: 0 0 0 3px rgba(135, 68, 41, 0.08);
+      }
+
+      .CourierRadio {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        accent-color: var(--primaryColor, #874429);
+        cursor: pointer;
+      }
+
+      .CourierOptionLabel {
+        flex: 1;
+        min-width: 0;
+        font-size: 14px;
+        font-weight: 600;
+        color: #1c1d1f;
+      }
+
+      .CourierOptionFee {
+        flex-shrink: 0;
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+
+        &.free {
+          color: #047857;
+        }
+      }
+    }
+
+    .CourierNote {
+      margin: 12px 0 0;
+      font-size: 12.5px;
+      line-height: 1.5;
+      color: #6b7280;
+    }
+  }
+
   /* ─── Right Column: Order Summary Card ─── */
+  /*
+   * The sticky element is the column itself, not the card inside it. The flex
+   * container is `align-items: flex-start`, so this item shrink-wraps to the
+   * card's height — a sticky card would then have no room to travel within its own
+   * containing block and `position: sticky` would do nothing. A sticky column is
+   * constrained by `.CheckoutContainer` instead, which spans the whole form.
+   * The offset clears the site's own sticky navbar (`#Nav`, 80px, sticky to 0).
+   */
   .CheckoutRight {
     width: 380px;
     flex-shrink: 0;
+    position: sticky;
+    top: 100px;
 
     @media (max-width: 1024px) {
       width: 340px;
     }
+    /* Single column: the summary sits below the form in normal document flow, so
+       it must not float over the fields the customer is still filling in. */
     @media (max-width: 768px) {
       width: 100%;
+      position: static;
+      top: auto;
     }
 
     .SummaryCard {
-      position: sticky;
-      top: 30px;
       background: #ffffff;
       padding: 28px;
       border-radius: 16px;

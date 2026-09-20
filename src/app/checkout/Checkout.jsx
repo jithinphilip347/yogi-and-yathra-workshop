@@ -1,10 +1,15 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { FaCheckCircle, FaTag, FaCreditCard, FaLock, FaArrowLeft, FaArrowRight, FaShieldAlt, FaBoxOpen, FaTruck } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useCheckout } from '@/features/commerce/hooks/useCheckout';
 import { usePayment } from '@/features/commerce/hooks/usePayment';
+import {
+  COURIER_PARTNERS,
+  computeCourierFee,
+  courierPartnerLabel,
+} from '@/features/commerce/utils/courierPartners';
 import '@/assets/css/checkout.scss';
 
 export default function Checkout() {
@@ -14,6 +19,9 @@ export default function Checkout() {
     subtotal,
     originalTotal,
     discountTotal,
+    courierPartner,
+    courierFee,
+    physicalSubtotal,
     appliedCoupon,
     activeStep,
     billingAddress,
@@ -34,6 +42,7 @@ export default function Checkout() {
     updateBilling,
     updateShipping,
     toggleSameAsBilling,
+    changeCourierPartner,
     changeStep,
     changePaymentMethod,
     delegateOrder,
@@ -42,7 +51,7 @@ export default function Checkout() {
     removeCoupon,
   } = useCheckout();
 
-  const { executeRazorpay, status: paymentStatus, paymentError } = usePayment();
+  const { executeRazorpay, status: paymentStatus, paymentError, resetPayment } = usePayment();
 
   const [couponCode, setCouponCode] = useState('');
   const [couponError, setCouponError] = useState('');
@@ -82,6 +91,22 @@ export default function Checkout() {
       router.replace('/cart');
     }
   }, [items, router, isPaymentInProgressOrComplete]);
+
+  // A payment attempt cannot survive a page load: `initiating` is set by the click
+  // and `verifying` by the Razorpay SDK callback, and both live in that page's JS.
+  // So arriving at a fresh mount in either state means the attempt is gone and the
+  // value is a persisted leftover — and leaving it would disable the Pay button
+  // with no explanation on screen. `completed` is deliberately left alone: it is
+  // what shows the post-payment confirmation before the redirect.
+  const clearedStaleAttempt = useRef(false);
+  useEffect(() => {
+    if (clearedStaleAttempt.current) return;
+    clearedStaleAttempt.current = true;
+
+    if (paymentStatus === 'initiating' || paymentStatus === 'verifying') {
+      resetPayment();
+    }
+  }, [paymentStatus, resetPayment]);
 
   const [prevUser, setPrevUser] = useState(user);
   if (prevUser !== user) {
@@ -179,7 +204,10 @@ export default function Checkout() {
 
   const orderNum = activeOrder?.order_number || activeOrder?.id || activeOrder?.order?.order_number || activeOrder?.order?.id;
   const delegatedId = delegatedPhysicalOrder?.id;
-  const finalPayable = Math.max(0, subtotal - (Number(appliedCoupon?.discount) || 0));
+  // The shipping fee is part of what the customer pays, so it is part of the
+  // payable total. E-commerce derives the same amount from the same partner when
+  // the delegated order is created.
+  const finalPayable = Math.max(0, subtotal - (Number(appliedCoupon?.discount) || 0) + courierFee);
 
   return (
     <div id="Checkout">
@@ -383,6 +411,47 @@ export default function Checkout() {
                       />
                     </div>
                   </div>
+
+                  {/* Courier partner. A delivery choice, so it sits in the delivery
+                      section — the same place the E-commerce checkout puts it —
+                      rather than in the order summary. Physical carts only. */}
+                  <div className="CourierSelector">
+                    <div className="CourierHeading">
+                      <FaTruck style={{ color: 'var(--primaryColor)' }} />
+                      <h3>Delivery Partner</h3>
+                    </div>
+
+                    <div className="CourierOptions">
+                      {COURIER_PARTNERS.map((partner) => {
+                        const fee = computeCourierFee(physicalSubtotal, partner.value);
+                        const isSelected = courierPartner === partner.value;
+
+                        return (
+                          <label
+                            key={partner.value}
+                            className={`CourierOption ${isSelected ? 'selected' : ''}`}
+                          >
+                            <input
+                              type="radio"
+                              name="courier-partner"
+                              value={partner.value}
+                              checked={isSelected}
+                              onChange={() => changeCourierPartner(partner.value)}
+                              className="CourierRadio"
+                            />
+                            <span className="CourierOptionLabel">{partner.label}</span>
+                            <span className={`CourierOptionFee ${fee === 0 ? 'free' : ''}`}>
+                              {fee === 0 ? 'Free shipping' : `+₹${fee}`}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+
+                    <p className="CourierNote">
+                      Free shipping on orders of ₹2,050 or more.
+                    </p>
+                  </div>
                 </div>
               )}
 
@@ -545,6 +614,12 @@ export default function Checkout() {
               <div className="SummaryRow DiscountRow">
                 <span>Coupon ({appliedCoupon.code}):</span>
                 <span>Applied</span>
+              </div>
+            )}
+            {hasPhysicalItems && (
+              <div className="SummaryRow">
+                <span>Courier Fee ({courierPartnerLabel(courierPartner)}):</span>
+                <span>{courierFee === 0 ? 'Free' : `₹${courierFee.toLocaleString()}`}</span>
               </div>
             )}
 
