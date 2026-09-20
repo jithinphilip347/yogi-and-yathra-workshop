@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { FaCheckCircle, FaTag, FaCreditCard, FaLock, FaArrowLeft, FaArrowRight, FaShieldAlt, FaBoxOpen, FaTruck } from 'react-icons/fa';
+import { FaCheckCircle, FaCheck, FaTag, FaCreditCard, FaLock, FaArrowLeft, FaArrowRight, FaShieldAlt, FaBoxOpen, FaTruck } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import { useCheckout } from '@/features/commerce/hooks/useCheckout';
 import { usePayment } from '@/features/commerce/hooks/usePayment';
@@ -10,6 +10,11 @@ import {
   computeCourierFee,
   courierPartnerLabel,
 } from '@/features/commerce/utils/courierPartners';
+import {
+  CHECKOUT_STEP_COUNT,
+  buildCheckoutSteps,
+  checkoutStepTitle,
+} from '@/features/commerce/utils/checkoutSteps';
 import '@/assets/css/checkout.scss';
 
 export default function Checkout() {
@@ -123,19 +128,27 @@ export default function Checkout() {
     }));
   }
 
+  // Both empty states used to render `.CheckoutEmptyState` as the ROOT element,
+  // while its only styling is nested under `#Checkout` — so the card rendered
+  // with no background, border, radius or padding at all. Wrapping them in
+  // `#Checkout` is what makes those rules actually apply.
   if (items.length === 0) {
     if (isPaymentInProgressOrComplete) {
       return (
-        <div className="CheckoutEmptyState">
-          <h2>Payment Verified!</h2>
-          <p>Redirecting to your order confirmation…</p>
+        <div id="Checkout">
+          <div className="CheckoutEmptyState">
+            <h2>Payment Verified!</h2>
+            <p>Redirecting to your order confirmation…</p>
+          </div>
         </div>
       );
     }
     return (
-      <div className="CheckoutEmptyState">
-        <h2>Redirecting to your cart…</h2>
-        <p>No checkout session found. Please review your items and try again.</p>
+      <div id="Checkout">
+        <div className="CheckoutEmptyState">
+          <h2>Redirecting to your cart…</h2>
+          <p>No checkout session found. Please review your items and try again.</p>
+        </div>
       </div>
     );
   }
@@ -209,23 +222,66 @@ export default function Checkout() {
   // the delegated order is created.
   const finalPayable = Math.max(0, subtotal - (Number(appliedCoupon?.discount) || 0) + courierFee);
 
+  // Which steps the flow permits entering is derived in `checkoutSteps.js` from
+  // the existing gate (step 3 needs the Razorpay order that
+  // `handleProceedToPayment` creates), so the stepper can only ever offer a route
+  // the flow itself would allow.
+  const steps = buildCheckoutSteps({ activeStep, activeOrder, hasPhysicalItems });
+  const stepAriaLabel = (s) =>
+    `Step ${s.step} of ${CHECKOUT_STEP_COUNT}: ${s.title}` +
+    (s.clickable ? ' — go to this step' : '') +
+    (s.state === 'locked' ? ' (locked)' : '');
+
   return (
     <div id="Checkout">
       {/* Stepper Navigation */}
       <div className="CheckoutStepper">
-        <div className={`StepItem ${activeStep >= 1 ? 'active' : ''} ${activeStep > 1 ? 'completed' : ''}`}>
-          <span className="StepNum">1</span>
-          <span className="StepTitle">Order Review</span>
+        {steps.map((s, i) => (
+          <React.Fragment key={s.step}>
+            {i > 0 && <div className={`StepLine ${s.step <= activeStep ? 'active' : ''}`} />}
+            <button
+              type="button"
+              className={`StepItem ${s.state}`}
+              onClick={s.clickable ? () => changeStep(s.step) : undefined}
+              disabled={!s.clickable}
+              aria-current={s.state === 'current' ? 'step' : undefined}
+              aria-label={stepAriaLabel(s)}
+            >
+              <span className="StepNum" aria-hidden="true">
+                {s.state === 'completed' ? <FaCheck /> : s.step}
+              </span>
+              <span className="StepTitle">{s.title}</span>
+            </button>
+          </React.Fragment>
+        ))}
+      </div>
+
+      {/* Compact stepper for narrow viewports. Deliberately not the row above
+          shrunk down: it names the current step, and its segments stay tappable
+          so stepping back never depends on the Back button. */}
+      <div className="StepperMobile">
+        <div className="StepperMobileHead">
+          <span className="StepperMobileCount">
+            Step {activeStep} of {CHECKOUT_STEP_COUNT}
+          </span>
+          <span className="StepperMobileTitle">{checkoutStepTitle(activeStep, hasPhysicalItems)}</span>
         </div>
-        <div className={`StepLine ${activeStep > 1 ? 'active' : ''}`} />
-        <div className={`StepItem ${activeStep >= 2 ? 'active' : ''} ${activeStep > 2 ? 'completed' : ''}`}>
-          <span className="StepNum">2</span>
-          <span className="StepTitle">{hasPhysicalItems ? 'Shipping & Details' : 'Student Details & Billing'}</span>
-        </div>
-        <div className={`StepLine ${activeStep > 2 ? 'active' : ''}`} />
-        <div className={`StepItem ${activeStep >= 3 ? 'active' : ''}`}>
-          <span className="StepNum">3</span>
-          <span className="StepTitle">Payment Gateway</span>
+        <div className="StepperMobileBar" role="group" aria-label="Checkout progress">
+          {steps.map((s) => (
+            <button
+              key={s.step}
+              type="button"
+              className={`StepSeg ${s.state}`}
+              onClick={s.clickable ? () => changeStep(s.step) : undefined}
+              disabled={!s.clickable}
+              aria-current={s.state === 'current' ? 'step' : undefined}
+              aria-label={stepAriaLabel(s)}
+            >
+              <span aria-hidden="true">
+                {s.state === 'completed' ? <FaCheck /> : s.state === 'locked' ? <FaLock /> : s.step}
+              </span>
+            </button>
+          ))}
         </div>
       </div>
 
@@ -500,13 +556,16 @@ export default function Checkout() {
               )}
 
               {/* Account Provisioning Notice for New E-commerce Customers */}
+              {/* No inline colours: this box is the success surface that
+                  `.OrderAlertBox` already defines, so the inline hex was a
+                  second, near-identical copy of the same tokens. */}
               {ecommerceCustomer?.status === 'created' && (
-                <div className="OrderAlertBox" style={{ borderColor: '#10b981', background: '#ecfdf5' }}>
-                  <div className="OrderAlertHeader" style={{ color: '#047857' }}>
-                    <FaCheckCircle className="AlertIcon" style={{ color: '#10b981' }} />
+                <div className="OrderAlertBox">
+                  <div className="OrderAlertHeader">
+                    <FaCheckCircle className="AlertIcon" />
                     <span>E-commerce Account Provisioned</span>
                   </div>
-                  <p className="OrderAlertText" style={{ color: '#065f46' }}>
+                  <p className="OrderAlertText">
                     An account has been created for your physical delivery. An email has been sent to set your password for shipment tracking.
                   </p>
                 </div>

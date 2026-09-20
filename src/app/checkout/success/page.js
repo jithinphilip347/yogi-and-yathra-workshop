@@ -1,26 +1,45 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { FaCheckCircle, FaBookOpen, FaArrowRight } from 'react-icons/fa';
+import { FaCheckCircle, FaBookOpen, FaBoxOpen, FaArrowRight, FaTruck, FaExclamationTriangle } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { useQueryClient } from '@tanstack/react-query';
+import { courierPartnerLabel } from '@/features/commerce/utils/courierPartners';
+import {
+  CONFIRMATION_DOMAIN,
+  CONFIRMATION_ROUTES,
+  CONFIRMATION_STATE,
+  buildConfirmationSummary,
+  buildNextSteps,
+  confirmationDomain,
+  confirmationReferences,
+  confirmationState,
+  formatAmount,
+  humanizeStatus,
+} from '@/features/commerce/utils/orderConfirmation';
 import '@/assets/css/checkout.scss';
+import '@/assets/css/checkout-success.scss';
 
+/**
+ * Checkout success — the last page of the checkout journey.
+ *
+ * Behaviour deliberately NOT changed: the TanStack cache invalidation below
+ * (its keys are pinned by `checkoutPostPurchaseRedirect.test.js`), and the
+ * server-authoritative data model. Everything on screen is read from the
+ * unified-order payload or the payment slice — nothing is fetched, recomputed or
+ * invented (see `utils/orderConfirmation.js` for the full reasoning).
+ *
+ * Behaviour deliberately changed: the 3-second auto-redirect to
+ * `/auth/profile?tab=my-courses` is gone. It navigated the customer away before
+ * they could read the confirmation or use any of the actions on it, which made a
+ * real confirmation page impossible. The same destination is now the primary
+ * call to action instead of a timer.
+ */
 export default function CheckoutSuccessPage() {
-  const router = useRouter();
   const queryClient = useQueryClient();
   const paymentState = useSelector((state) => state.payment || {});
   const activeOrder = useSelector((state) => state.checkout?.activeOrder);
-
-  const transactionId = paymentState.activeTransactionId || 'TXN-CONFIRMED';
-  const orderNumber =
-    activeOrder?.order?.order_number ||
-    activeOrder?.order_number ||
-    activeOrder?.id ||
-    'ORD-CONFIRMED';
-
-  const [countdown, setCountdown] = useState(3);
+  const courierPartner = useSelector((state) => state.checkout?.courierPartner);
 
   // Invalidate queries to guarantee fresh enrollment data in Profile/My Learning
   useEffect(() => {
@@ -34,70 +53,248 @@ export default function CheckoutSuccessPage() {
     }
   }, [queryClient]);
 
-  // Automatically transition to Profile / My Learning after countdown
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          router.replace('/auth/profile?tab=my-courses');
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+  const state = confirmationState({
+    paymentStatus: paymentState.status,
+    activeOrder,
+  });
+  const domain = confirmationDomain(activeOrder);
+  const summary = buildConfirmationSummary(activeOrder);
+  const refs = confirmationReferences({
+    activeOrder,
+    transactionId: paymentState.activeTransactionId,
+  });
+  const nextSteps = buildNextSteps(domain);
 
-    return () => clearInterval(timer);
-  }, [router]);
+  const hasLearning = domain === CONFIRMATION_DOMAIN.LEARNING || domain === CONFIRMATION_DOMAIN.MIXED;
+  const hasPhysical = domain === CONFIRMATION_DOMAIN.PHYSICAL || domain === CONFIRMATION_DOMAIN.MIXED;
+
+  /* ── No order to confirm ───────────────────────────────────────────────────
+     Reached by opening this URL directly, or after a cleared browser storage.
+     It must NOT claim a payment succeeded — the old page fell back to the
+     literal strings "ORD-CONFIRMED" / "TXN-CONFIRMED" and a green tick here. */
+  if (state === CONFIRMATION_STATE.NONE) {
+    return (
+      <div id="Checkout">
+        <div className="SuccessStateCard">
+          <span className="SuccessStateIcon neutral" aria-hidden="true">
+            <FaExclamationTriangle />
+          </span>
+          <h1 className="SuccessStateTitle">No recent order to show</h1>
+          <p className="SuccessStateText">
+            We could not find a completed order for this session. If you have just paid, check
+            My&nbsp;Courses — your access may already be active.
+          </p>
+          <div className="SuccessActions single">
+            <Link className="ProceedBtn SuccessPrimary" href={CONFIRMATION_ROUTES.myCourses}>
+              <FaBookOpen /> Go to My Courses
+            </Link>
+            <Link className="SuccessGhost" href={CONFIRMATION_ROUTES.continueShopping}>
+              Browse Workshops <FaArrowRight size={12} />
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const isConfirmed = state === CONFIRMATION_STATE.CONFIRMED;
 
   return (
-    <div id="Checkout" className="py-12">
-      <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-xl border border-gray-100 text-center space-y-6">
-        <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl">
-          <FaCheckCircle />
+    <div id="Checkout">
+      {/* ── Hero ───────────────────────────────────────────────────────────── */}
+      <section className={`SuccessHero ${isConfirmed ? 'confirmed' : 'pending'}`}>
+        <span className="SuccessHeroIcon" aria-hidden="true">
+          {isConfirmed ? <FaCheckCircle /> : <FaExclamationTriangle />}
+        </span>
+
+        <h1 className="SuccessHeroTitle">
+          {isConfirmed ? 'Payment Successful' : 'Confirming your payment'}
+        </h1>
+
+        <p className="SuccessHeroText">
+          {isConfirmed
+            ? 'Thank you for your purchase. Your order is confirmed and your access is being activated.'
+            : 'We have your order, but the payment confirmation has not reached us yet. Your reference is below — please do not pay again.'}
+        </p>
+
+        {refs.orderNumber && (
+          <div className="SuccessHeroRef">
+            <span className="SuccessHeroRefLabel">Workshop Order</span>
+            <span className="SuccessHeroRefValue">#{refs.orderNumber}</span>
+          </div>
+        )}
+      </section>
+
+      <div className="SuccessLayout">
+        <div className="SuccessMain">
+          {/* ── What this order covers ─────────────────────────────────────── */}
+          <section className="SuccessSection">
+            <h2 className="SuccessSectionTitle">Your Order</h2>
+
+            <div className="SuccessOrderList">
+              {hasLearning && (
+                <article className="SuccessOrderCard">
+                  <span className="SuccessOrderIcon" aria-hidden="true">
+                    <FaBookOpen />
+                  </span>
+                  <div className="SuccessOrderBody">
+                    <h3 className="SuccessOrderName">Learning Access</h3>
+                    <p className="SuccessOrderMeta">
+                      Courses and classes in this order are added to your library.
+                    </p>
+                  </div>
+                  <span className={`SuccessBadge ${isConfirmed ? 'success' : 'pending'}`}>
+                    {isConfirmed ? 'Confirmed' : 'Pending'}
+                  </span>
+                </article>
+              )}
+
+              {hasPhysical && (
+                <article className="SuccessOrderCard">
+                  <span className="SuccessOrderIcon" aria-hidden="true">
+                    <FaBoxOpen />
+                  </span>
+                  <div className="SuccessOrderBody">
+                    <h3 className="SuccessOrderName">
+                      Physical Order
+                      {refs.physicalOrderId ? (
+                        <span className="SuccessOrderRef">#{refs.physicalOrderId}</span>
+                      ) : null}
+                    </h3>
+                    <p className="SuccessOrderMeta">
+                      Sent to the store for fulfilment
+                      {humanizeStatus(refs.physicalOrderStatus)
+                        ? ` · ${humanizeStatus(refs.physicalOrderStatus)}`
+                        : ''}
+                      .
+                    </p>
+                  </div>
+                  <span className="SuccessBadge pending">
+                    {humanizeStatus(refs.physicalOrderStatus) || 'In Fulfilment'}
+                  </span>
+                </article>
+              )}
+
+              {!hasLearning && !hasPhysical && (
+                <article className="SuccessOrderCard">
+                  <span className="SuccessOrderIcon" aria-hidden="true">
+                    <FaCheckCircle />
+                  </span>
+                  <div className="SuccessOrderBody">
+                    <h3 className="SuccessOrderName">Order received</h3>
+                    <p className="SuccessOrderMeta">
+                      The details of what this order covers are on the order record.
+                    </p>
+                  </div>
+                  <span className="SuccessBadge success">Confirmed</span>
+                </article>
+              )}
+            </div>
+          </section>
+
+          {/* ── What happens next ──────────────────────────────────────────── */}
+          {nextSteps.length > 0 && (
+            <section className="SuccessSection">
+              <h2 className="SuccessSectionTitle">What happens next</h2>
+              <ol className="SuccessSteps">
+                {nextSteps.map((step) => (
+                  <li className="SuccessStep" key={step.key}>
+                    <span className="SuccessStepMark" aria-hidden="true">
+                      {step.key === 'learning' ? <FaBookOpen /> : <FaTruck />}
+                    </span>
+                    <div className="SuccessStepBody">
+                      <h3 className="SuccessStepTitle">{step.title}</h3>
+                      <p className="SuccessStepText">{step.body}</p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
+
+          {/* ── Actions: one primary, then clearly lesser options ──────────── */}
+          <div className="SuccessActions">
+            {hasLearning ? (
+              <Link className="ProceedBtn SuccessPrimary" href={CONFIRMATION_ROUTES.myCourses}>
+                <FaBookOpen /> Start Learning
+              </Link>
+            ) : (
+              <Link className="ProceedBtn SuccessPrimary" href={CONFIRMATION_ROUTES.continueShopping}>
+                <FaArrowRight /> Continue Shopping
+              </Link>
+            )}
+
+            <Link className="SuccessGhost" href={CONFIRMATION_ROUTES.billing}>
+              Billing &amp; Invoices
+            </Link>
+
+            {hasLearning && (
+              <Link className="SuccessLink" href={CONFIRMATION_ROUTES.continueShopping}>
+                Continue shopping <FaArrowRight size={12} />
+              </Link>
+            )}
+          </div>
         </div>
 
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Payment Successful!</h1>
-          <p className="text-sm text-gray-500 mt-2">
-            Thank you for your purchase. Your enrollment has been confirmed.
-          </p>
-          <p className="text-sm text-emerald-700 font-semibold mt-1">
-            Redirecting to your courses in {countdown}s…
-          </p>
-        </div>
+        {/* ── Aside: order summary + payment details ────────────────────────── */}
+        <aside className="SuccessAside">
+          <section className="SuccessSummaryCard">
+            <h2 className="SuccessSummaryTitle">Order Summary</h2>
 
-        {/* Order Details Card */}
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 text-left text-sm space-y-2 font-mono">
-          <div className="flex justify-between">
-            <span className="text-gray-500">Order Reference:</span>
-            <span className="font-bold text-gray-900">#{orderNumber}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">Payment Txn ID:</span>
-            <span className="text-gray-800">{transactionId}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">Payment Status:</span>
-            <span className="text-emerald-600 font-bold uppercase">PAID &amp; VERIFIED</span>
-          </div>
-        </div>
+            {summary.rows.length > 0 ? (
+              <>
+                {summary.rows.map((row) => (
+                  <div
+                    className={`SuccessSummaryRow ${row.kind === 'discount' ? 'discount' : ''}`}
+                    key={row.key}
+                  >
+                    <span>{row.label}</span>
+                    <span>{formatAmount(row.amount, summary.currency)}</span>
+                  </div>
+                ))}
+                <hr className="SuccessDivider" />
+              </>
+            ) : null}
 
-        {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 pt-4">
-          <button
-            onClick={() => router.replace('/auth/profile?tab=my-courses')}
-            className="flex-1 bg-primary-700 text-white py-3 px-6 rounded-lg font-semibold hover:bg-primary-800 transition flex items-center justify-center gap-2 cursor-pointer"
-          >
-            <FaBookOpen /> Go to My Enrolled Courses Now
-          </button>
-          <Link
-            href="/"
-            className="px-6 py-3 border border-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
-          >
-            Browse More <FaArrowRight size={14} />
-          </Link>
-        </div>
+            <div className="SuccessSummaryRow total">
+              <span>Total Paid</span>
+              <span>{formatAmount(summary.total, summary.currency)}</span>
+            </div>
+          </section>
+
+          <section className="SuccessSummaryCard">
+            <h2 className="SuccessSummaryTitle">Payment</h2>
+
+            <div className="SuccessDetailRow">
+              <span>Status</span>
+              <span className={`SuccessBadge ${isConfirmed ? 'success' : 'pending'}`}>
+                {humanizeStatus(refs.paymentStatus) ||
+                  (isConfirmed ? 'Paid' : 'Awaiting Confirmation')}
+              </span>
+            </div>
+
+            {refs.paymentGateway && (
+              <div className="SuccessDetailRow">
+                <span>Gateway</span>
+                <span className="SuccessDetailValue">{refs.paymentGateway}</span>
+              </div>
+            )}
+
+            {refs.transactionId && (
+              <div className="SuccessDetailRow">
+                <span>Transaction</span>
+                <span className="SuccessDetailValue mono">{refs.transactionId}</span>
+              </div>
+            )}
+
+            {hasPhysical && courierPartner && (
+              <div className="SuccessDetailRow">
+                <span>Delivery Partner</span>
+                <span className="SuccessDetailValue">{courierPartnerLabel(courierPartner)}</span>
+              </div>
+            )}
+          </section>
+        </aside>
       </div>
     </div>
   );

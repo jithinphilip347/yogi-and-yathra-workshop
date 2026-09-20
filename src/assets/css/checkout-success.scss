@@ -1,0 +1,540 @@
+/*
+ * Checkout Success — WORKSHOP-DS-07B.
+ *
+ * The last page of the checkout journey, so it inherits the same system the
+ * checkout itself was normalised onto in DS-07A: the `#Checkout` page surface and
+ * container gutters and the shared `.ProceedBtn` primary CTA come from
+ * `checkout.scss` (this page keeps `id="Checkout"` for exactly that reason), and
+ * everything page-specific is added here.
+ *
+ * Reference values are the measured ones from DS-07A:
+ *
+ *   Course Detail `.HighlightBox`  radius 12px  1px #e2e8f0  no shadow
+ *   Cart `.CartSummary`            radius 12px  1px border   shadow-sm
+ *   Checkout `.CheckoutSection`    radius 12px  1px border   shadow-sm
+ *
+ * One success page, one accent: the check mark and the status badges use the
+ * semantic success/warning tokens, everything else stays Workshop brand brown
+ * and neutral. The page must not read as a green page.
+ */
+#Checkout {
+  /* ─── Hero ─────────────────────────────────────────────────────────────── */
+  .SuccessHero {
+    background: var(--surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-10) var(--space-8);
+    margin-bottom: var(--space-7);
+    text-align: center;
+
+    @media (max-width: 600px) {
+      padding: var(--space-8) var(--space-6);
+    }
+
+    .SuccessHeroIcon {
+      width: 56px; /* component dimension, like the 32px step circle */
+      height: 56px;
+      margin: 0 auto var(--space-5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-circle);
+      font-size: 24px;
+      background: var(--color-success-surface);
+      border: var(--border-width) solid var(--color-success-border);
+      color: var(--color-success);
+    }
+
+    /* An unconfirmed order is not a success, and must not be dressed as one. */
+    &.pending .SuccessHeroIcon {
+      background: var(--color-warning-surface);
+      border-color: var(--color-warning-border);
+      color: var(--color-warning);
+    }
+
+    .SuccessHeroTitle {
+      font-size: var(--text-h1);
+      font-weight: var(--weight-bold);
+      color: var(--color-heading);
+      margin: 0 0 var(--space-3);
+      letter-spacing: -0.4px;
+
+      @media (max-width: 640px) {
+        font-size: var(--text-h2);
+      }
+      @media (max-width: 480px) {
+        font-size: var(--text-h3);
+      }
+    }
+
+    .SuccessHeroText {
+      font-size: var(--text-body);
+      line-height: var(--leading-relaxed);
+      color: var(--color-text-muted);
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .SuccessHeroRef {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-top: var(--space-7);
+      padding: var(--space-3) var(--space-6);
+      background: var(--surface-muted);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-md);
+      max-width: 100%;
+    }
+
+    .SuccessHeroRefLabel {
+      font-size: var(--text-micro);
+      font-weight: var(--weight-semibold);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--color-text-muted);
+    }
+
+    .SuccessHeroRefValue {
+      font-size: var(--text-body-lg);
+      font-weight: var(--weight-bold);
+      color: var(--color-heading);
+      overflow-wrap: anywhere;
+    }
+  }
+
+  /* ─── Terminal states (no order / unconfirmed) ─────────────────────────── */
+  .SuccessStateCard {
+    background: var(--surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--space-10) var(--space-8);
+    text-align: center;
+
+    @media (max-width: 600px) {
+      padding: var(--space-8) var(--space-5);
+    }
+
+    .SuccessStateIcon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto var(--space-5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-circle);
+      font-size: 24px;
+
+      &.neutral {
+        background: var(--surface-subtle);
+        border: var(--border-width) solid var(--color-border);
+        color: var(--color-text-muted);
+      }
+    }
+
+    .SuccessStateTitle {
+      font-size: var(--text-h2);
+      font-weight: var(--weight-bold);
+      color: var(--color-heading);
+      margin: 0 0 var(--space-4);
+    }
+
+    .SuccessStateText {
+      font-size: var(--text-body);
+      line-height: var(--leading-relaxed);
+      color: var(--color-text-muted);
+      margin: 0 auto;
+      max-width: 440px;
+    }
+
+    .SuccessActions {
+      margin-top: var(--space-8);
+    }
+  }
+
+  /* ─── Layout ───────────────────────────────────────────────────────────── */
+  .SuccessLayout {
+    display: flex;
+    gap: var(--space-9);
+    align-items: flex-start;
+
+    @media (max-width: 1024px) {
+      gap: var(--space-7);
+    }
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+  }
+
+  .SuccessMain {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Not sticky: unlike checkout, this page is short and there is no form to
+     scroll past, so a sticky summary would only ever hang in empty space. */
+  .SuccessAside {
+    width: 380px;
+    flex-shrink: 0;
+
+    @media (max-width: 1024px) {
+      width: 340px;
+    }
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
+
+  /* ─── Sections ─────────────────────────────────────────────────────────── */
+  .SuccessSection {
+    background: var(--surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-8);
+    margin-bottom: var(--space-7);
+
+    @media (max-width: 600px) {
+      padding: var(--space-5);
+    }
+
+    .SuccessSectionTitle {
+      font-size: var(--text-card-title);
+      font-weight: var(--weight-bold);
+      color: var(--color-heading);
+      margin: 0 0 var(--space-6);
+      letter-spacing: -0.3px;
+
+      @media (max-width: 1024px) {
+        font-size: var(--text-card-title-md);
+      }
+      @media (max-width: 768px) {
+        font-size: var(--text-card-title-sm);
+      }
+    }
+  }
+
+  /* ─── Order cards ──────────────────────────────────────────────────────── */
+  .SuccessOrderList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .SuccessOrderCard {
+    display: flex;
+    flex-wrap: wrap; /* the status badge drops below rather than squeezing the name */
+    align-items: center;
+    gap: var(--space-5);
+    padding: var(--space-5) var(--space-6);
+    background: var(--surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    @media (max-width: 480px) {
+      padding: var(--space-5);
+      gap: var(--space-4);
+    }
+
+    .SuccessOrderIcon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-circle);
+      background: var(--surface-subtle);
+      color: var(--color-primary);
+      font-size: 17px;
+    }
+
+    .SuccessOrderBody {
+      flex: 1 1 160px;
+      min-width: 0;
+    }
+
+    .SuccessOrderName {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: var(--space-3);
+      font-size: var(--text-body-lg);
+      font-weight: var(--weight-semibold);
+      color: var(--color-heading);
+      margin: 0 0 var(--space-1);
+      line-height: var(--leading-tight);
+    }
+
+    .SuccessOrderRef {
+      font-size: var(--text-caption);
+      font-weight: var(--weight-bold);
+      color: var(--color-text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .SuccessOrderMeta {
+      font-size: var(--text-caption);
+      color: var(--color-text-muted);
+      margin: 0;
+      line-height: var(--leading-normal);
+    }
+  }
+
+  /* ─── Status badges — the only place success/warning colour is used ────── */
+  .SuccessBadge {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-pill);
+    border: var(--border-width) solid transparent;
+    font-size: var(--text-micro);
+    font-weight: var(--weight-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+
+    &.success {
+      background: var(--color-success-surface);
+      border-color: var(--color-success-border);
+      color: var(--color-success);
+    }
+
+    &.pending {
+      background: var(--color-warning-surface);
+      border-color: var(--color-warning-border);
+      color: var(--color-warning);
+    }
+  }
+
+  /* ─── Next steps ───────────────────────────────────────────────────────── */
+  .SuccessSteps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .SuccessStep {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-5);
+    padding: var(--space-5) 0;
+    border-bottom: var(--border-width) solid var(--color-border-muted);
+
+    &:first-child {
+      padding-top: 0;
+    }
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .SuccessStepMark {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-circle);
+      background: var(--surface-muted);
+      color: var(--color-primary);
+      font-size: 16px;
+    }
+
+    .SuccessStepBody {
+      min-width: 0;
+    }
+
+    .SuccessStepTitle {
+      font-size: var(--text-body-lg);
+      font-weight: var(--weight-semibold);
+      color: var(--color-heading);
+      margin: 0 0 var(--space-1);
+    }
+
+    .SuccessStepText {
+      font-size: var(--text-body-sm);
+      line-height: var(--leading-relaxed);
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+  }
+
+  /* ─── Actions: one primary, then progressively lesser options ──────────── */
+  .SuccessActions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+    margin-top: var(--space-7);
+
+    /* Source order IS the hierarchy: primary first, then lesser options. It is
+       deliberately not `column-reverse` — that put the tertiary "Continue
+       shopping" link at the top and made the actions read bottom-up. */
+    @media (max-width: 600px) {
+      flex-direction: column;
+      align-items: stretch;
+
+      .SuccessLink {
+        justify-content: center;
+      }
+    }
+
+    /* Reuses the shared Workshop primary CTA from checkout.scss; only the width
+       differs, because here it sits beside other actions instead of alone. */
+    .SuccessPrimary {
+      width: auto;
+      margin-top: 0;
+      padding: var(--space-5) var(--space-7);
+      font-size: var(--text-body);
+      box-shadow: var(--shadow-none);
+      /* It is an <a>, so the browser's default underline has to be turned off
+         explicitly — `.SuccessGhost`/`.SuccessLink` already do this. */
+      text-decoration: none;
+    }
+
+    /* Same secondary treatment as the checkout's Back button. */
+    .SuccessGhost {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-6);
+      background: var(--surface-muted);
+      border: var(--border-width) solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: var(--text-body-sm);
+      font-weight: var(--weight-semibold);
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: background-color 0.2s ease, color 0.2s ease;
+
+      &:hover {
+        background: var(--surface-subtle);
+        color: var(--color-text);
+      }
+    }
+
+    /* Tertiary: a link, deliberately not a third button of equal weight. */
+    .SuccessLink {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--text-body-sm);
+      font-weight: var(--weight-semibold);
+      color: var(--color-primary);
+      text-decoration: none;
+
+      &:hover {
+        color: var(--color-primary-hover);
+        text-decoration: underline;
+      }
+    }
+
+    &.single {
+      justify-content: center;
+      margin-top: var(--space-8);
+    }
+  }
+
+  /* ─── Aside cards ──────────────────────────────────────────────────────── */
+  .SuccessSummaryCard {
+    background: var(--surface);
+    border: var(--border-width) solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-7);
+    margin-bottom: var(--space-5);
+
+    @media (max-width: 480px) {
+      padding: var(--space-5);
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .SuccessSummaryTitle {
+      font-size: var(--text-h3);
+      font-weight: var(--weight-bold);
+      color: var(--color-heading);
+      margin: 0 0 var(--space-6);
+      letter-spacing: -0.3px;
+    }
+
+    .SuccessSummaryRow {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-5);
+      font-size: var(--text-body-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-4);
+
+      span:last-child {
+        font-weight: var(--weight-semibold);
+        color: var(--color-text);
+        white-space: nowrap;
+      }
+
+      &.discount {
+        color: var(--color-success);
+
+        span:last-child {
+          color: var(--color-success);
+        }
+      }
+
+      &.total {
+        font-size: var(--text-card-title-sm);
+        font-weight: var(--weight-bold);
+        color: var(--color-heading);
+        margin-bottom: 0;
+
+        span:last-child {
+          font-size: var(--text-h3);
+          color: var(--color-primary);
+        }
+      }
+    }
+
+    .SuccessDivider {
+      border: 0;
+      border-top: var(--border-width) solid var(--color-border-muted);
+      margin: var(--space-5) 0;
+    }
+
+    .SuccessDetailRow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-5);
+      font-size: var(--text-body-sm);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-4);
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .SuccessDetailValue {
+      min-width: 0;
+      font-weight: var(--weight-semibold);
+      color: var(--color-text);
+      text-align: right;
+      overflow-wrap: anywhere;
+
+      &.mono {
+        font-variant-numeric: tabular-nums;
+        letter-spacing: 0.2px;
+      }
+    }
+  }
+}

@@ -428,6 +428,9 @@ describe("Sprint 19 — Course related products", () => {
     // DS-02: `styleCss` is the source compiled on demand — the committed
     // `style.css` artifact was removed because it had drifted from this source.
     const styleScss = read("../../assets/css/style.scss");
+    // DS-04: the card shell is tokenised, so the test needs the token layer too
+    // to prove the token still resolves to the measured reference value.
+    const tokensScss = read("../../assets/css/tokens.scss");
     const styleCss = sass.compileString(styleScss, {
       loadPaths: [path.resolve(__dirname, "../../assets/css")],
     }).css;
@@ -460,10 +463,29 @@ describe("Sprint 19 — Course related products", () => {
 
       expect(shell).not.toBe("");
       expect(shell).toMatch(/background: #fff;/);
-      expect(shell).toMatch(/border-radius: 12px;/);
       expect(shell).toMatch(/padding: 35px;/);
-      expect(shell).toMatch(/border: 1px solid #e2e8f0;/);
       expect(shell).toMatch(/margin-bottom: 30px;/);
+
+      // DS-04 tokenised the shell. The intent is unchanged — this section must
+      // keep the SAME shell as the page's `.HighlightBox` boxes — so assert the
+      // token here, and assert its resolved value separately below. Pinning the
+      // literal `12px` again would let the shell drift from `.HighlightBox`
+      // silently, which is the opposite of what this test is for.
+      expect(shell).toMatch(/border-radius: var\(--radius-lg\);/);
+      expect(shell).toMatch(/border: 1px solid var\(--color-border\);/);
+      expect(shell).toMatch(/border-radius: var\(--radius-lg\);/);
+
+      // ...and prove the token still resolves to the measured reference values,
+      // so the token layer itself cannot silently change this shell.
+      expect(tokensScss).toMatch(/--radius-lg:\s*12px/);
+      expect(tokensScss).toMatch(/--color-border:\s*#e2e8f0/);
+
+      // `.HighlightBox` must resolve to the same values — that is the whole
+      // point of the assertion.
+      const highlight = blockAt(styleCss, ".HighlightBox {") || "";
+      if (highlight) {
+        expect(highlight).toMatch(/border-radius: var\(--radius-lg\);/);
+      }
     });
 
     it("mirrors the HighlightBox rhythm at every breakpoint", () => {

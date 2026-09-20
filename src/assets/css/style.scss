@@ -399,7 +399,7 @@
             padding: 0 4px;
             line-height: 1;
             pointer-events: none;
-            box-shadow: 0 2px 5px rgba(255, 114, 94, 0.4);
+            box-shadow: 0 2px 5px rgba(var(--color-primary-rgb), 0.4);
           }
         }
 
@@ -443,7 +443,7 @@
               }
 
               .UnreadCountPill {
-                background: rgba(255, 114, 94, 0.12);
+                background: rgba(var(--color-primary-rgb), 0.12);
                 color: var(--primaryColor, #874429);
                 font-size: 11px;
                 font-weight: 700;
@@ -7330,7 +7330,7 @@
           display: block;
           order: 1;
           margin-bottom: 20px;
-          border-radius: 12px;
+          border-radius: var(--radius-lg);
           overflow: hidden;
           position: relative;
 
@@ -7355,7 +7355,7 @@
               border: none;
               width: 50px;
               height: 50px;
-              border-radius: 50%;
+              border-radius: var(--radius-circle);
               font-size: 24px;
               display: flex;
               align-items: center;
@@ -7381,7 +7381,7 @@
         background: #ffd700;
         color: #000;
         padding: 5px 14px;
-        border-radius: 4px;
+        border-radius: var(--radius-sm);
         font-size: 12px;
         font-weight: 700;
         text-transform: uppercase;
@@ -7465,7 +7465,7 @@
           img {
             width: 45px;
             height: 45px;
-            border-radius: 50%;
+            border-radius: var(--radius-circle);
             border: 2px solid #fff;
             object-fit: cover;
           }
@@ -7509,7 +7509,7 @@
           background: #fff;
           color: #000;
           padding: 20px;
-          border-radius: 12px;
+          border-radius: var(--radius-lg);
           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
           .Pricing {
@@ -7542,7 +7542,7 @@
             button {
               width: 100%;
               padding: 12px;
-              border-radius: 8px;
+              border-radius: var(--radius-md);
               font-weight: 700;
               font-size: 15px;
               cursor: pointer;
@@ -7589,9 +7589,9 @@
       /* Shared styles for content boxes */
       .HighlightBox {
         background: #fff;
-        border-radius: 12px;
+        border-radius: var(--radius-lg);
         padding: 35px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--color-border);
         margin-bottom: 30px;
         // box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
         @media (max-width: 1024px) {
@@ -7658,14 +7658,14 @@
       .CourseContent {
         .AccordionList {
           .AccordionItem {
-            border: 1px solid #edf2f7;
-            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
             margin-bottom: 15px;
             overflow: hidden;
             transition: all 0.3s ease;
 
             &.active {
-              border-color: var(--primaryColor);
+              border-color: var(--color-border-accent);
               box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             }
 
@@ -7725,14 +7725,14 @@
             .AccordionBody {
               padding: 10px 25px 20px;
               background: #fff;
-              border-top: 1px solid #f1f5f9;
+              border-top: 1px solid var(--color-border-muted);
 
               .LessonItem {
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
                 padding: 14px 0;
-                border-bottom: 1px solid #f1f5f9;
+                border-bottom: 1px solid var(--color-border-muted);
 
                 &:last-child {
                   border-bottom: none;
@@ -7819,9 +7819,9 @@
           img {
             width: 110px;
             height: 110px;
-            border-radius: 12px;
+            border-radius: var(--radius-lg);
             object-fit: cover;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--color-border);
 
             @media (max-width: 480px) {
               width: 80px;
@@ -7925,9 +7925,9 @@
       .ReviewsSection {
         width: 100%;
         background: #fff;
-        border-radius: 12px;
+        border-radius: var(--radius-lg);
         padding: 35px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--color-border);
         margin-bottom: 30px;
         @media (max-width: 1024px) {
           padding: 20px;
@@ -7945,7 +7945,7 @@
         .ReviewList {
           .SingleReview {
             padding: 25px 0;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px solid var(--color-border-muted);
             &:last-child {
               border-bottom: none;
             }
@@ -7963,7 +7963,7 @@
                 .UserImg {
                   width: 50px;
                   height: 50px;
-                  border-radius: 50%;
+                  border-radius: var(--radius-circle);
                   object-fit: cover;
                 }
                 .UserInfo {
@@ -8007,10 +8007,10 @@
         .ReadAllBtn {
           margin-top: 25px;
           padding: 12px 25px;
-          border: 1px solid var(--primaryColor);
+          border: 1px solid var(--color-border-accent);
           color: var(--primaryColor);
           background: transparent;
-          border-radius: 6px;
+          border-radius: var(--radius-sm);
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s;
@@ -8025,9 +8025,9 @@
       .SubmitReview {
         width: 100%;
         background: #fff;
-        border-radius: 12px;
+        border-radius: var(--radius-lg);
         padding: 35px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--color-border);
         margin-bottom: 30px;
         @media (max-width: 1024px) {
           padding: 20px;
@@ -8052,8 +8052,8 @@
             width: 100%;
             height: 120px;
             padding: 15px;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
             font-family: inherit;
             resize: none;
             margin-bottom: 15px;
@@ -8100,7 +8100,7 @@
               padding: 12px 30px;
 
               border: none;
-              border-radius: 6px;
+              border-radius: var(--radius-sm);
               font-weight: 500;
               cursor: pointer;
               font-family: myFont1;
@@ -8125,18 +8125,18 @@
 
       .PreviewCard {
         background: #fff;
-        border-radius: 16px;
+        border-radius: var(--radius-xl);
         padding: 20px;
         position: sticky;
         top: 100px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--color-border);
 
         .VideoThumb {
           position: relative;
           width: 100%;
           height: 210px;
-          border-radius: 12px;
+          border-radius: var(--radius-lg);
           overflow: hidden;
           margin-bottom: 20px;
           cursor: pointer;
@@ -8161,7 +8161,7 @@
             border: none;
             width: 65px;
             height: 65px;
-            border-radius: 50%;
+            border-radius: var(--radius-circle);
             font-size: 35px;
             display: flex;
             align-items: center;
@@ -8221,7 +8221,7 @@
           button {
             width: 100%;
             padding: 15px;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             font-weight: 700;
             font-size: 16px;
             cursor: pointer;
@@ -8279,9 +8279,9 @@
 
   .HighlightBox {
     background: #fff;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     padding: 30px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--color-border);
     margin-bottom: 30px;
 
     h3 {
@@ -8335,7 +8335,7 @@
         align-items: center;
         gap: 15px;
         img {
-          border-radius: 4px;
+          border-radius: var(--radius-sm);
           border: 1px solid rgba(255, 255, 255, 0.3);
         }
         .Text {
@@ -8371,7 +8371,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 50%;
+          border-radius: var(--radius-circle);
 
           @media (max-width: 1024px) {
             width: 28px;
@@ -8421,7 +8421,7 @@
           color: #000;
           border: none;
           padding: 10px 25px;
-          border-radius: 5px;
+          border-radius: var(--radius-sm);
           font-weight: 500;
           display: flex;
           align-items: center;
@@ -8465,7 +8465,7 @@
       background: #fff;
       color: #000;
       padding: 20px;
-      border-radius: 12px 12px 0 0;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
       box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.1);
       visibility: hidden;
       opacity: 0;
@@ -8480,7 +8480,7 @@
       h4 {
         font-size: 16px;
         margin-bottom: 15px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--color-border);
         padding-bottom: 10px;
       }
       .DrawerItem {
@@ -11011,9 +11011,9 @@
 #CourseDetails {
   .RelatedProducts {
     background: #fff;
-    border-radius: 12px;
+    border-radius: var(--radius-lg);
     padding: 35px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--color-border);
     margin-bottom: 30px;
 
     @media (max-width: 1024px) {
@@ -11069,8 +11069,8 @@
         justify-content: space-between;
         gap: 14px;
         padding: 15px;
-        border: 1px solid #e8edf3;
-        border-radius: 10px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
         background: #f8fafc;
 
         .ProdLeft {
@@ -11082,12 +11082,12 @@
           .ProdImage {
             width: 84px;
             height: 84px;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             overflow: hidden;
             position: relative;
             flex-shrink: 0;
             background: #eef2f7;
-            border: 1px solid #e8edf3;
+            border: 1px solid var(--color-border);
 
             img {
               width: 100%;
@@ -11127,7 +11127,7 @@
 
             .TypeBadge {
               padding: 2px 6px;
-              border-radius: 4px;
+              border-radius: var(--radius-sm);
               background: #eef2ff;
               color: #4338ca;
               font-size: 10px;
@@ -11174,8 +11174,8 @@
             min-height: 40px;
             padding: 10px 12px;
             background: transparent;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
             font-size: 13px;
             font-weight: 500;
             color: #2d3436;
@@ -11191,11 +11191,11 @@
             flex: 1 1 140px;
             min-height: 40px;
             padding: 10px 12px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            border: 1px solid var(--primaryColor);
+            border: 1px solid var(--color-border-accent);
             background: transparent;
             color: var(--primaryColor);
             transition: 0.3s;
@@ -11215,7 +11215,7 @@
             &:disabled {
               opacity: 0.55;
               cursor: not-allowed;
-              border-color: #cbd5e1;
+              border-color: var(--color-border-strong);
               color: #64748b;
 
               &:hover {

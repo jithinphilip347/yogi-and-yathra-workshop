@@ -10,10 +10,10 @@
 
   .card {
     background: #ffffff;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 30px;
     box-shadow: none;
-    border: 1px solid #eee;
+    border: 1px solid var(--color-border);
     margin-bottom: 24px;
     
     @media (max-width: 768px) {
@@ -36,7 +36,7 @@
         width: 40px;
         height: 3px;
         background: var(--primaryColor);
-        border-radius: 2px;
+        border-radius: var(--radius-xs);
       }
     }
   }
@@ -76,8 +76,8 @@
         
         .EnrollmentCard {
           background: #fff;
-          border-radius: 12px;
-          border: 1px solid #eee;
+          border-radius: var(--radius-lg);
+          border: 1px solid var(--color-border);
           padding: 24px;
           box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 
@@ -94,7 +94,7 @@
           }
           
           .PriceRow {
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--color-border);
             padding-top: 15px;
             margin-top: 15px;
             display: flex;
@@ -115,10 +115,10 @@
           .CountdownBlock {
             background: #f8fafc;
             padding: 14px 12px;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             text-align: center;
             margin: 12px 0 16px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--color-border);
 
             p {
               margin: 0 0 10px 0;
@@ -136,8 +136,8 @@
 
               .TimeBox {
                 background: #fff;
-                border: 1px solid #e2e8f0;
-                border-radius: 6px;
+                border: 1px solid var(--color-border);
+                border-radius: var(--radius-sm);
                 padding: 8px 4px;
                 flex: 1;
                 min-width: 48px;
@@ -170,7 +170,7 @@
             padding: 14px;
             font-size: 16px;
             font-weight: 500;
-            border-radius: 8px;
+            border-radius: var(--radius-md);
             cursor: pointer;
             margin-top: 20px;
             transition: 0.3s;
@@ -226,7 +226,7 @@
         display: inline-block;
         background: rgba(255,255,255,0.2);
         padding: 6px 16px;
-        border-radius: 50px;
+        border-radius: var(--radius-pill);
         font-size: 12px;
         font-weight: 600;
         text-transform: uppercase;
@@ -276,7 +276,7 @@
           font-size: 14px;
           background: rgba(255,255,255,0.1);
           padding: 8px 16px;
-          border-radius: 50px;
+          border-radius: var(--radius-pill);
           
           svg {
             color: var(--primaryColor);
@@ -290,7 +290,7 @@
         color: white;
         border: none;
         padding: 14px 28px;
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         font-size: 16px;
         font-weight: 500;
         cursor: pointer;
@@ -323,9 +323,9 @@
 
     .InfoCard {
       background: #fff;
-      border: 1px solid #eee;
+      border: 1px solid var(--color-border);
       padding: 15px;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       display: flex;
       align-items: flex-start;
       gap: 12px;
@@ -335,7 +335,7 @@
         color: var(--primaryColor);
         width: 40px;
         height: 40px;
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -390,8 +390,8 @@
     gap: 40px;
     padding: 20px 24px;
     background: #fafafa;
-    border: 1px solid #f1f5f9;
-    border-radius: 12px;
+    border: 1px solid var(--color-border-muted);
+    border-radius: var(--radius-lg);
     box-shadow: 0 2px 8px rgba(0,0,0,0.02);
 
     @media (max-width: 640px) {
@@ -405,12 +405,12 @@
       align-items: center;
       gap: 15px;
       padding-right: 40px;
-      border-right: 2px dashed #e2e8f0;
+      border-right: 2px dashed var(--color-border);
 
       @media (max-width: 640px) {
         border-right: none;
         padding-right: 0;
-        border-bottom: 2px dashed #e2e8f0;
+        border-bottom: 2px dashed var(--color-border);
         padding-bottom: 20px;
         width: 100%;
       }
@@ -420,7 +420,7 @@
         color: var(--primaryColor);
         background: #fff;
         padding: 6px;
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       }
       .TimeDetails {
@@ -461,17 +461,17 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 8px;
+          border-radius: var(--radius-md);
           font-size: 14px;
           font-weight: 500;
           background: #fff;
           color: #94a3b8;
-          border: 1px solid #e2e8f0;
+          border: 1px solid var(--color-border);
           
           &.Active {
             background: var(--primaryColor);
             color: #fff;
-            border-color: var(--primaryColor);
+            border-color: var(--color-border-accent);
             box-shadow: 0 4px 10px rgba(var(--primaryColorRgb), 0.3);
           }
         }
@@ -493,9 +493,9 @@
     .InstImage {
       width: 110px;
       height: 110px;
-      border-radius: 50%;
+      border-radius: var(--radius-circle);
       overflow: hidden;
-      border: 2px solid #eee;
+      border: 2px solid var(--color-border);
       flex-shrink: 0;
     }
 
@@ -526,8 +526,8 @@
           color: #555;
           background: #fff;
           padding: 6px 14px;
-          border-radius: 50px;
-          border: 1px solid #e2e8f0;
+          border-radius: var(--radius-pill);
+          border: 1px solid var(--color-border);
           display: flex;
           align-items: center;
           gap: 6px;
@@ -555,8 +555,8 @@
       color: #2d3436;
       background: #fafafa;
       padding: 12px 16px;
-      border-radius: 8px;
-      border: 1px solid #eee;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
 
       .ReqIcon {
         color: var(--primaryColor);
@@ -580,8 +580,8 @@
 
     .PlanCard {
       background: #fff;
-      border: 1px solid #eee;
-      border-radius: 12px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
       padding: 20px;
       position: relative;
       transition: 0.3s;
@@ -589,12 +589,12 @@
       flex-direction: column;
       
       &:hover {
-        border-color: var(--primaryColor);
+        border-color: var(--color-border-accent);
         box-shadow: 0 10px 30px rgba(0,0,0,0.05);
       }
 
       &.FeaturedPlan {
-        border: 2px solid var(--primaryColor);
+        border: 2px solid var(--color-border-accent);
         .PopularBadge {
           position: absolute;
           top: -12px;
@@ -602,7 +602,7 @@
           background: var(--primaryColor);
           color: #fff;
           padding: 4px 10px;
-          border-radius: 20px;
+          border-radius: var(--radius-xl);
           font-size: 11px;
           font-weight: 600;
         }
@@ -632,7 +632,7 @@
         color: #636e72;
         margin-bottom: 15px;
         padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--color-border);
       }
 
       .PlanFeatures {
@@ -666,9 +666,9 @@
         width: 100%;
         background: transparent;
         color: var(--primaryColor);
-        border: 1px solid var(--primaryColor);
+        border: 1px solid var(--color-border-accent);
         padding: 10px;
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         font-size: 14px;
         font-weight: 500;
         cursor: pointer;
@@ -696,8 +696,8 @@
       flex-direction: column;
       gap: 15px;
       padding: 15px;
-      border: 1px solid #eee;
-      border-radius: 10px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
       background: #fafafa;
 
       .ProdLeft {
@@ -707,7 +707,7 @@
         .ProdImage {
           width: 60px;
           height: 60px;
-          border-radius: 6px;
+          border-radius: var(--radius-sm);
           overflow: hidden;
           position: relative;
         }
@@ -724,7 +724,7 @@
           }
           .TypeBadge {
             padding: 2px 6px;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             background: #eef2ff;
             color: #4338ca;
             font-size: 10px;
@@ -763,8 +763,8 @@
           flex: 1;
           padding: 8px;
           background: transparent;
-          border: 1px solid #ddd;
-          border-radius: 6px;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-sm);
           font-size: 13px;
           font-weight: 500;
           cursor: pointer;
@@ -772,11 +772,11 @@
         .AddToCartBtn {
           flex: 1;
           padding: 8px;
-          border-radius: 6px;
+          border-radius: var(--radius-sm);
           font-size: 13px;
           font-weight: 500;
           cursor: pointer;
-          border: 1px solid var(--primaryColor);
+          border: 1px solid var(--color-border-accent);
           background: transparent;
           color: var(--primaryColor);
           transition: 0.3s;
@@ -793,7 +793,7 @@
           &:disabled {
             opacity: 0.55;
             cursor: not-allowed;
-            border-color: #cbd5e1;
+            border-color: var(--color-border-strong);
             color: #64748b;
             &:hover {
               background: transparent;
@@ -816,8 +816,8 @@
     .ReviewCard {
       background: #fafafa;
       padding: 20px;
-      border-radius: 8px;
-      border: 1px solid #eee;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
       .Stars {
         color: #fdcb6e;
         font-size: 16px;
@@ -845,8 +845,8 @@
     gap: 10px;
     
     .FAQItem {
-      border: 1px solid #eee;
-      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
       overflow: hidden;
       
       .FAQHead {
@@ -871,7 +871,7 @@
         font-size: 14px;
         color: #636e72;
         line-height: 1.6;
-        border-top: 1px solid #eee;
+        border-top: 1px solid var(--color-border);
       }
     }
   }

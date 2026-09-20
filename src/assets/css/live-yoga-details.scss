@@ -6,10 +6,10 @@
  
   .card {
     background: #ffffff;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 30px;
     box-shadow: none;
-    border: 1px solid #eee;
+    border: 1px solid var(--color-border);
     @media (max-width: 768px) {
       padding: 20px;
     }
@@ -30,7 +30,7 @@
         width: 40px;
         height: 3px;
         background: var(--primaryColor);
-        border-radius: 2px;
+        border-radius: var(--radius-xs);
       }
     }
   }
@@ -46,16 +46,16 @@
       background: rgba(0, 0, 0, 0.04);
       color: #2d3436;
       padding: 6px 14px;
-      border-radius: 20px;
+      border-radius: var(--radius-xl);
       font-size: 13px;
       font-weight: 500;
       &.TagChip {
         background: #fff;
-        border: 1px solid #eee;
+        border: 1px solid var(--color-border);
         cursor: pointer;
         transition: 0.3s;
         &:hover {
-          border-color: var(--primaryColor);
+          border-color: var(--color-border-accent);
           color: var(--primaryColor);
         }
       }
@@ -125,7 +125,7 @@
           backdrop-filter: blur(5px);
           -webkit-backdrop-filter:blur(5px);
           padding: 6px 16px;
-          border-radius: 50px;
+          border-radius: var(--radius-pill);
           font-size: 13px;
           font-weight: 600;
           text-transform: uppercase;
@@ -134,7 +134,7 @@
         .LiveBadge {
           background: #e74c3c;
           padding: 6px 16px;
-          border-radius: 50px;
+          border-radius: var(--radius-pill);
           font-size: 13px;
           font-weight: 700;
           display: flex;
@@ -145,7 +145,7 @@
             width: 8px;
             height: 8px;
             background: #fff;
-            border-radius: 50%;
+            border-radius: var(--radius-circle);
             animation: pulse 1.5s infinite;
           }
         }
@@ -187,7 +187,7 @@
           background: rgba(255, 255, 255, 0.1);
           border: 1px solid rgba(255, 255, 255, 0.2);
           padding: 8px 16px;
-          border-radius: 50px;
+          border-radius: var(--radius-pill);
           font-size: 14px;
           backdrop-filter: blur(5px);
           -webkit-backdrop-filter:blur(5px);
@@ -256,9 +256,9 @@
   .PricingCard {
     position: relative;
     background: #fff;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     box-shadow: none;
-    border: 1px solid #eee;
+    border: 1px solid var(--color-border);
     padding: 24px;
 
     .CardHeaderBadge {
@@ -269,7 +269,7 @@
       font-weight: 700;
       font-size: 12px;
       letter-spacing: 0.5px;
-      border-radius: 8px 8px 0 0;
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
       margin: -24px -24px 20px -24px;
       text-transform: uppercase;
     }
@@ -297,7 +297,7 @@
         background: #e8f5e9;
         color: #2e7d32;
         padding: 4px 10px;
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         font-size: 12px;
         font-weight: 800;
       }
@@ -306,10 +306,10 @@
     .CountdownBlock {
       background: #fcfcfc;
       padding: 15px;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       text-align: center;
       margin-bottom: 20px;
-      border: 1px solid #eee;
+      border: 1px solid var(--color-border);
 
       p {
         margin: 0 0 10px 0;
@@ -327,8 +327,8 @@
         margin-bottom: 15px;
         .TimeBox {
           background: #fff;
-          border: 1px solid #eee;
-          border-radius: 8px;
+          border: 1px solid var(--color-border);
+          border-radius: var(--radius-md);
           padding: 8px;
           width: 60px;
           box-shadow: none;
@@ -350,10 +350,10 @@
       .CalendarBtn {
         width: 100%;
         background: #fff;
-        border: 1px solid #eee;
+        border: 1px solid var(--color-border);
         color: #2d3436;
         padding: 10px;
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         font-size: 13px;
         font-weight: 600;
         display: flex;
@@ -363,7 +363,7 @@
         cursor: pointer;
         transition: 0.3s;
         &:hover {
-          border-color: var(--primaryColor);
+          border-color: var(--color-border-accent);
           color: var(--primaryColor);
         }
       }
@@ -374,7 +374,7 @@
       padding: 12px 16px;
       background: #fff1f1;
       border: 1px solid #ffe1e1;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
 
       .SeatHeader,
       .SeatFooter {
@@ -387,13 +387,13 @@
       .ProgressBar {
         height: 6px;
         background: #ffd1d1;
-        border-radius: 8px;
+        border-radius: var(--radius-md);
         overflow: hidden;
         margin-bottom: 8px;
         .ProgressFill {
           height: 100%;
           background: #ff7675;
-          border-radius: 8px;
+          border-radius: var(--radius-md);
         }
       }
       .HurryText {
@@ -410,7 +410,7 @@
       padding: 14px;
       font-size: 16px;
       font-weight: 500;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -462,7 +462,7 @@
     .HighlightItem {
       background: #f4f6f9;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       gap: 10px;
@@ -511,9 +511,9 @@
 
     .AudienceCard {
       background: #ffffff;
-      border-radius: 8px;
+      border-radius: var(--radius-md);
       padding: 25px;
-      border: 1px solid #eee;
+      border: 1px solid var(--color-border);
       h3 {
         display: flex;
         align-items: center;
@@ -564,13 +564,13 @@
       align-items: center;
       background: #fff;
       padding: 15px 20px;
-      border-radius: 8px;
-      border: 1px solid #eee;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
       transition: all 0.2s ease;
       border-left: 3px solid transparent;
 
       &:hover {
-        border-left: 3px solid var(--primaryColor);
+        border-left: 3px solid var(--color-border-accent);
         transform: translateX(4px);
         box-shadow: 0 4px 6px rgba(0,0,0,0.05);
       }
@@ -627,9 +627,9 @@
       position: relative;
       width: 100px;
       height: 100px;
-      border-radius: 50%;
+      border-radius: var(--radius-circle);
       overflow: hidden;
-      border: 3px solid #eee;
+      border: 3px solid var(--color-border);
       box-shadow: none;
       flex-shrink: 0;
       img {
@@ -657,7 +657,7 @@
         flex-wrap: wrap;
         margin-bottom: 15px;
         padding-bottom: 15px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid var(--color-border);
         @media (max-width: 480px) {
           justify-content: center;
         }
@@ -669,8 +669,8 @@
           color: #2d3436;
           background: #f8f9fa;
           padding: 6px 12px;
-          border-radius: 50px;
-          border: 1px solid #eee;
+          border-radius: var(--radius-pill);
+          border: 1px solid var(--color-border);
           .Icon {
             color: #fdcb6e;
             font-size: 15px;
@@ -711,8 +711,8 @@
         flex-direction: column;
         gap: 15px;
         padding: 15px;
-        border: 1px solid #eee;
-        border-radius: 10px;
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-md);
         background: #fafafa;
 
         .ProdLeft {
@@ -722,7 +722,7 @@
           .ProdImage {
             width: 60px;
             height: 60px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             overflow: hidden;
             position: relative;
             flex-shrink: 0;
@@ -741,7 +741,7 @@
             }
             .TypeBadge {
               padding: 2px 6px;
-              border-radius: 4px;
+              border-radius: var(--radius-sm);
               background: #eef2ff;
               color: #4338ca;
               font-size: 10px;
@@ -780,8 +780,8 @@
             flex: 1;
             padding: 8px;
             background: transparent;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-sm);
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
@@ -789,11 +789,11 @@
           .AddToCartBtn {
             flex: 1;
             padding: 8px;
-            border-radius: 6px;
+            border-radius: var(--radius-sm);
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            border: 1px solid var(--primaryColor);
+            border: 1px solid var(--color-border-accent);
             background: transparent;
             color: var(--primaryColor);
             transition: 0.3s;
@@ -810,7 +810,7 @@
             &:disabled {
               opacity: 0.55;
               cursor: not-allowed;
-              border-color: #cbd5e1;
+              border-color: var(--color-border-strong);
               color: #64748b;
               &:hover {
                 background: transparent;
@@ -865,8 +865,8 @@
     .ReviewCard {
       background: #f8f9fa;
       padding: 20px;
-      border-radius: 12px;
-      border: 1px solid #eee;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-border);
       .Stars {
         margin-bottom: 10px;
         .StarFill {
@@ -894,12 +894,12 @@
     flex-direction: column;
     gap: 15px;
     .FAQItem {
-      border: 1px solid #eee;
-      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
       overflow: hidden;
       transition: 0.3s;
       &.active {
-        border-color: var(--primaryColor);
+        border-color: var(--color-border-accent);
         box-shadow: none;
         .FAQHead {
           background: #faf9ff;
