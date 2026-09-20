@@ -8,6 +8,11 @@
 // autoprefixer itself, so the vendor prefixes the committed `.css` carried are
 // still emitted at build time. See docs/WORKSHOP_DS_01_DS_02_IMPLEMENTATION_REPORT.md
 import "../assets/css/tokens.scss";
+// DS-03 layout primitives (PageContainer / Section / SectionHeading). Loaded
+// after tokens so it can consume them, and before main.scss so that the long
+// tail of existing page rules still wins any specificity tie. These classes are
+// additive — nothing is applied to a page that has not opted in.
+import "../assets/css/layout.scss";
 import "../assets/css/main.scss";
 import "../assets/css/style.scss";
 import "../assets/css/notification.scss";

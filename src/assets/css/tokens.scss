@@ -72,11 +72,16 @@
   --surface-input:             #ffffff;
   --surface-disabled:          #f9fafb;
 
-  /* The Workshop's warm blue-grey. NOTE: the sticky header currently shares
-     this exact literal with generic muted surfaces, so the header cannot be
-     changed without also changing unrelated areas. `--surface-nav` is split out
-     now so a later sprint can diverge them safely. Do not apply it yet. */
-  --surface-nav:               #f2f6fc;
+  /* The Workshop's tinted blue-grey. DS-03 measured every consumer of the
+     literal `#f2f6fc`, and it is NOT the header's private colour: six surfaces
+     share it — `#Nav` (the sticky header), `.HomeBannerBottomLeft`,
+     `.HomeBannerBottomRight`, `.TestimonialCard`, `.MobileFilterBtn` and
+     `.CourseFilter`. It is named here as the shared tint it actually is, and
+     `--surface-nav` merely aliases it — so diverging the header from the other
+     five is now a one-line repoint instead of an edit to six selectors.
+     DS-03 changes neither value; both resolve to #f2f6fc exactly as before. */
+  --surface-tinted:            #f2f6fc;
+  --surface-nav:               var(--surface-tinted);
 
   /* The brand's warm surfaces: cart summary, order summary, notifications.
      These ARE intentional (#fffafa / #fffdf5 / #fffaf0 / #fffcfb). They are
@@ -106,6 +111,11 @@
   --color-text:                var(--textColor);          /* #333 */
   --color-text-muted:          #64748b;
   --color-text-subtle:         #94a3b8;
+  /* Headings are deliberately darker than body copy. Measured on the reference
+     page: `.HighlightBox h3` computes to rgb(26,26,26) = #1a1a1a, and the same
+     literal is used 15+ times across the source for heading text. Added in
+     DS-03 so SectionHeading needs no hardcoded colour. */
+  --color-heading:             #1a1a1a;
   /* NOTE: `#0f172a` is used 85 times as a standalone dark text colour and is
      deliberately NOT captured here — it is a text colour, not a primary
      fallback. It is available for a later text-hierarchy decision. */
@@ -173,8 +183,38 @@
   --space-10:                  60px;   /* inner section rhythm */
   --space-11:                  100px;  /* major section rhythm */
 
-  --section-y:                 var(--space-11);
-  --section-y-sm:              var(--space-10);
+  --section-y:                 var(--space-11);   /* 100px — major band */
+  --section-y-sm:              var(--space-10);   /* 60px — inner band */
+
+  /* The card-stack gap. Measured in DS-03: `30px` is used 95 times as a
+     margin/padding/gap — the dominant vertical gap between stacked cards on
+     content pages (Course Detail's `.HighlightBox` cards sit `margin-bottom:
+     30px` apart). DS-02's scale had no 30px step, which is why it is added
+     here rather than approximated to 32px. */
+  --section-gap:               30px;
+
+  /* The gap under a card/section heading. Measured 25px on the reference page
+     (`.HighlightBox h3`); DS-02's scale steps 24px -> 32px, so it is recorded
+     as its own value rather than rounded to either. */
+  --heading-gap:               25px;
+
+  /* ── LAYOUT / PAGE CONTAINER ───────────────────────────────────────────────
+     Measured from the global `.container` rule in main.scss, which is defined
+     by GUTTERS rather than by a max-width — there is no max-width at all. The
+     four values are the existing responsive scale, preserved exactly:
+
+         100px  >=1800px viewports        -> calc(100% - 200px)
+          50px  <=1800px                   -> calc(100% - 100px)
+          30px  <=1024px                   -> calc(100% - 60px)
+          16px  <=480px                    -> calc(100% - 32px)
+
+     Verified rendered at 1440px: the container measures 1340px (100% - 100px),
+     consistent across Course Detail, About and Contact. */
+  --container-gutter:          100px;
+  --container-gutter-lg:       50px;
+  --container-gutter-md:       30px;
+  --container-gutter-sm:       16px;
+  --container-narrow:          860px;   /* single-column reading width */
 
   /* ── TYPOGRAPHY ────────────────────────────────────────────────────────────
      22 sizes collapse to 10 roles. The two fractional sizes in use (13.5px
@@ -190,6 +230,15 @@
   --text-h1:                   32px;
   --text-h2:                   26px;
   --text-h3:                   20px;
+  /* Card/section heading on the reference content page. Measured in DS-03, not
+     inferred: `.HighlightBox h3` on Course Detail computes to 24px/600/#1a1a1a
+     with 25px bottom margin, responsively 20px @1024 and 18px @768. DS-02's
+     scale stopped at --text-h3 (20px), so this role had no token despite 39
+     declarations of 24px in the source, and no scale step for it.
+     The two smaller steps are the same heading's measured responsive values. */
+  --text-card-title:           24px;
+  --text-card-title-md:        20px;   /* <=1024px (same size as --text-h3) */
+  --text-card-title-sm:        18px;   /* <=768px */
   --text-body-lg:              16px;
   --text-body:                 15px;   /* body copy */
   --text-body-sm:              14px;   /* UI chrome */

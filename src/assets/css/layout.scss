@@ -1,0 +1,174 @@
+/* ============================================================================
+   WORKSHOP LAYOUT PRIMITIVES  —  DS-03
+   ============================================================================
+
+   PageContainer + Section + SectionHeading, expressed as CSS classes for the
+   existing React/SCSS architecture (this project uses plain classes; there is no
+   Tailwind and no CSS Modules).
+
+   ────────────────────────────────────────────────────────────────────────────
+   THE RULE THAT MAKES THIS FILE SAFE
+   ────────────────────────────────────────────────────────────────────────────
+
+   Every value below is either a token or a measurement taken from the page that
+   already renders it. Nothing is invented, and **nothing here is applied to a
+   page that has not opted in**. `.container` itself is NOT redefined — it stays
+   owned by main.scss — so no existing page can change because this file exists.
+
+   ────────────────────────────────────────────────────────────────────────────
+   WHAT WAS MEASURED (DS-03 audit, at 1440px)
+   ────────────────────────────────────────────────────────────────────────────
+
+   PageContainer   The global `.container` in main.scss is defined by GUTTERS,
+                   not by a max-width — it has none. Verified rendered at 1440px:
+                   1340px wide (= 100% - 100px), identical on Course Detail,
+                   About and Contact. Its responsive scale is 100/50/30/16px.
+
+   Section         Band rhythm: `padding: 100px 0` (14 uses) and `60px 0`
+                   (18 uses) dominate the source. Home's `#HomeBanner` is a
+                   full-bleed <section> measured at `padding: 60px 0 0`, with
+                   `.container` nested inside for content width — that is the
+                   pattern this primitive encodes.
+
+   Card stack      Content pages do NOT use band padding; Course Detail stacks
+                   `.HighlightBox` cards `margin-bottom: 30px` apart. `30px` is
+                   used 95 times as a gap and had no DS-02 token.
+
+   SectionHeading  `.HighlightBox h3` on Course Detail computes to
+                   24px / 600 / #1a1a1a, margin-bottom 25px, and responsively
+                   20px @1024 and 18px @768. Confirmed by measurement, and it is
+                   the effective scale — `.HighlightBox` is defined twice in
+                   style.scss (35px/24px and 30px/22px) and the 24px block wins.
+
+   ────────────────────────────────────────────────────────────────────────────
+   THE ACCENT BAR — A CORRECTION TO THE AUDIT
+   ────────────────────────────────────────────────────────────────────────────
+
+   The audit reported the 4px brown bar as a "section-heading motif in 5
+   locations". Measured, it is narrower than that claim:
+
+     - It is a PANEL/CALLOUT left-accent, not a section-heading default. It
+       appears at 6 sites, and as a *heading* accent at exactly one
+       (`main.scss:452`, an h4 sub-heading inside the product popup).
+     - Course Detail's section headings have NO accent at all — measured
+       border-left-width 0px on `.HighlightBox h3`.
+     - It carries three colours, not one: brand (#874429 x4), plus green
+       #10b981 and red #ef4444 as semantic status accents.
+
+   So the accent is offered as an OPT-IN variant, never the default. Imposing it
+   would restyle every content heading and contradict "do not make Course Detail
+   look radically different". The green/red variants stay semantic and are
+   deliberately NOT mapped onto --color-border-accent.
+   ============================================================================ */
+
+/* ── PAGECONTAINER ───────────────────────────────────────────────────────────
+   Modifiers only. `.container` (main.scss:61) keeps ownership of the gutter
+   scale, so `<PageContainer>` renders the identical class and therefore the
+   identical pixels; these add capability without altering it. */
+
+.container--full {
+  width: 100%;
+}
+
+.container--narrow {
+  max-width: var(--container-narrow);
+}
+
+/* ── SECTION ─────────────────────────────────────────────────────────────────
+   A full-bleed band. Nest a PageContainer inside it for content width. */
+
+.Section {
+  width: 100%;
+  padding-block: var(--section-y);
+}
+
+.Section--sm {
+  padding-block: var(--section-y-sm);
+}
+
+/* Opt out of band padding entirely — for a band that only carries a surface. */
+.Section--flush {
+  padding-block: 0;
+}
+
+/* Surfaces. Every one is an existing semantic token; no new colour. */
+.Section--surface {
+  background: var(--surface);
+}
+
+.Section--muted {
+  background: var(--surface-muted);
+}
+
+.Section--subtle {
+  background: var(--surface-subtle);
+}
+
+.Section--warm {
+  background: var(--surface-accent-subtle);
+}
+
+.Section--tinted {
+  background: var(--surface-tinted);
+}
+
+.Section--inverse {
+  background: var(--surface-inverse);
+  color: var(--text-inverse);
+}
+
+/* ── CARD STACK ──────────────────────────────────────────────────────────────
+   The content-page rhythm (Course Detail), as opposed to the band rhythm. */
+
+.SectionStack > * + * {
+  margin-top: var(--section-gap);
+}
+
+.SectionStack > * {
+  margin-bottom: 0;
+}
+
+/* ── SECTIONHEADING ──────────────────────────────────────────────────────────
+   One canonical heading. Values are the measured reference scale. */
+
+.SectionHeading {
+  font-family: myFont1;
+  font-size: var(--text-card-title);
+  font-weight: var(--weight-semibold);
+  color: var(--color-heading);
+  margin: 0 0 var(--heading-gap) 0;
+  /* NOTE: no line-height on purpose. The measured reference heading computes
+     `line-height: normal`, so imposing --leading-tight (1.25) here would change
+     the look on the first page that adopts it. Tightening heading line-height
+     is a typography decision for DS-04/DS-05, not a layout primitive. */
+}
+
+/* A heading that is the last child should not leave its gap behind. */
+.SectionHeading:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 1024px) {
+  .SectionHeading {
+    font-size: var(--text-card-title-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .SectionHeading {
+    font-size: var(--text-card-title-sm);
+  }
+}
+
+/* Opt-in 4px brand accent. Distinct from a card/input border by construction:
+   it is 4px (--border-accent-width) and brand-coloured (--color-border-accent),
+   against 1px --color-border everywhere else. */
+.SectionHeading--accent {
+  border-left: var(--border-accent-width) solid var(--color-border-accent);
+  padding-left: var(--space-4);
+}
+
+/* The inverse band needs an inverse heading. */
+.Section--inverse .SectionHeading {
+  color: var(--text-inverse);
+}

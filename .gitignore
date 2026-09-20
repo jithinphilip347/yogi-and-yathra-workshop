@@ -41,3 +41,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Compiled stylesheet twins.
+# The .scss sources are the single source of truth (DS-01/DS-02) and Next.js
+# compiles them itself (with autoprefixer) at build time — nothing here needs a
+# committed .css. Local editor tooling (a Sass watch/compile extension) writes
+# these twins into src/assets/css on every .scss save, which is how they drifted
+# from their sources in both directions before DS-01. Ignoring them means that
+# local regeneration can never be committed again.
+/src/assets/css/*.css
+/src/assets/css/*.css.map

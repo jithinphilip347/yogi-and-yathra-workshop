@@ -18,6 +18,9 @@ import {
   FiShoppingCart,
 } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
+// DS-03: canonical page shell. Renders the identical `container` class this
+// page already used, so the migration is a zero-pixel change.
+import PageContainer from "@/components/layout/PageContainer";
 import Image from "next/image";
 import Link from "next/link";
 import Inst1 from "@/assets/images/instructor-1.webp";
@@ -248,7 +251,7 @@ const CourseDetails = ({ courseDetails }) => {
   return (
     <div id="CourseDetails">
       <section className="CourseBanner">
-        <div className="container">
+        <PageContainer>
           <div className="HeroSection">
             {/* MOBILE ONLY: Video Preview */}
             <div className="MobilePreviewCard">
@@ -338,10 +341,10 @@ const CourseDetails = ({ courseDetails }) => {
               <div className="ActionBtns">{renderCourseCta()}</div>
             </div>
           </div>
-        </div>
+        </PageContainer>
       </section>
 
-      <div className="container">
+      <PageContainer>
         <div className="CourseDetailsMain">
           <div className="DetailsLeft">
             {course?.learning_outcomes &&
@@ -717,11 +720,11 @@ const CourseDetails = ({ courseDetails }) => {
             </div>
           </aside>
         </div>
-      </div>
+      </PageContainer>
 
       {/* FIXED BOTTOM ACTION BAR */}
       <div className="FixedBottomCart">
-        <div className="container">
+        <PageContainer>
           <div className="BottomFlex">
             <div className="CourseBrief">
               <Image
@@ -754,7 +757,7 @@ const CourseDetails = ({ courseDetails }) => {
               </button>
             </div>
           </div>
-        </div>
+        </PageContainer>
 
         {/* Drawer Logic */}
         <div className={`CartDrawerPopup ${showCartDrawer ? "active" : ""}`}>

@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { FaRegHeart, FaLeaf, FaRegMoon, FaPlus, FaMinus } from 'react-icons/fa';
 import '../../assets/css/about.scss';
+// DS-03: canonical page shell — emits the same `container` class (plus the
+// page's own modifier), so rendering is unchanged.
+import PageContainer from '@/components/layout/PageContainer';
 
 
 const About = () => {
@@ -30,7 +33,7 @@ const About = () => {
     <div id='About'>
       
       {/* Banner Section */}
-      <div className="AboutBanner container">
+      <PageContainer className="AboutBanner">
           <div className="BannerContent">
               <span className="Subtitle">Welcome to Yogi Yathra</span>
               <h1>Discover the art of <br/> mindful living</h1>
@@ -39,10 +42,10 @@ const About = () => {
           <div className="BannerImage">
               <img src="https://images.unsplash.com/photo-1545205597-3d9d02c29597?q=80&w=2000&auto=format&fit=crop" alt="Yoga Retreat Banner" />
           </div>
-      </div>
+      </PageContainer>
 
       {/* Our Story Section */}
-      <div className="OurStorySection container">
+      <PageContainer className="OurStorySection">
           <div className="StoryImageWrapper">
               <div className="StoryImageInner">
                   <img src="https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=1000&auto=format&fit=crop" alt="Yoga Training" />
@@ -58,11 +61,11 @@ const About = () => {
               <p>Yoga is a profound journey of the self, through the self, to the self. Founded on the timeless principles of balance, harmony, and connection, our studio is much more than just a place to practice yoga&mdash;it&apos;s a thriving community.</p>
               <p>Whether you are stepping onto the mat for the very first time or you are an experienced practitioner looking to deepen your practice, our expert instructors guide you through every pose with mindful attention and personal care. We ensure a safe, enriching, and deeply personal practice that nurtures both your physical strength and mental clarity.</p>
           </div>
-      </div>
+      </PageContainer>
 
       {/* Why Choose Us / Values */}
       <div className="PremiumValuesWrapper">
-        <div className="container PremiumValues">
+        <PageContainer className="PremiumValues">
             <div className="ValuesHeaderCentered">
                 <span className="SubHeading">Our Core Values</span>
                 <h2>The principles that <br/> guide our practice</h2>
@@ -84,11 +87,11 @@ const About = () => {
                     <p>We are deeply committed to continuously learning, growing, and refining our teachings to serve our community better every single day.</p>
                 </div>
             </div>
-        </div>
+        </PageContainer>
       </div>
 
       {/* FAQ Section */}
-      <div className="FaqSection container">
+      <PageContainer className="FaqSection">
           <div className="FaqImageWrapper">
               <img src="https://images.unsplash.com/photo-1575052814086-f385e2e2ad1b?q=80&w=1000&auto=format&fit=crop" alt="Yoga Class FAQ" />
           </div>
@@ -114,7 +117,7 @@ const About = () => {
                   ))}
               </div>
           </div>
-      </div>
+      </PageContainer>
 
     </div>
   )

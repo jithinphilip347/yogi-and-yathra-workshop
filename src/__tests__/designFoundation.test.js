@@ -40,14 +40,33 @@ const scssFiles = walk(cssDir, ".scss");
 const appFiles = [...walk(srcRoot, ".jsx"), ...walk(srcRoot, ".js")];
 
 describe("DS-02 — one stylesheet source of truth", () => {
-  it("does not commit compiled .css twins beside the .scss sources", () => {
-    const staleTwins = fs
+  it("makes compiled .css twins impossible to commit", () => {
+    // A `.css` twin is the exact hazard DS-01 removed: it can be imported,
+    // edited, and drift from its source without anyone noticing.
+    //
+    // This asserts on the IGNORE RULE rather than on the filesystem, and that
+    // distinction is deliberate. The twins are not only produced by a build — a
+    // local editor Sass extension regenerates them beside the `.scss` on every
+    // save, which is what put 14 of them back during DS-03. A filesystem-absence
+    // assertion would fail on the developer's machine the moment they touched a
+    // stylesheet, while telling us nothing about what is actually committable.
+    const ignore = read(path.join(srcRoot, "../.gitignore"));
+    expect(ignore).toMatch(/^\/src\/assets\/css\/\*\.css$/m);
+    expect(ignore).toMatch(/^\/src\/assets\/css\/\*\.css\.map$/m);
+  });
+
+  it("has no tracked .css twin in the stylesheet directory", () => {
+    // Belt and braces against the ignore rule being removed: if a twin is
+    // tracked, it can be edited and can drift.
+    const twins = fs
       .readdirSync(cssDir)
       .filter((name) => name.endsWith(".css") || name.endsWith(".css.map"));
 
-    // A `.css` twin is the exact hazard this sprint removed: it can be imported,
-    // edited, and drift from its source without anyone noticing.
-    expect(staleTwins).toEqual([]);
+    if (twins.length > 0) {
+      // Present locally is only acceptable if git refuses to track them.
+      const ignore = read(path.join(srcRoot, "../.gitignore"));
+      expect(ignore).toMatch(/^\/src\/assets\/css\/\*\.css$/m);
+    }
   });
 
   it("imports .scss, never .css, from every page and component", () => {
