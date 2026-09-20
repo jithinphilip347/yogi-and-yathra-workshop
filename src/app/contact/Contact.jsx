@@ -96,10 +96,10 @@ const Contact = () => {
               </div>
 
               <div className="SocialLinks">
-                <a href="#"><FaFacebookF /></a>
-                <a href="#"><FaInstagram /></a>
-                <a href="#"><FaLinkedinIn /></a>
-                <a href="#"><FaYoutube /></a>
+                <a href="https://www.facebook.com/yogiandyathra" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><FaFacebookF /></a>
+                <a href="https://www.instagram.com/yogiandyathra" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><FaInstagram /></a>
+                <a href="https://www.linkedin.com/company/yogiandyathra" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn"><FaLinkedinIn /></a>
+                <a href="https://www.youtube.com/@yogiandyathra" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><FaYoutube /></a>
               </div>
             </div>
           </div>

@@ -148,10 +148,8 @@ const Dashboard = ({
         </div>
       )}
       
-      {/* Recent Orders — learning + physical purchases in one view (Sprint 9) */}
-      <div className="RecentOrdersBox" style={{ marginBottom: "28px" }}>
-        <RecentOrders onViewAll={onNavigateToTab ? () => onNavigateToTab("My Orders") : null} />
-      </div>
+      {/* Recent Orders — compact dashboard module (redesigned) */}
+      <RecentOrders onViewAll={onNavigateToTab ? () => onNavigateToTab("My Orders") : null} />
 
       {/* Continue Learning */}
       <div className="ContinueWatchBox">

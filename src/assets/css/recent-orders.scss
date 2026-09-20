@@ -1,0 +1,300 @@
+/* ============================================================================
+   RECENT ORDERS — single latest-order preview
+   ============================================================================
+
+   Dashboard section that shows only the single most recent order as a
+   compact card with a "View All Orders" action.
+
+   Design:
+   - Header row: title left-aligned, "View All Orders →" right-aligned.
+   - One card: icon + order title + metadata + amount + status badge.
+   - Empty state with inline links to Courses / Live Classes.
+   - Degraded notice for E-commerce outages.
+   - ~80–110px desktop card height; stacks on mobile.
+
+   Responsive:
+   - ≥768px: horizontal row inside the card.
+   - <768px: amount + status in a footer row.
+   ============================================================================ */
+
+.RecentOrders {
+  width: 100%;
+
+  /* ── Header ────────────────────────────────────────────────────────────── */
+  .RecentOrdersHeader {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+
+    .RecentOrdersHead {
+      flex: 1;
+      min-width: 0;
+      margin: 0;
+
+      h2 {
+        font-size: 15px;
+        font-family: myFont1;
+        font-weight: 600;
+        color: #1e293b;
+        margin: 0;
+        line-height: 1.3;
+      }
+    }
+
+    .ViewAllLink {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: none;
+      color: #874429;
+      font-size: 12px;
+      font-family: myFont1;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 4px 0;
+      white-space: nowrap;
+      transition: color 0.15s ease;
+
+      &:hover {
+        color: #6d331e;
+      }
+
+      svg {
+        font-size: 11px;
+        transition: transform 0.15s ease;
+      }
+
+      &:hover svg {
+        transform: translateX(2px);
+      }
+    }
+  }
+
+  /* ── Degraded notice ───────────────────────────────────────────────────── */
+  .DegradedNotice {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm, 6px);
+    background: rgba(245, 158, 11, 0.08);
+    color: #d97706;
+    font-size: 11px;
+    font-family: myFont1;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  /* ── Latest order card ─────────────────────────────────────────────────── */
+  .LatestOrderCard {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md, 8px);
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--color-border, #e2e8f0);
+    min-height: 76px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:not(.is-empty):not(.is-loading):hover {
+      border-color: var(--color-border-strong, #cbd5e1);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    /* ── Icon ──────────────────────────────────────────────────────────────── */
+    .OrderIcon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md, 8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 18px;
+
+      &.is-learning {
+        background: rgba(135, 68, 41, 0.1);
+        color: #874429;
+      }
+
+      &.is-physical {
+        background: rgba(5, 150, 105, 0.1);
+        color: #059669;
+      }
+
+      &.is-mixed {
+        background: rgba(139, 92, 246, 0.1);
+        color: #7c3aed;
+      }
+    }
+
+    /* ── Content ──────────────────────────────────────────────────────────── */
+    .OrderContent {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .OrderTitle {
+      font-size: 14px;
+      font-family: myFont1;
+      font-weight: 600;
+      color: #1e293b;
+      line-height: 1.3;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .OrderMeta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-family: myFont1;
+      color: #64748b;
+      line-height: 1.3;
+    }
+
+    .OrderMetaDot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #cbd5e1;
+      flex-shrink: 0;
+    }
+
+    /* ── Right side: amount + status ─────────────────────────────────────── */
+    .OrderRight {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .OrderAmount {
+      font-size: 14px;
+      font-family: myFont1;
+      font-weight: 700;
+      color: #1e293b;
+      white-space: nowrap;
+    }
+
+    .OrderStatus {
+      font-size: 11px;
+      font-family: myFont1;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--radius-pill, 50px);
+      white-space: nowrap;
+      line-height: 1.3;
+      text-transform: capitalize;
+
+      &.status-completed,
+      &.status-delivered {
+        background: rgba(5, 150, 105, 0.1);
+        color: #059669;
+      }
+
+      &.status-processing,
+      &.status-confirmed {
+        background: rgba(59, 130, 246, 0.1);
+        color: #3b82f6;
+      }
+
+      &.status-pending,
+      &.status-draft {
+        background: rgba(245, 158, 11, 0.1);
+        color: #d97706;
+      }
+
+      &.status-cancelled,
+      &.status-failed {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc2626;
+      }
+
+      &.status-unknown {
+        background: rgba(100, 116, 139, 0.1);
+        color: #64748b;
+      }
+    }
+
+    /* ── Empty state ─────────────────────────────────────────────────────── */
+    &.is-empty {
+      justify-content: center;
+      min-height: 64px;
+
+      .OrderPlaceholder {
+        font-size: 13px;
+        color: #94a3b8;
+        font-family: myFont1;
+        text-align: center;
+        margin: 0;
+
+        a {
+          color: #874429;
+          font-weight: 600;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    /* ── Loading state ───────────────────────────────────────────────────── */
+    &.is-loading {
+      min-height: 76px;
+
+      .OrderSkeleton {
+        display: block;
+        width: 100%;
+        height: 18px;
+        border-radius: 4px;
+        background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+      }
+    }
+  }
+
+  /* ── Mobile: stack layout ──────────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .LatestOrderCard {
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px 14px;
+
+      .OrderRight {
+        width: 100%;
+        justify-content: space-between;
+        margin-top: 4px;
+        padding-top: 8px;
+        border-top: 1px solid var(--color-border, #e2e8f0);
+      }
+    }
+  }
+
+  /* ── Small mobile ──────────────────────────────────────────────────────── */
+  @media (max-width: 430px) {
+    .LatestOrderCard {
+      padding: 10px 12px;
+      min-height: 64px;
+    }
+  }
+}
+
+/* ── Skeleton animation ────────────────────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}

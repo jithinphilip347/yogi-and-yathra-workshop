@@ -298,7 +298,7 @@ const Nav = () => {
                     </Link>
                   </div>
                   <div className="SignBox">
-                    <Link href="/signup" className="authLink">
+                    <Link href="/auth/signup" className="authLink">
                       <RiUserLine />
                       <button>Sign Up</button>
                     </Link>

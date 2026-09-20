@@ -28,9 +28,9 @@ const Footer = () => {
               Empowering you to find balance, peace, and strength through the art of Yoga. Join our community and begin your wellness journey today.
             </p>
             <div className="footerSocial">
-              <Link href="#"><FaFacebookF /></Link>
-              <Link href="#"><FaInstagram /></Link>
-              <Link href="#"><FaYoutube /></Link>
+              <a href="https://www.facebook.com/yogiandyathra" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><FaFacebookF /></a>
+              <a href="https://www.instagram.com/yogiandyathra" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><FaInstagram /></a>
+              <a href="https://www.youtube.com/@yogiandyathra" target="_blank" rel="noopener noreferrer" aria-label="YouTube"><FaYoutube /></a>
             </div>
           </div>
 
@@ -38,9 +38,9 @@ const Footer = () => {
           <div className="footerColumn">
             <h4>COMPANY</h4>
             <ul>
-              <li><Link href="#">About Us</Link></li>
-              <li><Link href="#">Workshops</Link></li>
-              <li><Link href="#">Classes</Link></li>
+              <li><Link href="/about">About Us</Link></li>
+              <li><Link href="/course">Workshops</Link></li>
+              <li><Link href="/live-class">Classes</Link></li>
               <li><Link href="/pricing">Pricing</Link></li>
             </ul>
           </div>
@@ -49,10 +49,10 @@ const Footer = () => {
           <div className="footerColumn">
             <h4>SUPPORT</h4>
             <ul>
-              <li><Link href="#">FAQ</Link></li>
-              <li><Link href="#">Help Center</Link></li>
-              <li><Link href="#">Terms of Service</Link></li>
-              <li><Link href="#">Privacy Policy</Link></li>
+              <li><Link href="/#faq">FAQ</Link></li>
+              <li><Link href="/contact">Help Center</Link></li>
+              <li><Link href="/terms">Terms of Service</Link></li>
+              <li><Link href="/privacy">Privacy Policy</Link></li>
             </ul>
           </div>
 
@@ -77,7 +77,7 @@ const Footer = () => {
         <div className="footerBottom">
           <div className="footerBottomMain">
             <p className="copyrightText">© {new Date().getFullYear()} Yogi and Yathra. All Rights Reserved.</p>
-            <p className="designedBy">Designed by <Link href="#">VATL</Link></p>
+            <p className="designedBy">Designed by <a href="https://vatl.in" target="_blank" rel="noopener noreferrer">VATL</a></p>
           </div>
         </div>
       </div>

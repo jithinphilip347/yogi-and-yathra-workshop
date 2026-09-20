@@ -214,7 +214,7 @@ const Page = () => {
             <div className="ContentSection CoursesSection">
               <div className="SectionHeader">
                 <h2>{teacher.courses.length} Published Courses</h2>
-                <Link href="#" className="ViewAllLink">View All <FaArrowRight /></Link>
+                <Link href="/course" className="ViewAllLink">View All <FaArrowRight /></Link>
               </div>
               
               <div className="TeacherCoursesGrid">
