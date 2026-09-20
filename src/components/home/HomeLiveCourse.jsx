@@ -17,6 +17,7 @@ import {
   FiLock,
 } from "react-icons/fi";
 import { useQuery } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
 import courseApi from "@/libs/courseApi";
 
 import LiveBg1 from "../../assets/images/live1.webp";
@@ -25,9 +26,10 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
+import { registrationViewerState } from "@/utils/registrationWindow";
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 
-const EventSlide = ({ event }) => {
+const EventSlide = ({ event, hasAccess = false }) => {
   const router = useRouter();
   const { buyNow } = useCart();
   const [timeLeft, setTimeLeft] = useState({
@@ -46,17 +48,29 @@ const EventSlide = ({ event }) => {
         Number(event?.available_seats) <= 0 &&
         Number(event?.capacity) > 0)
   );
-  const isRegistrationClosed = Boolean(event?.registration_status === "closed");
+  // ── Registration window vs. entitlement ──────────────────────────────
+  // The window governs NEW registrations only. A viewer who already holds an
+  // active enrollment must keep seeing — and reaching — their session after the
+  // public window closes (src/utils/registrationWindow.js holds the rule, and the
+  // backend re-validates every new registration regardless of what we render).
+  const registration = registrationViewerState(event, { hasAccess, isEnded });
+
+  const isRegistrationClosed = registration.showClosedState;
+  // Closed-window and sold-out are both registration constraints, so neither may
+  // lock out someone who is already registered.
+  const registrationBlocked =
+    !hasAccess && (registration.showClosedState || isSoldOut);
 
   const getCtaText = () => {
     if (isEnded) return "Session Ended";
     if (isLive) return "Join Live";
+    if (hasAccess) return "View Session";
     if (isSoldOut) return "Sold Out";
     if (isRegistrationClosed) return "Registration Closed";
     return "Pre Book Now";
   };
 
-  const isButtonDisabled = isEnded || isSoldOut || isRegistrationClosed;
+  const isButtonDisabled = isEnded || registrationBlocked;
 
   const handleCardClick = () => {
     const slug =
@@ -72,6 +86,13 @@ const EventSlide = ({ event }) => {
     if (isButtonDisabled) return;
 
     if (isLive) {
+      handleCardClick();
+      return;
+    }
+
+    // An entitled viewer opens their session; they must not be pushed into buying
+    // it a second time.
+    if (hasAccess) {
       handleCardClick();
       return;
     }
@@ -168,7 +189,7 @@ const EventSlide = ({ event }) => {
 
         <div className="ImageCenterContent">
             {/* Kept this just in case they still want the lock on the image */}
-            {isRegistrationClosed && (
+            {isRegistrationClosed && !hasAccess && (
               <div className="LockIconWrapper">
                 <FiLock />
               </div>
@@ -283,6 +304,29 @@ const HomeLiveCourse = ({ liveSections }) => {
       ? liveSections.data
       : [];
 
+  // One enrollment lookup for the whole rail (not one per card), reusing the same
+  // endpoint the LiveSection detail page trusts. Cache-only until it resolves: an
+  // unknown viewer is treated as unentitled, which only ever shows the *public*
+  // state — never a wrong unlock.
+  const { user } = useSelector((state) => state.auth);
+  const { data: enrolledLiveSectionIds } = useQuery({
+    queryKey: ["viewer-live-section-enrollments", user?.id],
+    queryFn: async () => {
+      const res = await courseApi.userEnrollments(user.id, "live_section");
+      const list = res.data?.data || res.data || [];
+      return list
+        .filter((e) => e.status === "active")
+        .map((e) => Number(e.enrollable_id));
+    },
+    enabled: !!user?.id,
+    staleTime: 30_000,
+  });
+
+  const enrolledIds = useMemo(
+    () => new Set(Array.isArray(enrolledLiveSectionIds) ? enrolledLiveSectionIds : []),
+    [enrolledLiveSectionIds]
+  );
+
   const { data: liveSectionsData, isLoading } = useQuery({
     queryKey: ["public-live-sections"],
     queryFn: async () => {
@@ -362,7 +406,10 @@ const HomeLiveCourse = ({ liveSections }) => {
             >
               {list.map((event) => (
                 <SwiperSlide key={event.id}>
-                  <EventSlide event={event} />
+                  <EventSlide
+                    event={event}
+                    hasAccess={enrolledIds.has(Number(event.id))}
+                  />
                 </SwiperSlide>
               ))}
             </Swiper>

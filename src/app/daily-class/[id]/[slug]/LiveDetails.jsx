@@ -30,6 +30,10 @@ import Image from "next/image";
 import Inst1 from "@/assets/images/instructor-1.webp";
 import ThumbNail from "@/assets/images/live1.webp";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
+import {
+  REGISTRATION_WINDOW_STATE,
+  registrationViewerState,
+} from "@/utils/registrationWindow";
 import Yoga1 from "@/assets/images/yoga-1.jpg";
 import Yoga2 from "@/assets/images/yoga-2.jpg";
 import Yoga3 from "@/assets/images/yoga-3.jpg";
@@ -192,6 +196,28 @@ const LiveDetails = ({ id, classDetails }) => {
     fetchStatus,
     cancelSubscription,
   } = useSubscription();
+
+  // ─── Registration window (shared rule) ───────────────────────────────
+  // Mirrors the backend's HasRegistrationWindow through the same helper the
+  // LiveSection rail uses. Only a NEW registration is gated: an active subscriber
+  // keeps their classroom button regardless of the window, because an entitlement
+  // outlives it. `subStatus` is the server's answer, never local state, and the
+  // backend re-validates on subscription creation — so a stale or manipulated
+  // client clock can never buy access.
+  const registration = registrationViewerState(dailyClass, {
+    hasAccess: subStatus === "active",
+    isEnded: Boolean(dailyClass?.is_ended),
+  });
+
+  const registrationOpensAt = dailyClass?.registration_open_at
+    ? new Date(dailyClass.registration_open_at).toLocaleString("en-IN", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    : null;
 
   // On load (and after returning from the AutoPay checkout), fetch the
   // ACTUAL server subscription state — never trust local frontend state.
@@ -901,6 +927,24 @@ const LiveDetails = ({ id, classDetails }) => {
                       ? "Authorize AutoPay to continue…"
                       : "Confirming payment…"}
                 </button>
+              ) : registration.showClosedState ? (
+                <>
+                  <button className="EnrollSidebarBtn" disabled>
+                    {registration.state === REGISTRATION_WINDOW_STATE.NOT_OPEN
+                      ? "Registration Opens Soon"
+                      : "Registration Closed"}
+                  </button>
+                  <p
+                    className="SecureCheckoutNote"
+                    style={{ fontSize: 12, color: "#64748b", textAlign: "center", marginTop: 8 }}
+                  >
+                    {registration.state === REGISTRATION_WINDOW_STATE.NOT_OPEN
+                      ? registrationOpensAt
+                        ? `Registration opens on ${registrationOpensAt}.`
+                        : "Registration for this class has not opened yet."
+                      : "This class is no longer accepting new registrations."}
+                  </p>
+                </>
               ) : (
                 <>
                   <button
