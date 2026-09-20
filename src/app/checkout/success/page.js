@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { FaCheckCircle, FaBookOpen, FaArrowRight } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { useQueryClient } from '@tanstack/react-query';
-import '@/assets/css/checkout.css';
+import '@/assets/css/checkout.scss';
 
 export default function CheckoutSuccessPage() {
   const router = useRouter();

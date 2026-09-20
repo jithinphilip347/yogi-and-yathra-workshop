@@ -381,7 +381,7 @@ const Dashboard = ({
           <div className="EmptyState" style={{ padding: "30px", textAlign: "center", background: "rgba(255,255,255,0.02)", borderRadius: "12px" }}>
             <p style={{ color: "#aaa", marginBottom: "15px" }}>You haven&apos;t purchased any courses yet.</p>
             <Link href="/course">
-              <button className="ExploreBtn" style={{ padding: "8px 20px", background: "var(--primary-color, #ff6b6b)", color: "#fff", borderRadius: "6px", border: "none", cursor: "pointer" }}>Explore Courses</button>
+              <button className="ExploreBtn" style={{ padding: "8px 20px", background: "var(--primaryColor, #874429)", color: "#fff", borderRadius: "6px", border: "none", cursor: "pointer" }}>Explore Courses</button>
             </Link>
           </div>
         ) : (

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import fs from "fs";
 import path from "path";
+import * as sass from "sass";
 import { fileURLToPath } from "url";
 
 import {
@@ -424,8 +425,12 @@ describe("Sprint 19 — Course related products", () => {
    * photos resolve at all.
    */
   describe("Course product section presentation", () => {
-    const styleCss = read("../../assets/css/style.css");
+    // DS-02: `styleCss` is the source compiled on demand — the committed
+    // `style.css` artifact was removed because it had drifted from this source.
     const styleScss = read("../../assets/css/style.scss");
+    const styleCss = sass.compileString(styleScss, {
+      loadPaths: [path.resolve(__dirname, "../../assets/css")],
+    }).css;
     const constantsSource = read("../../utils/constants.js");
     const envExample = read("../../../.env.example");
     const popupSource = read("../../components/popup/ProductDetailPopup.jsx");

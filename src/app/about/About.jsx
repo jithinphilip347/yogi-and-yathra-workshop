@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { FaRegHeart, FaLeaf, FaRegMoon, FaPlus, FaMinus } from 'react-icons/fa';
-import '../../assets/css/about.css';
+import '../../assets/css/about.scss';
 
 
 const About = () => {

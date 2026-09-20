@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import BlogCard from './BlogCard';
 import { blogApi } from '@/services/blogApi';
-import '../../assets/css/blog.css';
+import '../../assets/css/blog.scss';
 
 const Blog = () => {
   const [blogs, setBlogs] = useState([]);

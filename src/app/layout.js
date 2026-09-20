@@ -1,6 +1,16 @@
-import "../assets/css/main.css";
-import "../assets/css/style.css";
-import "../assets/css/notification.css";
+// Global style entry, in cascade order.
+//
+// DS-02: these import the `.scss` SOURCES, not the committed `.css` twins. The
+// Workshop previously loaded compiled `.css` at this level while individual
+// pages loaded a mix of `.scss` and `.css` — with the `.css` files committed
+// beside their sources and drifting from them in BOTH directions. The `.scss`
+// files are now the single source of truth; Next.js compiles them and runs
+// autoprefixer itself, so the vendor prefixes the committed `.css` carried are
+// still emitted at build time. See docs/WORKSHOP_DS_01_DS_02_IMPLEMENTATION_REPORT.md
+import "../assets/css/tokens.scss";
+import "../assets/css/main.scss";
+import "../assets/css/style.scss";
+import "../assets/css/notification.scss";
 import ClientLayout from "./ClientLayout";
 
 export const metadata = {

@@ -39,7 +39,6 @@ import { useDailyClassCertificate } from "@/hooks/useDailyClassCertificate";
 
 import "../../../../../assets/css/live-stream.scss";
 import "../../../../../assets/css/learning-player.scss";
-import "../../../../../assets/css/daily-class-player.scss";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    DAY MAP & TIME PARSER — Consistent schedule parsing across the app

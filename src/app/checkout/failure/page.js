@@ -3,7 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { FaTimesCircle, FaRedo, FaHeadset } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
-import '@/assets/css/checkout.css';
+import '@/assets/css/checkout.scss';
 
 export default function CheckoutFailurePage() {
   const paymentError = useSelector((state) => state.payment?.paymentError);

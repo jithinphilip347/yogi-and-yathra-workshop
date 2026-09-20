@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import '../../assets/css/contact.css';
+import '../../assets/css/contact.scss';
 import { FaRegEnvelope, FaPhoneAlt, FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from 'react-icons/fa';
 import courseApi from '@/libs/courseApi';
 import toast from 'react-hot-toast';

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import BlogCard from '../BlogCard';
 import { blogApi } from '@/services/blogApi';
 import { resolveMediaUrl } from '@/utils/mediaUrl';
-import '../../../assets/css/blog.css';
+import '../../../assets/css/blog.scss';
 
 const fallbackHero = "https://images.unsplash.com/photo-1599901860904-17e6ed7083a0?q=80&w=1000&auto=format&fit=crop";
 const fallbackAuthor = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=200&auto=format&fit=crop";

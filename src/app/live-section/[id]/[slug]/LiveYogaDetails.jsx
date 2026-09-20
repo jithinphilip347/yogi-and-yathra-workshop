@@ -29,7 +29,7 @@ import toast from 'react-hot-toast';
 import Yoga1 from "@/assets/images/yoga-1.jpg";
 import Yoga2 from "@/assets/images/yoga-2.jpg";
 import Yoga3 from "@/assets/images/yoga-3.jpg";
-import '../../../../assets/css/live-yoga-details.css';
+import '../../../../assets/css/live-yoga-details.scss';
 
 // Local placeholders used only when a related product has no media of its own.
 const relatedFallbackImages = [Yoga1, Yoga2, Yoga3];

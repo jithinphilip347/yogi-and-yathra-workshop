@@ -1,0 +1,246 @@
+/* ============================================================================
+   WORKSHOP GLOBAL DESIGN TOKENS  —  DS-02
+   ============================================================================
+
+   The Workshop's semantic design layer. Before this file, the application had
+   exactly five custom properties (`--primaryColor`, `--primaryColorRgb`,
+   `--primaryHoverColor`, `--secondaryColor`, `--textColor`) and every surface,
+   border, radius, space, shadow and type size was a literal written at its use
+   site. Measured consequence: 17 radius values, ~10 neutral border greys, 4
+   spellings of white, 7-8 muted-surface greys, 22 font sizes (two of them
+   fractional), and 16+ shadows.
+
+   See: docs/WORKSHOP_GLOBAL_DESIGN_SYSTEM_AUDIT.md
+
+   ────────────────────────────────────────────────────────────────────────────
+   RULES FOR THIS FILE
+   ────────────────────────────────────────────────────────────────────────────
+
+   1. THE BRAND IS NOT IN QUESTION. `#874429` and its hover are the Workshop's
+      identity and are only ever aliased here, never replaced. No blue, no
+      purple, no second palette.
+
+   2. SEMANTIC, NOT NUMERIC. Names describe a role ("card", "muted", "danger"),
+      never a value. A token that only means "8px" is not a token.
+
+   3. THIS FILE DEFINES; IT DOES NOT APPLY. Adding tokens changes nothing on
+      screen. Page and component migration happens in DS-03 onward. That is
+      deliberate: the foundation must be provably a no-op so that any later
+      visual change is attributable to a specific migration step.
+
+   4. EVERY VALUE IS RATIFIED FROM THE AUDIT'S MEASUREMENTS, not invented. Where
+      the audit found a clear modal (most-used) value for a role, that value
+      wins — the application already had a coherent implicit hierarchy and this
+      file names it rather than replacing it.
+
+   5. VALUES ARE DECLARED IN THE ORDER THEY CASCADE. `--primaryColor` itself is
+      declared in main.scss's `:root`; the aliases below resolve lazily at use
+      time, so load order between these two files does not matter.
+
+   ────────────────────────────────────────────────────────────────────────────
+   THE 7-STEP RADIUS SCALE, IN ONE PICTURE
+   ────────────────────────────────────────────────────────────────────────────
+
+       xs  2px   progress bars, micro decoration, numeric badges
+       sm  6px   inputs, small buttons, compact cards        (66 existing uses)
+       md  8px   cards — the Workshop's modal card radius     (80 existing uses)
+       lg 12px   panels, modals, order summary                (60 existing uses)
+       xl 16px   large containers, feature cards
+     pill 50px   status/label badges                          (17 existing uses)
+   circle 50%    avatars, dots, icon buttons, rings           (69 existing uses)
+
+   ============================================================================ */
+
+:root {
+  /* ── BRAND ─────────────────────────────────────────────────────────────────
+     Aliases only. The literal values live in main.scss's `:root` and are the
+     single source for the brand. Nothing here redefines them. */
+  --color-primary:             var(--primaryColor);          /* #874429 */
+  --color-primary-hover:       var(--primaryHoverColor);     /* #6d331e */
+  --color-primary-rgb:         var(--primaryColorRgb);       /* 135, 68, 41 */
+  --color-secondary:           var(--secondaryColor);        /* #f2b907 */
+
+  /* ── SURFACES ──────────────────────────────────────────────────────────────
+     Ratified from the audit: `#fff` was written four different ways across 158
+     declarations; seven near-identical greys competed for "muted"; and four
+     cream tints expressed one warm-brand idea. */
+  --surface-page:              #ffffff;
+  --surface:                   #ffffff;   /* all cards, modals, order summary */
+  --surface-muted:             #f8fafc;   /* section backgrounds */
+  --surface-subtle:            #f1f5f9;   /* inset / grouped / inactive areas */
+  --surface-raised:            #ffffff;   /* + --shadow-md for elevation */
+  --surface-input:             #ffffff;
+  --surface-disabled:          #f9fafb;
+
+  /* The Workshop's warm blue-grey. NOTE: the sticky header currently shares
+     this exact literal with generic muted surfaces, so the header cannot be
+     changed without also changing unrelated areas. `--surface-nav` is split out
+     now so a later sprint can diverge them safely. Do not apply it yet. */
+  --surface-nav:               #f2f6fc;
+
+  /* The brand's warm surfaces: cart summary, order summary, notifications.
+     These ARE intentional (#fffafa / #fffdf5 / #fffaf0 / #fffcfb). They are
+     preserved — this token exists so the idea survives as ONE value. */
+  --surface-accent-subtle:     #fffcfb;
+
+  /* Inverse/brand surfaces. The footer is a solid brand-brown field with
+     translucent white dividers — the strongest brand surface in the product. */
+  --surface-inverse:           var(--color-primary);
+  --surface-inverse-divider:   rgba(255, 255, 255, 0.15);
+  --text-inverse:              #ffffff;
+
+  /* ── BORDERS ───────────────────────────────────────────────────────────────
+     The single largest source of visual drift: ~10 greys doing one job.
+     `#e2e8f0` is the audit's modal neutral at 40 declarations. */
+  --color-border:              #e2e8f0;   /* every card, input, divider */
+  --color-border-muted:        #f1f5f9;   /* list separators, hairline rules */
+  --color-border-strong:       #cbd5e1;   /* selected rows, emphasis */
+
+  /* The brown border is NOT a cart quirk — the audit found it used as a border
+     in 13 stylesheets. It is a Workshop-wide accent and is now named. It is
+     neither removed nor confined to the cart. */
+  --color-border-accent:       var(--color-primary);
+  --color-border-focus:        var(--color-primary);
+
+  /* ── TEXT ────────────────────────────────────────────────────────────────── */
+  --color-text:                var(--textColor);          /* #333 */
+  --color-text-muted:          #64748b;
+  --color-text-subtle:         #94a3b8;
+  /* NOTE: `#0f172a` is used 85 times as a standalone dark text colour and is
+     deliberately NOT captured here — it is a text colour, not a primary
+     fallback. It is available for a later text-hierarchy decision. */
+
+  /* ── STATUS ────────────────────────────────────────────────────────────────
+     The audit found each family spanning 4 values with no rule for which is a
+     surface, which a border, and which text. */
+  --color-error:               #dc2626;
+  --color-error-surface:       #fef2f2;
+  --color-error-border:        #fecaca;
+
+  --color-warning:             #b45309;
+  --color-warning-surface:     #fffbeb;
+  --color-warning-border:      #fde68a;
+  /* `#d97706` has 13 standalone uses as warning TEXT and is intentionally left
+     alone here — it is a semantic colour, not a mistyped brand fallback. */
+
+  --color-success:             #047857;
+  --color-success-surface:     #ecfdf5;
+  --color-success-border:      #a7f3d0;
+
+  --color-live:                #10b981;   /* live/active indicator */
+  --color-danger:              #ef4444;   /* destructive accent bar (live-stream) */
+
+  /* ── OVERLAY ───────────────────────────────────────────────────────────────
+     The audit found four scrim opacities (0.85 / 0.7 / 0.486 / 0.048) in use. */
+  --overlay-modal:             rgba(0, 0, 0, 0.72);
+  --overlay-drawer:            rgba(0, 0, 0, 0.50);
+
+  /* ── RADIUS ────────────────────────────────────────────────────────────────
+     Seven steps replacing 17 values. Six of the retired values (15px, 14px,
+     18px, 25px, 5px, 30px) mapped to no semantic role at all. */
+  --radius-none:               0;
+  --radius-xs:                 2px;
+  --radius-sm:                 6px;
+  --radius-md:                 8px;
+  --radius-lg:                 12px;
+  --radius-xl:                 16px;
+  --radius-pill:               50px;
+  --radius-circle:             50%;
+
+  /* ── BORDER WIDTH ──────────────────────────────────────────────────────────
+     `1.5px` is retired (it existed only in checkout and nowhere else in the
+     Workshop); the lone `3px` folds to 2px. */
+  --border-width:              1px;
+  --border-width-strong:       2px;
+  /* The 4px brown bar is an intentional section-heading motif, not a control
+     border. It is preserved as its own token so a normalisation sweep cannot
+     mistake it for a stray thick border. */
+  --border-accent-width:       4px;
+
+  /* ── SPACING ───────────────────────────────────────────────────────────────
+     4px-based, anchored on the audit's measured values. `20px` is the most
+     common padding (45 uses); `6px` is retained because 11 compact chips
+     depend on it. */
+  --space-1:                   4px;
+  --space-2:                   6px;
+  --space-3:                   8px;
+  --space-4:                   12px;
+  --space-5:                   16px;
+  --space-6:                   20px;
+  --space-7:                   24px;
+  --space-8:                   32px;
+  --space-9:                   40px;
+  --space-10:                  60px;   /* inner section rhythm */
+  --space-11:                  100px;  /* major section rhythm */
+
+  --section-y:                 var(--space-11);
+  --section-y-sm:              var(--space-10);
+
+  /* ── TYPOGRAPHY ────────────────────────────────────────────────────────────
+     22 sizes collapse to 10 roles. The two fractional sizes in use (13.5px
+     x23, 12.5px x11) are retired by this scale — nothing should be half a pixel
+     off scale.
+
+     THE 14px-vs-15px DECISION: the audit found them effectively tied (190 vs
+     151 uses; style.scss alone splits 95/95), so today the choice is arbitrary
+     per rule. `--text-body` is 15px and `--text-body-sm` is 14px, with 14px
+     reserved for UI chrome (labels, metadata, table cells, chips). */
+  --text-display:              40px;
+  --text-display-hero:         48px;   /* documented hero variant */
+  --text-h1:                   32px;
+  --text-h2:                   26px;
+  --text-h3:                   20px;
+  --text-body-lg:              16px;
+  --text-body:                 15px;   /* body copy */
+  --text-body-sm:              14px;   /* UI chrome */
+  --text-caption:              13px;
+  --text-micro:                12px;
+
+  --weight-regular:            400;
+  --weight-medium:             500;
+  --weight-semibold:           600;
+  --weight-bold:               700;
+
+  --leading-tight:             1.25;
+  --leading-normal:            1.5;
+  --leading-relaxed:           1.6;
+
+  /* ── SHADOW ────────────────────────────────────────────────────────────────
+     16+ ad-hoc shadows collapse to four levels plus the brand glow. `--shadow-
+     accent` fixes the audit's invalid-CSS defect: `rgba(var(--primaryColor), …)`
+     is invalid because that property holds a hex value, so those four shadows
+     rendered nothing. The RGB triplet is the correct form. */
+  --shadow-none:               none;
+  --shadow-sm:                 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md:                 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg:                 0 10px 25px rgba(0, 0, 0, 0.1);
+  --shadow-xl:                 0 20px 50px rgba(0, 0, 0, 0.12);
+  --shadow-accent:             0 5px 15px rgba(var(--color-primary-rgb), 0.3);
+
+  /* ── FOCUS / ACCESSIBILITY ─────────────────────────────────────────────────
+     Previously focus styling was only *accidentally* consistent: it used
+     `var(--primaryColor, …)` with a different fallback per file. */
+  --focus-ring-color:          var(--color-primary);
+  --focus-ring-width:          2px;
+  --focus-ring-offset:         2px;
+  --focus-border-color:        var(--color-primary);
+
+  --disabled-surface:          var(--surface-disabled);
+  --disabled-border:           var(--color-border-muted);
+  --disabled-text:             var(--color-text-subtle);
+  --disabled-opacity:          0.6;
+
+  /* ── BREAKPOINTS (documented, not yet usable as tokens) ────────────────────
+     CSS custom properties cannot be used inside `@media` queries, so these are
+     recorded here as the agreed scale for DS-11. Applying them requires SCSS
+     variables in a partial imported via `@use` — deferred deliberately, because
+     the audit found responsive coverage to be a per-file accident (456 media
+     queries in style.scss; 0 in unifiedCart.scss; 2 in a 2,034-line player) and
+     fixing that is a real migration, not a token.
+
+         --bp-sm   640px
+         --bp-md   768px
+         --bp-lg  1024px
+         --bp-xl  1440px
+  */
+}

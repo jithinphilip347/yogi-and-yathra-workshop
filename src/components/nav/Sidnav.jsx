@@ -148,7 +148,7 @@ const Sidnav = ({ isOpen, onClose }) => {
                 {mounted && isAuthenticated && unreadCount > 0 && (
                   <span
                     style={{
-                      background: "var(--primaryColor, #ff725e)",
+                      background: "var(--primaryColor, #874429)",
                       color: "#fff",
                       fontSize: "11px",
                       fontWeight: 600,

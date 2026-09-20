@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import "@/assets/css/HomeFAQ.css";
+import "@/assets/css/HomeFAQ.scss";
 import FAQImage from "../../assets/images/courseImg-7.webp";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";

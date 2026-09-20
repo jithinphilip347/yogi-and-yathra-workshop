@@ -13,7 +13,7 @@ import {
 } from "@/hooks/useNotifications";
 import { getSafeActionUrl } from "@/utils/notificationHelpers";
 import NotificationItem from "@/components/notifications/NotificationItem";
-import "@/assets/css/notification.css";
+import "@/assets/css/notification.scss";
 
 const Notification = () => {
   const router = useRouter();

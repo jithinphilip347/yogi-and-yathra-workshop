@@ -22,7 +22,7 @@
 }
 
 .NotificationItem:focus-visible {
-  box-shadow: 0 0 0 2px var(--primaryColor, #ff725e);
+  box-shadow: 0 0 0 2px var(--primaryColor, #874429);
 }
 
 .NotificationItem.is-clickable {
@@ -35,7 +35,7 @@
   bottom: 0;
   left: 0;
   width: 3px;
-  background: var(--primaryColor, #ff725e);
+  background: var(--primaryColor, #874429);
   border-radius: 4px 0 0 4px;
 }
 
@@ -107,7 +107,7 @@
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--primaryColor, #ff725e);
+  background: var(--primaryColor, #874429);
   display: inline-block;
   margin-top: 6px;
   flex-shrink: 0;
@@ -395,7 +395,7 @@
 
 #Notification .NotificationHeaderSection .HeaderTitleWrapper .UnreadPill {
   background: rgba(255, 114, 94, 0.12);
-  color: var(--primaryColor, #ff725e);
+  color: var(--primaryColor, #874429);
   font-size: 12px;
   font-weight: 700;
   padding: 3px 10px;
@@ -418,8 +418,8 @@
 }
 
 #Notification .NotificationHeaderSection .MarkAllBtn:hover {
-  color: var(--primaryColor, #ff725e);
-  border-color: var(--primaryColor, #ff725e);
+  color: var(--primaryColor, #874429);
+  border-color: var(--primaryColor, #874429);
   background: #fffcfb;
 }
 
@@ -524,7 +524,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 24px;
-  background: var(--primaryColor, #ff725e);
+  background: var(--primaryColor, #874429);
   color: #ffffff;
   border-radius: 8px;
   text-decoration: none;
@@ -564,8 +564,8 @@
 }
 
 #Notification .NotificationPagination .PaginationBtn:hover:not(:disabled) {
-  border-color: var(--primaryColor, #ff725e);
-  color: var(--primaryColor, #ff725e);
+  border-color: var(--primaryColor, #874429);
+  color: var(--primaryColor, #874429);
   background: #fffcfb;
 }
 

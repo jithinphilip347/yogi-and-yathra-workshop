@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import * as sass from "sass";
 import { fileURLToPath } from "url";
 
 /**
@@ -19,9 +20,20 @@ const read = (...segments) =>
   fs.readFileSync(path.resolve(__dirname, ...segments), "utf8");
 
 const cartMarkup = read("../../app/cart/Cart.jsx");
-const styleCss = read("../../assets/css/style.css");
 const styleScss = read("../../assets/css/style.scss");
 const unifiedCartScss = read("../../assets/css/unifiedCart.scss");
+
+// DS-02: assert against the CSS the SOURCE actually produces.
+//
+// These assertions need flattened selectors (`#Cart .CartItem {`), which only
+// exist after compilation — the source nests them inside `#Cart { … }`. They
+// used to read a committed `style.css`, but that artifact had drifted from its
+// source in both directions, so the assertions were checking a file nobody was
+// editing. Compiling here is both accurate and stricter: the contract is now
+// enforced against the current source on every run.
+const styleCss = sass.compileString(styleScss, {
+  loadPaths: [path.resolve(__dirname, "../../assets/css")],
+}).css;
 
 /** The `#Cart { ... }` block of a stylesheet, up to the next top-level rule. */
 const cartBlock = (source, terminator) => {
@@ -119,7 +131,12 @@ describe("Cart page stylesheet contract", () => {
     }
   });
 
-  it("keeps the compiled stylesheet and its scss source on the same selectors", () => {
+  it("derives the shipped cart CSS from the scss source, not a committed twin", () => {
+    // DS-02 replaced the old "compiled css and scss agree" parity check. That
+    // check existed only because two files had to be kept in step by hand, and
+    // it could not detect the failure that actually happened: edits landing in
+    // one file and never reaching the other. The contract is now structural —
+    // the stylesheet the app loads IS this source, compiled.
     const selectors = cssCart.match(/^#Cart[^{]*\{/gm) || [];
     expect(selectors.length).toBeGreaterThan(40);
 
@@ -130,8 +147,6 @@ describe("Cart page stylesheet contract", () => {
       }
     }
 
-    // Every class the shipped CSS styles must exist in the source too, so the
-    // next person editing one file cannot silently desync the other.
     const missing = [...classes].filter((name) => !scssCart.includes(`.${name}`));
     expect(missing).toEqual([]);
   });

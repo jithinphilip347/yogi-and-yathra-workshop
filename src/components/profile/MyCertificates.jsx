@@ -255,7 +255,7 @@ export default function MyCertificates({ user }) {
             padding: "8px 16px",
             borderRadius: "8px",
             border: "none",
-            background: activeFilter === "all" ? "var(--primaryColor, #8B3A1C)" : "#f1f5f9",
+            background: activeFilter === "all" ? "var(--primaryColor, #874429)" : "#f1f5f9",
             color: activeFilter === "all" ? "#fff" : "#475569",
             fontWeight: "600",
             fontSize: "13px",
@@ -271,7 +271,7 @@ export default function MyCertificates({ user }) {
             padding: "8px 16px",
             borderRadius: "8px",
             border: "none",
-            background: activeFilter === "issued" ? "var(--primaryColor, #8B3A1C)" : "#f1f5f9",
+            background: activeFilter === "issued" ? "var(--primaryColor, #874429)" : "#f1f5f9",
             color: activeFilter === "issued" ? "#fff" : "#475569",
             fontWeight: "600",
             fontSize: "13px",
@@ -287,7 +287,7 @@ export default function MyCertificates({ user }) {
             padding: "8px 16px",
             borderRadius: "8px",
             border: "none",
-            background: activeFilter === "in_progress" ? "var(--primaryColor, #8B3A1C)" : "#f1f5f9",
+            background: activeFilter === "in_progress" ? "var(--primaryColor, #874429)" : "#f1f5f9",
             color: activeFilter === "in_progress" ? "#fff" : "#475569",
             fontWeight: "600",
             fontSize: "13px",
@@ -310,7 +310,7 @@ export default function MyCertificates({ user }) {
             Complete your enrolled courses or attend required live yoga classes to earn verified certificates.
           </p>
           <Link href="/course">
-            <button className="ExploreBtn" style={{ padding: "10px 24px", background: "var(--primaryColor, #8B3A1C)", color: "#fff", border: "none", borderRadius: "8px", fontWeight: "600", cursor: "pointer" }}>
+            <button className="ExploreBtn" style={{ padding: "10px 24px", background: "var(--primaryColor, #874429)", color: "#fff", border: "none", borderRadius: "8px", fontWeight: "600", cursor: "pointer" }}>
               Explore Courses
             </button>
           </Link>
@@ -446,7 +446,7 @@ export default function MyCertificates({ user }) {
                         alignItems: "center",
                         gap: "6px",
                         padding: "8px 18px",
-                        background: "var(--primaryColor, #8B3A1C)",
+                        background: "var(--primaryColor, #874429)",
                         color: "#ffffff",
                         border: "none",
                         borderRadius: "8px",

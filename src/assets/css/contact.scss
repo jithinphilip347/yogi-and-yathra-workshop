@@ -99,7 +99,7 @@
 
                     .InfoIcon {
                         font-size: 20px;
-                        color: var(--primaryColor, #d97706);
+                        color: var(--primaryColor, #874429);
 
                         /* Responsive */
                         @media (max-width: 480px) { font-size: 18px; }
@@ -139,9 +139,9 @@
                         font-size: 18px;
 
                         &:hover {
-                            background: var(--primaryColor, #d97706);
+                            background: var(--primaryColor, #874429);
                             color: #fff;
-                            border-color: var(--primaryColor, #d97706);
+                            border-color: var(--primaryColor, #874429);
                         }
 
                         /* Responsive */
@@ -203,7 +203,7 @@
 
                         &:focus {
                             outline: none;
-                            border-color: var(--primaryColor, #d97706);
+                            border-color: var(--primaryColor, #874429);
                         }
 
                         &.error {
@@ -231,8 +231,8 @@
                     width: 100%;
                     padding: 16px;
                     background: transparent;
-                    border: 1px solid var(--primaryColor, #d97706);
-                    color: var(--primaryColor, #d97706);
+                    border: 1px solid var(--primaryColor, #874429);
+                    color: var(--primaryColor, #874429);
                     font-size: 16px;
                     font-weight: 500;
                     border-radius: 4px;
@@ -242,7 +242,7 @@
                     margin-top: 10px;
 
                     &:hover {
-                        background: var(--primaryColor, #d97706);
+                        background: var(--primaryColor, #874429);
                         color: #fff;
                     }
 
