@@ -105,7 +105,7 @@ describe('invoice availability model', () => {
     expect(state.state).toBe(INVOICE_STATE.VOID);
     expect(state.downloadable).toBe(false);
     expect(state.actionLabel).toBeNull();
-    expect(state.note).toBe('This invoice was cancelled');
+    expect(state.note).toBe('This receipt was cancelled');
   });
 
   it('exposes an action label only for an available invoice', () => {
@@ -299,11 +299,39 @@ describe('invoice UI source audit', () => {
   });
 
   it('gates the receipt action on the availability model, not on the order', () => {
+    // WORKSHOP-DS-07E moved the gate out of each page and into the one shared
+    // component, so Billing now *delegates* rather than deciding.
     expect(billingComponent).toMatch(/invoiceStateForOrder\(/);
-    expect(billingComponent).toMatch(/INVOICE_STATE\.AVAILABLE/);
-    expect(billingComponent).toMatch(/\.downloadable/);
+    expect(billingComponent).toMatch(/ReceiptActions/);
     // The old "an order exists, so match any invoice by order_id" shortcut.
     expect(billingComponent).not.toMatch(/invoices\.find\(/);
+  });
+
+  it('decides availability once per order, inside the shared component', () => {
+    const receiptActions = stripComments(read('../../components/commerce/ReceiptActions.jsx'));
+
+    expect(receiptActions).toMatch(/INVOICE_STATE\.AVAILABLE/);
+    expect(receiptActions).toMatch(/receipt\.canView/);
+    // No page may render a receipt button of its own any more.
+    expect(receiptActions).toMatch(/ReceiptActionsButtons/);
+  });
+
+  it('opens the receipt in-app instead of a new tab', () => {
+    const receiptActions = stripComments(read('../../components/commerce/ReceiptActions.jsx'));
+    const receiptHook = stripComments(read('../../features/commerce/hooks/useReceiptDocument.js'));
+
+    for (const [name, source] of [['ReceiptActions', receiptActions], ['useReceiptDocument', receiptHook]]) {
+      expect(source, `${name} must not open a window`).not.toMatch(/window\.open\(/);
+      expect(source, `${name} must not navigate away`).not.toMatch(/location\.href\s*=/);
+    }
+
+    expect(receiptActions).toMatch(/PdfViewerModal/);
+    // PDF.js is loaded lazily so it never reaches the server render.
+    expect(receiptActions).toMatch(/ssr:\s*false/);
+  });
+
+  it('no longer exposes a helper that presents a receipt in a new tab', () => {
+    expect(billingService).not.toMatch(/export function openInvoiceDocument/);
   });
 
   it('carries no inline dark-theme palette or Tailwind utility classes', () => {

@@ -300,13 +300,25 @@ describe('orders UI source guarantees', () => {
     expect(orderDetailCode).toMatch(/ITEM_TYPE_LABELS/);
   });
 
-  it('shows no invoice action and no invoice URL', () => {
-    // WORKSHOP-DS-07C governs invoice UI; the orders pages must not reintroduce a
-    // static receipt/download affordance.
+  it('never builds a receipt URL of its own', () => {
+    // WORKSHOP-DS-07C/07E govern receipt UI. Order Detail renders the shared
+    // `ReceiptActions` component; it must never assemble a document path, and the
+    // orders list must not offer a receipt at all (the list payload carries no
+    // invoice, so it has nothing to gate on).
     for (const [name, source] of [['MyOrders', myOrdersCode], ['OrderDetail', orderDetailCode]]) {
-      expect(source, `${name} must not reference invoices`).not.toMatch(/invoice|receipt|download/i);
-      expect(source, `${name} must not reference invoices`).not.toMatch(/\/invoices?\b/i);
+      expect(source, `${name} must not build an invoice path`).not.toMatch(/\/invoices?\b/i);
+      expect(source, `${name} must not link a download`).not.toMatch(/href=\{[^}]*receipt/i);
+      expect(source, `${name} must not call the billing API`).not.toMatch(/billingApi/);
     }
+
+    expect(myOrdersCode, 'the list must not offer a receipt action').not.toMatch(/ReceiptActions/);
+  });
+
+  it('shows the receipt through the one shared component', () => {
+    expect(orderDetailCode).toMatch(/ReceiptActions/);
+    expect(orderDetailCode).toMatch(/receiptStateFromInvoices\(/);
+    // Never a per-order flag invented locally: the state comes from the model.
+    expect(orderDetailCode).toMatch(/order\.invoices/);
   });
 
   it('never persists order data to browser storage', () => {

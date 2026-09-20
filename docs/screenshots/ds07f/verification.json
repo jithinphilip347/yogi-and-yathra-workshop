@@ -1,0 +1,899 @@
+{
+  "pages": [
+    {
+      "name": "billing",
+      "width": 1440,
+      "heading": "Billing & Order History",
+      "headingColor": "rgb(26, 26, 26)",
+      "rowCount": 9,
+      "rows": [
+        {
+          "order": "#ORD-2026-00009",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00006",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00007",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00006",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00005",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00005",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00004",
+          "amount": "₹3",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00004",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00003",
+          "amount": "₹100",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00003",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00002",
+          "amount": "₹1,000",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00002",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00001",
+          "amount": "₹800",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00001",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        }
+      ],
+      "overflow": 0,
+      "clipped": [
+        "caption.VisuallyHidden+171"
+      ],
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    },
+    {
+      "name": "billing",
+      "width": 1024,
+      "heading": "Billing & Order History",
+      "headingColor": "rgb(26, 26, 26)",
+      "rowCount": 9,
+      "rows": [
+        {
+          "order": "#ORD-2026-00009",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00006",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00007",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00006",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00005",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00005",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00004",
+          "amount": "₹3",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00004",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00003",
+          "amount": "₹100",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00003",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00002",
+          "amount": "₹1,000",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00002",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00001",
+          "amount": "₹800",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00001",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        }
+      ],
+      "overflow": 0,
+      "clipped": [
+        "caption.VisuallyHidden+171"
+      ],
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    },
+    {
+      "name": "billing",
+      "width": 768,
+      "heading": "Billing & Order History",
+      "headingColor": "rgb(26, 26, 26)",
+      "rowCount": 9,
+      "rows": [
+        {
+          "order": "#ORD-2026-00009",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00006",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00007",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00006",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00005",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00005",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00004",
+          "amount": "₹3",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00004",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00003",
+          "amount": "₹100",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00003",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00002",
+          "amount": "₹1,000",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00002",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00001",
+          "amount": "₹800",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00001",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        }
+      ],
+      "overflow": 0,
+      "clipped": [
+        "caption.VisuallyHidden+171"
+      ],
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    },
+    {
+      "name": "billing",
+      "width": 390,
+      "heading": "Billing & Order History",
+      "headingColor": "rgb(26, 26, 26)",
+      "rowCount": 9,
+      "rows": [
+        {
+          "order": "#ORD-2026-00009",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00006",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00007",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00006",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00005",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00005",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00004",
+          "amount": "₹3",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00004",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00003",
+          "amount": "₹100",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00003",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00002",
+          "amount": "₹1,000",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00002",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00001",
+          "amount": "₹800",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00001",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        }
+      ],
+      "overflow": 0,
+      "clipped": [
+        "caption.VisuallyHidden+171"
+      ],
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    },
+    {
+      "name": "billing",
+      "width": 320,
+      "heading": "Billing & Order History",
+      "headingColor": "rgb(26, 26, 26)",
+      "rowCount": 9,
+      "rows": [
+        {
+          "order": "#ORD-2026-00009",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00008",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00006",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00007",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00006",
+          "amount": "₹1,050",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00005",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00005",
+          "amount": "₹1,050",
+          "status": "Pending",
+          "receiptNote": "Not available yet",
+          "receiptNumber": null,
+          "actions": []
+        },
+        {
+          "order": "#ORD-2026-00004",
+          "amount": "₹3",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00004",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00003",
+          "amount": "₹100",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00003",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00002",
+          "amount": "₹1,000",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00002",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        },
+        {
+          "order": "#ORD-2026-00001",
+          "amount": "₹800",
+          "status": "Completed",
+          "receiptNote": null,
+          "receiptNumber": "INV-2026-00001",
+          "actions": [
+            "View Receipt",
+            "Download"
+          ]
+        }
+      ],
+      "overflow": 0,
+      "clipped": [
+        "caption.VisuallyHidden+171"
+      ],
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    },
+    {
+      "name": "order-detail",
+      "width": 1440,
+      "opened": true,
+      "order": "#ORD-2026-00008PhysicalPhysical order #2450Completed · 20 Se",
+      "sections": [
+        "Shipment",
+        "Progress",
+        "Items",
+        "Shipping address",
+        "Receipt",
+        "Payment"
+      ],
+      "receiptText": "ReceiptView ReceiptDownloadINV-2026-0000620 Sept 2026",
+      "receiptActions": [
+        "View Receipt",
+        "Download"
+      ],
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    },
+    {
+      "name": "viewer-1440",
+      "width": 1440,
+      "clicked": {
+        "clicked": true,
+        "row": "#ORD-2026-00008"
+      },
+      "hasCanvas": true,
+      "w": 974,
+      "ink": {
+        "ink": 981,
+        "total": 32713,
+        "inkRatio": 0.03
+      },
+      "viewerOpen": true,
+      "canvasWidth": 974,
+      "canvasHeight": 1377,
+      "pageIndicator": "1 / 1",
+      "zoomIndicator": "100%",
+      "tools": [
+        "Previous page",
+        "Next page",
+        "Zoom out",
+        "Zoom in",
+        "Download",
+        "Close receipt viewer"
+      ],
+      "dialogWidth": 1000,
+      "dialogOverflow": 0,
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    },
+    {
+      "name": "viewer-768",
+      "width": 768,
+      "clicked": {
+        "clicked": true,
+        "row": "#ORD-2026-00008"
+      },
+      "hasCanvas": true,
+      "w": 710,
+      "ink": {
+        "ink": 574,
+        "total": 17387,
+        "inkRatio": 0.033
+      },
+      "viewerOpen": true,
+      "canvasWidth": 710,
+      "canvasHeight": 1004,
+      "pageIndicator": "1 / 1",
+      "zoomIndicator": "100%",
+      "tools": [
+        "Previous page",
+        "Next page",
+        "Zoom out",
+        "Zoom in",
+        "Download",
+        "Close receipt viewer"
+      ],
+      "dialogWidth": 736,
+      "dialogOverflow": 0,
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    },
+    {
+      "name": "viewer-390",
+      "width": 390,
+      "clicked": {
+        "clicked": true,
+        "row": "#ORD-2026-00008"
+      },
+      "hasCanvas": true,
+      "w": 365,
+      "ink": {
+        "ink": 219,
+        "total": 4603,
+        "inkRatio": 0.0476
+      },
+      "viewerOpen": true,
+      "canvasWidth": 365,
+      "canvasHeight": 517,
+      "pageIndicator": "1 / 1",
+      "zoomIndicator": "100%",
+      "tools": [
+        "Previous page",
+        "Next page",
+        "Zoom out",
+        "Zoom in",
+        "Download",
+        "Close receipt viewer"
+      ],
+      "dialogWidth": 390,
+      "dialogOverflow": 0,
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    },
+    {
+      "name": "viewer-320",
+      "width": 320,
+      "clicked": {
+        "clicked": true,
+        "row": "#ORD-2026-00008"
+      },
+      "hasCanvas": true,
+      "w": 296,
+      "ink": {
+        "ink": 166,
+        "total": 3018,
+        "inkRatio": 0.055
+      },
+      "viewerOpen": true,
+      "canvasWidth": 296,
+      "canvasHeight": 418,
+      "pageIndicator": "1 / 1",
+      "zoomIndicator": "100%",
+      "tools": [
+        "Previous page",
+        "Next page",
+        "Zoom out",
+        "Zoom in",
+        "Download",
+        "Close receipt viewer"
+      ],
+      "dialogWidth": 320,
+      "dialogOverflow": 0,
+      "consoleErrors": [
+        "WebSocket connection to 'ws://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conne",
+        "WebSocket connection to 'wss://localhost:8080/app/rq0tlxj2agqwnb9hyakl?protocol=7&client=js&version=8.6.0&flash=false' failed: Error in conn"
+      ]
+    }
+  ],
+  "documentResponses": [
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 204,
+      "mimeType": "text/html",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 200,
+      "mimeType": "application/pdf",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 204,
+      "mimeType": "text/html",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 200,
+      "mimeType": "application/pdf",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 204,
+      "mimeType": "text/html",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 200,
+      "mimeType": "application/pdf",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 204,
+      "mimeType": "text/html",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 200,
+      "mimeType": "application/pdf",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 204,
+      "mimeType": "text/html",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=inline",
+      "status": 200,
+      "mimeType": "application/pdf",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=attachment",
+      "status": 204,
+      "mimeType": "text/html",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    },
+    {
+      "url": "/api/v1/billing/invoices/6/download?disposition=attachment",
+      "status": 200,
+      "mimeType": "application/pdf",
+      "contentDisposition": null,
+      "hasTokenInUrl": false
+    }
+  ],
+  "downloads": [
+    {
+      "event": "begin",
+      "suggestedFilename": "Receipt-INV-2026-00006.pdf",
+      "url": "blob:http://localhost:3001/be82e0bb-8917-44fb-823b-dc4b89c40"
+    },
+    {
+      "event": "completed",
+      "guid": "5c4bba0a-6aa9-424c-9c28-00249701b964"
+    },
+    {
+      "savedAs": "Receipt-INV-2026-00006.pdf",
+      "hrefScheme": "blob",
+      "blobType": "application/pdf",
+      "blobBytes": 1268937,
+      "blobHeader": "%PDF-",
+      "blobEof": "2\n%%EOF\n",
+      "chromeDownloadCapture": "Receipt-INV-2026-00006.pdf",
+      "chromeDownloadHeader": "%PDF-"
+    }
+  ],
+  "notes": [
+    {
+      "check": "the receipt document actually rendered @1440",
+      "ok": true,
+      "inkRatio": 0.03
+    },
+    {
+      "check": "viewer closes on Escape @1440",
+      "ok": true
+    },
+    {
+      "check": "the receipt document actually rendered @768",
+      "ok": true,
+      "inkRatio": 0.033
+    },
+    {
+      "check": "viewer closes on Escape @768",
+      "ok": true
+    },
+    {
+      "check": "the receipt document actually rendered @390",
+      "ok": true,
+      "inkRatio": 0.0476
+    },
+    {
+      "check": "viewer closes on Escape @390",
+      "ok": true
+    },
+    {
+      "check": "the receipt document actually rendered @320",
+      "ok": true,
+      "inkRatio": 0.055
+    },
+    {
+      "check": "viewer closes on Escape @320",
+      "ok": true
+    },
+    {
+      "check": "zoom in enlarges the rendered page",
+      "ok": true,
+      "from": {
+        "zoom": "100%",
+        "canvas": 974
+      },
+      "to": {
+        "zoom": "150%",
+        "canvas": 1461
+      }
+    },
+    {
+      "check": "zoom out shrinks it again",
+      "ok": true,
+      "to": {
+        "zoom": "125%",
+        "canvas": 1218
+      }
+    },
+    {
+      "check": "document is a single page",
+      "ok": true,
+      "pages": 1
+    },
+    {
+      "check": "Download hands real PDF bytes to the save helper",
+      "ok": true,
+      "evidence": {
+        "blobs": 1,
+        "saves": [
+          {
+            "download": "Receipt-INV-2026-00006.pdf",
+            "hrefScheme": "blob"
+          }
+        ],
+        "type": "application/pdf",
+        "size": 1268937,
+        "header": "%PDF-",
+        "eof": "2\n%%EOF\n"
+      }
+    },
+    {
+      "check": "Download names the file Receipt-INV-*.pdf",
+      "ok": true,
+      "savedAs": "Receipt-INV-2026-00006.pdf"
+    },
+    {
+      "check": "Download does not navigate (blob: URL, not an http document URL)",
+      "ok": true,
+      "hrefScheme": "blob"
+    },
+    {
+      "check": "billing page was live while documents were fetched",
+      "ok": true
+    }
+  ]
+}

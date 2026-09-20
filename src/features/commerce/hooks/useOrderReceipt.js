@@ -22,15 +22,14 @@ import { receiptStateFromInvoices } from '@/features/commerce/utils/invoiceAvail
  * @returns {object|null} a receipt state, or null when unknown
  */
 export default function useOrderReceipt(reference) {
-  const [receipt, setReceipt] = useState(null);
+  // Keyed by the reference it belongs to, so a receipt resolved for one order can
+  // never be rendered for another while the new lookup is in flight.
+  const [resolved, setResolved] = useState({ ref: null, receipt: null });
+
+  const ref = reference === null || reference === undefined ? '' : String(reference).trim();
 
   useEffect(() => {
-    const ref = reference === null || reference === undefined ? '' : String(reference).trim();
-
-    if (!ref) {
-      setReceipt(null);
-      return undefined;
-    }
+    if (!ref) return undefined;
 
     let cancelled = false;
 
@@ -41,18 +40,22 @@ export default function useOrderReceipt(reference) {
 
         if (cancelled || !view) return;
 
-        setReceipt(receiptStateFromInvoices(view.invoices, { paid: view.isPaid }));
+        setResolved({
+          ref,
+          receipt: receiptStateFromInvoices(view.invoices, { paid: view.isPaid }),
+        });
       } catch {
         // Not an error the customer needs: the page's own CTAs still work and
         // the billing history shows the same information a moment later.
-        if (!cancelled) setReceipt(null);
+        if (!cancelled) setResolved({ ref, receipt: null });
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [reference]);
+  }, [ref]);
 
-  return receipt;
+  if (!ref || resolved.ref !== ref) return null;
+  return resolved.receipt;
 }

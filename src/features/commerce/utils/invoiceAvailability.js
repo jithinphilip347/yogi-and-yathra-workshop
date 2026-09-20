@@ -13,12 +13,11 @@
  *   GET /api/v1/billing/invoices/{invoice}       → {success, data}
  *   GET /api/v1/billing/invoices/{invoice}/download
  *
- * `BillingController::invoicesDownload` renders `invoices.receipt` to HTML and
- * serves it `Content-Disposition: inline`; the only gate is
- * `authorizeInvoiceAccess()` (owner, or admin). There is no PDF generator — the
- * model docblock says so explicitly — so the honest customer-facing label is
- * "View Receipt", not "Receipt PDF". We never invent a PDF endpoint to make the
- * old label true.
+ * `BillingController::invoicesDownload` builds a real PDF (`ReceiptDocumentService`
+ * → dompdf → `invoices.receipt`) and streams it as `application/pdf`; the only
+ * gate is `authorizeInvoiceAccess()` (owner, or admin). `disposition=inline`
+ * streams it for the in-app viewer and `disposition=attachment` saves it — one
+ * document, two presentations, never two URLs.
  *
  * ── WHY `draft` IS STILL DOWNLOADABLE ────────────────────────────────────────
  *
@@ -64,11 +63,10 @@ export const INVOICE_STATE = {
 /**
  * The two things a customer may do with an available receipt.
  *
- * The verified backend exposes ONE document route
- * (`billing/invoices/{invoice}/download`) and serves it `Content-Disposition:
- * inline`. "View" is that route opened in a tab; "Download" is the same
- * authenticated bytes saved to disk. Neither is invented — but this is a single
- * endpoint, not two, and the report says so.
+ * Both are the SAME verified document route (`billing/invoices/{invoice}/
+ * download`) returning the same PDF bytes: "View" streams it into the in-app
+ * PDF.js viewer, "Download" saves it. This is a single endpoint, not two, and
+ * the label is "View Receipt" because viewing is what the customer does with it.
  */
 export const RECEIPT_ACTION = {
   VIEW: 'view',
@@ -230,7 +228,7 @@ export function describeInvoice(invoice) {
     tone: invoiceStatusTone(status),
     receiptNumber: invoiceReceiptNumber(invoice),
     issuedAt: invoiceIssuedAt(invoice),
-    // The backend serves the receipt inline as HTML, so "View" is accurate.
+    // The backend serves the receipt as a PDF; the action opens it in-app.
     actionLabel: 'View Receipt',
     downloadLabel: 'Download',
     note: invoiceReceiptNumber(invoice) || 'Receipt available',

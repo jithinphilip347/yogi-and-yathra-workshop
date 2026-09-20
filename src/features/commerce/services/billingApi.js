@@ -9,6 +9,12 @@
  * every signed-in customer. The verified route is real; the transfer mechanism
  * was not.
  *
+ * The route now returns a genuine `application/pdf` document (dompdf renders
+ * `invoices.receipt`, `BillingController::invoicesDownload`), and the bytes are
+ * fetched here rather than navigated to. One route, one document: the
+ * `disposition` parameter only chooses inline streaming (the in-app viewer)
+ * versus an attachment (the save), so View and Download can never disagree.
+ *
  * Scope note: these are WORKSHOP endpoints (`/api/v1/billing/*`). No Yogan Yatra /
  * E-commerce endpoint is contacted here, and no internal service key is involved.
  */
@@ -110,12 +116,12 @@ export const billingApi = {
    * Fetch the receipt document through the authenticated client.
    *
    * `responseType: 'blob'` plus the bearer token is the only mechanism the
-   * verified backend contract supports — it streams HTML with
-   * `Content-Disposition: inline`, not a public or signed URL.
+   * verified backend contract supports — the response is real PDF bytes, not a
+   * public or signed URL, and the receipt is never fetched without auth.
    *
    * @returns {Promise<{blob: Blob, filename: string}>}
    */
-  async downloadInvoiceDocument(invoice, { filename } = {}) {
+  async downloadInvoiceDocument(invoice, { filename, disposition = 'inline' } = {}) {
     const invoiceId = typeof invoice === 'object' ? invoice?.id : invoice;
     if (!invoiceId) throw new Error('Missing invoice reference.');
 
@@ -123,13 +129,17 @@ export const billingApi = {
       const res = await apiClient.get(INVOICE_DOWNLOAD_PATH(invoiceId), {
         responseType: 'blob',
         timeout: 30000,
+        // One route, two dispositions: `inline` streams the PDF into the in-app
+        // viewer, `attachment` saves it. The document is identical either way.
+        params: { disposition },
       });
 
       const number = typeof invoice === 'object' ? invoice?.invoice_number : null;
       return {
         blob: res.data,
-        // The document the backend serves is the receipt, labelled as such.
-        filename: filename || (number ? `Receipt-${number}.html` : 'Receipt.html'),
+        // The backend names the file `Receipt-{invoice_number}.pdf`; mirror it so
+        // a saved receipt matches the one the viewer is showing.
+        filename: filename || (number ? `Receipt-${number}.pdf` : 'Receipt.pdf'),
       };
     } catch (error) {
       const message = await describeBlobError(error);
@@ -141,34 +151,14 @@ export const billingApi = {
 };
 
 /**
- * Present the fetched receipt in a new tab.
+ * NOTE: `openInvoiceDocument()` was removed.
  *
- * The object URL is a same-origin blob, so nothing about the invoice is exposed
- * as a public URL and no token is placed in a query string. Revoked on a timer
- * (not immediately) because a new tab needs the URL to stay alive long enough to
- * load it.
- *
- * @returns {boolean} whether a tab was opened
+ * It existed to hand a blob URL to `window.open(...)`. "View Receipt" now
+ * renders in-app with PDF.js (`features/commerce/components/PdfViewerModal`),
+ * so nothing in the product opens a receipt in a new tab any more. Keeping the
+ * helper around would leave the easy path to the accepted-but-wrong behaviour
+ * one import away.
  */
-export function openInvoiceDocument(blob, filename = 'Receipt.html') {
-  if (typeof window === 'undefined' || typeof URL?.createObjectURL !== 'function') {
-    return false;
-  }
-
-  // Prefer the requested filename; a popup-blocked open falls back to download.
-  const type = blob?.type && blob.type !== '' ? blob.type : 'text/html';
-  const file = blob instanceof Blob ? blob : new Blob([blob], { type });
-
-  const objectUrl = URL.createObjectURL(file);
-  const opened = window.open(objectUrl, '_blank', 'noopener,noreferrer');
-
-  if (!opened) {
-    saveInvoiceDocument(file, filename);
-  }
-
-  window.setTimeout(() => URL.revokeObjectURL(objectUrl), 60000);
-  return Boolean(opened);
-}
 
 /**
  * Save the already-fetched receipt bytes to disk.
@@ -181,7 +171,7 @@ export function openInvoiceDocument(blob, filename = 'Receipt.html') {
  *
  * @returns {boolean} whether a save was initiated
  */
-export function saveInvoiceDocument(blob, filename = 'Receipt.html') {
+export function saveInvoiceDocument(blob, filename = 'Receipt.pdf') {
   if (typeof window === 'undefined' || typeof URL?.createObjectURL !== 'function') {
     return false;
   }
