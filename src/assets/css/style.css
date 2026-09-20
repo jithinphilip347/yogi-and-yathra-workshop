@@ -10821,45 +10821,48 @@
   }
 }
 
+/* ==========================================================================
+   Cart page.
+
+   The list is a set of white cards on a light page tint: each item is one card
+   with a fixed thumbnail, the details column, and a right-aligned price. The
+   order summary is a card on desktop and a compact fixed bar on mobile that must
+   always show the amount being charged.
+
+   (The old block bordered every item top AND bottom — a doubled line between
+   neighbours — and styled `.removeBtn` only inside `.CoursePriceBox`, where the
+   button never lives, so Remove rendered as a raw browser button.)
+   ========================================================================== */
 #Cart {
   width: 100%;
-  padding: 100px 0;
-  background: #fff;
+  padding: 100px 0 120px;
+  background: #f8fafc;
 }
 @media (max-width: 1024px) {
   #Cart {
-    padding: 80px 0;
+    padding: 80px 0 110px;
   }
 }
 @media (max-width: 768px) {
   #Cart {
-    padding: 60px 0;
+    /* Room for the fixed order-summary bar so it never covers the last item. */
+    padding: 60px 0 170px;
   }
 }
 @media (max-width: 480px) {
   #Cart {
-    padding: 40px 0;
+    padding: 40px 0 172px;
   }
 }
 @media (max-width: 420px) {
   #Cart {
-    padding: 20px 0;
+    padding: 20px 0 172px;
   }
 }
 #Cart .CartHeader {
-  margin-bottom: 40px;
-}
-@media (max-width: 1024px) {
-  #Cart .CartHeader {
-    margin-bottom: 30px;
-  }
+  margin-bottom: 28px;
 }
 @media (max-width: 768px) {
-  #Cart .CartHeader {
-    margin-bottom: 25px;
-  }
-}
-@media (max-width: 480px) {
   #Cart .CartHeader {
     margin-bottom: 20px;
   }
@@ -10868,7 +10871,8 @@
   font-size: 32px;
   font-family: myFont1;
   font-weight: 700;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
+  color: #1a1a1a;
 }
 @media (max-width: 1024px) {
   #Cart .CartTitle {
@@ -10891,15 +10895,10 @@
   }
 }
 #Cart .CourseCount {
-  font-size: 16px;
-  color: #666;
+  font-size: 15px;
+  color: #64748b;
   font-family: myFont1;
   font-weight: 500;
-}
-@media (max-width: 1024px) {
-  #Cart .CourseCount {
-    font-size: 15px;
-  }
 }
 @media (max-width: 768px) {
   #Cart .CourseCount {
@@ -10911,40 +10910,59 @@
     font-size: 13px;
   }
 }
-@media (max-width: 420px) {
-  #Cart .CourseCount {
-    font-size: 12px;
-  }
-}
 #Cart .EmptyCart {
-  width: 100%;
+  max-width: 620px;
+  margin: 0 auto;
   text-align: center;
-  padding: 120px 0;
+  padding: 64px 28px;
+  background: #fff;
+  border: 1px dashed #dbe3ec;
+  border-radius: 14px;
 }
 #Cart .EmptyCart h2 {
-  font-size: 28px;
+  font-size: 26px;
   font-family: myFont1;
   margin-bottom: 10px;
+  color: #1a1a1a;
 }
 #Cart .EmptyCart p {
-  font-size: 16px;
-  color: #777;
-  margin-bottom: 25px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #64748b;
+  margin: 0 auto 26px;
+  max-width: 430px;
   font-family: myFont1;
 }
 #Cart .EmptyCart .browseBtn {
   background: var(--primaryColor);
   color: white;
   border: none;
-  padding: 12px 25px;
-  border-radius: 6px;
+  padding: 13px 28px;
+  border-radius: 8px;
   font-family: myFont1;
   font-size: 15px;
+  font-weight: 600;
   cursor: pointer;
+  transition: 0.25s;
+}
+#Cart .EmptyCart .browseBtn:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+@media (max-width: 480px) {
+  #Cart .EmptyCart {
+    padding: 44px 20px;
+  }
+  #Cart .EmptyCart h2 {
+    font-size: 21px;
+  }
+  #Cart .EmptyCart p {
+    font-size: 14px;
+  }
 }
 #Cart .CartMain {
   display: flex;
-  gap: 40px;
+  gap: 32px;
   align-items: flex-start;
 }
 @media (max-width: 1024px) {
@@ -10955,10 +10973,11 @@
 @media (max-width: 768px) {
   #Cart .CartMain {
     flex-direction: column;
+    gap: 24px;
   }
 }
 #Cart .CartLeft {
-  width: 70%;
+  width: 68%;
 }
 @media (max-width: 1024px) {
   #Cart .CartLeft {
@@ -10972,38 +10991,54 @@
 }
 #Cart .CartItem {
   display: flex;
-  gap: 20px;
-  padding: 20px 0px;
-  border-bottom: 1px solid #eee;
-  margin-bottom: 20px;
-  transition: 0.3s;
-  border-top: 1px solid #eee;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 18px;
+  margin-bottom: 16px;
+  background: #fff;
+  border: 1px solid #e8edf3;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+#Cart .CartItem:hover {
+  box-shadow: 0 8px 22px rgba(16, 24, 40, 0.08);
+  border-color: #dde4ec;
+}
+#Cart .CartItem:last-child {
+  margin-bottom: 0;
 }
 @media (max-width: 480px) {
   #Cart .CartItem {
-    flex-direction: column;
-    gap: 15px;
+    /* Thumbnail + details stay side by side; only the price wraps to its own row. */
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 14px;
   }
 }
 #Cart .courseImgBox {
-  width: 220px;
-  aspect-ratio: 3/2;
+  width: 132px;
+  height: 96px;
   flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f1f5f9;
 }
 @media (max-width: 1024px) {
   #Cart .courseImgBox {
-    width: 180px;
+    width: 116px;
+    height: 88px;
   }
 }
 @media (max-width: 768px) {
   #Cart .courseImgBox {
-    width: 150px;
+    width: 104px;
+    height: 80px;
   }
 }
 @media (max-width: 480px) {
   #Cart .courseImgBox {
-    width: 100%;
-    aspect-ratio: 16/9;
+    width: 88px;
+    height: 88px;
   }
 }
 #Cart .courseImgBox img {
@@ -11011,140 +11046,146 @@
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
-  border-radius: 6px;
+  display: block;
 }
 #Cart .CourseDetailsBox {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 #Cart .CourseTitle {
-  font-size: 18px;
+  font-size: 17px;
   font-weight: 600;
-  margin-bottom: 5px;
+  line-height: 1.35;
+  margin-bottom: 4px;
+  color: #1a1a1a;
   font-family: myFont1;
 }
 @media (max-width: 480px) {
   #Cart .CourseTitle {
-    font-size: 16px;
+    font-size: 15.5px;
   }
 }
 #Cart .CourseDesc {
-  font-size: 14px;
-  color: #666;
+  font-size: 13.5px;
+  color: #64748b;
   margin-bottom: 10px;
   font-family: myFont1;
   font-weight: 500;
 }
 @media (max-width: 480px) {
   #Cart .CourseDesc {
-    font-size: 13px;
-  }
-}
-#Cart .CourseRatingBox {
-  margin-bottom: 10px;
-}
-#Cart .CourseRatingBox .rating {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-#Cart .CourseRatingBox .rating span {
-  font-weight: 600;
-}
-#Cart .CourseRatingBox .rating .stars {
-  display: flex;
-  color: #f7a41d;
-}
-#Cart .CourseRatingBox .rating p {
-  font-size: 14px;
-  color: #777;
-  font-family: myFont1;
-  font-weight: 500;
-}
-@media (max-width: 480px) {
-  #Cart .CourseRatingBox .rating p {
-    font-size: 12px;
+    font-size: 12.5px;
+    margin-bottom: 8px;
   }
 }
 #Cart .LessonsHoursBox {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 #Cart .LessonsHoursBox svg {
   color: var(--primaryColor);
+  font-size: 13px;
 }
 #Cart .LessonsHoursBox .Lessons,
 #Cart .LessonsHoursBox .Hours {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 14px;
-  color: #555;
+  font-size: 13px;
+  color: #475569;
   font-family: myFont1;
   font-weight: 500;
 }
 @media (max-width: 480px) {
   #Cart .LessonsHoursBox .Lessons,
   #Cart .LessonsHoursBox .Hours {
-    font-size: 13px;
+    font-size: 12.5px;
   }
 }
 #Cart .CoursePriceBox {
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 20px;
   display: flex;
-}
-@media (max-width: 1024px) {
-  #Cart .CoursePriceBox {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-  }
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
 }
 @media (max-width: 480px) {
   #Cart .CoursePriceBox {
+    flex: 1 1 100%;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
     width: 100%;
-    border-top: 1px dashed #eee;
-    padding-top: 15px;
-    margin-top: 5px;
-  }
-}
-#Cart .CoursePriceBox .removeBtn {
-  background: none;
-  border: none;
-  color: var(--primaryColor);
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  font-family: myFont1;
-}
-@media (max-width: 480px) {
-  #Cart .CoursePriceBox .removeBtn {
-    text-decoration: underline;
+    padding-top: 12px;
+    margin-top: 2px;
+    border-top: 1px dashed #e8edf3;
   }
 }
 #Cart .CoursePriceBox .price {
   text-align: right;
 }
+@media (max-width: 480px) {
+  #Cart .CoursePriceBox .price {
+    /* Price and struck-through original on one line, original first. */
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: baseline;
+    gap: 8px;
+  }
+}
 #Cart .CoursePriceBox .price h3 {
-  font-size: 20px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+  font-family: myFont1;
 }
 @media (max-width: 480px) {
   #Cart .CoursePriceBox .price h3 {
-    font-size: 18px;
+    font-size: 17px;
   }
 }
 #Cart .CoursePriceBox .price .oldPrice {
-  text-decoration: line-through;
-  color: #777;
-  font-size: 14px;
   display: block;
+  text-decoration: line-through;
+  color: #94a3b8;
+  font-size: 13px;
+  font-family: myFont1;
+  font-weight: 500;
+}
+#Cart .removeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  color: #64748b;
+  font-family: myFont1;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+#Cart .removeBtn svg {
+  font-size: 12px;
+}
+#Cart .removeBtn:hover {
+  color: #b91c1c;
+  border-color: #fecaca;
+  background: #fef2f2;
+}
+@media (max-width: 480px) {
+  #Cart .removeBtn {
+    padding: 8px 11px;
+    font-size: 12.5px;
+  }
 }
 #Cart .CartRight {
-  width: 30%;
+  width: 32%;
   position: sticky;
   top: 130px;
 }
@@ -11157,66 +11198,61 @@
   #Cart .CartRight {
     width: 100%;
     position: fixed;
-    bottom: 0;
     left: 0;
+    bottom: 0;
     top: auto;
     z-index: 100;
     background: #fff;
-    box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
+    border-top: 1px solid #e8edf3;
+    box-shadow: 0 -6px 20px rgba(16, 24, 40, 0.1);
   }
 }
 #Cart .CartSummary {
-  border: 1px solid #eee;
-  padding: 25px;
-  border-radius: 10px;
+  background: #fff;
+  border: 1px solid #e8edf3;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 @media (max-width: 768px) {
   #Cart .CartSummary {
+    /* One compact row: amount on the left, checkout on the right. */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
     border: none;
-    padding: 15px 20px;
     border-radius: 0;
-    border-top: 1px solid #eee;
+    box-shadow: none;
+    padding: 12px 18px;
   }
 }
 @media (max-width: 480px) {
   #Cart .CartSummary {
-    padding: 15px;
+    padding: 12px 14px;
   }
 }
 #Cart .CartSummary h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
+  font-size: 17px;
+  margin-bottom: 14px;
   font-family: myFont1;
   font-weight: 600;
+  color: #1a1a1a;
 }
 @media (max-width: 768px) {
   #Cart .CartSummary h3 {
     display: none;
   }
 }
-#Cart .CartSummary .price {
-  margin-bottom: 20px;
-}
-#Cart .CartSummary .price .mainPrice {
-  font-size: 24px;
-  font-weight: 700;
-  display: block;
-  font-family: myFont1;
-  font-weight: 600;
-}
-#Cart .CartSummary .price .oldPrice {
-  text-decoration: line-through;
-  color: #777;
-  font-size: 15px;
-  font-family: myFont1;
-  font-weight: 500;
-}
 #Cart .CartSummary .PriceBox {
-  margin-top: 20px;
+  margin-top: 4px;
 }
 @media (max-width: 768px) {
   #Cart .CartSummary .PriceBox {
     margin-top: 0;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 }
 #Cart .CartSummary .PriceRow {
@@ -11226,14 +11262,26 @@
   font-size: 15px;
   font-family: myFont1;
 }
+#Cart .CartSummary .PriceRow p {
+  color: #475569;
+}
+#Cart .CartSummary .PriceRow span {
+  color: #1a1a1a;
+  font-weight: 500;
+}
 @media (max-width: 768px) {
   #Cart .CartSummary .PriceRow {
     display: none;
   }
 }
+@media (max-width: 768px) {
+  #Cart .CartSummary .SummaryDomainRow {
+    display: none;
+  }
+}
 #Cart .CartSummary .Divider {
   height: 1px;
-  background: #eee;
+  background: #eef1f5;
   margin: 15px 0;
 }
 @media (max-width: 768px) {
@@ -11245,17 +11293,30 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 15px;
+  margin-bottom: 18px;
 }
 @media (max-width: 768px) {
   #Cart .CartSummary .TotalPrice {
-    display: none;
+    /* The bar must always state the amount being charged. */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin-bottom: 0;
   }
 }
 #Cart .CartSummary .TotalPrice p {
   font-size: 16px;
   font-family: myFont1;
   font-weight: 600;
+  color: #475569;
+}
+@media (max-width: 768px) {
+  #Cart .CartSummary .TotalPrice p {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #64748b;
+  }
 }
 #Cart .CartSummary .TotalPrice h2 {
   font-size: 22px;
@@ -11263,45 +11324,9 @@
   font-family: myFont1;
   color: var(--primaryColor);
 }
-#Cart .CartSummary .MobileTotalDetails {
-  display: none;
-}
 @media (max-width: 768px) {
-  #Cart .CartSummary .MobileTotalDetails {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  #Cart .CartSummary .MobileTotalDetails .MobTotalLabel {
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    font-family: myFont1;
-    margin: 0;
-  }
-  #Cart .CartSummary .MobileTotalDetails h2 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #1a1a1a;
-    font-family: myFont1;
-    margin: 0;
-  }
-  #Cart .CartSummary .MobileTotalDetails .MobOldPrice {
-    font-size: 15px;
-    color: #888;
-    text-decoration: line-through;
-    font-family: myFont1;
-  }
-  #Cart .CartSummary .MobileTotalDetails .MobDiscount {
-    font-size: 14px;
-    color: #28a745;
-    font-weight: 600;
-    font-family: myFont1;
-    background: #e6f4ea;
-    padding: 3px 8px;
-    border-radius: 4px;
+  #Cart .CartSummary .TotalPrice h2 {
+    font-size: 20px;
   }
 }
 #Cart .CartSummary .checkoutBtn {
@@ -11311,11 +11336,30 @@
   color: white;
   border: none;
   font-size: 16px;
-  font-weight: 500;
-  border-radius: 6px;
+  font-weight: 600;
+  border-radius: 10px;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.25s;
   font-family: myFont1;
+}
+#Cart .CartSummary .checkoutBtn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+@media (max-width: 768px) {
+  #Cart .CartSummary .checkoutBtn {
+    flex: 0 0 auto;
+    width: auto;
+    padding: 13px 20px;
+    font-size: 14.5px;
+    border-radius: 8px;
+  }
+}
+@media (max-width: 768px) {
+  #Cart .CartSummary .CheckoutBlockNotice {
+    flex: 1 1 100%;
+    margin: 2px 0 0;
+    text-align: left;
+  }
 }
 
 #Wishlist {

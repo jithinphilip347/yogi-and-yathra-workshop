@@ -54,7 +54,9 @@
 
   .CartItem {
     position: relative;
-    transition: background-color 0.2s ease, border-color 0.2s ease;
+    /* Loaded after style.css, so this is the authoritative transition for the
+       item card: it must cover the hover shadow declared there too. */
+    transition: box-shadow 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
 
     &.hasIssue {
       border-left: 3px solid #ef4444;
