@@ -16,7 +16,7 @@ import { configuredBaseUrl } from "./url";
 const envImageBase =
   process.env.NEXT_PUBLIC_IMAGE_URL ||
   process.env.NEXT_PUBLIC_API_URL ||
-  "http://localhost:8000";
+  "https://admin.varixialabs.com/workshopapi/public";
 
 export const IMAGE_URL = envImageBase
   .replace(/\/+$/, "")
