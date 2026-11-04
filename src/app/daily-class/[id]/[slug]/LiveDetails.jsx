@@ -24,6 +24,8 @@ import {
   FiLock,
   FiRefreshCw,
   FiPlayCircle,
+  FiChevronDown,
+  FiChevronUp,
 } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
 import Image from "next/image";
@@ -159,6 +161,7 @@ const LiveDetails = ({ id, classDetails }) => {
   const [activeFaq, setActiveFaq] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [confirmCancel, setConfirmCancel] = useState(false);
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
   const [classCountdown, setClassCountdown] = useState({
     days: "00",
     hours: "00",
@@ -476,17 +479,59 @@ const LiveDetails = ({ id, classDetails }) => {
                     <FiGlobe /> En & Mal
                   </div>
                 </div>
-                <p
-                  style={{
-                    fontSize: "14px",
-                    color: "#636e72",
-                    lineHeight: 1.6,
-                    marginTop: "10px",
-                  }}
-                >
-                  {instructorBio ||
-                    "An internationally certified yoga and mindfulness trainer with over 5 years of experience helping individuals achieve physical and mental balance."}
-                </p>
+                {(() => {
+                  const bioText =
+                    instructorBio ||
+                    "An internationally certified yoga and mindfulness trainer with over 5 years of experience helping individuals achieve physical and mental balance.";
+                  const isLong = bioText.length > 180;
+                  const displayed = !isBioExpanded && isLong
+                    ? bioText.slice(0, 180).trim() + "..."
+                    : bioText;
+                  return (
+                    <div style={{ marginTop: "10px" }}>
+                      <p
+                        style={{
+                          fontSize: "14px",
+                          color: "#636e72",
+                          lineHeight: 1.6,
+                          margin: 0,
+                          whiteSpace: "pre-line",
+                        }}
+                      >
+                        {displayed}
+                      </p>
+                      {isLong && (
+                        <button
+                          type="button"
+                          onClick={() => setIsBioExpanded(!isBioExpanded)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            color: "var(--primaryColor, #874429)",
+                            fontWeight: "600",
+                            fontSize: "13px",
+                            cursor: "pointer",
+                            padding: "4px 0",
+                            marginTop: "4px",
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "4px",
+                          }}
+                        >
+                          {isBioExpanded ? (
+                            <>
+                              View Less <FiChevronUp style={{ fontSize: "12px" }} />
+                            </>
+                          ) : (
+                            <>
+                              View More <FiChevronDown style={{ fontSize: "12px" }} />
+                            </>
+                          )}
+                        </button>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </section>

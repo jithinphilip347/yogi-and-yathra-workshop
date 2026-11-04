@@ -9,7 +9,9 @@ import {
   FiLock, 
   FiUsers, 
   FiStar, 
-  FiShoppingCart 
+  FiShoppingCart,
+  FiChevronDown,
+  FiChevronUp,
 } from 'react-icons/fi';
 import { AiFillStar } from 'react-icons/ai';
 import { resolveMediaUrl, resolveProductMediaUrl } from '@/utils/mediaUrl';
@@ -28,6 +30,7 @@ export default function OverviewTab({ course, currentLesson, completionSummary, 
   const [eligibility, setEligibility] = useState(certificateEligibility || null);
   const [isClaiming, setIsClaiming] = useState(false);
   const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
 
   // Commerce hooks
   const { items: cartItems, addItem, removeItem } = useCart();
@@ -344,10 +347,53 @@ export default function OverviewTab({ course, currentLesson, completionSummary, 
               </div>
             </div>
           </div>
-          <div 
-            className="Bio" 
-            dangerouslySetInnerHTML={{ __html: instructor.bio_graphy || "Instructor biography not available." }}
-          />
+          {(() => {
+            const bioHtml = instructor.full_biography || instructor.bio_graphy || "Instructor biography not available.";
+            const rawBio = bioHtml.replace(/<[^>]*>/g, "").trim();
+            const isLong = rawBio.length > 200;
+            return (
+              <div style={{ marginTop: "10px" }}>
+                <div 
+                  className="Bio" 
+                  style={
+                    !isBioExpanded && isLong
+                      ? { maxHeight: "90px", overflow: "hidden", position: "relative" }
+                      : {}
+                  }
+                  dangerouslySetInnerHTML={{ __html: bioHtml }}
+                />
+                {isLong && (
+                  <button
+                    type="button"
+                    onClick={() => setIsBioExpanded(!isBioExpanded)}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "var(--primaryColor, #874429)",
+                      fontWeight: "600",
+                      fontSize: "13px",
+                      cursor: "pointer",
+                      padding: "4px 0",
+                      marginTop: "4px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    {isBioExpanded ? (
+                      <>
+                        View Less <FiChevronUp size={13} />
+                      </>
+                    ) : (
+                      <>
+                        View More <FiChevronDown size={13} />
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
+            );
+          })()}
         </div>
       )}
 

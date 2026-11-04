@@ -28,6 +28,8 @@ import {
   FiBookOpen,
   FiRefreshCw,
   FiCheck,
+  FiChevronDown,
+  FiChevronUp,
 } from "react-icons/fi";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
@@ -152,6 +154,7 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
   });
   const [isLive, setIsLive] = useState(false);
   const [hasEnded, setHasEnded] = useState(false);
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
 
   // ─── Shared Zoom meeting integration ────────────────────────────────
   const {
@@ -1078,9 +1081,60 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
                   </div>
                 </div>
               </div>
-              <p style={{ fontSize: "13px", color: "#64748b", lineHeight: "1.6", margin: 0 }}>
-                {instructor.full_biography || instructor.bio_graphy || "Certified yoga master with years of teaching experience."}
-              </p>
+              {(() => {
+                const bio =
+                  instructor.full_biography ||
+                  instructor.bio_graphy ||
+                  "Certified yoga master with years of teaching experience.";
+                const isLong = bio.length > 160;
+                const displayed = !isBioExpanded && isLong
+                  ? bio.slice(0, 160).trim() + "..."
+                  : bio;
+                return (
+                  <div>
+                    <p
+                      style={{
+                        fontSize: "13px",
+                        color: "#64748b",
+                        lineHeight: "1.6",
+                        margin: 0,
+                        whiteSpace: "pre-line",
+                      }}
+                    >
+                      {displayed}
+                    </p>
+                    {isLong && (
+                      <button
+                        type="button"
+                        onClick={() => setIsBioExpanded(!isBioExpanded)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "var(--primaryColor, #874429)",
+                          fontWeight: "600",
+                          fontSize: "12px",
+                          cursor: "pointer",
+                          padding: "2px 0",
+                          marginTop: "4px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        {isBioExpanded ? (
+                          <>
+                            View Less <FiChevronUp size={12} />
+                          </>
+                        ) : (
+                          <>
+                            View More <FiChevronDown size={12} />
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
             </section>
           </div>
         </div>

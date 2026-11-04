@@ -51,6 +51,7 @@ const CourseDetails = ({ courseDetails }) => {
   const [reviewRating, setReviewRating] = useState(5);
   const [reviewComment, setReviewComment] = useState("");
   const [isEditingReview, setIsEditingReview] = useState(false);
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
   const router = useRouter();
   const { items: cartItems, addItem, buyNow, removeItem, isInCart } = useCart();
 
@@ -479,14 +480,54 @@ const CourseDetails = ({ courseDetails }) => {
                   </div>
                 </div>
               </div>
-              <div
-                className="Bio ContentText"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    instructorBio ||
-                    "Instructor biography not available.",
-                }}
-              ></div>
+              {(() => {
+                const rawBio = (instructorBio || "").replace(/<[^>]*>/g, "").trim();
+                const isLong = rawBio.length > 200;
+                return (
+                  <div style={{ marginBottom: "12px" }}>
+                    <div
+                      className="Bio ContentText"
+                      style={
+                        !isBioExpanded && isLong
+                          ? { maxHeight: "90px", overflow: "hidden", position: "relative" }
+                          : {}
+                      }
+                      dangerouslySetInnerHTML={{
+                        __html: instructorBio || "Instructor biography not available.",
+                      }}
+                    />
+                    {isLong && (
+                      <button
+                        type="button"
+                        onClick={() => setIsBioExpanded(!isBioExpanded)}
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "var(--primaryColor, #874429)",
+                          fontWeight: "600",
+                          fontSize: "13px",
+                          cursor: "pointer",
+                          padding: "4px 0",
+                          marginTop: "4px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                        }}
+                      >
+                        {isBioExpanded ? (
+                          <>
+                            View Less <FiChevronUp size={13} />
+                          </>
+                        ) : (
+                          <>
+                            View More <FiChevronDown size={13} />
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
               <Link
                 href={instructorSlug ? `/teacher-list/${instructorSlug}` : "#"}
                 className="MoreLink"

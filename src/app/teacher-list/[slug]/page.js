@@ -20,6 +20,8 @@ import {
   FaVideo,
   FaArrowRight,
   FaUserGraduate,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 import { fetchInstructorDetails } from "@/libs/course";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
@@ -33,6 +35,7 @@ const Page = () => {
   const [teacher, setTeacher] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isBioExpanded, setIsBioExpanded] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -225,7 +228,50 @@ const Page = () => {
             {/* ABOUT SECTION */}
             <div className="ContentSection AboutSection">
               <h2>About me</h2>
-              <p className="BioText">{biography || "No biography available."}</p>
+              {(() => {
+                const isLong = biography && biography.length > 280;
+                const displayText = !isBioExpanded && isLong
+                  ? biography.slice(0, 280).trim() + "..."
+                  : biography;
+                return (
+                  <div style={{ marginBottom: "25px" }}>
+                    <p className="BioText" style={{ margin: 0, whiteSpace: "pre-line" }}>
+                      {displayText || "No biography available."}
+                    </p>
+                    {isLong && (
+                      <button
+                        type="button"
+                        onClick={() => setIsBioExpanded(!isBioExpanded)}
+                        className="ViewMoreBioBtn"
+                        style={{
+                          background: "none",
+                          border: "none",
+                          color: "var(--primaryColor, #874429)",
+                          fontWeight: "600",
+                          fontSize: "14px",
+                          cursor: "pointer",
+                          padding: "6px 0",
+                          marginTop: "6px",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          transition: "color 0.2s ease",
+                        }}
+                      >
+                        {isBioExpanded ? (
+                          <>
+                            View Less <FaChevronUp style={{ fontSize: "11px" }} />
+                          </>
+                        ) : (
+                          <>
+                            View More <FaChevronDown style={{ fontSize: "11px" }} />
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                );
+              })()}
 
               <div className="ProfileStatsRight">
                 {stats.map((stat, index) => (
