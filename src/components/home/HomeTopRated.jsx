@@ -68,7 +68,7 @@ const HomeTopRated = () => {
                   duration={(course.duration || 0) + " hrs"}
                   price={Number(course.price)}
                   oldPrice={Number(course.discount_price)}
-                  rating="4.5"
+                  rating={course?.average_rating ?? course?.rating ?? 0}
                   students={course?.enrollments_count}
                   instructorName={course?.instructor?.name}
                   wishlistIcon={findWishlistIcon(course.id, "course")}

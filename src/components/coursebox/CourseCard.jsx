@@ -44,6 +44,7 @@ const CourseCard = ({
   slug
 }) => {
   const [btnLoading, setBtnLoading] = useState(false);
+  const detailsHref = type === "course" ? `/course/${slug}/${id}` : `/daily-class/${id}/${slug}`;
 
   const handleClick = () => {
     setBtnLoading(true);
@@ -56,7 +57,21 @@ const CourseCard = ({
   const { handleWishlist } = useWishlist();
 
   return (
-    <div className="courseCard">
+    <div
+      className="courseCard"
+      onClick={(event) => {
+        if (loading || event.target.closest("a, button")) return;
+        window.location.assign(detailsHref);
+      }}
+      onKeyDown={(event) => {
+        if (loading || event.target !== event.currentTarget || !["Enter", " "].includes(event.key)) return;
+        event.preventDefault();
+        window.location.assign(detailsHref);
+      }}
+      role={loading ? undefined : "link"}
+      tabIndex={loading ? undefined : 0}
+      aria-label={loading ? undefined : `View details for ${title}`}
+    >
       {loading ? (
         <CourseCardSkeleton />
       ) : (
@@ -117,7 +132,7 @@ const CourseCard = ({
               </div>
             </div>
 
-            <Link className="viewBtn"  href={type === "course" ? `/course/${slug}/${id}` : `/daily-class/${id}/${slug}`}>
+            <Link className="viewBtn" href={detailsHref}>
               {btnLoading ? <div className="spinner"></div> : buttonText}
             </Link>
           </div>
