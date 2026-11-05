@@ -66,6 +66,16 @@ const Nav = () => {
   // Real notification unread count for badge
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
 
+  const submitCatalogSearch = useCallback((query) => {
+    const term = String(query || "").trim();
+    if (!term) return;
+
+    setSearchQuery(term);
+    setIsSearching(false);
+    setIsSearchOpen(false);
+    router.push(`/course?q=${encodeURIComponent(term)}`);
+  }, [router]);
+
   const [mounted, setMounted] = useState(false);
 
   // Debounced search for inline dropdown
@@ -137,6 +147,12 @@ const Nav = () => {
                   value={searchQuery}
                   onFocus={() => setIsSearching(true)}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") {
+                      event.preventDefault();
+                      submitCatalogSearch(searchQuery);
+                    }
+                  }}
                   aria-label="Search courses, live sections, and daily classes"
                 />
               </div>
@@ -361,6 +377,7 @@ const Nav = () => {
         onClose={() => setIsSearchOpen(false)}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        onSearchSubmit={submitCatalogSearch}
       />
 
       <Sidnav isOpen={isSideNavOpen} onClose={() => setIsSideNavOpen(false)} />

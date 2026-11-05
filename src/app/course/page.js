@@ -18,6 +18,7 @@ import Breadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 import { fetchCategories } from "@/libs/course";
 import courseApi from "@/libs/courseApi";
 import { useQuery } from "@tanstack/react-query";
+import useGlobalSearch from "@/hooks/useGlobalSearch";
 
 const unwrapList = (response) => {
   const payload = response?.data;
@@ -51,6 +52,8 @@ const getOriginalPrice = (item) => {
 
 const CourseListContent = () => {
   const searchParams = useSearchParams();
+  const catalogSearch = searchParams.get("q")?.trim() || "";
+  const isSearchMode = catalogSearch.length > 0;
   const categoryParam = searchParams.get("category") || searchParams.get("category_id");
 
   const [categories, setCategories] = useState([]);
@@ -68,6 +71,7 @@ const CourseListContent = () => {
   const { data: filterOptionsResponse } = useQuery({
     queryKey: ["course-filter-options"],
     queryFn: courseApi.filterOptions,
+    enabled: !isSearchMode,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -76,6 +80,7 @@ const CourseListContent = () => {
   const { data: dailyClassesResponse, isLoading: isDailyClassesLoading } = useQuery({
     queryKey: ["public-daily-classes-catalog"],
     queryFn: courseApi.dailyClasses,
+    enabled: !isSearchMode,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -83,6 +88,7 @@ const CourseListContent = () => {
   const { data: liveSectionsResponse, isLoading: isLiveSectionsLoading } = useQuery({
     queryKey: ["public-live-sections-catalog"],
     queryFn: courseApi.liveSections,
+    enabled: !isSearchMode,
     staleTime: 5 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
@@ -110,10 +116,11 @@ const CourseListContent = () => {
   const activePrice = price > 0 ? Math.min(price, maxPrice) : maxPrice;
 
   useEffect(() => {
+    if (isSearchMode) return;
     fetchCategories().then((data) => {
       setCategories(data || []);
     });
-  }, []);
+  }, [isSearchMode]);
 
   const category = React.useMemo(() => {
     if (selectedCategory !== null) return selectedCategory;
@@ -183,7 +190,15 @@ const CourseListContent = () => {
     page,
   };
 
-  const { courseQuery } = useCourse({ queries });
+  const {
+    data: globalSearchResponse,
+    isLoading: isSearchLoading,
+    isFetching: isSearchFetching,
+    isError: isSearchError,
+  } = useGlobalSearch(catalogSearch, { perPage: 100 });
+  const globalSearchResults = globalSearchResponse?.data || [];
+
+  const { courseQuery } = useCourse({ queries: isSearchMode ? null : queries });
   const { data, isLoading, isFetching } = courseQuery;
 
   const [coursesList, setCoursesList] = useState([]);
@@ -200,11 +215,17 @@ const CourseListContent = () => {
   const hasMore = Boolean(data?.data?.next_page_url);
 
   const listingItems = useMemo(() => {
-    const items = [
-      ...coursesList.map((item) => ({ ...item, contentType: "course" })),
-      ...dailyClasses.map((item) => ({ ...item, contentType: "daily_class" })),
-      ...liveSections.map((item) => ({ ...item, contentType: "live_section" })),
-    ];
+    const items = isSearchMode
+      ? globalSearchResults.map((item) => ({
+          ...item,
+          contentType: item.type,
+          instructor: { name: item.instructor_name },
+        }))
+      : [
+          ...coursesList.map((item) => ({ ...item, contentType: "course" })),
+          ...dailyClasses.map((item) => ({ ...item, contentType: "daily_class" })),
+          ...liveSections.map((item) => ({ ...item, contentType: "live_section" })),
+        ];
 
     const filtered = items.filter((item) => {
       if (contentType !== "all" && item.contentType !== contentType) return false;
@@ -230,7 +251,7 @@ const CourseListContent = () => {
       const dateB = new Date(b.created_at || b.date || b.start_date || 0).getTime();
       return dateB - dateA;
     });
-  }, [coursesList, dailyClasses, liveSections, contentType, category, level, instructorId, price, activePrice, sortValue]);
+  }, [isSearchMode, globalSearchResults, coursesList, dailyClasses, liveSections, contentType, category, level, instructorId, price, activePrice, sortValue]);
 
   const contentTypes = [
     { id: "all", label: "All" },
@@ -239,7 +260,9 @@ const CourseListContent = () => {
     { id: "live_section", label: "Live Sections" },
   ];
 
-  const isCatalogLoading = isLoading || isDailyClassesLoading || isLiveSectionsLoading;
+  const isCatalogLoading = isSearchMode
+    ? isSearchLoading || isSearchFetching
+    : isLoading || isDailyClassesLoading || isLiveSectionsLoading;
 
   const renderCatalogCard = (item) => {
     const type = item.contentType;
@@ -295,7 +318,7 @@ const CourseListContent = () => {
         </div>
       </div>
       <div className="container">
-        <div className="TopActions">
+        {!isSearchMode && <div className="TopActions">
           <button
             className="MobileFilterBtn"
             onClick={() => setIsDrawerOpen(true)}
@@ -322,11 +345,11 @@ const CourseListContent = () => {
               )}
             </div>
           </div>
-        </div>
+        </div>}
 
         <div className="CourseMain">
           {/* Desktop Filter */}
-          <div className="DesktopFilterWrapper">
+          {!isSearchMode && <div className="DesktopFilterWrapper">
             <FilterBox
               category={category}
               setCategory={setCategory}
@@ -343,10 +366,10 @@ const CourseListContent = () => {
               setInstructorId={setInstructorId}
               categories={categories}
             />
-          </div>
+          </div>}
 
           {/* Mobile Filter Drawer */}
-          {isDrawerOpen && (
+          {!isSearchMode && isDrawerOpen && (
             <div className="DrawerOverlay">
               <div ref={drawerRef} className="DrawerContent">
                 <FilterBox
@@ -372,6 +395,14 @@ const CourseListContent = () => {
           )}
 
           <div className="ContentArea">
+            {isSearchMode && (
+              <div className="CatalogSearchHeading">
+                <h1 className="text-2xl font-semibold text-gray-900">Search results</h1>
+                <p className="mt-1 text-sm text-gray-500">
+                  {globalSearchResponse?.meta?.total ?? globalSearchResults.length} results for “{catalogSearch}”
+                </p>
+              </div>
+            )}
             <div className="ContentTypeFilters" role="group" aria-label="Filter by content type">
               {contentTypes.map((option) => (
                 <button
@@ -389,15 +420,20 @@ const CourseListContent = () => {
               ))}
             </div>
             <div className="CourseGrid">
-              {isCatalogLoading && page === 1
+              {isCatalogLoading && (isSearchMode || page === 1)
                 ? Array(8)
                     .fill({})
                     .map((_, i) => <CourseCard key={i} loading={true} />)
+                : isSearchError ? (
+                    <div className="NoData">Search failed. Please try again.</div>
+                  )
                 : listingItems.length > 0
                   ? listingItems.map(renderCatalogCard)
                   : !isCatalogLoading && (
                       <div className="NoData">
-                        No content found matching your filters.
+                        {isSearchMode
+                          ? `No results found for “${catalogSearch}”.`
+                          : "No content found matching your filters."}
                       </div>
                     )}
               {isFetching &&
@@ -407,7 +443,7 @@ const CourseListContent = () => {
                   .map((_, i) => <CourseCard key={i} loading={true} />)}
             </div>
 
-            {!isLoading && hasMore && (contentType === "all" || contentType === "course") && (
+            {!isSearchMode && !isLoading && hasMore && (contentType === "all" || contentType === "course") && (
               <div className="LoadMoreWrapper">
                 <button
                   className="LoadMoreBtn"
