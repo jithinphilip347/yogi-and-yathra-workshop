@@ -16,6 +16,8 @@ import useWishlist from "@/hooks/useWishlist";
 import FilterBox from "@/components/filter/FilterBox";
 import Breadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 import { fetchCategories } from "@/libs/course";
+import courseApi from "@/libs/courseApi";
+import { useQuery } from "@tanstack/react-query";
 
 const CourseListContent = () => {
   const searchParams = useSearchParams();
@@ -24,13 +26,24 @@ const CourseListContent = () => {
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [level, setLevel] = useState("");
-  const [price, setPrice] = useState(5000);
+  const [price, setPrice] = useState(0);
+  const [instructorId, setInstructorId] = useState("");
   const [sort, setSort] = useState("Newest");
   const [sortValue, setSortValue] = useState("created_at");
   const [page, setPage] = useState(1);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { data: filterOptionsResponse } = useQuery({
+    queryKey: ["course-filter-options"],
+    queryFn: courseApi.filterOptions,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+  const filterOptions = filterOptionsResponse?.data || {};
+  const maxPrice = Number(filterOptions.max_price) || 5000;
+  const activePrice = price > 0 ? Math.min(price, maxPrice) : maxPrice;
 
   useEffect(() => {
     fetchCategories().then((data) => {
@@ -99,7 +112,8 @@ const CourseListContent = () => {
     category_id: category,
     level,
     min_price: 0,
-    max_price: price,
+    max_price: activePrice,
+    ...(instructorId ? { instructor_id: instructorId } : {}),
     order_by: "desc",
     per_page: 12,
     page,
@@ -171,6 +185,10 @@ const CourseListContent = () => {
               setLevel={setLevel}
               price={price}
               setPrice={setPrice}
+              maxPrice={maxPrice}
+              instructors={filterOptions.instructors || []}
+              instructorId={instructorId}
+              setInstructorId={setInstructorId}
               categories={categories}
             />
           </div>
@@ -191,6 +209,10 @@ const CourseListContent = () => {
                   setLevel={setLevel}
                   price={price}
                   setPrice={setPrice}
+                  maxPrice={maxPrice}
+                  instructors={filterOptions.instructors || []}
+                  instructorId={instructorId}
+                  setInstructorId={setInstructorId}
                   categories={categories}
                 />
               </div>

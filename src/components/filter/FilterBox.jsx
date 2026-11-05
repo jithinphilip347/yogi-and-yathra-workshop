@@ -1,15 +1,19 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FiChevronDown, FiX } from "react-icons/fi";
 
 const FilterBox = ({ 
   category, setCategory, categoryOpen, setCategoryOpen, categoryRef,
-  level, setLevel, price, setPrice, isMobile = false, onClose, categories = [] 
+  level, setLevel, price, setPrice, maxPrice = 5000, instructors = [], instructorId = "", setInstructorId = () => {}, isMobile = false, onClose, categories = [] 
 }) => {
+  const [instructorOpen, setInstructorOpen] = useState(false);
+  const instructorRef = useRef(null);
+  const selectedInstructor = instructors.find((instructor) => String(instructor.id) === String(instructorId));
   const handleReset = () => {
     setCategory("All");
     setLevel("");
-    setPrice(5000);
+    setPrice(maxPrice);
+    setInstructorId("");
     if(isMobile) onClose();
   };
 
@@ -51,6 +55,22 @@ const FilterBox = ({
       </div>
 
       <div className="FilterBlock">
+        <label>Instructor</label>
+        <div className="CustomDropdown" ref={instructorRef} onClick={() => setInstructorOpen((open) => !open)}>
+          <span>{selectedInstructor?.name || "All Instructors"}</span>
+          <FiChevronDown />
+          {instructorOpen && (
+            <ul className="DropdownList">
+              <li onClick={(event) => { event.stopPropagation(); setInstructorId(""); setInstructorOpen(false); }}>All Instructors</li>
+              {instructors.map((instructor) => (
+                <li key={instructor.id} onClick={(event) => { event.stopPropagation(); setInstructorId(String(instructor.id)); setInstructorOpen(false); }}>{instructor.name}</li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <div className="FilterBlock">
         <label>Course Level</label>
         <div className="RadioGroup">
           {["Beginner", "Intermediate", "Advanced"].map((l) => (
@@ -71,14 +91,14 @@ const FilterBox = ({
       <div className="FilterBlock">
         <label>Price Range</label>
         <div className="PriceRangeHeader">
-          <span>₹ 0 - ₹ {price}</span>
+          <span>₹ 0 - ₹ {price || maxPrice}</span>
         </div>
         <input 
           type="range" 
           min="0" 
-          max="5000" 
+          max={maxPrice}
           step="100"
-          value={price} 
+          value={price || maxPrice}
           onChange={(e) => setPrice(e.target.value)} 
           className="PriceSlider" 
         />
@@ -89,7 +109,7 @@ const FilterBox = ({
           </div>
           <div className="InputBox">
             <small>Max</small>
-            <input type="number" value={price} readOnly />
+            <input type="number" value={price || maxPrice} readOnly />
           </div>
         </div>
       </div>

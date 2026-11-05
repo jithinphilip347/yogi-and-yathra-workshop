@@ -44,6 +44,9 @@ const CourseCard = ({
   slug
 }) => {
   const [btnLoading, setBtnLoading] = useState(false);
+  const numericPrice = Number(String(price ?? "").replace(/[^\d.-]/g, ""));
+  const numericOldPrice = Number(String(oldPrice ?? "").replace(/[^\d.-]/g, ""));
+  const showOldPrice = Number.isFinite(numericOldPrice) && numericOldPrice > numericPrice && numericOldPrice > 0;
   const detailsHref = type === "course" ? `/course/${slug}/${id}` : `/daily-class/${id}/${slug}`;
 
   const handleClick = () => {
@@ -78,7 +81,7 @@ const CourseCard = ({
         <>
           <div className="courseImgWrapper">
             <Image src={image} alt={title} fill className="courseImage" />
-            <button className="wishlistBtn" onClick={() => handleWishlist({ id, title, image, price, oldPrice, rating, students, instructorName, lessons, duration, instructorImg, instructorLabel }, type)}>
+            <button className="wishlistBtn" aria-label={`Toggle ${title} favorite`} onClick={() => handleWishlist({ id, slug, title, image, price, oldPrice, rating, students, instructorName, lessons, duration, instructorImg, instructorLabel }, type)}>
                 {wishlistIcon} 
             </button>
           </div>
@@ -106,7 +109,7 @@ const CourseCard = ({
           <div className="Priceratebox">
             <div className="priceBox">
               <h4> {priceIcon} {price}</h4>
-              <span className="old">{oldPriceIcon} {oldPrice}</span>
+              {showOldPrice && <span className="old">{oldPriceIcon} {oldPrice}</span>}
             </div>
 
             <div className="rating">

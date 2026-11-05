@@ -329,8 +329,8 @@ const Page = () => {
                       title={course.title}
                       lessons={course.lessons_count?.toString() || "0"}
                       duration={formatDuration(course.duration)}
-                      price={formatPrice(course.price)}
-                      oldPrice={course.discount_price > 0 ? formatPrice(course.discount_price) : null}
+                      price={formatPrice(course.discount_price > 0 && course.discount_price < course.price ? course.discount_price : course.price)}
+                      oldPrice={course.discount_price > 0 && course.discount_price < course.price ? formatPrice(course.price) : null}
                       rating={course.rating?.toString() || "0"}
                       students={course.enrollments_count?.toString() || "0"}
                       lessonsLabel="Lessons"
