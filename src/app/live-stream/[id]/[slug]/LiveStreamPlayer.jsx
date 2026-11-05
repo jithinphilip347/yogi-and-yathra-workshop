@@ -60,7 +60,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
     entityId: data.id,
     entityType: "live_section",
     entity: data,
-    instructorId: data.instructor_id,
+    instructorId: selectedSession?.instructor?.id ?? data.instructor_id,
     signatureEndpoint: `live-sections/${data.id}/zoom-signature`,
     signaturePayload: selectedSession?.id ? { session_id: selectedSession.id } : null,
     attendanceDate: selectedSession?.date || null,
@@ -149,7 +149,11 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
   const humanDate = selectedSession?.human_date || data.human_date || "";
   const timeDisplay = humanDate ? `${humanDate} at ${data.human_start_time || ""} (${timezone})` : "";
 
-  const isHost = Boolean(user && (user.role === 'admin' || Number(data.instructor_id) === Number(user.id)));
+  const isHost = Boolean(user && (
+    user.role === 'admin'
+    || Number(data.instructor_id) === Number(user.id)
+    || (selectedSession?.is_substitute_assignment && Number(selectedSession?.instructor?.id) === Number(user.id))
+  ));
   const isClassActive = selectedSession?.can_join === true || data.can_join === true || data.status === 'live';
   const isCompleted = data.is_ended || data.time_status === 'completed' || data.status === 'completed' || data.status === 'passed';
   const sessionRecordingUrl = selectedSession ? selectedSession.recording_url : data.recording_url;

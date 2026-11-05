@@ -447,6 +447,16 @@ const LiveDetails = ({ id, classDetails }) => {
                   })}
                 </div>
               </div>
+              {Array.isArray(dailyClass?.session_instructors) && dailyClass.session_instructors.length > 0 && (
+                <div className="mt-4 border-t border-gray-100 pt-3">
+                  <span className="DaysLabel">Session instructor updates:</span>
+                  <ul className="mt-2 space-y-1 text-sm text-gray-700">
+                    {dailyClass.session_instructors.map((session) => (
+                      <li key={session.date}>{session.date}: {session.instructor?.name || "Guest instructor"}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </section>
 

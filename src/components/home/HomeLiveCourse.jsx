@@ -32,6 +32,7 @@ import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 const EventSlide = ({ event, hasAccess = false }) => {
   const router = useRouter();
   const { buyNow } = useCart();
+  const [failedInstructorAvatar, setFailedInstructorAvatar] = useState(null);
   const [timeLeft, setTimeLeft] = useState({
     days: "00",
     hours: "00",
@@ -176,9 +177,12 @@ const EventSlide = ({ event, hasAccess = false }) => {
         <div className="ImageOverlay"></div>
         
         <div className="TopBadges">
-          <div className="CategoryBadge">
-            <FiRadio className="icon" />{" "}
-            {event?.category?.name || event?.type || "LIVE"}
+          <div className="BadgeStack">
+            <span className="CourseTypeBadge">Live Section</span>
+            <div className="CategoryBadge">
+              <FiRadio className="icon" />{" "}
+              {event?.category?.name || event?.type || "LIVE"}
+            </div>
           </div>
           {difficultyBadge && (
              <div className="Badge difficulty">
@@ -262,13 +266,14 @@ const EventSlide = ({ event, hasAccess = false }) => {
 
         <div className="BottomRow">
           <div className="InstructorInfo">
-            {instructorAvatar ? (
+            {instructorAvatar && failedInstructorAvatar !== instructorAvatar ? (
               <Image
                 src={instructorAvatar}
                 alt={instructorName}
                 width={44}
                 height={44}
                 className="ProfileImg"
+                onError={() => setFailedInstructorAvatar(instructorAvatar)}
               />
             ) : (
               <div className="ProfilePlaceholder">

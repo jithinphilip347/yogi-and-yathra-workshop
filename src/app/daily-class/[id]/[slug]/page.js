@@ -2,7 +2,7 @@ import { fetchDailyClassDetails } from "@/libs/course";
 import LiveDetails from "./LiveDetails";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 
-export const revalidate = 600;
+export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

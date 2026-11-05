@@ -353,6 +353,9 @@ const LiveYogaDetails = ({ liveSection }) => {
                 {programSessions.map((session) => (
                   <li key={session.id || session.session_number}>
                     <strong>Session {session.session_number}</strong> · {session.human_date} · {session.start_time?.slice(0, 5) || humanStartTime} ({timezone})
+                    {session.instructor?.name && session.instructor.name !== instructor.name && (
+                      <span> · Instructor: {session.instructor.name}</span>
+                    )}
                   </li>
                 ))}
               </ol>
