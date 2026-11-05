@@ -40,7 +40,7 @@ const HomeTeacher = () => {
           <div className="title-area">
             <span className="badge">EXPERTISE</span>
             <h2>
-              Explore our comprehensive <br /> service offerings
+              Explore our <span>comprehensive</span> <br /> service offerings
             </h2>
           </div>
 

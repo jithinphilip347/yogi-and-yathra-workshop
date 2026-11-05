@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 import BannerImg from "../../assets/images/bannerimg.webp";
 import { MdKeyboardArrowRight } from "react-icons/md";
@@ -28,9 +29,9 @@ const HomeBanner = () => {
                 </p>
               </div>
               <div className="HomeBannerBtn">
-                <button className="PrimaryBtn">
+                <Link href="/course" className="PrimaryBtn">
                   Explore Programs <MdKeyboardArrowRight />
-                </button>
+                </Link>
               </div>
             </div>
             <div className="HomeBannerBottomBox">

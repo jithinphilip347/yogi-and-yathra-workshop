@@ -26,7 +26,7 @@ const HomeTrending = () => {
     <div id="HomeTrending">
       <div className="container">
         <div className="HomeTrendingHead">
-          <h2>Trending This Week</h2>
+          <h2><span>Trending</span> This Week</h2>
           <Link href="/course" className="viewAllBtn">View All</Link>
         </div>
         <div className="HomeTrendingMain">

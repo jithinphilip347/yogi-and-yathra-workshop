@@ -25,11 +25,11 @@ export default async function Home() {
     <HomeLiveCourse liveSections={liveSections} />
     {/* <HomeCourse /> */}
     <HomePopular categories={categories} />
-    <HomeTrending />
     <HomeLiveClass dailyClasses={dailyClasses} />
-    <HomeNew />
+    <HomeTrending />
     <HomeTopRated />
-    <HomeTestimonial />
+    <HomeNew />
+    {/* <HomeTestimonial /> */}
     <HomeTeacher />
     <HomeFAQ />
     </>

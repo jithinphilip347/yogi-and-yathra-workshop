@@ -5,8 +5,18 @@
   padding: 10px;
   overflow: hidden;
   cursor: pointer;
-  transition: 0.3s ease;
+  transition: all 0.3s ease;
   border: 1px solid #f2f6fc;
+}
+.courseCard:hover {
+  background: #faf0e8;
+  background: rgba(var(--primaryColorRgb, 135, 68, 41), 0.08);
+  border-color: rgba(var(--primaryColorRgb, 135, 68, 41), 0.35);
+  box-shadow: 0 10px 25px rgba(var(--primaryColorRgb, 135, 68, 41), 0.12);
+  transform: translateY(-4px);
+}
+.courseCard:hover .courseImgWrapper .courseImage {
+  transform: scale(1.03);
 }
 @media (max-width: 768px) {
   .courseCard {
@@ -33,6 +43,7 @@
   height: 100%;
   -o-object-fit: cover;
      object-fit: cover;
+  transition: transform 0.3s ease;
 }
 .courseImgWrapper .wishlistBtn {
   position: absolute;
@@ -63,6 +74,13 @@
 .courseImgWrapper .wishlistBtn svg {
   color: var(--primaryColor);
   font-size: 15px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.courseImgWrapper .wishlistBtn:hover svg {
+  transform: scale(1.15);
+}
+.courseImgWrapper .wishlistBtn svg.wishlistActive {
+  color: #e11d48;
 }
 @media (max-width: 768px) {
   .courseImgWrapper .wishlistBtn svg {
@@ -279,6 +297,7 @@
   border-radius: 50%;
   -o-object-fit: cover;
      object-fit: cover;
+  transition: transform 0.3s ease;
 }
 
 .TutorDetails {

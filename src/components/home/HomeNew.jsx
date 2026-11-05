@@ -41,7 +41,7 @@ const HomeNew = () => {
     <div id="HomeNew">
       <div className="container">
         <div className="HomeNewHead">
-          <h2>Newly Launched Programs</h2>
+          <h2><span>Newly</span> Launched Programs</h2>
           <Link href="/course" className="viewAllBtn">
             View All
           </Link>

@@ -153,6 +153,11 @@ const HomeTestimonial = () => {
 
   const testimonials = data ?? [];
 
+  // Hide section completely if there are no testimonials to display
+  if (!isLoading && !isError && testimonials.length === 0) {
+    return null;
+  }
+
   // Show 4 skeleton placeholders while loading
   const skeletonCount = 4;
 

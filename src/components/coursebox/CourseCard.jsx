@@ -54,7 +54,7 @@ const CourseCard = ({
     }, 800);
   };
 
-  const { handleWishlist } = useWishlist();
+  const { handleWishlist, findWishlistIcon } = useWishlist();
 
   return (
     <div
@@ -77,9 +77,35 @@ const CourseCard = ({
       ) : (
         <>
           <div className="courseImgWrapper">
-            <Image src={image} alt={title} fill className="courseImage" />
-            <button className="wishlistBtn" onClick={() => handleWishlist({ id, title, image, price, oldPrice, rating, students, instructorName, lessons, duration, instructorImg, instructorLabel }, type)}>
-                {wishlistIcon} 
+            {image && <Image src={image} alt={title || "Course"} fill className="courseImage" />}
+            <button
+              type="button"
+              className="wishlistBtn"
+              aria-label="Wishlist"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleWishlist(
+                  {
+                    id,
+                    slug,
+                    title,
+                    image,
+                    price,
+                    oldPrice,
+                    rating,
+                    students,
+                    instructorName,
+                    lessons,
+                    duration,
+                    instructorImg,
+                    instructorLabel,
+                  },
+                  type
+                );
+              }}
+            >
+              {wishlistIcon || (id ? findWishlistIcon(id, type) : null)}
             </button>
           </div>
            <div className="CourseTitleBoxMain">

@@ -44,7 +44,7 @@ const HomeLiveClass = ({ dailyClasses }) => {
     <div id="HomeLiveClass">
       <div className="container">
         <div className="HomeLiveClassHead">
-          <h2>Live & Interactive Classes</h2>
+          <h2><span>Live</span> & Interactive Classes</h2>
           <a href="/live-class" className="viewAllBtn">
             View All
           </a>

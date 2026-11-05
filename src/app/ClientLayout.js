@@ -6,6 +6,7 @@ import Footer from '@/components/footer/Footer';
 import SubNav from '@/components/nav/SubNav';
 import Providers from '@/components/Providers';
 import SmoothScrollProvider from '@/components/SmoothScrollProvider';
+import { Toaster } from 'react-hot-toast';
 
 export default function ClientLayout({ children }) {
   const pathname = usePathname();
@@ -25,6 +26,7 @@ export default function ClientLayout({ children }) {
   return (
     <SmoothScrollProvider>
       <Providers>
+        <Toaster position="top-right" reverseOrder={false} />
         {!hideHeaderFooter && <Nav />}
         {!hideHeaderFooter && <SubNav />}
         
