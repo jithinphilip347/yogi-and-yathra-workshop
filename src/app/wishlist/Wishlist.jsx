@@ -43,7 +43,7 @@ const Wishlist = () => {
         ) : (
           <>
             <div className="WishlistGrid">
-              {courses.slice(0, visibleCourses).map((course) => (
+              {wishlist.slice(0, visibleCourses).map((course) => (
                 <CourseCard
                   key={`${course.type}-${course.id}`}
                   {...course}

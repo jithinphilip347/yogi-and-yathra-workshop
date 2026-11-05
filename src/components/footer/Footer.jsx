@@ -77,7 +77,23 @@ const Footer = () => {
         <div className="footerBottom">
           <div className="footerBottomMain">
             <p className="copyrightText">© {new Date().getFullYear()} Yogi and Yathra. All Rights Reserved.</p>
-            <p className="designedBy">Designed by <a href="https://vatl.in" target="_blank" rel="noopener noreferrer">VATL</a></p>
+            <div className="developedBy">
+              <a
+                href="https://varixialabs.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="developedByLink"
+              >
+                <span>Developed by</span>
+                <Image
+                  src="/design-logo.png"
+                  alt="VATL - Varixia Labs"
+                  width={80}
+                  height={18}
+                  className="developedByLogo"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </div>

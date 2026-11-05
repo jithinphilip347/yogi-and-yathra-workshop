@@ -57,7 +57,7 @@ const CourseCard = ({
     }, 800);
   };
 
-  const { handleWishlist } = useWishlist();
+  const { handleWishlist, findWishlistIcon } = useWishlist();
 
   return (
     <div

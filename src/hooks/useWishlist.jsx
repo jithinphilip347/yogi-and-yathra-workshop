@@ -1,35 +1,54 @@
-
-import React from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import {FaHeart , FaRegHeart} from 'react-icons/fa'
-import toast from 'react-hot-toast'
-import { addToWishlist, removeFromWishlist } from '@/features/wishlist/wishlistSlice'
+"use client";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import toast from "react-hot-toast";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "@/features/wishlist/wishlistSlice";
 
 const useWishlist = () => {
-  const { wishlist } = useSelector(state => state.wishlist)
+  const wishlist = useSelector((state) => state.wishlist?.wishlist || []);
   const dispatch = useDispatch();
-  
-  const findWishlistIcon = (courseId , type) => {
-     const isWishList = wishlist.find(item => item.id === courseId && item.type === type)
-     return isWishList ? <FaHeart /> : <FaRegHeart />
-  }
 
-  const handleWishlist = (item, type) => {
-    const isWishList = wishlist.find(wItem => wItem.id === item.id && wItem.type === type)
-    
-    if(isWishList){
-      dispatch(removeFromWishlist({ id: item.id , type }))
-      toast.success("Removed from wishlist")
+  const isInWishlist = (courseId, type = "course") => {
+    if (!courseId) return false;
+    return wishlist.some(
+      (item) =>
+        String(item.id) === String(courseId) &&
+        (item.type || "course") === (type || "course")
+    );
+  };
+
+  const findWishlistIcon = (courseId, type = "course") => {
+    const isWishList = isInWishlist(courseId, type);
+    return isWishList ? (
+      <FaHeart className="wishlistActive" />
+    ) : (
+      <FaRegHeart />
+    );
+  };
+
+  const handleWishlist = (item, type = "course") => {
+    if (!item?.id) return;
+    const isWishList = isInWishlist(item.id, type);
+
+    if (isWishList) {
+      dispatch(removeFromWishlist({ id: item.id, type }));
+      toast.success("Removed from wishlist");
     } else {
-      dispatch(addToWishlist({ ...item, type }))
-      toast.success("Added to wishlist")
+      dispatch(addToWishlist({ ...item, type }));
+      toast.success("Added to wishlist");
     }
-  }
+  };
 
   return {
+    wishlist,
+    isInWishlist,
     findWishlistIcon,
-    handleWishlist
-  }
-}
+    handleWishlist,
+  };
+};
 
-export default useWishlist
+export default useWishlist;

@@ -33,7 +33,7 @@ const HomePopular = ({ categories }) => {
     <div id="HomePopular">
       <div className="container">
         <div className="PopularHead">
-          <h2>Popular Right Now</h2>
+          <h2><span>Popular</span> Right Now</h2>
           <Link href="/course" className="viewAllBtn">View All</Link>
         </div>
 

@@ -27,7 +27,7 @@ const HomeTopRated = () => {
     <div id="HomeTopRated">
       <div className="container">
         <div className="HomeTopRatedHead">
-          <h2>Top-Rated by Learners</h2>
+          <h2><span>Top-Rated</span> by Learners</h2>
           <Link href="/course" className="viewAllBtn">View All</Link>
         </div>
         <div className="HomeTopRatedMain">

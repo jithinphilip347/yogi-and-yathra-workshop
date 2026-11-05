@@ -1167,11 +1167,13 @@
           color: var(--primaryColor);
           border: none;
           border-radius: 50px;
-          display: flex;
+          display: inline-flex;
           align-items: center;
           gap: 6px;
           cursor: pointer;
           transition: 0.3s;
+          text-decoration: none;
+          width: fit-content;
         }
       }
     }
@@ -1335,15 +1337,15 @@
 //HomeLiveCourse
 #HomeLiveCourse {
   width: 100%;
-  padding-top: 100px;
+  padding-top: 35px;
   @media (max-width: 1024px) {
-    padding-top: 60px;
+    padding-top: 30px;
   }
   @media (max-width: 768px) {
-    padding-top: 40px;
+    padding-top: 22px;
   }
   @media (max-width: 480px) {
-    padding-top: 30px;
+    padding-top: 16px;
   }
   .HomeLiveCourseMain {
     width: 100%;
@@ -2284,16 +2286,16 @@
 //HomeCourse
 #HomeCourse {
   width: 100%;
-  padding: 100px 0;
+  padding: 35px 0;
   position: relative;
   @media (max-width: 1024px) {
-    padding: 60px 0px;
+    padding: 30px 0px;
   }
   @media (max-width: 768px) {
-    padding: 40px 0px;
+    padding: 22px 0px;
   }
   @media (max-width: 480px) {
-    padding: 30px 0px;
+    padding: 16px 0px;
   }
   .HomeCourseMain {
     width: 100%;
@@ -2341,16 +2343,16 @@
 //Most Popular
 #HomePopular {
   width: 100%;
-  padding: 100px 0;
+  padding: 35px 0;
   position: relative;
   @media (max-width: 1024px) {
-    padding: 60px 0px;
+    padding: 30px 0px;
   }
   @media (max-width: 768px) {
-    padding: 40px 0px;
+    padding: 22px 0px;
   }
   @media (max-width: 480px) {
-    padding: 30px 0px;
+    padding: 16px 0px;
   }
   .PopularHead {
     width: 100%;
@@ -2478,16 +2480,16 @@
 //HomeTrending
 #HomeTrending {
   width: 100%;
-  padding: 100px 0;
+  padding: 35px 0;
   position: relative;
   @media (max-width: 1024px) {
-    padding: 60px 0px;
+    padding: 30px 0px;
   }
   @media (max-width: 768px) {
-    padding: 40px 0px;
+    padding: 22px 0px;
   }
   @media (max-width: 480px) {
-    padding: 30px 0px;
+    padding: 16px 0px;
   }
   .HomeTrendingHead {
     width: 100%;
@@ -2583,14 +2585,14 @@
 //HomeLiveClass
 #HomeLiveClass {
   width: 100%;
-  padding: 50px 0;
+  padding: 35px 0;
   position: relative;
   background: var(--primaryColor);
   @media (max-width: 768px) {
-    padding: 40px 0px;
+    padding: 22px 0px;
   }
   @media (max-width: 480px) {
-    padding: 30px 0px;
+    padding: 16px 0px;
   }
   .HomeLiveClassHead {
     width: 100%;
@@ -2810,16 +2812,16 @@
 //HomeNew
 #HomeNew {
   width: 100%;
-  padding: 100px 0;
+  padding: 35px 0;
   position: relative;
   @media (max-width: 1024px) {
-    padding: 60px 0px;
+    padding: 30px 0px;
   }
   @media (max-width: 768px) {
-    padding: 40px 0px;
+    padding: 22px 0px;
   }
   @media (max-width: 480px) {
-    padding: 30px 0px;
+    padding: 16px 0px;
   }
   .HomeNewHead {
     width: 100%;
@@ -2915,16 +2917,16 @@
 //HomeTopRated
 #HomeTopRated {
   width: 100%;
-  padding: 100px 0;
+  padding: 35px 0;
   position: relative;
   @media (max-width: 1024px) {
-    padding: 60px 0px;
+    padding: 30px 0px;
   }
   @media (max-width: 768px) {
-    padding: 40px 0px;
+    padding: 22px 0px;
   }
   @media (max-width: 480px) {
-    padding: 30px 0px;
+    padding: 16px 0px;
   }
   .HomeTopRatedHead {
     width: 100%;
@@ -3020,15 +3022,15 @@
 //Home Testimonial
 #HomeTestimonial {
   width: 100%;
-  padding: 100px 0;
+  padding: 35px 0;
   @media (max-width: 1024px) {
-    padding: 60px 0px;
+    padding: 30px 0px;
   }
   @media (max-width: 768px) {
-    padding: 40px 0px;
+    padding: 22px 0px;
   }
   @media (max-width: 480px) {
-    padding: 30px 0px;
+    padding: 16px 0px;
   }
   .TestimonialHead {
     display: flex;
@@ -3176,16 +3178,16 @@
 //HomeTeacher
 #HomeTeacher {
   width: 100%;
-  padding: 100px 0;
+  padding: 35px 0;
   background-color: #fff;
   @media (max-width: 1024px) {
-    padding: 60px 0px;
+    padding: 30px 0px;
   }
   @media (max-width: 768px) {
-    padding: 40px 0px;
+    padding: 22px 0px;
   }
   @media (max-width: 480px) {
-    padding: 30px 0px;
+    padding: 16px 0px;
   }
   .HomeTeacherHeader {
     display: flex;
