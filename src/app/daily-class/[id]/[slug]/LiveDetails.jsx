@@ -32,6 +32,7 @@ import Image from "next/image";
 import Inst1 from "@/assets/images/instructor-1.webp";
 import ThumbNail from "@/assets/images/live1.webp";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
+import { normalizeRichTextHtml } from "@/utils/url";
 import {
   REGISTRATION_WINDOW_STATE,
   registrationViewerState,
@@ -392,9 +393,10 @@ const LiveDetails = ({ id, classDetails }) => {
             <div
               style={{ lineHeight: 1.8, color: "#475569" }}
               dangerouslySetInnerHTML={{
-                __html:
+                __html: normalizeRichTextHtml(
                   dailyClass?.description ||
-                  "<p>Join this immersive daily experience to transform your mornings. This program combines dynamic stretching with deep mindfulness meditation to help you start every day with clarity, focus, and energy. Suitable for all levels, you'll be guided step-by-step by our expert instructors.</p>",
+                    "<p>Join this immersive daily experience to transform your mornings. This program combines dynamic stretching with deep mindfulness meditation to help you start every day with clarity, focus, and energy. Suitable for all levels, you'll be guided step-by-step by our expert instructors.</p>"
+                ),
               }}
             />
           </section>
@@ -668,7 +670,7 @@ const LiveDetails = ({ id, classDetails }) => {
                       <div
                         className="FAQBody"
                         dangerouslySetInnerHTML={{
-                          __html: faq.answer || faq.a || "",
+                          __html: normalizeRichTextHtml(faq.answer || faq.a || ""),
                         }}
                       ></div>
                     )}

@@ -33,6 +33,7 @@ import { computeRelatedProducts } from "@/features/commerce/utils/relatedProduct
 import { useCourseReviews, formatReviewDate } from "@/components/reviews/useCourseReviews";
 import { reviewApi } from "@/services/reviewApi";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
+import { normalizeRichTextHtml } from "@/utils/url";
 
 // Local placeholder used by the shared RelatedProducts component when a product
 // has no live E-commerce media (never a constructed/broken URL).
@@ -366,7 +367,7 @@ const CourseDetails = ({ courseDetails }) => {
               <h3>Description</h3>
               <div
                 className="ContentText"
-                dangerouslySetInnerHTML={{ __html: course?.description || "" }}
+                dangerouslySetInnerHTML={{ __html: normalizeRichTextHtml(course?.description || "") }}
               ></div>
             </div>
 
@@ -493,7 +494,7 @@ const CourseDetails = ({ courseDetails }) => {
                           : {}
                       }
                       dangerouslySetInnerHTML={{
-                        __html: instructorBio || "Instructor biography not available.",
+                        __html: normalizeRichTextHtml(instructorBio || "Instructor biography not available."),
                       }}
                     />
                     {isLong && (

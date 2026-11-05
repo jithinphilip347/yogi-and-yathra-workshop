@@ -15,6 +15,7 @@ import {
 } from 'react-icons/fi';
 import { AiFillStar } from 'react-icons/ai';
 import { resolveMediaUrl, resolveProductMediaUrl } from '@/utils/mediaUrl';
+import { normalizeRichTextHtml } from '@/utils/url';
 import courseApi from '@/libs/courseApi';
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
 import {
