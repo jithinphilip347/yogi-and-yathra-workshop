@@ -45,6 +45,8 @@ export default function useZoomMeeting({
   entity,
   instructorId,
   signatureEndpoint,
+  signaturePayload = null,
+  attendanceDate = null,
   onJoined,
   onLeft,
   onFailed,
@@ -152,7 +154,7 @@ export default function useZoomMeeting({
             entity_id: entityId,
             student_id: user.id,
             status: "present",
-            attendance_date: new Date().toISOString().split("T")[0],
+            attendance_date: attendanceDate || new Date().toISOString().split("T")[0],
             notes: "Successfully joined embedded Zoom meeting container",
           });
         } catch (e) {
@@ -312,7 +314,7 @@ export default function useZoomMeeting({
     const toastId = toast.loading("Authorizing Zoom session...");
 
     try {
-      const signRes = await apiClient.post(`/${signatureEndpoint}`, null, {
+      const signRes = await apiClient.post(`/${signatureEndpoint}`, signaturePayload, {
         signal: controller.signal,
       });
 
@@ -366,7 +368,7 @@ export default function useZoomMeeting({
         document.exitFullscreen().catch(() => {});
       }
     }
-  }, [user, router, signatureEndpoint]);
+  }, [user, router, signatureEndpoint, signaturePayload, attendanceDate]);
 
   // ─── 8. Toggle fullscreen for meeting container ────────────────────
   const toggleMeetingFullscreen = useCallback(() => {

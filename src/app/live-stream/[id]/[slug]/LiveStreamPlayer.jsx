@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { 
@@ -31,6 +31,15 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
 
   const data = liveSection || {};
   const instructor = data.instructor || {};
+  const scheduledSessions = Array.isArray(data.sessions) ? data.sessions : [];
+  const selectedSession = useMemo(() => {
+    const now = Date.now();
+    const active = scheduledSessions.find((session) => {
+      const start = new Date(session.class_date_time).getTime();
+      return Number.isFinite(start) && now >= start - 15 * 60_000 && now <= start + (Number(session.duration || data.duration) + 30) * 60_000;
+    });
+    return active || scheduledSessions.find((session) => new Date(session.class_date_time).getTime() > now) || scheduledSessions[scheduledSessions.length - 1] || null;
+  }, [scheduledSessions, data.duration, timeLeft]);
 
   // ─── Shared Zoom meeting integration ────────────────────────────────
   const {
@@ -53,6 +62,8 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
     entity: data,
     instructorId: data.instructor_id,
     signatureEndpoint: `live-sections/${data.id}/zoom-signature`,
+    signaturePayload: selectedSession?.id ? { session_id: selectedSession.id } : null,
+    attendanceDate: selectedSession?.date || null,
   });
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -135,13 +146,14 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
     : "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=150&h=150";
 
   const timezone = data.timezone || "IST";
-  const humanDate = data.human_date || "";
+  const humanDate = selectedSession?.human_date || data.human_date || "";
   const timeDisplay = humanDate ? `${humanDate} at ${data.human_start_time || ""} (${timezone})` : "";
 
   const isHost = Boolean(user && (user.role === 'admin' || Number(data.instructor_id) === Number(user.id)));
-  const isClassActive = data.can_join === true || data.status === 'live';
-  const isCompleted = data.status === 'completed' || data.status === 'passed';
-  const recordingAvailable = isCompleted && data.recording_available;
+  const isClassActive = selectedSession?.can_join === true || data.can_join === true || data.status === 'live';
+  const isCompleted = data.is_ended || data.time_status === 'completed' || data.status === 'completed' || data.status === 'passed';
+  const sessionRecordingUrl = selectedSession ? selectedSession.recording_url : data.recording_url;
+  const recordingAvailable = isCompleted && (selectedSession ? selectedSession.recording_status === 'available' : data.recording_available);
   const isFuture = !isClassActive && !isCompleted;
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -265,7 +277,7 @@ const LiveStreamPlayer = ({ liveSection: initialLiveSection }) => {
             >
               {recordingAvailable && (
                 <video
-                  src={resolveMediaUrl(data.recording_url)}
+                  src={resolveMediaUrl(sessionRecordingUrl)}
                   controls
                   style={{ position: 'absolute', inset: 0, width: "100%", height: "100%", objectFit: "contain", background: '#000' }}
                   poster={data.banner_image ? resolveMediaUrl(data.banner_image) : undefined}

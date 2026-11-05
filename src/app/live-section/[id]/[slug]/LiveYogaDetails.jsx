@@ -134,6 +134,8 @@ const LiveYogaDetails = ({ liveSection }) => {
   const averageRating = data.average_rating || 0;
   const reviewCount = data.review_count || 0;
   const humanDate = data.human_date || "";
+  const programSessions = Array.isArray(data.sessions) ? data.sessions : [];
+  const programDurationDays = Number(data.program_duration_days || data.session_count || 1);
   const humanStartTime = data.human_start_time || "";
   const timezone = data.timezone || "";
   const timeDisplay = timezone ? `${humanStartTime} (${timezone})` : humanStartTime;
@@ -307,7 +309,7 @@ const LiveYogaDetails = ({ liveSection }) => {
             {/* Hero Summary */}
             <div className="HeroSummaryGrid">
               {humanDate && (
-                <div className="SumItem"><MdOutlineDateRange /> {humanDate}</div>
+                <div className="SumItem"><MdOutlineDateRange /> {humanDate}{data.human_end_date && data.human_end_date !== humanDate ? ` – ${data.human_end_date}` : ""}</div>
               )}
               {timeDisplay && (
                 <div className="SumItem"><MdOutlineAccessTime /> {timeDisplay}</div>
@@ -341,6 +343,20 @@ const LiveYogaDetails = ({ liveSection }) => {
               <div className="HighlightItem"><FaChalkboardTeacher /> <span>Expert Instructor</span></div>
               <div className="HighlightItem"><MdOutlineDateRange /> <span>Flexible</span></div>
             </div>
+          </section>
+
+          <section className="AboutSection card" aria-labelledby="live-program-schedule-heading">
+            <h2 id="live-program-schedule-heading">Program Schedule</h2>
+            <p>{programDurationDays} {programDurationDays === 1 ? "Day" : "Days"} / {programDurationDays} {programDurationDays === 1 ? "Session" : "Sessions"}</p>
+            {programSessions.length > 0 && (
+              <ol style={{ margin: "16px 0 0", paddingLeft: 24, display: "grid", gap: 10 }}>
+                {programSessions.map((session) => (
+                  <li key={session.id || session.session_number}>
+                    <strong>Session {session.session_number}</strong> · {session.human_date} · {session.start_time?.slice(0, 5) || humanStartTime} ({timezone})
+                  </li>
+                ))}
+              </ol>
+            )}
           </section>
 
           {/* What You'll Learn */}
