@@ -171,7 +171,7 @@ const Nav = () => {
                         {inlineResults.map((result) => (
                           <Link
                             key={`${result.type}-${result.id}`}
-                            href={getResultRoute(result)}
+                            href={getSearchResultRoute(result)}
                             className="SearchCourseBox"
                             onClick={() => setIsSearching(false)}
                             style={{ textDecoration: "none", color: "inherit" }}

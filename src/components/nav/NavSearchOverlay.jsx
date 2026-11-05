@@ -98,7 +98,7 @@ const NavSearchOverlay = ({ isOpen, onClose, searchQuery, setSearchQuery }) => {
               {results.map((result, index) => (
                 <Link
                   key={`${result.type}-${result.id}`}
-                  href={getResultRoute(result)}
+                  href={getSearchResultRoute(result)}
                   className="SearchCourseBox"
                   onClick={handleResultClick}
                   style={{ textDecoration: "none", color: "inherit" }}

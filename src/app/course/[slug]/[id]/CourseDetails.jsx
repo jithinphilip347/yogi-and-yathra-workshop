@@ -827,7 +827,10 @@ const CourseDetails = ({ courseDetails }) => {
         />
       )}
       {showPreviewPopup && (
-        <VideoPreviewPopup onClose={() => setShowPreviewPopup(false)} />
+        <VideoPreviewPopup
+          course={course}
+          onClose={() => setShowPreviewPopup(false)}
+        />
       )}
     </div>
   );
