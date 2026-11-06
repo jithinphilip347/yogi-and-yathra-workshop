@@ -142,6 +142,11 @@ const LiveDetails = ({ id, classDetails }) => {
   const studentCount = Number(
     dailyClass?.total_enrollments ?? dailyClass?.enrollments_count ?? 0
   );
+  const classCapacity = dailyClass?.capacity == null ? null : Number(dailyClass.capacity);
+  const seatsRemaining = dailyClass?.available_seats == null
+    ? null
+    : Number(dailyClass.available_seats);
+  const isClassFull = dailyClass?.registration_status === "full" || seatsRemaining === 0;
 
   // Fallback image sources
   const thumbnailSrc = dailyClass?.thumbnail
@@ -297,7 +302,8 @@ const LiveDetails = ({ id, classDetails }) => {
                 <span>{averageRating} Rating</span>
               </span>
               <span>
-                <FiUsers style={{ marginRight: "5px" }} /> {studentCount} Students enrolled
+                <FiUsers style={{ marginRight: "5px" }} /> {studentCount}
+                {classCapacity === null ? " Students enrolled" : ` / ${classCapacity} seats filled`}
               </span>
             </div>
 
@@ -719,6 +725,16 @@ const LiveDetails = ({ id, classDetails }) => {
                     : "Mon • Tue • Wed • Thu • Fri"}
                 </strong>
               </div>
+              {classCapacity !== null && (
+                <div className="ECardItem">
+                  <span>Availability:</span>
+                  <strong>
+                    {isClassFull
+                      ? "Fully booked"
+                      : `${Math.max(0, seatsRemaining ?? classCapacity)} seat${(seatsRemaining ?? classCapacity) === 1 ? "" : "s"} left`}
+                  </strong>
+                </div>
+              )}
 
               <div className="PriceRow">
                 <span className="Label">
@@ -989,7 +1005,9 @@ const LiveDetails = ({ id, classDetails }) => {
                   <button className="EnrollSidebarBtn" disabled>
                     {registration.state === REGISTRATION_WINDOW_STATE.NOT_OPEN
                       ? "Registration Opens Soon"
-                      : "Registration Closed"}
+                      : isClassFull
+                        ? "Fully Booked"
+                        : "Registration Closed"}
                   </button>
                   <p
                     className="SecureCheckoutNote"
@@ -999,7 +1017,9 @@ const LiveDetails = ({ id, classDetails }) => {
                       ? registrationOpensAt
                         ? `Registration opens on ${registrationOpensAt}.`
                         : "Registration for this class has not opened yet."
-                      : "This class is no longer accepting new registrations."}
+                      : isClassFull
+                        ? "This class has reached its enrollment capacity."
+                        : "This class is no longer accepting new registrations."}
                   </p>
                 </>
               ) : (
