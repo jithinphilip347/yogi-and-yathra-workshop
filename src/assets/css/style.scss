@@ -3416,14 +3416,37 @@
         font-size: 14px;
         color: rgba(255, 255, 255, 0.6);
       }
-      .designedBy {
-        a {
-          color: #fff;
-          font-weight: 600;
-          text-decoration: none;
+      .designedBy,
+      .developedBy {
+        a,
+        .developedByLink {
+          color: #ffffff;
+          font-weight: 500;
+          font-size: 13px;
+          text-decoration: none !important;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          transition: opacity 0.2s ease;
+
+          span {
+            color: #ffffff;
+            text-decoration: none !important;
+          }
+
           &:hover {
-            text-decoration: underline;
-            color: #f1f5f9;
+            text-decoration: none !important;
+            opacity: 0.85;
+          }
+
+          .developedByLogo,
+          img {
+            height: 14px;
+            width: auto;
+            max-width: 60px;
+            display: inline-block;
+            vertical-align: middle;
+            object-fit: contain;
           }
         }
       }

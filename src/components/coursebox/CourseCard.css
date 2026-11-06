@@ -13,7 +13,6 @@
   background: rgba(var(--primaryColorRgb, 135, 68, 41), 0.08);
   border-color: rgba(var(--primaryColorRgb, 135, 68, 41), 0.35);
   box-shadow: 0 10px 25px rgba(var(--primaryColorRgb, 135, 68, 41), 0.12);
-  transform: translateY(-4px);
 }
 .courseCard:hover .courseImgWrapper .courseImage {
   transform: scale(1.03);

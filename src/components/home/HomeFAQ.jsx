@@ -64,6 +64,7 @@ const HomeFAQ = () => {
 
   return (
     <div id="HomeFAQ">
+      <span id="faq" style={{ position: "relative", top: "-80px", display: "block" }} />
       <div className="container">
         <div className="HomeFAQMain">
           <div className="FAQHead">
