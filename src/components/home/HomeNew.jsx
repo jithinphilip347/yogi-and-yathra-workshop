@@ -19,6 +19,7 @@ import User5 from "../../assets/images/instructor-5.webp";
 import User6 from "../../assets/images/instructor-6.webp";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import Link from "next/link";
+import ElseDesign from "../elseDesign/ElseDesign";
 
 import { FiUsers } from "react-icons/fi";
 import { AiFillStar } from "react-icons/ai";
@@ -42,12 +43,23 @@ const HomeNew = () => {
       <div className="container">
         <div className="HomeNewHead">
           <h2><span>Newly</span> Launched Programs</h2>
-          <Link href="/course" className="viewAllBtn">
+          {!isLoading && courses.length > 0 && (
+            <Link href="/course" className="viewAllBtn">
             View All
           </Link>
+          )}
         </div>
         <div className="HomeNewMain">
-          <div className="swiper-btn prev-btn">
+          {!isLoading && courses.length === 0 ? (
+            <ElseDesign
+              title="No Newly Launched Programs"
+              message="New programs will be launched shortly. Please check back soon!"
+
+
+            />
+          ) : (
+            <>
+              <div className="swiper-btn prev-btn">
             <FaChevronLeft />
           </div>
           <div className="swiper-btn next-btn">
@@ -109,6 +121,8 @@ const HomeNew = () => {
               </SwiperSlide>
             ))}
           </Swiper>
+            </>
+          )}
         </div>
       </div>
     </div>

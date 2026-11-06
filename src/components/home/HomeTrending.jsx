@@ -10,6 +10,7 @@ import { AiFillStar } from "react-icons/ai";
 import useCourse from "@/hooks/useCourse";
 import useWishlist from "@/hooks/useWishlist";
 import Link from "next/link";
+import ElseDesign from "../elseDesign/ElseDesign";
 
 const HomeTrending = () => {
   const queries = {
@@ -27,10 +28,21 @@ const HomeTrending = () => {
       <div className="container">
         <div className="HomeTrendingHead">
           <h2><span>Trending</span> This Week</h2>
-          <Link href="/course" className="viewAllBtn">View All</Link>
+          {!isLoading && courses.length > 0 && (
+            <Link href="/course" className="viewAllBtn">View All</Link>
+          )}
         </div>
         <div className="HomeTrendingMain">
-          <div className="swiper-btn prev-btn">
+          {!isLoading && courses.length === 0 ? (
+            <ElseDesign
+              title="No Trending Courses This Week"
+              message="New trending courses will appear here soon. Check back shortly!"
+
+
+            />
+          ) : (
+            <>
+              <div className="swiper-btn prev-btn">
             <FaChevronLeft />
           </div>
           <div className="swiper-btn next-btn">
@@ -92,6 +104,8 @@ const HomeTrending = () => {
               </SwiperSlide>
             ))}
           </Swiper>
+            </>
+          )}
         </div>
       </div>
     </div>

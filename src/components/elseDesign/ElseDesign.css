@@ -1,0 +1,93 @@
+.ElseDesign {
+  width: 100%;
+  padding: 40px 20px;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 10px 0 20px 0;
+}
+
+.ElseDesign:hover {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ElseDesign.compact {
+  padding: 24px 16px;
+}
+
+.ElseDesignIconWrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(135, 68, 41, 0.08);
+  color: var(--primaryColor, #874429);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 16px;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.ElseDesignTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.2px;
+}
+
+.ElseDesignMessage {
+  font-size: 14px;
+  color: #64748b;
+  max-width: 480px;
+  margin: 0;
+  line-height: 1.55;
+}
+
+/* White text variant for dark/terracotta backgrounds (HomeLiveCourse, HomeLiveClass) */
+.ElseDesign.lightText .ElseDesignIconWrap,
+#HomeLiveCourse .ElseDesign .ElseDesignIconWrap,
+#HomeLiveClass .ElseDesign .ElseDesignIconWrap {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+.ElseDesign.lightText .ElseDesignTitle,
+#HomeLiveCourse .ElseDesign .ElseDesignTitle,
+#HomeLiveClass .ElseDesign .ElseDesignTitle {
+  color: #ffffff !important;
+}
+
+.ElseDesign.lightText .ElseDesignMessage,
+#HomeLiveCourse .ElseDesign .ElseDesignMessage,
+#HomeLiveClass .ElseDesign .ElseDesignMessage {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+@media (max-width: 768px) {
+  .ElseDesign {
+    padding: 28px 16px;
+  }
+  .ElseDesignIconWrap {
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  .ElseDesignTitle {
+    font-size: 16px;
+  }
+  .ElseDesignMessage {
+    font-size: 13px;
+  }
+}

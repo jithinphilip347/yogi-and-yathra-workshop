@@ -77,7 +77,7 @@ const Footer = () => {
                 <MdEmail /> support@yogiandyathra.com
               </p>
               <p className="contactRow">
-                <FaPhoneAlt /> +91 1800-3232-8686
+                <FaPhoneAlt /> +91 6282 847 517
               </p>
               <p className="contactRow">
                 <FaMapMarkerAlt /> Yogify, Elavoor Kavala, Karukutty, Angamaly, Kerala Pin: 683576

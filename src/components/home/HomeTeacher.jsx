@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import TeacherBox from "../teachersBox/TeacherBox";
 import Link from "next/link";
+import ElseDesign from "../elseDesign/ElseDesign";
 import { fetchFeaturedInstructors } from "@/libs/course";
 
 const HomeTeacher = () => {
@@ -45,31 +46,42 @@ const HomeTeacher = () => {
           </div>
 
           <div className="nav-buttons">
-            <Link href="/teacher-list" className="viewAllBtn">
+            {!loading && instructors.length > 0 && (
+              <Link href="/teacher-list" className="viewAllBtn">
               View All
             </Link>
+            )}
           </div>
         </div>
         <div className="HomeTeacherMain">
-          <div className="TeacherGrid">
-            {loading
-              ? Array(4)
-                  .fill(0)
-                  .map((_, i) => <TeacherBox key={i} loading />)
-              : instructors
-                  .slice(0, 4)
-                  .map((member) => (
-                    <TeacherBox
-                      key={member.id}
-                      image={member.img}
-                      name={member.name}
-                      position={member.role}
-                      twitter={member.twitter}
-                      instagram={member.instagram}
-                      profileLink={member.link}
-                    />
-                  ))}
-          </div>
+          {loading ? (
+            <div className="TeacherGrid">
+              {Array(4)
+                .fill(0)
+                .map((_, i) => <TeacherBox key={i} loading />)}
+            </div>
+          ) : instructors.length === 0 ? (
+            <ElseDesign
+              title="No Instructors Found"
+              message="Our expert instructors will be listed here soon. Please check back later."
+
+
+            />
+          ) : (
+            <div className="TeacherGrid">
+              {instructors.slice(0, 4).map((member) => (
+                <TeacherBox
+                  key={member.id}
+                  image={member.img}
+                  name={member.name}
+                  position={member.role}
+                  twitter={member.twitter}
+                  instagram={member.instagram}
+                  profileLink={member.link}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
