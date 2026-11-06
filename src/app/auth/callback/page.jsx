@@ -48,7 +48,7 @@ function CallbackContent() {
         dispatch(setLogin(res.data));
         toast.success("Signed in successfully with Google!");
 
-        // Check if items exist in guest checkout or cart
+        // The login action has restored only this account's cart.
         const state = window.__REDUX_STORE__?.getState?.() || {};
         const checkoutItems = state.checkout?.items || [];
         const cartItems = state.cart?.items || [];

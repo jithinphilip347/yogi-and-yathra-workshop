@@ -4,6 +4,7 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import { DEFAULT_COURIER_PARTNER } from '../utils/courierPartners';
+import { setLogin, logout } from '../../auth/authSlice';
 
 const initialState = {
   sessionId: null, // Unified Checkout Session ID (correlates Workshop & E-commerce orders)
@@ -156,6 +157,12 @@ const checkoutSlice = createSlice({
       state.isProcessing = false;
       state.error = null;
     },
+  },
+  extraReducers: (builder) => {
+    // Checkout snapshots and customer details must never survive an account switch.
+    builder
+      .addCase(setLogin, () => initialState)
+      .addCase(logout, () => initialState);
   },
 });
 
