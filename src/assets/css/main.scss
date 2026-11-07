@@ -563,6 +563,72 @@ main {
     padding: 20px;
 }
 
+.InstructorReviewLaterLink {
+    display: block;
+    margin: 0 0 14px auto;
+    padding: 8px 14px;
+    border: 1px solid #874429;
+    border-radius: 8px;
+    background: #fff;
+    color: #874429;
+    font: inherit;
+    cursor: pointer;
+}
+.InstructorReviewOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10010;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, .62);
+    backdrop-filter: blur(3px);
+}
+.InstructorReviewDialog {
+    width: min(100%, 620px);
+    max-height: min(90vh, 760px);
+    overflow: auto;
+    padding: 26px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: #fff;
+    color: #1a1a1a;
+}
+.InstructorReviewHeader, .InstructorReviewActions, .InstructorReviewSubject {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.InstructorReviewHeader { padding-bottom: 18px; border-bottom: 1px solid #f1f5f9; }
+.InstructorReviewHeader h2 { margin: 0 0 5px; font-size: 21px; font-weight: 700; }
+.InstructorReviewHeader p { margin: 0; color: #64748b; font-size: 14px; }
+.InstructorReviewClose { border: 0; background: transparent; color: #64748b; font-size: 28px; cursor: pointer; }
+.InstructorReviewSubject { justify-content: flex-start; padding: 18px 0; }
+.InstructorReviewSubject img, .InstructorReviewSubject > span { width: 48px; height: 48px; border-radius: 50%; object-fit: cover; }
+.InstructorReviewSubject > span { display: grid; place-items: center; background: #fbf5f2; color: #874429; font-weight: 700; }
+.InstructorReviewSubject div { display: grid; gap: 3px; }
+.InstructorReviewSubject small, .InstructorReviewForm label span { color: #64748b; }
+.InstructorReviewForm fieldset { margin: 0 0 18px; padding: 0; border: 0; }
+.InstructorReviewForm legend, .InstructorReviewForm label { display: block; margin-bottom: 8px; font-weight: 600; }
+.InstructorReviewForm legend span { color: #d33; }
+.InstructorReviewStars { display: flex; gap: 8px; }
+.InstructorReviewStars button { padding: 2px; border: 0; background: transparent; color: #cbd5e1; font-size: 26px; cursor: pointer; }
+.InstructorReviewStars button .isSelected { color: #f5ad14; }
+.InstructorReviewForm textarea { width: 100%; min-height: 120px; resize: vertical; padding: 12px; border: 1px solid #d7dce3; border-radius: 8px; font: inherit; }
+.InstructorReviewActions { justify-content: flex-end; margin-top: 18px; }
+.InstructorReviewActions button { min-height: 42px; padding: 0 16px; border: 1px solid #874429; border-radius: 8px; font: inherit; cursor: pointer; }
+.InstructorReviewLater { background: #fff; color: #874429; }
+.InstructorReviewSubmit { background: #874429; color: #fff; }
+.InstructorReviewActions button:disabled { opacity: .55; cursor: not-allowed; }
+@media (max-width: 600px) {
+    .InstructorReviewOverlay { padding: 12px; }
+    .InstructorReviewDialog { padding: 20px; }
+    .InstructorReviewActions { align-items: stretch; flex-direction: column-reverse; }
+    .InstructorReviewActions button { width: 100%; }
+}
+
 .RePopupContent.ReviewContainer {
     background: #fff;
     width: 100%;

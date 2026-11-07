@@ -42,6 +42,8 @@ import Yoga2 from "@/assets/images/yoga-2.jpg";
 import Yoga3 from "@/assets/images/yoga-3.jpg";
 import "@/assets/css/daily-live-details.scss";
 
+const EMPTY_DAILY_CLASS = Object.freeze({});
+
 const dayMap = {
   sun: 0, sunday: 0,
   mon: 1, monday: 1,
@@ -122,7 +124,7 @@ const getNextClassDate = (dailyClassObj) => {
 };
 
 const LiveDetails = ({ id, classDetails }) => {
-  const dailyClass = classDetails || {};
+  const dailyClass = classDetails || EMPTY_DAILY_CLASS;
   const instructor = dailyClass?.instructor;
   const category = dailyClass?.category;
   const days = dailyClass?.schedule || [];
@@ -134,7 +136,7 @@ const LiveDetails = ({ id, classDetails }) => {
   const requirements = dailyClass?.requirements || [];
 
   const averageRating = Number(
-    dailyClass?.average_rating ?? instructor?.average_rating ?? instructor?.instructor_rating ?? 5.0
+    dailyClass?.average_rating ?? 0
   );
   const reviewCount = Number(
     dailyClass?.review_count ?? (reviewsData.length || 0)
@@ -185,9 +187,10 @@ const LiveDetails = ({ id, classDetails }) => {
   // the view models are derived straight from the detail payload, in server
   // order, and rendered through the shared RelatedProducts component (see
   // features/commerce/components/RelatedProducts.jsx).
+  const dailyClassProducts = dailyClass.products;
   const relatedProducts = useMemo(
-    () => computeRelatedProducts(dailyClass?.products),
-    [dailyClass?.products]
+    () => computeRelatedProducts(dailyClassProducts),
+    [dailyClassProducts]
   );
 
   // ─── Instructor / host detection (mirrors DailyClassPlayer pattern) ──

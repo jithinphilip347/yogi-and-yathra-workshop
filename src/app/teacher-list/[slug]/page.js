@@ -24,6 +24,7 @@ import {
   FaChevronUp,
 } from "react-icons/fa";
 import { fetchInstructorDetails } from "@/libs/course";
+import { reviewApi } from "@/services/reviewApi";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import TeacherBox from "../../../components/teachersBox/TeacherBox";
 import CourseCard from "../../../components/coursebox/CourseCard";
@@ -36,6 +37,9 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
+  const [reviewPage, setReviewPage] = useState(1);
+  const [reviewLastPage, setReviewLastPage] = useState(1);
+  const [reviewsLoading, setReviewsLoading] = useState(false);
 
   useEffect(() => {
     if (!slug) return;
@@ -51,7 +55,26 @@ const Page = () => {
           return;
         }
 
-        setTeacher(data);
+        let profileData = data;
+        try {
+          const reviewResponse = await reviewApi.getInstructorReviews(data.id, { page: 1, per_page: 10 });
+          const summary = reviewResponse.data?.data;
+          const pageData = summary?.reviews;
+          profileData = {
+            ...data,
+            average_rating: summary?.average_rating ?? data.average_rating,
+            instructor_rating: summary?.average_rating ?? data.instructor_rating,
+            review_count: summary?.review_count ?? data.review_count,
+            total_reviews: summary?.review_count ?? data.total_reviews,
+            rating_breakdown: summary?.rating_breakdown ?? data.rating_breakdown,
+            reviews: Array.isArray(pageData?.data) ? pageData.data : data.reviews,
+          };
+          setReviewPage(pageData?.current_page || 1);
+          setReviewLastPage(pageData?.last_page || 1);
+        } catch (reviewError) {
+          console.error("Unable to load instructor reviews:", reviewError);
+        }
+        setTeacher(profileData);
       } catch (err) {
         console.error("Failed to load instructor:", err);
         setError("Failed to load instructor details");
@@ -62,6 +85,24 @@ const Page = () => {
 
     loadInstructor();
   }, [slug]);
+
+  const loadMoreReviews = async () => {
+    if (!teacher?.id || reviewsLoading || reviewPage >= reviewLastPage) return;
+    setReviewsLoading(true);
+    try {
+      const response = await reviewApi.getInstructorReviews(teacher.id, { page: reviewPage + 1, per_page: 10 });
+      const pageData = response.data?.data?.reviews;
+      if (Array.isArray(pageData?.data)) {
+        setTeacher((current) => ({ ...current, reviews: [...(current?.reviews || []), ...pageData.data] }));
+        setReviewPage(pageData.current_page || reviewPage + 1);
+        setReviewLastPage(pageData.last_page || reviewLastPage);
+      }
+    } catch (reviewError) {
+      console.error("Unable to load more instructor reviews:", reviewError);
+    } finally {
+      setReviewsLoading(false);
+    }
+  };
 
   // ─── Helpers ──────────────────────────────────────────────────────────
 
@@ -492,7 +533,7 @@ const Page = () => {
                           ))}
                         </div>
                       </div>
-                      <p className="ReviewText">&quot;{review.comment}&quot;</p>
+                      <p className="ReviewText">&quot;{review.content}&quot;</p>
                     </div>
                   ))}
                 </div>
@@ -504,6 +545,11 @@ const Page = () => {
                     No reviews yet.
                   </p>
                 </div>
+              )}
+              {reviews.length > 0 && reviewPage < reviewLastPage && (
+                <button type="button" className="ReadAllBtn" onClick={loadMoreReviews} disabled={reviewsLoading}>
+                  {reviewsLoading ? "Loading…" : "Load more reviews"}
+                </button>
               )}
             </div>
 

@@ -6,8 +6,9 @@ import { FiAward, FiCheckCircle, FiDownload, FiEye, FiRefreshCw, FiGrid, FiX } f
 import courseApi from '@/libs/courseApi';
 import toast from 'react-hot-toast';
 import CertificateViewerModal from '@/components/certificate/CertificateViewerModal';
+import InstructorReviewPrompt from '@/components/profile/InstructorReviewPrompt';
 
-export default function CompletionModal({ course, certificateData, onClose, onClaimSuccess }) {
+export default function CompletionModal({ course, enrollment, certificateData, onClose, onClaimSuccess }) {
   const router = useRouter();
   const [isClaiming, setIsClaiming] = useState(false);
   const [claimedCert, setClaimedCert] = useState(certificateData?.certificate || null);
@@ -227,6 +228,12 @@ export default function CompletionModal({ course, certificateData, onClose, onCl
             </button>
           </div>
         </div>
+
+        {enrollment?.id && (
+          <div style={{ width: '100%', marginTop: '12px' }}>
+            <InstructorReviewPrompt enrollmentId={enrollment.id} autoPrompt={false} />
+          </div>
+        )}
 
         {/* Certificate Viewer Modal */}
         <CertificateViewerModal
