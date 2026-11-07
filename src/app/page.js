@@ -10,6 +10,8 @@ import HomeTopRated from "@/components/home/HomeTopRated";
 import HomeTrending from "@/components/home/HomeTrending";
 import { fetchCategories, fetchDailyClasses, fetchLiveSections } from "@/libs/course";
 import HomeFAQ from "@/components/home/HomeFAQ";
+import HomeOfflineEvent from "@/components/home/HomeOfflineEvent";
+import HomeTravel from "@/components/home/HomeTravel";
 
 const revalidate = 600;
 
@@ -31,6 +33,8 @@ export default async function Home() {
     <HomeNew />
     {/* <HomeTestimonial /> */}
     <HomeTeacher />
+    <HomeOfflineEvent />
+    <HomeTravel />
     <HomeFAQ />
     </>
   );

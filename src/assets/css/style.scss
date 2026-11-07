@@ -2366,6 +2366,9 @@
       // font-weight: 700;
       color: #000;
       font-family: myFont2;
+      span {
+        color: var(--primaryColor, #874429);
+      }
       @media (max-width: 768px) {
         font-size: 26px;
       }
@@ -2503,6 +2506,9 @@
       font-weight: 700;
       color: #000;
       font-family: myFont1;
+      span {
+        color: var(--primaryColor, #874429);
+      }
       @media (max-width: 768px) {
         font-size: 26px;
       }
@@ -2835,6 +2841,9 @@
       font-weight: 700;
       color: #000;
       font-family: myFont1;
+      span {
+        color: var(--primaryColor, #874429);
+      }
       @media (max-width: 768px) {
         font-size: 24px;
       }
@@ -2940,6 +2949,9 @@
       font-weight: 700;
       color: #000;
       font-family: myFont1;
+      span {
+        color: var(--primaryColor, #874429);
+      }
       @media (max-width: 768px) {
         font-size: 24px;
       }
@@ -3218,6 +3230,9 @@
         font-weight: 600;
         line-height: 1.2;
         color: #111;
+        span {
+          color: var(--primaryColor, #874429);
+        }
         @media (max-width: 768px) {
           font-size: 24px;
         }
