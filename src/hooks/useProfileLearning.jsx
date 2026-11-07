@@ -317,7 +317,9 @@ export const useProfileLearning = () => {
         category: cls.category?.name || (typeof cls.category === "string" ? cls.category : "POWER YOGA"),
         instructor: cls.instructor?.name || (typeof cls.instructor === "string" ? cls.instructor : "Yogify Instructor"),
         instructorImg: cls.instructor?.avatar_url || cls.instructor?.avatar || cls.instructorImg || null,
-        dateRange: cls.start_date && cls.end_date ? `${cls.start_date} - ${cls.end_date}` : (cls.human_start_date ? `${cls.human_start_date} - ${cls.human_end_date}` : "Ongoing"),
+        dateRange: cls.human_start_date || cls.start_date
+          ? `${cls.human_start_date || cls.start_date} - ${cls.human_end_date || (cls.end_date || "Ongoing")}`
+          : "Ongoing",
         time: displayTime,
         days,
         progress,

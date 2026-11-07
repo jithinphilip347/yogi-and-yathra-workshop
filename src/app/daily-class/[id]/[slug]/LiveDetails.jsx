@@ -312,8 +312,8 @@ const LiveDetails = ({ id, classDetails }) => {
 
             <div className="HeroSummaryGrid">
               <div className="SumItem">
-                <FiCalendar /> {dailyClass?.human_start_date || "14 Jan"} -{" "}
-                {dailyClass?.human_end_date || "24 Jan"}
+                <FiCalendar /> {dailyClass?.human_start_date || "Date TBD"} -{" "}
+                {dailyClass?.human_end_date || (dailyClass?.end_date ? "Date TBD" : "Ongoing")}
               </div>
               <div className="SumItem">
                 <FiClock /> {dailyClass?.human_class_time || "07:00 PM"}
@@ -710,11 +710,11 @@ const LiveDetails = ({ id, classDetails }) => {
             <div className="EnrollmentCard">
               <div className="ECardItem">
                 <span>Starts:</span>
-                <strong>{dailyClass?.human_start_date || "14 Jan 2026"}</strong>
+                <strong>{dailyClass?.human_start_date || "Date TBD"}</strong>
               </div>
               <div className="ECardItem">
                 <span>Ends:</span>
-                <strong>{dailyClass?.human_end_date || "24 Jan 2026"}</strong>
+                <strong>{dailyClass?.human_end_date || (dailyClass?.end_date ? "Date TBD" : "Ongoing")}</strong>
               </div>
               <div className="ECardItem">
                 <span>Time:</span>

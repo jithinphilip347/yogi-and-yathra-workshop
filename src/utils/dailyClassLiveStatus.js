@@ -44,7 +44,7 @@ const getLocalDateParts = (date, timeZone) => {
 
 /** True only during a scheduled occurrence, using the class's local timezone. */
 export function isDailyClassLiveNow(dailyClass, now = new Date()) {
-  if (!dailyClass?.start_date || !dailyClass?.end_date || !dailyClass?.class_time) return false;
+  if (!dailyClass?.start_date || !dailyClass?.class_time) return false;
 
   const timeMatch = String(dailyClass.class_time).match(/^(\d{1,2}):(\d{2})(?::\d{2})?\s*(AM|PM)?$/i);
   if (!timeMatch) return false;
@@ -63,7 +63,10 @@ export function isDailyClassLiveNow(dailyClass, now = new Date()) {
 
   const local = getLocalDateParts(now, dailyClass.timezone || "Asia/Kolkata");
   const localDate = `${local.year}-${local.month}-${local.day}`;
-  if (localDate < String(dailyClass.start_date).slice(0, 10) || localDate > String(dailyClass.end_date).slice(0, 10)) {
+  if (
+    localDate < String(dailyClass.start_date).slice(0, 10) ||
+    (dailyClass.end_date && localDate > String(dailyClass.end_date).slice(0, 10))
+  ) {
     return false;
   }
 
