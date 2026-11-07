@@ -11,6 +11,7 @@ import useCourse from "@/hooks/useCourse";
 import { useSelector } from "react-redux";
 import useWishlist from "@/hooks/useWishlist";
 import Link from "next/link";
+import ElseDesign from "../elseDesign/ElseDesign";
 const HomePopular = ({ categories }) => {
   const [selectedCategory,setSelectedCategory] = useState("All")
   const { user } = useSelector(state => state.auth)
@@ -34,7 +35,9 @@ const HomePopular = ({ categories }) => {
       <div className="container">
         <div className="PopularHead">
           <h2><span>Popular</span> Right Now</h2>
-          <Link href="/course" className="viewAllBtn">View All</Link>
+          {!isLoading && courses.length > 0 && (
+            <Link href="/course" className="viewAllBtn">View All</Link>
+          )}
         </div>
 
         <div className="PopularFilters">
@@ -48,7 +51,14 @@ const HomePopular = ({ categories }) => {
           ))}
         </div>
         <div className="HomePopularMain">
-          <div className="swiper-btn prev-btn">
+          {!isLoading && courses.length === 0 ? (
+            <ElseDesign
+              title="No Popular Courses Found"
+              message="There are currently no popular courses available in this category."
+            />
+          ) : (
+            <>
+              <div className="swiper-btn prev-btn">
             <FaChevronLeft />
           </div>
           <div className="swiper-btn next-btn">
@@ -111,6 +121,8 @@ const HomePopular = ({ categories }) => {
               </SwiperSlide>
             ))}
           </Swiper>
+            </>
+          )}
         </div>
       </div>
     </div>

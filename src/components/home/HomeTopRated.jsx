@@ -10,6 +10,7 @@ import { AiFillStar } from "react-icons/ai";
 import useCourse from "@/hooks/useCourse";
 import useWishlist from "@/hooks/useWishlist";
 import Link from "next/link";
+import ElseDesign from "../elseDesign/ElseDesign";
 
 
 
@@ -28,10 +29,21 @@ const HomeTopRated = () => {
       <div className="container">
         <div className="HomeTopRatedHead">
           <h2><span>Top-Rated</span> by Learners</h2>
-          <Link href="/course" className="viewAllBtn">View All</Link>
+          {!isLoading && courses.length > 0 && (
+            <Link href="/course" className="viewAllBtn">View All</Link>
+          )}
         </div>
         <div className="HomeTopRatedMain">
-          <div className="swiper-btn prev-btn">
+          {!isLoading && courses.length === 0 ? (
+            <ElseDesign
+              title="No Top-Rated Courses"
+              message="Top-rated courses will appear here once reviews and ratings are submitted."
+
+
+            />
+          ) : (
+            <>
+              <div className="swiper-btn prev-btn">
             <FaChevronLeft />
           </div>
           <div className="swiper-btn next-btn">
@@ -93,6 +105,8 @@ const HomeTopRated = () => {
               </SwiperSlide>
             ))}
           </Swiper>
+            </>
+          )}
         </div>
       </div>
     </div>

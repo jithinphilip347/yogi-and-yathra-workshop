@@ -27,6 +27,7 @@ import { GoDotFill } from "react-icons/go";
 import { MdDateRange } from "react-icons/md";
 import useWishlist from "@/hooks/useWishlist";
 import { isDailyClassLiveNow } from "@/utils/dailyClassLiveStatus";
+import ElseDesign from "../elseDesign/ElseDesign";
 
 const HomeLiveClass = ({ dailyClasses }) => {
   const { findWishlistIcon } = useWishlist();
@@ -43,21 +44,31 @@ const HomeLiveClass = ({ dailyClasses }) => {
       ? dailyClasses.data
       : [];
 
-  if (!list || list.length === 0) {
-    return null;
-  }
+  
 
   return (
     <div id="HomeLiveClass">
       <div className="container">
         <div className="HomeLiveClassHead">
           <h2><span>Live</span> & Interactive Classes</h2>
-          <a href="/live-class" className="viewAllBtn">
+          {list && list.length > 0 && (
+            <a href="/live-class" className="viewAllBtn">
             View All
           </a>
+          )}
         </div>
         <div className="HomeLiveClassMain">
-          <div className="swiper-btn prev-btn">
+          {!list || list.length === 0 ? (
+            <ElseDesign
+              lightText={true}
+              title="No Live Classes Today"
+              message="There are currently no daily live classes scheduled. Please explore other sessions or check back soon."
+
+
+            />
+          ) : (
+            <>
+              <div className="swiper-btn prev-btn">
             <FaChevronLeft />
           </div>
           <div className="swiper-btn next-btn">
@@ -113,6 +124,8 @@ const HomeLiveClass = ({ dailyClasses }) => {
               );
             })}
           </Swiper>
+            </>
+          )}
         </div>
       </div>
     </div>

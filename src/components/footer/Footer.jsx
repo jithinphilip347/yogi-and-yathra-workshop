@@ -41,7 +41,6 @@ const Footer = () => {
               <li><Link href="/about">About Us</Link></li>
               <li><Link href="/course">Workshops</Link></li>
               <li><Link href="/live-class">Classes</Link></li>
-              <li><Link href="/pricing">Pricing</Link></li>
             </ul>
           </div>
 
@@ -49,10 +48,24 @@ const Footer = () => {
           <div className="footerColumn">
             <h4>SUPPORT</h4>
             <ul>
-              <li><Link href="/#faq">FAQ</Link></li>
+              <li>
+                <Link
+                  href="/#HomeFAQ"
+                  onClick={(e) => {
+                    if (typeof window !== "undefined" && window.location.pathname === "/") {
+                      const el = document.getElementById("HomeFAQ") || document.getElementById("faq");
+                      if (el) {
+                        e.preventDefault();
+                        el.scrollIntoView({ behavior: "smooth" });
+                        window.history.pushState(null, "", "#HomeFAQ");
+                      }
+                    }
+                  }}
+                >
+                  FAQ
+                </Link>
+              </li>
               <li><Link href="/contact">Help Center</Link></li>
-              <li><Link href="/terms">Terms of Service</Link></li>
-              <li><Link href="/privacy">Privacy Policy</Link></li>
             </ul>
           </div>
 
@@ -64,7 +77,7 @@ const Footer = () => {
                 <MdEmail /> support@yogiandyathra.com
               </p>
               <p className="contactRow">
-                <FaPhoneAlt /> +91 1800-3232-8686
+                <FaPhoneAlt /> +91 6282 847 517
               </p>
               <p className="contactRow">
                 <FaMapMarkerAlt /> Yogify, Elavoor Kavala, Karukutty, Angamaly, Kerala Pin: 683576
@@ -83,13 +96,21 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="developedByLink"
+                style={{
+                  color: "#ffffff",
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "8px",
+                }}
               >
-                <span>Developed by</span>
+                <span style={{ color: "#ffffff", textDecoration: "none" }}>Developed by</span>
                 <Image
                   src="/design-logo.png"
                   alt="VATL - Varixia Labs"
-                  width={80}
-                  height={18}
+                  width={58}
+                  height={13}
+                  style={{ height: "13px", width: "auto", display: "inline-block" }}
                   className="developedByLogo"
                 />
               </a>

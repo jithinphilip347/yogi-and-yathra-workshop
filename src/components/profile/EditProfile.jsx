@@ -5,6 +5,7 @@ import { toast, Toaster } from "react-hot-toast";
 import UserProfileImg from "@/assets/images/user-img.webp";
 import useProfile from "@/hooks/useProfile";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
+import SearchableSelect, { HEALTH_ISSUES_OPTIONS } from "./SearchableSelect";
 
 const EditProfile = ({ profileImg, setProfileImg, user }) => {
   const [imgError, setImgError] = useState("");
@@ -20,6 +21,7 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
     age: "",
     hasHealthIssues: false,
     health_issue: "",
+    otherIssue: "",
     height: "",
     weight: "",
   });
@@ -35,8 +37,9 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
         whatsapp: user.whatsapp || "",
         location: user.location || "",
         age: user.age || "",
-        hasHealthIssues: !!user.health_issue,
+        hasHealthIssues: !!user.health_issue && user.health_issue !== "None, No Issues.",
         health_issue: user.health_issue || "",
+        otherIssue: "",
         height: user.height || "",
         weight: user.weight || "",
       });
@@ -85,6 +88,11 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
         formData.health_issue === "Select an Issue"
       ) {
         newErrors.health_issue = "Please select a health issue";
+      } else if (
+        (formData.health_issue === "Other:" || formData.health_issue === "Other") &&
+        !formData.otherIssue?.trim()
+      ) {
+        newErrors.health_issue = "Please specify your health issue";
       }
     }
 
@@ -131,8 +139,17 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
     }
 
     const formDataObj = new FormData();
-    Object.keys(formData).forEach((key) => {
-      formDataObj.append(key, formData[key]);
+    const resolvedIssue = !formData.hasHealthIssues
+      ? ""
+      : (formData.health_issue === "Other:" || formData.health_issue === "Other") && formData.otherIssue
+      ? formData.otherIssue
+      : formData.health_issue;
+    const payload = {
+      ...formData,
+      health_issue: resolvedIssue,
+    };
+    Object.keys(payload).forEach((key) => {
+      formDataObj.append(key, payload[key]);
     });
 
     if (selectedFile) {
@@ -235,12 +252,12 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
           </div>
           <div className="InputGroup">
             <label>
-              Mobile Number <span style={{ color: "red" }}>*</span>
+              Mobile Number (WhatsApp) <span style={{ color: "red" }}>*</span>
             </label>
             <input
               type="text"
               name="phone"
-              placeholder="Mobile"
+              placeholder="Mobile (WhatsApp)"
               value={formData.phone}
               onChange={handleChange}
               className={errors.phone ? "error-border" : ""}
@@ -255,11 +272,11 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
             )}
           </div>
           <div className="InputGroup">
-            <label>WhatsApp Number</label>
+            <label>Secondary Number (Optional)</label>
             <input
               type="text"
               name="whatsapp"
-              placeholder="WhatsApp"
+              placeholder="Secondary (Optional)"
               value={formData.whatsapp}
               onChange={handleChange}
             />
@@ -297,15 +314,28 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
 
         {/* Health Issues Section */}
         <div className="HealthSection">
-          <label className="CheckboxLabel">
-            <input
-              type="checkbox"
-              name="hasHealthIssues"
-              checked={formData.hasHealthIssues}
-              onChange={handleChange}
-            />
-            Do you have any health issues?
-          </label>
+          <div className="HealthToggleRow">
+            <span className="HealthToggleText">Do you have any health issues?</span>
+            <div className="HealthToggleBtns">
+              <button
+                type="button"
+                className={`ToggleBtn ${formData.hasHealthIssues ? "active" : ""}`}
+                onClick={() => setFormData((prev) => ({ ...prev, hasHealthIssues: true }))}
+              >
+                Yes
+              </button>
+              <button
+                type="button"
+                className={`ToggleBtn ${!formData.hasHealthIssues ? "active" : ""}`}
+                onClick={() => {
+                  setFormData((prev) => ({ ...prev, hasHealthIssues: false, health_issue: "", otherIssue: "" }));
+                  if (errors.health_issue) setErrors((prev) => ({ ...prev, health_issue: "" }));
+                }}
+              >
+                No
+              </button>
+            </div>
+          </div>
 
           {formData.hasHealthIssues && (
             <div className="HealthFieldsContainer">
@@ -313,17 +343,17 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
                 <label>
                   Select Health Issue <span style={{ color: "red" }}>*</span>
                 </label>
-                <select
-                  name="health_issue"
+                <SearchableSelect
+                  options={HEALTH_ISSUES_OPTIONS}
                   value={formData.health_issue}
-                  onChange={handleChange}
-                  className={errors.health_issue ? "error-border" : ""}
-                >
-                  <option value="">Select an Issue</option>
-                  <option value="Back Pain">Back Pain</option>
-                  <option value="Asthma">Asthma</option>
-                  <option value="Other">Other</option>
-                </select>
+                  onChange={(val) => {
+                    setFormData((prev) => ({ ...prev, health_issue: val }));
+                    if (errors.health_issue) {
+                      setErrors((prev) => ({ ...prev, health_issue: "" }));
+                    }
+                  }}
+                  hasError={!!errors.health_issue}
+                />
                 {errors.health_issue && (
                   <span
                     className="error-text"
@@ -333,6 +363,19 @@ const EditProfile = ({ profileImg, setProfileImg, user }) => {
                   </span>
                 )}
               </div>
+
+              {(formData.health_issue === "Other:" || formData.health_issue === "Other") && (
+                <div className="InputGroup" style={{ marginTop: "12px" }}>
+                  <label>Please specify</label>
+                  <input
+                    type="text"
+                    name="otherIssue"
+                    placeholder="Type your health issue"
+                    value={formData.otherIssue || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+              )}
               <div className="InputGroup">
                 <label>Height (cm)</label>
                 <input

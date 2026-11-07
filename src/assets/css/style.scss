@@ -2388,6 +2388,9 @@
       // font-weight: 700;
       color: #000;
       font-family: myFont2;
+      span {
+        color: var(--primaryColor, #874429);
+      }
       @media (max-width: 768px) {
         font-size: 26px;
       }
@@ -2525,6 +2528,9 @@
       font-weight: 700;
       color: #000;
       font-family: myFont1;
+      span {
+        color: var(--primaryColor, #874429);
+      }
       @media (max-width: 768px) {
         font-size: 26px;
       }
@@ -2857,6 +2863,9 @@
       font-weight: 700;
       color: #000;
       font-family: myFont1;
+      span {
+        color: var(--primaryColor, #874429);
+      }
       @media (max-width: 768px) {
         font-size: 24px;
       }
@@ -2962,6 +2971,9 @@
       font-weight: 700;
       color: #000;
       font-family: myFont1;
+      span {
+        color: var(--primaryColor, #874429);
+      }
       @media (max-width: 768px) {
         font-size: 24px;
       }
@@ -3240,6 +3252,9 @@
         font-weight: 600;
         line-height: 1.2;
         color: #111;
+        span {
+          color: var(--primaryColor, #874429);
+        }
         @media (max-width: 768px) {
           font-size: 24px;
         }
@@ -3438,14 +3453,37 @@
         font-size: 14px;
         color: rgba(255, 255, 255, 0.6);
       }
-      .designedBy {
-        a {
-          color: #fff;
-          font-weight: 600;
-          text-decoration: none;
+      .designedBy,
+      .developedBy {
+        a,
+        .developedByLink {
+          color: #ffffff;
+          font-weight: 500;
+          font-size: 13px;
+          text-decoration: none !important;
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          transition: opacity 0.2s ease;
+
+          span {
+            color: #ffffff;
+            text-decoration: none !important;
+          }
+
           &:hover {
-            text-decoration: underline;
-            color: #f1f5f9;
+            text-decoration: none !important;
+            opacity: 0.85;
+          }
+
+          .developedByLogo,
+          img {
+            height: 14px;
+            width: auto;
+            max-width: 60px;
+            display: inline-block;
+            vertical-align: middle;
+            object-fit: contain;
           }
         }
       }
@@ -5639,6 +5677,49 @@
               margin: 15px 0;
             }
 
+            .HealthToggleRow {
+              display: flex;
+              align-items: center;
+              gap: 16px;
+              margin-bottom: 15px;
+              flex-wrap: wrap;
+
+              .HealthToggleText {
+                font-size: 14px;
+                font-weight: 500;
+                color: #222;
+              }
+
+              .HealthToggleBtns {
+                display: inline-flex;
+                gap: 8px;
+
+                .ToggleBtn {
+                  border: 1px solid #e2e8f0;
+                  background: #f8fafc;
+                  padding: 6px 20px;
+                  font-size: 13px;
+                  font-weight: 600;
+                  border-radius: 6px;
+                  cursor: pointer;
+                  color: #64748b;
+                  transition: all 0.2s ease;
+
+                  &:hover {
+                    border-color: #cbd5e1;
+                    color: #1e293b;
+                  }
+
+                  &.active {
+                    background: var(--primaryColor, #874429);
+                    border-color: var(--primaryColor, #874429);
+                    color: #ffffff;
+                    box-shadow: 0 2px 6px rgba(135, 68, 41, 0.25);
+                  }
+                }
+              }
+            }
+
             .CheckboxLabel {
               display: flex;
               align-items: center;
@@ -5661,8 +5742,172 @@
               @media (max-width: 1024px) {
                 padding: 15px;
               }
+
+              .CustomSearchDropdown {
+                position: relative;
+                width: 100%;
+
+                .DropdownTrigger {
+                  width: 100%;
+                  min-height: 48px;
+                  padding: 12px 16px;
+                  background: #ffffff;
+                  border: 1px solid #e2e8f0;
+                  border-radius: 8px;
+                  display: flex;
+                  align-items: center;
+                  justify-content: space-between;
+                  cursor: pointer;
+                  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                  user-select: none;
+                  -webkit-user-select:none;
+
+                  &:hover {
+                    border-color: #cbd5e1;
+                  }
+
+                  &.open {
+                    border-color: var(--primaryColor, #874429);
+                    box-shadow: 0 0 0 3px rgba(135, 68, 41, 0.12);
+                  }
+
+                  &.error-border {
+                    border-color: #ef4444;
+                  }
+
+                  .SelectedText {
+                    font-size: 14px;
+                    color: #1e293b;
+                    font-weight: 500;
+                  }
+
+                  .PlaceholderText {
+                    font-size: 14px;
+                    color: #94a3b8;
+                  }
+
+                  .ArrowIcon {
+                    font-size: 18px;
+                    color: #64748b;
+                    transition: transform 0.2s ease;
+
+                    &.rotated {
+                      transform: rotate(180deg);
+                    }
+                  }
+                }
+
+                .DropdownMenu {
+                  position: absolute;
+                  top: calc(100% + 6px);
+                  left: 0;
+                  right: 0;
+                  background: #ffffff;
+                  border: 1px solid #e2e8f0;
+                  border-radius: 10px;
+                  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+                  z-index: 50;
+                  overflow: hidden;
+                  animation: dropdownFadeIn 0.15s ease-out;
+
+                  .SearchBox {
+                    position: relative;
+                    display: flex;
+                    align-items: center;
+                    padding: 10px 12px;
+                    border-bottom: 1px solid #f1f5f9;
+                    background: #f8fafc;
+
+                    .SearchIcon {
+                      position: absolute;
+                      left: 20px;
+                      font-size: 15px;
+                      color: #94a3b8;
+                    }
+
+                    input {
+                      width: 100%;
+                      padding: 8px 12px 8px 32px;
+                      font-size: 13px;
+                      border: 1px solid #e2e8f0;
+                      border-radius: 6px;
+                      background: #ffffff;
+                      color: #1e293b;
+                      outline: none;
+                      transition: border-color 0.2s ease;
+
+                      &:focus {
+                        border-color: var(--primaryColor, #874429);
+                      }
+                    }
+                  }
+
+                  .OptionsList {
+                    max-height: 200px;
+                    overflow-y: auto;
+                    overscroll-behavior: contain;
+                    -webkit-overflow-scrolling: touch;
+                    touch-action: pan-y;
+                    padding: 6px 0;
+
+                    &::-webkit-scrollbar {
+                      width: 6px;
+                    }
+
+                    &::-webkit-scrollbar-thumb {
+                      background: #cbd5e1;
+                      border-radius: 3px;
+                    }
+
+                    .OptionItem {
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-between;
+                      padding: 10px 16px;
+                      font-size: 14px;
+                      color: #334155;
+                      cursor: pointer;
+                      transition: background 0.15s ease, color 0.15s ease;
+
+                      &:hover {
+                        background: rgba(var(--primaryColorRgb, 135, 68, 41), 0.08);
+                        color: var(--primaryColor, #874429);
+                      }
+
+                      &.selected {
+                        background: rgba(var(--primaryColorRgb, 135, 68, 41), 0.12);
+                        color: var(--primaryColor, #874429);
+                        font-weight: 600;
+                      }
+
+                      .CheckIcon {
+                        font-size: 16px;
+                        color: var(--primaryColor, #874429);
+                      }
+                    }
+
+                    .NoOptions {
+                      padding: 16px;
+                      text-align: center;
+                      font-size: 13px;
+                      color: #94a3b8;
+                    }
+                  }
+                }
+              }
             }
           }
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
           .FormActions {
             display: flex;

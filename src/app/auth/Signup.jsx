@@ -132,13 +132,13 @@ const Signup = () => {
 
                 <div className="FormRow">
                   <div className="InputGroup">
-                    <label>Mobile Number</label>
-                    <input type="number" placeholder="Mobile" onChange={(e)=>setFormData({...formData, mobile: e.target.value})} />
+                    <label>Mobile Number (WhatsApp)</label>
+                    <input type="number" placeholder="Mobile (WhatsApp)" onChange={(e)=>setFormData({...formData, mobile: e.target.value})} />
                     {errors.mobile && <span className="ErrorTxt">{errors.mobile}</span>}
                   </div>
                   <div className="InputGroup">
-                    <label>WhatsApp Number</label>
-                    <input type="number" placeholder="WhatsApp" onChange={(e)=>setFormData({...formData, whatsapp: e.target.value})} />
+                    <label>Secondary Number (Optional)</label>
+                    <input type="number" placeholder="Secondary (Optional)" onChange={(e)=>setFormData({...formData, whatsapp: e.target.value})} />
                   </div>
                 </div>
 

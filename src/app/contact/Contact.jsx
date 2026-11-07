@@ -92,7 +92,7 @@ const Contact = () => {
               
               <div className="InfoItem">
                 <FaPhoneAlt className="InfoIcon" />
-                <span>(584) 391 - 467</span>
+                <span>+91 6282 847 517</span>
               </div>
 
               <div className="SocialLinks">

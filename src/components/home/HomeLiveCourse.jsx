@@ -28,6 +28,7 @@ import "swiper/css/navigation";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import { registrationViewerState } from "@/utils/registrationWindow";
 import { useCart } from "@/features/commerce/hooks/useCommerceHooks";
+import ElseDesign from "../elseDesign/ElseDesign";
 
 const EventSlide = ({ event, hasAccess = false }) => {
   const router = useRouter();
@@ -383,9 +384,7 @@ const HomeLiveCourse = ({ liveSections }) => {
     );
   }
 
-  if (!list || list.length === 0) {
-    return null;
-  }
+  
 
   return (
     <section id="HomeLiveCourse">
@@ -400,24 +399,34 @@ const HomeLiveCourse = ({ liveSections }) => {
           </div>
 
           <div className="LiveCourseMainBox">
-            <Swiper
-              modules={[Navigation]}
-              navigation={true}
-              loop={list.length > 1}
-              grabCursor={true}
-              slidesPerView={1}
-              speed={700}
-              className="LiveCourseSwiper"
-            >
-              {list.map((event) => (
-                <SwiperSlide key={event.id}>
-                  <EventSlide
-                    event={event}
-                    hasAccess={enrolledIds.has(Number(event.id))}
-                  />
-                </SwiperSlide>
-              ))}
-            </Swiper>
+            {!list || list.length === 0 ? (
+              <ElseDesign
+                lightText={true}
+                title="No Upcoming Live Sessions"
+                message="We are organizing new expert-led live workshops and sessions. Check back soon!"
+
+
+              />
+            ) : (
+              <Swiper
+                modules={[Navigation]}
+                navigation={true}
+                loop={list.length > 1}
+                grabCursor={true}
+                slidesPerView={1}
+                speed={700}
+                className="LiveCourseSwiper"
+              >
+                {list.map((event) => (
+                  <SwiperSlide key={event.id}>
+                    <EventSlide
+                      event={event}
+                      hasAccess={enrolledIds.has(Number(event.id))}
+                    />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
           </div>
         </div>
       </div>
