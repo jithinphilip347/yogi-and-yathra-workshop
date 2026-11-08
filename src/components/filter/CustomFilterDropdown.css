@@ -241,3 +241,28 @@
   font-family: myFont1, sans-serif;
 }
 
+/* ── Responsive Media Queries (STRICT: 480px, 420px) ── */
+@media (max-width: 480px) {
+  .CustomFilterDropdown .dropdownTrigger {
+    padding: 7px 12px;
+    font-size: 11.5px;
+  }
+  .customDropdownMenu {
+    min-width: 200px;
+    max-width: 260px;
+  }
+}
+
+@media (max-width: 420px) {
+  .CustomFilterDropdown .dropdownTrigger {
+    padding: 6px 10px;
+    font-size: 11px;
+    gap: 5px;
+  }
+  .customDropdownMenu {
+    min-width: 180px;
+    max-width: calc(100vw - 32px);
+  }
+}
+
+

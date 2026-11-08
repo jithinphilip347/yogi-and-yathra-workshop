@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import Image from "next/image";
 import TravelCard from "@/components/travelCard/TravelCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
 import CustomFilterDropdown from "@/components/filter/CustomFilterDropdown";
 import { DEFAULT_TRAVEL_RETREATS } from "@/components/home/HomeTravel";
+import HeroBgImg from "@/assets/images/travel.jpg";
 import {
   FiMapPin,
   FiClock,
@@ -12,9 +14,6 @@ import {
   FiChevronDown,
   FiRotateCcw,
   FiCompass,
-  FiHeart,
-  FiHome,
-  FiShield,
 } from "react-icons/fi";
 import "@/assets/css/TravelList.scss";
 
@@ -152,13 +151,21 @@ const TravelList = ({ initialTravels }) => {
     <div id="TravelListPage">
       {/* ── Full-Width Hero Banner Section (100% Screen Width) ── */}
       <section className="travelHeroBanner">
+        {/* Background Image with Black Overlay */}
+        <div className="heroBgWrapper">
+          <Image
+            src={HeroBgImg}
+            alt="Curated Travel & Yoga Retreats"
+            fill
+            priority
+            sizes="100vw"
+            className="heroBgImage"
+          />
+          <div className="heroBlackOverlay" />
+        </div>
+
         <div className="container">
           <div className="travelHeroContent">
-            <div className="heroDotBadge">
-              <span className="dot" />
-              <span>Transformational Journeys</span>
-            </div>
-
             <h1>
               Curated <span>Travel</span> & Yoga Retreats
             </h1>
@@ -166,26 +173,6 @@ const TravelList = ({ initialTravels }) => {
             <p className="heroSubtitle">
               Escape the ordinary and embark on guided spiritual journeys, coastal yoga camps, and Himalayan wellness immersions. Handcrafted experiences with certified masters.
             </p>
-
-            {/* Feature Highlight Pills with Icons */}
-            <div className="heroFeaturePills">
-              <span className="featurePill">
-                <FiCompass />
-                <span>Guided Himalayan & Coastal Tours</span>
-              </span>
-              <span className="featurePill">
-                <FiHeart />
-                <span>Organic Sattvic Meals Included</span>
-              </span>
-              <span className="featurePill">
-                <FiHome />
-                <span>Luxury Ashram & Resort Stays</span>
-              </span>
-              <span className="featurePill">
-                <FiShield />
-                <span>100% Guaranteed Safe Departure</span>
-              </span>
-            </div>
           </div>
         </div>
       </section>

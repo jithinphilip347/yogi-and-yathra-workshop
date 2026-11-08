@@ -5,10 +5,6 @@
   padding: 95px 0 70px 0; /* 60px fixed SubNav clearance + 35px visible breathing space */
   font-family: myFont1, sans-serif;
 
-  @media (max-width: 1024px) {
-    padding: 35px 0 60px 0; /* SubNav hidden on <=1024px */
-  }
-
   /* Breadcrumbs */
   .travelBreadcrumbsWrapper {
     margin-bottom: 22px;
@@ -27,15 +23,6 @@
       overflow: hidden;
       border: 1px solid #e2e8f0;
       background: #0f172a;
-
-      @media (max-width: 1024px) {
-        height: 360px;
-      }
-
-      @media (max-width: 768px) {
-        height: 250px;
-        border-radius: 14px;
-      }
 
       .travelThumbnailImg {
         object-fit: cover;
@@ -184,16 +171,6 @@
             color: #ffffff;
           }
         }
-
-        @media (max-width: 768px) {
-          width: 46px;
-          height: 46px;
-
-          .playIcon {
-            font-size: 13px;
-            margin-left: 2px;
-          }
-        }
       }
     }
   }
@@ -203,16 +180,6 @@
     display: grid;
     grid-template-columns: 1fr 380px;
     gap: 40px;
-
-    @media (max-width: 1024px) {
-      grid-template-columns: 1fr 340px;
-      gap: 28px;
-    }
-
-    @media (max-width: 868px) {
-      grid-template-columns: 1fr;
-      gap: 32px;
-    }
   }
 
   /* ════════ LEFT COLUMN: Content Sections Flow ════════ */
@@ -264,10 +231,6 @@
         color: #0f172a;
         line-height: 1.25;
         margin: 0;
-
-        @media (max-width: 768px) {
-          font-size: 24px;
-        }
       }
 
       .travelShortDescription {
@@ -310,10 +273,6 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 14px;
 
-        @media (max-width: 600px) {
-          grid-template-columns: 1fr;
-        }
-
         .specCard {
           display: flex;
           align-items: center;
@@ -354,89 +313,71 @@
               font-size: 14px;
               color: #0f172a;
               font-weight: 600;
-
-              .strikePrice {
-                font-size: 12px;
-                color: #94a3b8;
-                text-decoration: line-through;
-                margin-left: 6px;
-                font-weight: 400;
-              }
-            }
-          }
-
-          /* Full Width Slot Availability Card */
-          &.slotProgressCard {
-            grid-column: 1 / -1;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 10px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-
-            .slotProgressTop {
-              display: flex;
-              align-items: center;
-              justify-content: space-between;
-              flex-wrap: wrap;
-              gap: 8px;
-
-              .slotCounts {
-                display: flex;
-                align-items: center;
-                gap: 16px;
-                font-size: 13px;
-                color: #475569;
-                flex-wrap: wrap;
-
-                strong {
-                  color: #0f172a;
-                }
-
-                .availSlots strong {
-                  color: #dc2626;
-                }
-              }
-
-              .percentLabel {
-                font-size: 12px;
-                font-weight: 700;
-                color: var(--primaryColor, #874429);
-                background: #faf4ef;
-                padding: 3px 8px;
-                border-radius: 6px;
-              }
-            }
-
-            .bookingProgressBar {
-              width: 100%;
-              height: 8px;
-              background: #f1f5f9;
-              border-radius: 10px;
-              overflow: hidden;
-
-              .progressFill {
-                height: 100%;
-                background: var(--primaryColor, #874429);
-                border-radius: 10px;
-              }
             }
           }
         }
       }
-    }
 
-    /* Content Section Blocks (Accommodation, Food, Transport) */
-    .travelSectionBlock {
-      .contentCard {
+      /* Overall Slot Progress Box */
+      .slotStatusContainer {
+        margin-top: 18px;
         background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 14px;
-        padding: 20px;
+        border-radius: 12px;
+        padding: 16px 20px;
 
-        .cardIntroText {
-          font-size: 14px;
-          color: #475569;
+        .slotStatusHeader {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 10px;
+          font-size: 13.5px;
+          font-weight: 600;
+
+          .slotCountLabel {
+            color: #0f172a;
+          }
+
+          .slotPercentLabel {
+            color: var(--primaryColor, #874429);
+          }
+        }
+
+        .slotProgressBar {
+          width: 100%;
+          height: 8px;
+          background: #f1f5f9;
+          border-radius: 50px;
+          overflow: hidden;
+          margin-bottom: 8px;
+
+          .slotProgressFill {
+            height: 100%;
+            background: var(--primaryColor, #874429);
+            border-radius: 50px;
+            transition: width 0.4s ease;
+          }
+        }
+
+        .slotSubtext {
+          font-size: 12px;
+          color: #64748b;
+          margin: 0;
+        }
+      }
+    }
+
+    /* Retreat Overview & Features */
+    .travelOverviewSection {
+      .overviewFeaturesBox {
+        background: #faf4ef;
+        border: 1px solid #f0e3d9;
+        border-radius: 14px;
+        padding: 22px;
+
+        .overviewDesc {
+          font-size: 14.5px;
+          color: #334155;
           line-height: 1.6;
           margin: 0 0 16px 0;
         }
@@ -445,10 +386,6 @@
           display: grid;
           grid-template-columns: repeat(2, 1fr);
           gap: 14px;
-
-          @media (max-width: 680px) {
-            grid-template-columns: 1fr;
-          }
 
           .featureItem {
             display: flex;
@@ -477,10 +414,6 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 14px;
-
-        @media (max-width: 640px) {
-          grid-template-columns: 1fr;
-        }
 
         .highlightCard {
           display: flex;
@@ -592,12 +525,6 @@
         border-radius: 14px;
         padding: 20px;
 
-        @media (max-width: 600px) {
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
-
         .coordinatorAvatarCol {
           display: flex;
           flex-direction: column;
@@ -667,6 +594,90 @@
           }
         }
       }
+
+      /* Coordinator Help Box */
+      .coordinatorHelpBox {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        background: #faf4ef;
+        border: 1px solid #f0e3d9;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-top: 16px;
+
+        .helpTextContent {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          .helpChatIcon {
+            color: var(--primaryColor, #874429);
+            font-size: 24px;
+            flex-shrink: 0;
+          }
+
+          h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            margin: 0 0 2px 0;
+          }
+
+          p {
+            font-size: 12.5px;
+            color: #64748b;
+            margin: 0;
+          }
+        }
+
+        .helpActionButtons {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+
+          .helpCallBtn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            font-size: 12.5px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+
+            &:hover {
+              border-color: var(--primaryColor, #874429);
+              color: var(--primaryColor, #874429);
+            }
+          }
+
+          .helpWhatsappBtn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #059669;
+            font-size: 12.5px;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background: #059669;
+              color: #ffffff;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -687,15 +698,6 @@
       flex-direction: column;
       gap: 18px;
       box-shadow: none !important;
-
-      @media (max-width: 1024px) {
-        top: 95px;
-      }
-
-      @media (max-width: 868px) {
-        position: static;
-        top: auto;
-      }
 
       .passHeader {
         display: flex;
@@ -737,20 +739,19 @@
           }
         }
 
-        .savingsRow {
+        .originalPriceRow {
           display: flex;
           align-items: center;
-          gap: 8px;
-          margin-top: 4px;
+          gap: 6px;
+          font-size: 12px;
+          color: #94a3b8;
 
-          .originalPrice {
-            font-size: 13px;
-            color: #94a3b8;
+          .striked {
             text-decoration: line-through;
           }
 
-          .discountTag {
-            font-size: 11px;
+          .discountBadge {
+            font-size: 10.5px;
             font-weight: 700;
             color: #15803d;
             background: #dcfce7;
@@ -908,14 +909,473 @@
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 24px;
       width: 100%;
+    }
+  }
 
-      @media (max-width: 1024px) {
+  /* ═════════════════════════════════════════════════════════════════════════
+     RESPONSIVE BREAKPOINTS (STRICT: 1024px, 768px, 480px, 420px)
+     ═════════════════════════════════════════════════════════════════════════ */
+
+  /* ── 1. Tablet Landscape / Small Desktop (<= 1024px) ─────────────────── */
+  @media (max-width: 1024px) {
+    padding: 35px 0 60px 0; /* SubNav hidden on <=1024px */
+
+    .travelFullWidthMedia {
+      margin-bottom: 28px;
+
+      .travelMediaWrapper {
+        height: 360px;
+      }
+    }
+
+    .travelDetailsGrid {
+      grid-template-columns: 1fr 340px;
+      gap: 28px;
+    }
+
+    .travelSidebarCol {
+      .travelPassStickyCard {
+        top: 95px;
+        padding: 20px;
+      }
+    }
+
+    .relatedTravelsSection {
+      .relatedTravelsGrid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
       }
+    }
+  }
 
-      @media (max-width: 640px) {
+  /* ── 2. Tablet Portrait / Mobile Landscape (<= 768px) ────────────────── */
+  @media (max-width: 768px) {
+    padding: 28px 0 50px 0;
+
+    .travelFullWidthMedia {
+      margin-bottom: 24px;
+
+      .travelMediaWrapper {
+        height: 250px;
+        border-radius: 14px;
+
+        .travelIntroPlayBtn {
+          width: 46px;
+          height: 46px;
+
+          .playIcon {
+            font-size: 13px;
+            margin-left: 2px;
+          }
+        }
+
+        .closeInlineVideoBtn {
+          top: 12px;
+          right: 12px;
+          width: 32px;
+          height: 32px;
+          font-size: 16px;
+        }
+      }
+    }
+
+    /* Stack main column and booking card vertically */
+    .travelDetailsGrid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .travelMainCol {
+      gap: 26px;
+
+      .travelHeaderSection {
+        .travelMainTitle {
+          font-size: 25px;
+        }
+
+        .travelShortDescription {
+          font-size: 14px;
+        }
+      }
+
+      .sectionTitle {
+        font-size: 18px;
+        margin-bottom: 14px;
+      }
+
+      .travelSpecsSection {
+        .specsGrid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+      }
+
+      .travelOverviewSection {
+        .overviewFeaturesBox {
+          padding: 16px;
+
+          .featureListGrid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+          }
+        }
+
+        .highlightsGrid {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+
+        .coordinatorCard {
+          padding: 16px;
+          gap: 16px;
+        }
+
+        .coordinatorHelpBox {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 12px;
+
+          .helpActionButtons {
+            width: 100%;
+            justify-content: flex-start;
+          }
+        }
+      }
+    }
+
+    .travelSidebarCol {
+      .travelPassStickyCard {
+        position: static;
+        top: auto;
+        padding: 20px;
+      }
+    }
+
+    .relatedTravelsSection {
+      margin-top: 45px;
+      padding-top: 35px;
+
+      .relatedSectionTitle {
+        font-size: 21px;
+        margin-bottom: 20px;
+      }
+
+      .relatedTravelsGrid {
         grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+  }
+
+  /* ── 3. Mobile Portrait (<= 480px) ──────────────────────────────────── */
+  @media (max-width: 480px) {
+    padding: 20px 0 40px 0;
+
+    .travelBreadcrumbsWrapper {
+      margin-bottom: 16px;
+    }
+
+    .travelFullWidthMedia {
+      margin-bottom: 20px;
+
+      .travelMediaWrapper {
+        height: 210px;
+        border-radius: 12px;
+
+        .mediaTopBadges {
+          top: 12px;
+          left: 12px;
+          right: 12px;
+
+          .travelCategoryBadge,
+          .travelStatusBadge {
+            font-size: 10.5px;
+            padding: 4px 10px;
+          }
+        }
+      }
+    }
+
+    .travelMainCol {
+      gap: 22px;
+
+      .travelHeaderSection {
+        gap: 10px;
+
+        .travelHeaderMetaTop {
+          gap: 8px;
+
+          .slotsAvailableBadge,
+          .durationBadge {
+            font-size: 11px;
+            padding: 3px 10px;
+          }
+        }
+
+        .travelMainTitle {
+          font-size: 21px;
+        }
+
+        .travelShortDescription {
+          font-size: 13px;
+          line-height: 1.55;
+        }
+      }
+
+      .travelSpecsSection {
+        .specsGrid {
+          .specCard {
+            padding: 12px 14px;
+            gap: 12px;
+
+            .specIconBox {
+              width: 36px;
+              height: 36px;
+              font-size: 16px;
+            }
+
+            .specInfo {
+              .specValue {
+                font-size: 13px;
+              }
+            }
+          }
+        }
+
+        .slotStatusContainer {
+          padding: 14px 16px;
+        }
+      }
+
+      .travelOverviewSection {
+        .overviewFeaturesBox {
+          padding: 14px;
+        }
+
+        .highlightsGrid {
+          .highlightCard {
+            padding: 14px;
+            gap: 10px;
+          }
+        }
+
+        .coordinatorCard {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 14px;
+          gap: 12px;
+
+          .coordinatorDetailsCol {
+            align-items: center;
+
+            .coordinatorTags {
+              justify-content: center;
+            }
+          }
+        }
+
+        .coordinatorHelpBox {
+          padding: 14px;
+
+          .helpTextContent {
+            gap: 10px;
+
+            .helpChatIcon {
+              font-size: 20px;
+            }
+          }
+
+          .helpActionButtons {
+            flex-direction: column;
+            width: 100%;
+
+            .helpCallBtn,
+            .helpWhatsappBtn {
+              width: 100%;
+              justify-content: center;
+            }
+          }
+        }
+
+        .itineraryTimeline {
+          gap: 14px;
+
+          .timelineItem {
+            gap: 12px;
+
+            .timelineMarker {
+              width: 42px;
+
+              .markerCircle {
+                font-size: 10.5px;
+                padding: 3px 6px;
+              }
+            }
+
+            .timelineContent {
+              .timelineTitle {
+                font-size: 14px;
+              }
+
+              .timelineDesc {
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .travelSidebarCol {
+      .travelPassStickyCard {
+        padding: 18px 16px;
+        border-radius: 14px;
+        gap: 14px;
+
+        .passHeader {
+          .passPriceWrapper {
+            .priceAmount {
+              font-size: 28px;
+            }
+          }
+        }
+
+        .exploreJourneyPrimaryBtn {
+          padding: 12px 18px;
+          font-size: 13.5px;
+        }
+      }
+    }
+
+    .relatedTravelsSection {
+      margin-top: 35px;
+      padding-top: 25px;
+
+      .relatedSectionTitle {
+        font-size: 19px;
+        margin-bottom: 16px;
+      }
+    }
+  }
+
+  /* ── 4. Small Mobile (<= 420px) ─────────────────────────────────────── */
+  @media (max-width: 420px) {
+    .travelFullWidthMedia {
+      .travelMediaWrapper {
+        height: 185px;
+        border-radius: 10px;
+
+        .travelIntroPlayBtn {
+          width: 40px;
+          height: 40px;
+
+          .playIcon {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+
+    .travelMainCol {
+      .travelHeaderSection {
+        .travelHeaderMetaTop {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+        }
+
+        .travelMainTitle {
+          font-size: 19px;
+          line-height: 1.35;
+        }
+      }
+
+      .travelSpecsSection {
+        .specsGrid {
+          .specCard {
+            padding: 10px 12px;
+            gap: 10px;
+
+            .specIconBox {
+              width: 32px;
+              height: 32px;
+              font-size: 14px;
+            }
+
+            .specInfo {
+              .specLabel {
+                font-size: 10.5px;
+              }
+              .specValue {
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+
+      .travelOverviewSection {
+        .highlightsGrid {
+          .highlightCard {
+            padding: 12px;
+            gap: 8px;
+
+            .highlightCheck {
+              font-size: 15px;
+            }
+
+            .highlightText {
+              h4 {
+                font-size: 13px;
+              }
+              p {
+                font-size: 11.5px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .travelSidebarCol {
+      .travelPassStickyCard {
+        padding: 14px;
+
+        .passHeader {
+          .passPriceWrapper {
+            .currency {
+              font-size: 17px;
+            }
+            .priceAmount {
+              font-size: 25px;
+            }
+          }
+        }
+
+        .slotStatusBox {
+          .slotTopRow {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 3px;
+          }
+        }
+
+        .quickRecapBox {
+          padding: 10px 12px;
+          gap: 8px;
+
+          .recapRow {
+            font-size: 11.5px;
+          }
+        }
+      }
+    }
+
+    .relatedTravelsSection {
+      .relatedSectionTitle {
+        font-size: 18px;
+        margin-bottom: 14px;
       }
     }
   }

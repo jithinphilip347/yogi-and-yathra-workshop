@@ -5,10 +5,6 @@
   padding: 95px 0 70px 0; /* 60px fixed SubNav clearance + 35px visible breathing space */
   font-family: myFont1, sans-serif;
 
-  @media (max-width: 1024px) {
-    padding: 35px 0 60px 0; /* SubNav hidden on <=1024px */
-  }
-
   /* Breadcrumbs */
   .eventBreadcrumbsWrapper {
     margin-bottom: 22px;
@@ -27,15 +23,6 @@
       overflow: hidden;
       border: 1px solid #e2e8f0;
       background: #0f172a;
-
-      @media (max-width: 1024px) {
-        height: 360px;
-      }
-
-      @media (max-width: 768px) {
-        height: 250px;
-        border-radius: 14px;
-      }
 
       .eventFullImg {
         object-fit: cover;
@@ -184,16 +171,6 @@
             color: #ffffff;
           }
         }
-
-        @media (max-width: 768px) {
-          width: 46px;
-          height: 46px;
-
-          .playIcon {
-            font-size: 13px;
-            margin-left: 2px;
-          }
-        }
       }
     }
   }
@@ -203,16 +180,6 @@
     display: grid;
     grid-template-columns: 1fr 380px;
     gap: 40px;
-
-    @media (max-width: 1024px) {
-      grid-template-columns: 1fr 340px;
-      gap: 28px;
-    }
-
-    @media (max-width: 868px) {
-      grid-template-columns: 1fr;
-      gap: 32px;
-    }
   }
 
   /* ════════ LEFT COLUMN: Content Sections Flow ════════ */
@@ -261,10 +228,6 @@
         color: #0f172a;
         line-height: 1.25;
         margin: 0;
-
-        @media (max-width: 768px) {
-          font-size: 24px;
-        }
       }
 
       .eventShortDescription {
@@ -292,10 +255,6 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 14px;
-
-        @media (max-width: 600px) {
-          grid-template-columns: 1fr;
-        }
 
         .specCard {
           display: flex;
@@ -374,12 +333,6 @@
         border-radius: 14px;
         padding: 20px;
 
-        @media (max-width: 600px) {
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
-
         .instructorAvatarCol {
           display: flex;
           flex-direction: column;
@@ -457,10 +410,6 @@
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         gap: 14px;
-
-        @media (max-width: 640px) {
-          grid-template-columns: 1fr;
-        }
 
         .highlightCard {
           display: flex;
@@ -625,15 +574,6 @@
       flex-direction: column;
       gap: 18px;
       box-shadow: none !important;
-
-      @media (max-width: 1024px) {
-        top: 95px;
-      }
-
-      @media (max-width: 868px) {
-        position: static;
-        top: auto;
-      }
 
       .passHeader {
         display: flex;
@@ -815,9 +755,429 @@
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 24px;
       width: 100%;
+    }
+  }
 
-      @media (max-width: 900px) {
+  /* ═════════════════════════════════════════════════════════════════════════
+     RESPONSIVE BREAKPOINTS (STRICT: 1024px, 768px, 480px, 420px)
+     ═════════════════════════════════════════════════════════════════════════ */
+
+  /* ── 1. Tablet Landscape / Small Desktop (<= 1024px) ─────────────────── */
+  @media (max-width: 1024px) {
+    padding: 35px 0 60px 0; /* SubNav hidden on <=1024px */
+
+    .eventFullWidthMedia {
+      margin-bottom: 28px;
+
+      .eventMediaWrapper {
+        height: 360px;
+      }
+    }
+
+    .eventDetailsGrid {
+      grid-template-columns: 1fr 340px;
+      gap: 28px;
+    }
+
+    .eventSidebarCol {
+      .eventPassStickyCard {
+        top: 95px;
+        padding: 20px;
+      }
+    }
+  }
+
+  /* ── 2. Tablet Portrait / Mobile Landscape (<= 768px) ────────────────── */
+  @media (max-width: 768px) {
+    padding: 28px 0 50px 0;
+
+    .eventFullWidthMedia {
+      margin-bottom: 24px;
+
+      .eventMediaWrapper {
+        height: 250px;
+        border-radius: 14px;
+
+        .eventIntroPlayBtn {
+          width: 46px;
+          height: 46px;
+
+          .playIcon {
+            font-size: 13px;
+            margin-left: 2px;
+          }
+        }
+
+        .closeInlineVideoBtn {
+          top: 12px;
+          right: 12px;
+          width: 32px;
+          height: 32px;
+          font-size: 16px;
+        }
+      }
+    }
+
+    /* Stack main column and pass card vertically */
+    .eventDetailsGrid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .eventMainCol {
+      gap: 26px;
+
+      .eventHeaderSection {
+        .eventMainTitle {
+          font-size: 25px;
+        }
+
+        .eventShortDescription {
+          font-size: 14px;
+        }
+      }
+
+      .sectionTitle {
+        font-size: 18px;
+        margin-bottom: 14px;
+      }
+
+      .eventSpecsSection {
+        .specsGrid {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+      }
+
+      .eventHighlightsSection {
+        .highlightsGrid {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+      }
+
+      .eventInstructorSection {
+        .instructorCard {
+          padding: 16px;
+          gap: 16px;
+        }
+      }
+    }
+
+    .eventSidebarCol {
+      .eventPassStickyCard {
+        position: static;
+        top: auto;
+        padding: 20px;
+      }
+    }
+
+    .relatedEventsSection {
+      margin-top: 45px;
+      padding-top: 35px;
+
+      .relatedSectionTitle {
+        font-size: 21px;
+        margin-bottom: 20px;
+      }
+
+      .relatedEventsGrid {
         grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+  }
+
+  /* ── 3. Mobile Portrait (<= 480px) ──────────────────────────────────── */
+  @media (max-width: 480px) {
+    padding: 20px 0 40px 0;
+
+    .eventBreadcrumbsWrapper {
+      margin-bottom: 16px;
+    }
+
+    .eventFullWidthMedia {
+      margin-bottom: 20px;
+
+      .eventMediaWrapper {
+        height: 210px;
+        border-radius: 12px;
+
+        .mediaTopBadges {
+          top: 12px;
+          left: 12px;
+          right: 12px;
+
+          .eventCategoryBadge,
+          .eventStatusBadge {
+            font-size: 10.5px;
+            padding: 4px 10px;
+          }
+        }
+      }
+    }
+
+    .eventMainCol {
+      gap: 22px;
+
+      .eventHeaderSection {
+        gap: 10px;
+
+        .eventHeaderMetaTop {
+          gap: 8px;
+
+          .seatsLeftBadge,
+          .deadlineNotice {
+            font-size: 11px;
+            padding: 3px 10px;
+          }
+        }
+
+        .eventMainTitle {
+          font-size: 21px;
+        }
+
+        .eventShortDescription {
+          font-size: 13px;
+          line-height: 1.55;
+        }
+      }
+
+      .eventSpecsSection {
+        .specsGrid {
+          .specCard {
+            padding: 12px 14px;
+            gap: 12px;
+
+            .specIconBox {
+              width: 36px;
+              height: 36px;
+              font-size: 16px;
+            }
+
+            .specInfo {
+              .specValue {
+                font-size: 13px;
+              }
+            }
+          }
+        }
+      }
+
+      .eventInstructorSection {
+        .instructorCard {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: 14px;
+          gap: 12px;
+
+          .instructorDetailsCol {
+            align-items: center;
+
+            .instructorTags {
+              justify-content: center;
+            }
+          }
+        }
+      }
+
+      .eventHighlightsSection {
+        .highlightsGrid {
+          .highlightCard {
+            padding: 14px;
+            gap: 10px;
+          }
+        }
+      }
+
+      .eventScheduleSection {
+        .scheduleTimeline {
+          gap: 14px;
+
+          .timelineItem {
+            gap: 12px;
+
+            .timelineMarker {
+              width: 28px;
+
+              .markerCircle {
+                width: 26px;
+                height: 26px;
+                font-size: 11.5px;
+              }
+            }
+
+            .timelineContent {
+              .timelineTitle {
+                font-size: 14px;
+              }
+
+              .timelineDesc {
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+
+      .eventVenueFacilities {
+        .facilitiesBox {
+          padding: 14px;
+          gap: 10px;
+
+          .facilityItem {
+            font-size: 12.5px;
+          }
+        }
+      }
+    }
+
+    .eventSidebarCol {
+      .eventPassStickyCard {
+        padding: 18px 16px;
+        border-radius: 14px;
+        gap: 14px;
+
+        .passHeader {
+          .passPriceWrapper {
+            .priceAmount {
+              font-size: 28px;
+            }
+          }
+        }
+
+        .bookSpotPrimaryBtn {
+          padding: 12px 18px;
+          font-size: 13.5px;
+        }
+      }
+    }
+
+    .relatedEventsSection {
+      margin-top: 35px;
+      padding-top: 25px;
+
+      .relatedSectionTitle {
+        font-size: 19px;
+        margin-bottom: 16px;
+      }
+    }
+  }
+
+  /* ── 4. Small Mobile (<= 420px) ─────────────────────────────────────── */
+  @media (max-width: 420px) {
+    .eventFullWidthMedia {
+      .eventMediaWrapper {
+        height: 185px;
+        border-radius: 10px;
+
+        .eventIntroPlayBtn {
+          width: 40px;
+          height: 40px;
+
+          .playIcon {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+
+    .eventMainCol {
+      .eventHeaderSection {
+        .eventHeaderMetaTop {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+        }
+
+        .eventMainTitle {
+          font-size: 19px;
+          line-height: 1.35;
+        }
+      }
+
+      .eventSpecsSection {
+        .specsGrid {
+          .specCard {
+            padding: 10px 12px;
+            gap: 10px;
+
+            .specIconBox {
+              width: 32px;
+              height: 32px;
+              font-size: 14px;
+            }
+
+            .specInfo {
+              .specLabel {
+                font-size: 10.5px;
+              }
+              .specValue {
+                font-size: 12px;
+              }
+            }
+          }
+        }
+      }
+
+      .eventHighlightsSection {
+        .highlightsGrid {
+          .highlightCard {
+            padding: 12px;
+            gap: 8px;
+
+            .highlightCheck {
+              font-size: 15px;
+            }
+
+            .highlightText {
+              h4 {
+                font-size: 13px;
+              }
+              p {
+                font-size: 11.5px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .eventSidebarCol {
+      .eventPassStickyCard {
+        padding: 14px;
+
+        .passHeader {
+          .passPriceWrapper {
+            .currency {
+              font-size: 17px;
+            }
+            .priceAmount {
+              font-size: 25px;
+            }
+          }
+        }
+
+        .seatsStatusBox {
+          .seatsTopRow {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 3px;
+          }
+        }
+
+        .deadlineAlertBox {
+          padding: 8px 10px;
+          font-size: 11px;
+        }
+      }
+    }
+
+    .relatedEventsSection {
+      .relatedSectionTitle {
+        font-size: 18px;
+        margin-bottom: 14px;
       }
     }
   }

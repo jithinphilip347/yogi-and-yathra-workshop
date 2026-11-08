@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useMemo } from "react";
+import Image from "next/image";
 import EventCard from "@/components/eventCard/EventCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
 import CustomFilterDropdown from "@/components/filter/CustomFilterDropdown";
 import { DEFAULT_OFFLINE_EVENTS } from "@/components/home/HomeOfflineEvent";
+import HeroBgImg from "@/assets/images/courseImg-3.webp";
 import {
   FiMapPin,
   FiClock,
@@ -12,9 +14,6 @@ import {
   FiChevronDown,
   FiRotateCcw,
   FiCalendar,
-  FiUsers,
-  FiUserCheck,
-  FiShield,
 } from "react-icons/fi";
 import "@/assets/css/EventList.scss";
 
@@ -163,13 +162,21 @@ const EventList = ({ initialEvents }) => {
     <div id="EventListPage">
       {/* ── Full-Width Hero Banner Section (100% Screen Width) ── */}
       <section className="eventHeroBanner">
+        {/* Background Image with Black Overlay */}
+        <div className="heroBgWrapper">
+          <Image
+            src={HeroBgImg}
+            alt="Offline Events & Workshops"
+            fill
+            priority
+            sizes="100vw"
+            className="heroBgImage"
+          />
+          <div className="heroBlackOverlay" />
+        </div>
+
         <div className="container">
           <div className="eventHeroContent">
-            <div className="heroDotBadge">
-              <span className="dot" />
-              <span>In-Person Experiences</span>
-            </div>
-
             <h1>
               Offline <span>Events</span> & Workshops
             </h1>
@@ -177,26 +184,6 @@ const EventList = ({ initialEvents }) => {
             <p className="heroSubtitle">
               Immerse yourself in authentic physical yoga workshops, restorative sound baths, and nature meditation retreats guided by certified yoga masters across Kerala.
             </p>
-
-            {/* Feature Highlight Pills with Icons */}
-            <div className="heroFeaturePills">
-              <span className="featurePill">
-                <FiUsers />
-                <span>100% In-Person Physical</span>
-              </span>
-              <span className="featurePill">
-                <FiUserCheck />
-                <span>Certified Master Instructors</span>
-              </span>
-              <span className="featurePill">
-                <FiCheckCircle />
-                <span>Mats & Props Provided</span>
-              </span>
-              <span className="featurePill">
-                <FiShield />
-                <span>Instant Pass Confirmation</span>
-              </span>
-            </div>
           </div>
         </div>
       </section>
