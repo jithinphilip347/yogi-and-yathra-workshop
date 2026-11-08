@@ -32,7 +32,7 @@ export const DEFAULT_TRAVEL_RETREATS = [
     originalPrice: "29,999",
     slug: "rishikesh-himalayan-retreat",
     link: "/traveldetails",
-    videoUrl: "",
+    videoUrl: "https://www.youtube.com/embed/inpok4MKVLM",
   },
   {
     id: 2,
@@ -51,7 +51,7 @@ export const DEFAULT_TRAVEL_RETREATS = [
     originalPrice: "22,000",
     slug: "wayanad-rainforest-escape",
     link: "/traveldetails",
-    videoUrl: "",
+    videoUrl: "https://www.youtube.com/embed/sTANio_2E0Q",
   },
   {
     id: 3,
@@ -70,7 +70,7 @@ export const DEFAULT_TRAVEL_RETREATS = [
     originalPrice: "19,500",
     slug: "gokarna-sunset-camp",
     link: "/traveldetails",
-    videoUrl: "",
+    videoUrl: "https://www.youtube.com/embed/4pKly2JojMw",
   },
   {
     id: 4,
@@ -89,7 +89,7 @@ export const DEFAULT_TRAVEL_RETREATS = [
     originalPrice: "19,999",
     slug: "varkala-cliff-immersion",
     link: "/traveldetails",
-    videoUrl: "",
+    videoUrl: "https://www.youtube.com/embed/g_tea8ZNk5A",
   },
 ];
 

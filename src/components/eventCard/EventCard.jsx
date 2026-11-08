@@ -61,6 +61,30 @@ const EventCard = ({ event }) => {
   const fullLocation = venue ? `${venue}, ${location}` : location;
   const cleanPrice = String(price).replace(/[₹\s]/g, "");
 
+  // Sample event preview video fallback if not provided
+  const sampleFallbackVideo = "https://www.youtube.com/embed/inpok4MKVLM";
+  const activeVideoUrl = videoUrl && String(videoUrl).trim() !== "" ? String(videoUrl).trim() : sampleFallbackVideo;
+
+  const formatVideoUrl = (url) => {
+    if (!url) return "";
+    const trimmed = url.trim();
+    if (trimmed.includes("youtube.com/embed/")) {
+      return trimmed.includes("autoplay=1")
+        ? trimmed
+        : `${trimmed}${trimmed.includes("?") ? "&" : "?"}autoplay=1`;
+    }
+    const ytMatch = trimmed.match(
+      /(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
+    if (ytMatch && ytMatch[1]) {
+      return `https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0`;
+    }
+    return trimmed;
+  };
+
+  const finalVideoUrl = formatVideoUrl(activeVideoUrl);
+  const isEmbedVideo = finalVideoUrl.includes("youtube.com") || finalVideoUrl.includes("player.vimeo.com");
+
   return (
     <>
       <div
@@ -203,18 +227,18 @@ const EventCard = ({ event }) => {
               <FiX />
             </button>
 
-            {videoUrl && videoUrl.includes("youtube") ? (
+            {isEmbedVideo ? (
               <iframe
-                src={videoUrl}
+                src={finalVideoUrl}
                 title={title}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 className="EventModalIframe"
               />
-            ) : videoUrl ? (
+            ) : finalVideoUrl ? (
               <video
-                src={videoUrl}
+                src={finalVideoUrl}
                 controls
                 autoPlay
                 className="EventModalVideo"

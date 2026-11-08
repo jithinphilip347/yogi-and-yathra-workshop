@@ -32,7 +32,7 @@ export const DEFAULT_OFFLINE_EVENTS = [
     tags: ["In-Person", "Mats Provided", "Sunset View"],
     slug: "sunset-beach-yoga",
     link: "/eventdetails",
-    videoUrl: "",
+    videoUrl: "https://www.youtube.com/embed/inpok4MKVLM",
   },
   {
     id: 2,
@@ -50,7 +50,7 @@ export const DEFAULT_OFFLINE_EVENTS = [
     tags: ["Sound Bath", "Herbal Tea", "Certificate"],
     slug: "chakra-healing-sound-therapy",
     link: "/eventdetails",
-    videoUrl: "",
+    videoUrl: "https://www.youtube.com/embed/sTANio_2E0Q",
   },
   {
     id: 3,
@@ -68,7 +68,7 @@ export const DEFAULT_OFFLINE_EVENTS = [
     tags: ["In-Person", "Certificate", "Alignment"],
     slug: "pranayama-advanced-asana",
     link: "/eventdetails",
-    videoUrl: "",
+    videoUrl: "https://www.youtube.com/embed/4pKly2JojMw",
   },
   {
     id: 4,
@@ -86,7 +86,7 @@ export const DEFAULT_OFFLINE_EVENTS = [
     tags: ["Forest Trek", "Organic Food", "Campfire"],
     slug: "mindfulness-forest-meditation",
     link: "/eventdetails",
-    videoUrl: "",
+    videoUrl: "https://www.youtube.com/embed/g_tea8ZNk5A",
   },
   {
     id: 5,
