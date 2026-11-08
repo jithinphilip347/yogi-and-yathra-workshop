@@ -268,6 +268,7 @@ export default function LearningPlayerLayout({ playerSession: initialSession }) 
         {showCompletionModal && (
           <CompletionModal
             course={course}
+            enrollment={enrollment}
             onClose={() => {
               setShowCompletionModal(false);
               // Persist the dismissal so the modal is not shown again for 24h.

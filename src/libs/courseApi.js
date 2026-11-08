@@ -5,6 +5,7 @@ const courseApi = {
     apiClient.get("home/courses", {
       params: queries,
     }),
+  filterOptions: () => apiClient.get("home/course-filter-options"),
     
   show: (courseId) => apiClient.get(`home/courses/${courseId}`),
 

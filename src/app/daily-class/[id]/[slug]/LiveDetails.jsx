@@ -42,6 +42,8 @@ import Yoga2 from "@/assets/images/yoga-2.jpg";
 import Yoga3 from "@/assets/images/yoga-3.jpg";
 import "@/assets/css/daily-live-details.scss";
 
+const EMPTY_DAILY_CLASS = Object.freeze({});
+
 const dayMap = {
   sun: 0, sunday: 0,
   mon: 1, monday: 1,
@@ -122,7 +124,7 @@ const getNextClassDate = (dailyClassObj) => {
 };
 
 const LiveDetails = ({ id, classDetails }) => {
-  const dailyClass = classDetails || {};
+  const dailyClass = classDetails || EMPTY_DAILY_CLASS;
   const instructor = dailyClass?.instructor;
   const category = dailyClass?.category;
   const days = dailyClass?.schedule || [];
@@ -134,7 +136,7 @@ const LiveDetails = ({ id, classDetails }) => {
   const requirements = dailyClass?.requirements || [];
 
   const averageRating = Number(
-    dailyClass?.average_rating ?? instructor?.average_rating ?? instructor?.instructor_rating ?? 5.0
+    dailyClass?.average_rating ?? 0
   );
   const reviewCount = Number(
     dailyClass?.review_count ?? (reviewsData.length || 0)
@@ -142,6 +144,11 @@ const LiveDetails = ({ id, classDetails }) => {
   const studentCount = Number(
     dailyClass?.total_enrollments ?? dailyClass?.enrollments_count ?? 0
   );
+  const classCapacity = dailyClass?.capacity == null ? null : Number(dailyClass.capacity);
+  const seatsRemaining = dailyClass?.available_seats == null
+    ? null
+    : Number(dailyClass.available_seats);
+  const isClassFull = dailyClass?.registration_status === "full" || seatsRemaining === 0;
 
   // Fallback image sources
   const thumbnailSrc = dailyClass?.thumbnail
@@ -180,9 +187,10 @@ const LiveDetails = ({ id, classDetails }) => {
   // the view models are derived straight from the detail payload, in server
   // order, and rendered through the shared RelatedProducts component (see
   // features/commerce/components/RelatedProducts.jsx).
+  const dailyClassProducts = dailyClass.products;
   const relatedProducts = useMemo(
-    () => computeRelatedProducts(dailyClass?.products),
-    [dailyClass?.products]
+    () => computeRelatedProducts(dailyClassProducts),
+    [dailyClassProducts]
   );
 
   // ─── Instructor / host detection (mirrors DailyClassPlayer pattern) ──
@@ -297,14 +305,15 @@ const LiveDetails = ({ id, classDetails }) => {
                 <span>{averageRating} Rating</span>
               </span>
               <span>
-                <FiUsers style={{ marginRight: "5px" }} /> {studentCount} Students enrolled
+                <FiUsers style={{ marginRight: "5px" }} /> {studentCount}
+                {classCapacity === null ? " Students enrolled" : ` / ${classCapacity} seats filled`}
               </span>
             </div>
 
             <div className="HeroSummaryGrid">
               <div className="SumItem">
-                <FiCalendar /> {dailyClass?.human_start_date || "14 Jan"} -{" "}
-                {dailyClass?.human_end_date || "24 Jan"}
+                <FiCalendar /> {dailyClass?.human_start_date || "Date TBD"} -{" "}
+                {dailyClass?.human_end_date || (dailyClass?.end_date ? "Date TBD" : "Ongoing")}
               </div>
               <div className="SumItem">
                 <FiClock /> {dailyClass?.human_class_time || "07:00 PM"}
@@ -447,6 +456,16 @@ const LiveDetails = ({ id, classDetails }) => {
                   })}
                 </div>
               </div>
+              {Array.isArray(dailyClass?.session_instructors) && dailyClass.session_instructors.length > 0 && (
+                <div className="mt-4 border-t border-gray-100 pt-3">
+                  <span className="DaysLabel">Session instructor updates:</span>
+                  <ul className="mt-2 space-y-1 text-sm text-gray-700">
+                    {dailyClass.session_instructors.map((session) => (
+                      <li key={session.date}>{session.date}: {session.instructor?.name || "Guest instructor"}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </section>
 
@@ -691,11 +710,11 @@ const LiveDetails = ({ id, classDetails }) => {
             <div className="EnrollmentCard">
               <div className="ECardItem">
                 <span>Starts:</span>
-                <strong>{dailyClass?.human_start_date || "14 Jan 2026"}</strong>
+                <strong>{dailyClass?.human_start_date || "Date TBD"}</strong>
               </div>
               <div className="ECardItem">
                 <span>Ends:</span>
-                <strong>{dailyClass?.human_end_date || "24 Jan 2026"}</strong>
+                <strong>{dailyClass?.human_end_date || (dailyClass?.end_date ? "Date TBD" : "Ongoing")}</strong>
               </div>
               <div className="ECardItem">
                 <span>Time:</span>
@@ -709,6 +728,16 @@ const LiveDetails = ({ id, classDetails }) => {
                     : "Mon • Tue • Wed • Thu • Fri"}
                 </strong>
               </div>
+              {classCapacity !== null && (
+                <div className="ECardItem">
+                  <span>Availability:</span>
+                  <strong>
+                    {isClassFull
+                      ? "Fully booked"
+                      : `${Math.max(0, seatsRemaining ?? classCapacity)} seat${(seatsRemaining ?? classCapacity) === 1 ? "" : "s"} left`}
+                  </strong>
+                </div>
+              )}
 
               <div className="PriceRow">
                 <span className="Label">
@@ -979,7 +1008,9 @@ const LiveDetails = ({ id, classDetails }) => {
                   <button className="EnrollSidebarBtn" disabled>
                     {registration.state === REGISTRATION_WINDOW_STATE.NOT_OPEN
                       ? "Registration Opens Soon"
-                      : "Registration Closed"}
+                      : isClassFull
+                        ? "Fully Booked"
+                        : "Registration Closed"}
                   </button>
                   <p
                     className="SecureCheckoutNote"
@@ -989,7 +1020,9 @@ const LiveDetails = ({ id, classDetails }) => {
                       ? registrationOpensAt
                         ? `Registration opens on ${registrationOpensAt}.`
                         : "Registration for this class has not opened yet."
-                      : "This class is no longer accepting new registrations."}
+                      : isClassFull
+                        ? "This class has reached its enrollment capacity."
+                        : "This class is no longer accepting new registrations."}
                   </p>
                 </>
               ) : (

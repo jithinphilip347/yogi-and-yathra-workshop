@@ -2,7 +2,7 @@ import { fetchDailyClassDetails } from "@/libs/course";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import DailyClassPlayer from "./DailyClassPlayer";
 
-export const revalidate = 600;
+export const revalidate = 60;
 
 /**
  * Derive a URL-safe slug from the daily class title.

@@ -2,7 +2,7 @@ import { fetchLiveSections, fetchLiveSectionDetail } from "@/libs/course";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import LiveStreamPlayer from "./LiveStreamPlayer";
 
-export const revalidate = 600;
+export const revalidate = 60;
 
 export async function generateMetadata({ params }) {
   const { id } = await params;

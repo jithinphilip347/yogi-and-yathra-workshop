@@ -33,7 +33,17 @@ const Dashboard = ({
       .catch(() => {});
   }, []);
 
-  const activeDailyClass = liveClasses && liveClasses.length > 0 ? liveClasses[0] : null;
+  const activeDailyClassList = (Array.isArray(liveClasses) ? liveClasses : []).filter((item) =>
+    ["active", "confirmed"].includes(String(item.status || "").toLowerCase())
+  );
+  const activeDailyClass =
+    activeDailyClassList.find((item) => item.todayStatus?.hasSession) ||
+    activeDailyClassList[0] ||
+    null;
+  const dailyClassAction = activeDailyClass?.todayStatus?.actionType || "secondary";
+  const dailyClassDetailsUrl = activeDailyClass
+    ? `/daily-class/${activeDailyClass.id}/${(activeDailyClass.title || "").trim().replace(/\s+/g, "-").toLowerCase()}`
+    : null;
   const activeLiveSession =
     liveSessions && liveSessions.length > 0
       ? liveSessions.find((s) => ["upcoming", "ready", "live"].includes(s.status) && !s.is_past)
@@ -255,24 +265,36 @@ const Dashboard = ({
                   </div>
 
                   <div className="WeeklyChips">
-                    {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day, idx) => (
-                      <span key={idx} className={`Chip ${activeDailyClass.days?.includes(day) || ['Tu', 'We'].includes(day) ? "Active" : ""}`}>
-                        {day}
-                      </span>
-                    ))}
+                    {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((day, idx) => {
+                      const dayNames = {
+                        Mo: ["mo", "mon", "monday"], Tu: ["tu", "tue", "tues", "tuesday"],
+                        We: ["we", "wed", "wednesday"], Th: ["th", "thu", "thur", "thurs", "thursday"],
+                        Fr: ["fr", "fri", "friday"], Sa: ["sa", "sat", "saturday"], Su: ["su", "sun", "sunday"],
+                      };
+                      const isScheduled = (activeDailyClass.days || []).some((scheduledDay) =>
+                        dayNames[day].includes(String(scheduledDay).trim().toLowerCase())
+                      );
+                      return (
+                        <span key={idx} className={`Chip ${isScheduled ? "Active" : ""}`}>
+                          {day}
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
 
                 <div className="CardRight">
-                  <div className="ProgressHero">
-                    <div className="ProgressHeader">
-                      <span className="Label">PROGRESS</span>
-                      <span className="Value">Day {activeDailyClass.progress?.currentDay || 1} / {activeDailyClass.progress?.totalDays || 10}</span>
+                  {activeDailyClass.progress?.totalDays ? (
+                    <div className="ProgressHero">
+                      <div className="ProgressHeader">
+                        <span className="Label">PROGRESS</span>
+                        <span className="Value">Day {activeDailyClass.progress.currentDay} / {activeDailyClass.progress.totalDays}</span>
+                      </div>
+                      <div className="ProgressBar">
+                        <div className="Fill" style={{ width: `${activeDailyClass.progress.percentage || 0}%` }}></div>
+                      </div>
                     </div>
-                    <div className="ProgressBar">
-                      <div className="Fill" style={{ width: `${activeDailyClass.progress?.percentage || 0}%` }}></div>
-                    </div>
-                  </div>
+                  ) : null}
 
                   <div className="TodayStatusBox">
                     <div className="StatusHeader">
@@ -282,16 +304,27 @@ const Dashboard = ({
                     <div className="HelperText">{activeDailyClass.todayStatus?.helper || "Join opens 15 mins before"}</div>
                   </div>
 
-                  <Link href={activeDailyClass.meeting_link || "/live-stream"} passHref>
-                    <button className="ActionBtn primary">
-                      <FiPlayCircle className="BtnIcon" /> Join Today&apos;s Class
+                  {dailyClassAction === "disabled" ? (
+                    <button className="ActionBtn primary" type="button" disabled>
+                      {activeDailyClass.todayStatus.actionText || "Class Ended"}
                     </button>
-                  </Link>
+                  ) : (
+                    <Link
+                      href={dailyClassAction === "primary"
+                        ? activeDailyClass.meeting_link
+                        : dailyClassDetailsUrl}
+                    >
+                      <button className="ActionBtn primary" type="button">
+                        {dailyClassAction === "primary" && <FiPlayCircle className="BtnIcon" />}
+                        {activeDailyClass.todayStatus?.actionText || "View Schedule"}
+                      </button>
+                    </Link>
+                  )}
                 </div>
               </div>
             ) : (
               <div className="EmptyState" style={{ padding: "30px", textAlign: "center", background: "rgba(255,255,255,0.02)", borderRadius: "12px" }}>
-                <p style={{ color: "#aaa" }}>No live classes scheduled for today.</p>
+                <p style={{ color: "#aaa" }}>No active Daily Class enrollment is available for today.</p>
               </div>
             )}
           </div>
@@ -391,8 +424,8 @@ const Dashboard = ({
                   title={course?.title}
                   lessons={course?.lessons_count}
                   duration={(course?.duration || 0) + " hrs"}
-                  price={Number(course?.price || 0)}
-                  oldPrice={Number(course?.discount_price || 0)}
+                  price={course?.effective_price ?? course?.discount_price ?? course?.price ?? 0}
+                  oldPrice={course?.original_price ?? (course?.discount_price > 0 && course.discount_price < course.price ? course.price : null)}
                   rating={course?.average_rating ?? course?.rating ?? 0} 
                   students={course?.enrollments_count}
                   instructorName={course?.instructor?.name}

@@ -1,90 +1,75 @@
 "use client";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import Link from "next/link";
-import { FiBookOpen, FiClock, FiUsers } from "react-icons/fi";
-import { AiFillStar } from "react-icons/ai";
+import { useQuery } from "@tanstack/react-query";
+import { FaRegPlayCircle, FaRegClock, FaRupeeSign, FaStar, FaUsers } from "react-icons/fa";
+import { FiHeart } from "react-icons/fi";
 import CourseCard from "@/components/coursebox/CourseCard";
 import useWishlist from "@/hooks/useWishlist";
+import courseApi from "@/libs/courseApi";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 
 const Wishlist = () => {
-  const { wishlist, findWishlistIcon } = useWishlist();
+  const wishlist = useSelector((state) => state.wishlist?.wishlist || []);
+  const { findWishlistIcon } = useWishlist();
   const [visibleCourses, setVisibleCourses] = useState(8);
-
-  const loadMore = () => {
-    setVisibleCourses((prev) => prev + 4);
-  };
+  const savedCourses = wishlist.filter((item) => item.type === "course");
+  const savedIds = savedCourses.map((item) => item.id).filter(Boolean);
+  const { data: catalogResponse, isLoading } = useQuery({
+    queryKey: ["wishlist-published-courses", savedIds],
+    queryFn: () => courseApi.all({ ids: savedIds.join(","), per_page: Math.max(savedIds.length, 1), page: 1 }),
+    enabled: savedIds.length > 0,
+    staleTime: 60_000,
+  });
+  const catalogCourses = catalogResponse?.data?.data || [];
+  const courses = catalogCourses.map((course) => {
+    const saved = savedCourses.find((item) => String(item.id) === String(course.id));
+    return { ...saved, ...course, image: course.thumbnail || saved?.image };
+  });
 
   return (
     <div id="Wishlist">
       <div className="container">
         <div className="WishlistHeader">
           <h2>My Wishlist</h2>
-          <p>{wishlist?.length || 0} {wishlist?.length === 1 ? "Course" : "Courses"} Saved</p>
+          <p>{courses.length} {courses.length === 1 ? "Course" : "Courses"} Saved</p>
         </div>
-
-        {!wishlist || wishlist.length === 0 ? (
+        {isLoading ? <div className="WishlistEmpty"><p>Loading saved courses…</p></div> : courses.length === 0 ? (
           <div className="WishlistEmpty">
+            <FiHeart aria-hidden="true" />
             <h3>Your Wishlist is Empty</h3>
-            <p>
-              Courses you save will appear here. Start exploring and add your
-              favorite courses.
-            </p>
-            <div style={{ marginTop: "25px" }}>
-              <Link
-                href="/course"
-                style={{
-                  display: "inline-block",
-                  padding: "10px 24px",
-                  background: "var(--primaryColor, #874429)",
-                  color: "#fff",
-                  borderRadius: "25px",
-                  textDecoration: "none",
-                  fontWeight: 600,
-                  fontSize: "15px",
-                  transition: "opacity 0.2s ease",
-                }}
-              >
-                Explore Courses
-              </Link>
-            </div>
+            <p>Courses you save will appear here. Start exploring and add your favorite courses.</p>
           </div>
         ) : (
           <>
             <div className="WishlistGrid">
-              {wishlist.slice(0, visibleCourses).map((course) => (
+              {courses.slice(0, visibleCourses).map((course) => (
                 <CourseCard
-                  key={`${course.type || "course"}-${course.id}`}
-                  id={course.id}
-                  slug={course.slug || "course"}
-                  type={course.type || "course"}
-                  image={course.image}
-                  title={course.title}
-                  lessons={course.lessons}
-                  duration={course.duration}
-                  price={Number(course.price) || 0}
-                  oldPrice={Number(course.oldPrice) || 0}
+                  key={`${course.type}-${course.id}`}
+                  {...course}
+                  image={course.image ? resolveMediaUrl(course.image) : "/images/course-placeholder.webp"}
                   rating={course.rating ?? 0}
-                  students={course.students}
-                  instructorName={course.instructorName}
-                  instructorImg={course.instructorImg}
-                  instructorLabel={course.instructorLabel}
+                  students={course.students ?? 0}
+                  lessons={course.lessons ?? 0}
+                  duration={course.duration || "—"}
+                  price={course.effective_price ?? course.price ?? 0}
+                  oldPrice={course.original_price ?? course.oldPrice}
+                  wishlistIcon={findWishlistIcon(course.id, course.type)}
                   lessonsLabel="Lessons"
-                  buttonText="View Details"
-                  wishlistIcon={findWishlistIcon(course.id, course.type || "course")}
-                  lessonsIcon={<FiBookOpen />}
-                  clockIcon={<FiClock />}
-                  priceIcon="₹"
-                  oldPriceIcon="₹"
-                  ratingIcon={<AiFillStar />}
-                  userIcon={<FiUsers />}
+                  lessonsIcon={<FaRegPlayCircle />}
+                  clockIcon={<FaRegClock />}
+                  priceIcon={<FaRupeeSign />}
+                  ratingIcon={<FaStar />}
+                  userIcon={<FaUsers />}
+                  buttonText="View Course"
+                  type="course"
+                  slug={course.slug || "details"}
                 />
               ))}
             </div>
-
-            {visibleCourses < wishlist.length && (
+            {visibleCourses < courses.length && (
               <div className="LoadMoreBox">
-                <button onClick={loadMore}>Load More Courses</button>
+                <button onClick={() => setVisibleCourses((count) => count + 4)}>Load More Courses</button>
               </div>
             )}
           </>

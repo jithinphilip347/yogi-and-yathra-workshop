@@ -16,7 +16,7 @@ const parseDailyClassSchedule = (schedule) => {
 };
 
 const formatTime12h = (timeStr) => {
-  if (!timeStr) return "07:00 PM";
+  if (!timeStr) return "Scheduled";
   if (typeof timeStr === "string" && (timeStr.includes("AM") || timeStr.includes("PM"))) {
     return timeStr;
   }
@@ -49,7 +49,7 @@ const computeDailyClassProgress = (item, cls) => {
     item?.total_sessions ||
     cls?.pricing_plans?.[0]?.sessions_count ||
     cls?.subscription_plans?.[0]?.sessions_count ||
-    10;
+    null;
 
   const attendedSessions =
     item?.attended_sessions ??
@@ -58,13 +58,13 @@ const computeDailyClassProgress = (item, cls) => {
   const percentage =
     typeof item?.attendance_percentage === "number"
       ? item.attendance_percentage
-      : totalSessions > 0
+      : totalSessions && totalSessions > 0
       ? Math.min(100, Math.round((attendedSessions / totalSessions) * 100))
       : 0;
 
   return {
     currentDay: attendedSessions,
-    totalDays: totalSessions,
+    totalDays: totalSessions ? Number(totalSessions) : null,
     percentage: Math.min(100, Math.max(0, percentage)),
   };
 };
@@ -223,27 +223,7 @@ export const useProfileLearning = () => {
     refetchOnWindowFocus: false,
   });
 
-  // 2. Fetch public/featured daily classes (as fallback/browse)
-  const dailyClassesQuery = useQuery({
-    queryKey: ["public-daily-classes"],
-    queryFn: async () => {
-      const res = await courseApi.dailyClasses();
-      return res.data?.data || res.data?.daily_classes || res.data || [];
-    },
-    refetchOnWindowFocus: false,
-  });
-
-  // 3. Fetch public live sections (as fallback/browse)
-  const liveSectionsQuery = useQuery({
-    queryKey: ["public-live-sections"],
-    queryFn: async () => {
-      const res = await courseApi.liveSections();
-      return res.data?.data || res.data?.live_sections || res.data || [];
-    },
-    refetchOnWindowFocus: false,
-  });
-
-  // 4. Fetch student continue learning feed
+  // 2. Fetch student continue learning feed
   const continueLearningQuery = useQuery({
     queryKey: ["student-continue-learning", userId],
     queryFn: async () => {
@@ -254,7 +234,7 @@ export const useProfileLearning = () => {
     refetchOnWindowFocus: false,
   });
 
-  // 5. Fetch dashboard upcoming events
+  // 3. Fetch dashboard upcoming events
   const upcomingEventsQuery = useQuery({
     queryKey: ["dashboard-upcoming-events"],
     queryFn: async () => {
@@ -337,44 +317,29 @@ export const useProfileLearning = () => {
         category: cls.category?.name || (typeof cls.category === "string" ? cls.category : "POWER YOGA"),
         instructor: cls.instructor?.name || (typeof cls.instructor === "string" ? cls.instructor : "Yogify Instructor"),
         instructorImg: cls.instructor?.avatar_url || cls.instructor?.avatar || cls.instructorImg || null,
-        dateRange: cls.start_date && cls.end_date ? `${cls.start_date} - ${cls.end_date}` : (cls.human_start_date ? `${cls.human_start_date} - ${cls.human_end_date}` : "Ongoing"),
+        dateRange: cls.human_start_date || cls.start_date
+          ? `${cls.human_start_date || cls.start_date} - ${cls.human_end_date || (cls.end_date || "Ongoing")}`
+          : "Ongoing",
         time: displayTime,
-        days: days.length > 0 ? days : ["Tuesday", "Wednesday"],
+        days,
         progress,
         todayStatus,
-        status: item.status || "active",
+        // Confirmed enrollments grant access just like active ones. Normalize
+        // them to the current-classes tab vocabulary used by the profile UI.
+        status: ["active", "confirmed"].includes(String(item.status || "").toLowerCase())
+          ? "active"
+          : String(item.status || "").toLowerCase(),
         meeting_link: `/daily-class/${cls.id}/${(cls.title || '').trim().replace(/\s+/g, '-').toLowerCase()}/player`,
       };
-    });
-
-  const publicDailyClasses = Array.isArray(dailyClassesQuery.data)
-    ? dailyClassesQuery.data.map((cls) => {
-        const days = parseDailyClassSchedule(cls.schedule || cls.days);
-        const displayTime = cls.human_class_time || formatTime12h(cls.class_time || cls.time);
-        const progress = computeDailyClassProgress(null, cls);
-        const todayStatus = computeDailyClassTodayStatus(cls, days, displayTime);
-
-        return {
-          id: cls.id,
-          title: cls.title,
-          category: cls.category?.name || (typeof cls.category === "string" ? cls.category : "POWER YOGA"),
-          instructor: cls.instructor?.name || (typeof cls.instructor === "string" ? cls.instructor : "Yogify Instructor"),
-          instructorImg: cls.instructor?.avatar_url || cls.instructor?.avatar || cls.instructorImg || null,
-          dateRange: cls.start_date && cls.end_date ? `${cls.start_date} - ${cls.end_date}` : (cls.human_start_date ? `${cls.human_start_date} - ${cls.human_end_date}` : "Scheduled"),
-          time: displayTime,
-          days: days.length > 0 ? days : ["Tuesday", "Wednesday"],
-          progress,
-          todayStatus,
-          status: "active",
-          meeting_link: `/daily-class/${cls.id}/${(cls.title || '').trim().replace(/\s+/g, '-').toLowerCase()}/player`,
-        };
-      })
-    : [];
-
-  const liveClasses = rawDailyClasses.length > 0 ? rawDailyClasses : publicDailyClasses;
+    })
+    .filter((dailyClass) => dailyClass.id && dailyClass.title);
+  // Profile and dashboard learning cards must represent the student's own
+  // enrollments. Public catalog items belong on browse pages, never as fallback.
+  const liveClasses = rawDailyClasses;
 
   const formatLiveSessionItem = (item, isEnrollment = true) => {
     const session = item.enrollable || item;
+    const enrollmentStatus = String(item.status || "").toLowerCase();
 
     // Resolve instructor name
     const instructorName =
@@ -473,6 +438,9 @@ export const useProfileLearning = () => {
     if (session.status === "cancelled" || session.status === "expired") {
       computedStatus = session.status;
     }
+    if (isEnrollment && ["cancelled", "expired", "refunded"].includes(enrollmentStatus)) {
+      computedStatus = enrollmentStatus === "refunded" ? "cancelled" : enrollmentStatus;
+    }
 
     return {
       id: session.id || item.id,
@@ -488,7 +456,7 @@ export const useProfileLearning = () => {
       status: computedStatus,
       is_past: isPast,
       is_live: isLive,
-      enrollment_status: isEnrollment ? item.status : null,
+      enrollment_status: isEnrollment ? enrollmentStatus : null,
       has_certificate: Boolean(session.has_certificate),
       can_issue_certificate: Boolean(session.can_issue_certificate),
       certificate_template_id: session.certificate_template_id || null,
@@ -500,25 +468,23 @@ export const useProfileLearning = () => {
 
   // Parse Live Sessions
   const rawLiveSessions = rawEnrollments
-    .filter(
-      (item) =>
+    .filter((item) =>
+      ["active", "confirmed", "completed", "cancelled", "expired"].includes(String(item.status || "").toLowerCase()) &&
+      (
         item.enrollable_type?.includes("LiveSection") ||
         item.product_type === "LiveSection" ||
         item.product_type === "live_section" ||
         item.product_type === "Live Section"
+      )
     )
-    .map((item) => formatLiveSessionItem(item, true));
+    .map((item) => formatLiveSessionItem(item, true))
+    .filter((session) => session.id && session.title);
 
-  const publicLiveSessions = Array.isArray(liveSectionsQuery.data)
-    ? liveSectionsQuery.data.map((session) => formatLiveSessionItem(session, false))
-    : [];
-
-  const liveSessions = rawLiveSessions.length > 0 ? rawLiveSessions : publicLiveSessions;
+  const liveSessions = rawLiveSessions;
 
   const isLoading =
     userEnrollmentsQuery.isLoading ||
-    dailyClassesQuery.isLoading ||
-    liveSectionsQuery.isLoading;
+    continueLearningQuery.isLoading;
 
   return {
     courses: enrolledCourses,

@@ -28,4 +28,15 @@ export const reviewApi = {
 
   // Delete own review (or admin moderation)
   deleteReview: (id) => apiClient.delete(`/reviews/${id}`),
+
+  // Dedicated instructor feedback, scoped to a completed enrollment.
+  getEligibleInstructorReviews: (includeDismissed = false) =>
+    apiClient.get("/instructor-reviews/eligible", { params: { include_dismissed: includeDismissed } }),
+  getInstructorReviewEligibility: (enrollmentId) =>
+    apiClient.get("/instructor-reviews/eligibility", { params: { enrollment_id: enrollmentId } }),
+  submitInstructorReview: (data) => apiClient.post("/instructor-reviews", data),
+  dismissInstructorReview: (enrollmentId) =>
+    apiClient.post("/instructor-reviews/dismiss", { enrollment_id: enrollmentId }),
+  getInstructorReviews: (instructorId, params = {}) =>
+    apiClient.get(`/instructors/public/${instructorId}/reviews`, { params }),
 };

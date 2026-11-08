@@ -136,6 +136,8 @@ const getNextClassDate = (dailyClassObj) => {
   return { targetTime: fallback, isLive: false, hasEnded: false };
 };
 
+const toLocalDateKey = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
 /* ═══════════════════════════════════════════════════════════════════════════
    MAIN COMPONENT — DailyClassPlayer
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -156,6 +158,10 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
   const [hasEnded, setHasEnded] = useState(false);
   const [isBioExpanded, setIsBioExpanded] = useState(false);
 
+  const nextOccurrence = classData ? getNextClassDate(classData) : null;
+  const occurrenceDate = nextOccurrence?.targetTime ? toLocalDateKey(nextOccurrence.targetTime) : null;
+  const occurrenceSubstitute = classData?.session_instructors?.find((item) => item.date === occurrenceDate)?.instructor;
+
   // ─── Shared Zoom meeting integration ────────────────────────────────
   const {
     meetingRef,
@@ -175,8 +181,9 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
     entityId: classData?.id,
     entityType: "daily_class",
     entity: classData,
-    instructorId: classData?.instructor_id,
+    instructorId: occurrenceSubstitute?.id || classData?.instructor_id,
     signatureEndpoint: `daily-classes/${classData?.id}/zoom-signature`,
+    signaturePayload: occurrenceDate ? { session_date: occurrenceDate } : null,
   });
 
   // ─── Authoritative Certificate State (Sprint 3) ──────────────────────
@@ -292,7 +299,7 @@ const DailyClassPlayer = ({ dailyClass: initialDailyClass, slug, bannerImage }) 
 
   // Access control
   const isHost = Boolean(
-    user && (user.role === "admin" || Number(classData?.instructor_id) === Number(user.id))
+    user && (user.role === "admin" || Number(classData?.instructor_id) === Number(user.id) || Number(occurrenceSubstitute?.id) === Number(user.id))
   );
 
   // Loading state

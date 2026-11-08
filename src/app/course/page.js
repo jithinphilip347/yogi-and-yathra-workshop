@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, Suspense } from "react";
+import React, { useState, useEffect, useRef, Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import CourseCard from "../../components/coursebox/CourseCard";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
@@ -16,27 +16,111 @@ import useWishlist from "@/hooks/useWishlist";
 import FilterBox from "@/components/filter/FilterBox";
 import Breadcrumbs from "../../components/breadcrumbs/Breadcrumbs";
 import { fetchCategories } from "@/libs/course";
+import courseApi from "@/libs/courseApi";
+import { useQuery } from "@tanstack/react-query";
+import useGlobalSearch from "@/hooks/useGlobalSearch";
+
+const unwrapList = (response) => {
+  const payload = response?.data;
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(response)) return response;
+  return [];
+};
+
+const getCurrentPrice = (item) => {
+  if (item?.effective_price !== null && item?.effective_price !== undefined) {
+    return item.effective_price;
+  }
+  const regular = Number(item?.price);
+  const discounted = Number(item?.discount_price);
+  return Number.isFinite(discounted) && discounted > 0 && discounted < regular
+    ? item.discount_price
+    : item?.price;
+};
+
+const getOriginalPrice = (item) => {
+  if (item?.original_price !== null && item?.original_price !== undefined) {
+    return item.original_price;
+  }
+  const regular = Number(item?.price);
+  const discounted = Number(item?.discount_price);
+  return Number.isFinite(discounted) && discounted > 0 && discounted < regular
+    ? item.price
+    : null;
+};
 
 const CourseListContent = () => {
   const searchParams = useSearchParams();
+  const catalogSearch = searchParams.get("q")?.trim() || "";
+  const isSearchMode = catalogSearch.length > 0;
   const categoryParam = searchParams.get("category") || searchParams.get("category_id");
 
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [level, setLevel] = useState("");
-  const [price, setPrice] = useState(5000);
+  const [price, setPrice] = useState(0);
+  const [instructorId, setInstructorId] = useState("");
+  const [contentType, setContentType] = useState("all");
   const [sort, setSort] = useState("Newest");
   const [sortValue, setSortValue] = useState("created_at");
   const [page, setPage] = useState(1);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { data: filterOptionsResponse } = useQuery({
+    queryKey: ["course-filter-options"],
+    queryFn: courseApi.filterOptions,
+    enabled: !isSearchMode,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+  const filterOptions = filterOptionsResponse?.data || {};
+  const { data: dailyClassesResponse, isLoading: isDailyClassesLoading } = useQuery({
+    queryKey: ["public-daily-classes-catalog"],
+    queryFn: courseApi.dailyClasses,
+    enabled: !isSearchMode,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+  const { data: liveSectionsResponse, isLoading: isLiveSectionsLoading } = useQuery({
+    queryKey: ["public-live-sections-catalog"],
+    queryFn: courseApi.liveSections,
+    enabled: !isSearchMode,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+  const dailyClasses = useMemo(() => unwrapList(dailyClassesResponse), [dailyClassesResponse]);
+  const liveSections = useMemo(() => unwrapList(liveSectionsResponse), [liveSectionsResponse]);
+  const maxPrice = [
+    Number(filterOptions.max_price) || 5000,
+    ...dailyClasses.map((item) => Number(getCurrentPrice(item)) || 0),
+    ...liveSections.map((item) => Number(getCurrentPrice(item)) || 0),
+  ].reduce((highest, value) => Math.max(highest, value), 100);
+  const instructorOptions = useMemo(() => {
+    const options = new Map(
+      (filterOptions.instructors || []).map((instructor) => [String(instructor.id), instructor])
+    );
+    [...dailyClasses, ...liveSections].forEach((item) => {
+      const instructor = item.instructor;
+      const id = item.instructor_id ?? instructor?.id;
+      if (id && instructor?.name && !options.has(String(id))) {
+        options.set(String(id), { id, name: instructor.name });
+      }
+    });
+    return [...options.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }, [filterOptions.instructors, dailyClasses, liveSections]);
+  const activePrice = price > 0 ? Math.min(price, maxPrice) : maxPrice;
 
   useEffect(() => {
+    if (isSearchMode) return;
     fetchCategories().then((data) => {
       setCategories(data || []);
     });
-  }, []);
+  }, [isSearchMode]);
 
   const category = React.useMemo(() => {
     if (selectedCategory !== null) return selectedCategory;
@@ -99,13 +183,22 @@ const CourseListContent = () => {
     category_id: category,
     level,
     min_price: 0,
-    max_price: price,
+    max_price: activePrice,
+    ...(instructorId ? { instructor_id: instructorId } : {}),
     order_by: "desc",
     per_page: 12,
     page,
   };
 
-  const { courseQuery } = useCourse({ queries });
+  const {
+    data: globalSearchResponse,
+    isLoading: isSearchLoading,
+    isFetching: isSearchFetching,
+    isError: isSearchError,
+  } = useGlobalSearch(catalogSearch, { perPage: 100 });
+  const globalSearchResults = globalSearchResponse?.data || [];
+
+  const { courseQuery } = useCourse({ queries: isSearchMode ? null : queries });
   const { data, isLoading, isFetching } = courseQuery;
 
   const [coursesList, setCoursesList] = useState([]);
@@ -119,7 +212,103 @@ const CourseListContent = () => {
 
   const { findWishlistIcon } = useWishlist();
 
-  const hasMore = data?.data?.next_page_url !== null;
+  const hasMore = Boolean(data?.data?.next_page_url);
+
+  const listingItems = useMemo(() => {
+    const items = isSearchMode
+      ? globalSearchResults.map((item) => ({
+          ...item,
+          contentType: item.type,
+          instructor: { name: item.instructor_name },
+        }))
+      : [
+          ...coursesList.map((item) => ({ ...item, contentType: "course" })),
+          ...dailyClasses.map((item) => ({ ...item, contentType: "daily_class" })),
+          ...liveSections.map((item) => ({ ...item, contentType: "live_section" })),
+        ];
+
+    const filtered = items.filter((item) => {
+      if (contentType !== "all" && item.contentType !== contentType) return false;
+
+      const itemCategoryId = item.category_id ?? item.category?.id;
+      if (category !== "All" && itemCategoryId != null && String(itemCategoryId) !== String(category)) return false;
+
+      const itemLevel = item.level || item.difficulty;
+      if (level && itemLevel && String(itemLevel).toLowerCase() !== String(level).toLowerCase()) return false;
+
+      const itemInstructorId = item.instructor_id ?? item.instructor?.id;
+      if (instructorId && itemInstructorId != null && String(itemInstructorId) !== String(instructorId)) return false;
+
+      const itemPrice = getCurrentPrice(item);
+      if (price > 0 && itemPrice != null && Number(itemPrice) > activePrice) return false;
+      return true;
+    });
+
+    return filtered.sort((a, b) => {
+      if (sortValue === "price") return Number(getCurrentPrice(b) || 0) - Number(getCurrentPrice(a) || 0);
+      if (sortValue === "rating") return Number(b.average_rating ?? b.rating ?? 0) - Number(a.average_rating ?? a.rating ?? 0);
+      const dateA = new Date(a.created_at || a.date || a.start_date || 0).getTime();
+      const dateB = new Date(b.created_at || b.date || b.start_date || 0).getTime();
+      return dateB - dateA;
+    });
+  }, [isSearchMode, globalSearchResults, coursesList, dailyClasses, liveSections, contentType, category, level, instructorId, price, activePrice, sortValue]);
+
+  const contentTypes = [
+    { id: "all", label: "All" },
+    { id: "course", label: "Courses" },
+    { id: "daily_class", label: "Daily Classes" },
+    { id: "live_section", label: "Live Sections" },
+  ];
+
+  const isCatalogLoading = isSearchMode
+    ? isSearchLoading || isSearchFetching
+    : isLoading || isDailyClassesLoading || isLiveSectionsLoading;
+
+  const renderCatalogCard = (item) => {
+    const type = item.contentType;
+    const isCourse = type === "course";
+    const currentPrice = getCurrentPrice(item);
+    const instructor = item.instructor || {};
+    const displaySlug = item.slug || item.title?.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    const classDate = item.human_start_date || item.human_date || item.start_date;
+    const classTime = item.human_class_time || item.human_start_time || item.start_time;
+    const duration = item.duration != null && item.duration !== ""
+      ? (isCourse ? `${item.duration} hrs` : type === "live_section" ? `${item.duration} min` : item.duration)
+      : null;
+    const sessionCount = item.sessions_count ?? item.session_count;
+
+    return (
+      <CourseCard
+        key={`${type}-${item.id}`}
+        loading={false}
+        image={item.thumbnail ? resolveMediaUrl(item.thumbnail) : "/images/course-placeholder.webp"}
+        title={item.title}
+        lessons={isCourse ? item.lessons_count : sessionCount}
+        duration={duration}
+        price={currentPrice}
+        oldPrice={getOriginalPrice(item)}
+        rating={item.average_rating ?? item.rating}
+        students={item.enrollments_count ?? item.booked_seats ?? item.students_count}
+        instructorName={instructor.name}
+        wishlistIcon={findWishlistIcon(item.id, type)}
+        lessonsIcon={<FiBookOpen />}
+        clockIcon={<FiClock />}
+        dateIcon={<FiClock />}
+        dateFormat={!isCourse ? classDate : null}
+        time={!isCourse ? classTime : null}
+        timeIcon={<FiClock />}
+        userIcon={<FiUsers />}
+        ratingIcon={<AiFillStar />}
+        buttonText="View Details"
+        instructorImg={instructor.avatar_url || instructor.avatar ? resolveMediaUrl(instructor.avatar_url || instructor.avatar) : null}
+        type={type}
+        instructorLabel={instructor.role || "Instructor"}
+        id={item.id}
+        slug={displaySlug}
+        lessonsLabel={isCourse ? "Lessons" : "Sessions"}
+      />
+    );
+  };
 
   return (
     <div id="CourseList">
@@ -129,7 +318,7 @@ const CourseListContent = () => {
         </div>
       </div>
       <div className="container">
-        <div className="TopActions">
+        {!isSearchMode && <div className="TopActions">
           <button
             className="MobileFilterBtn"
             onClick={() => setIsDrawerOpen(true)}
@@ -156,11 +345,11 @@ const CourseListContent = () => {
               )}
             </div>
           </div>
-        </div>
+        </div>}
 
         <div className="CourseMain">
           {/* Desktop Filter */}
-          <div className="DesktopFilterWrapper">
+          {!isSearchMode && <div className="DesktopFilterWrapper">
             <FilterBox
               category={category}
               setCategory={setCategory}
@@ -171,12 +360,16 @@ const CourseListContent = () => {
               setLevel={setLevel}
               price={price}
               setPrice={setPrice}
+              maxPrice={maxPrice}
+              instructors={instructorOptions}
+              instructorId={instructorId}
+              setInstructorId={setInstructorId}
               categories={categories}
             />
-          </div>
+          </div>}
 
           {/* Mobile Filter Drawer */}
-          {isDrawerOpen && (
+          {!isSearchMode && isDrawerOpen && (
             <div className="DrawerOverlay">
               <div ref={drawerRef} className="DrawerContent">
                 <FilterBox
@@ -191,6 +384,10 @@ const CourseListContent = () => {
                   setLevel={setLevel}
                   price={price}
                   setPrice={setPrice}
+                  maxPrice={maxPrice}
+                  instructors={instructorOptions}
+                  instructorId={instructorId}
+                  setInstructorId={setInstructorId}
                   categories={categories}
                 />
               </div>
@@ -198,49 +395,45 @@ const CourseListContent = () => {
           )}
 
           <div className="ContentArea">
+            {isSearchMode && (
+              <div className="CatalogSearchHeading">
+                <h1 className="text-2xl font-semibold text-gray-900">Search results</h1>
+                <p className="mt-1 text-sm text-gray-500">
+                  {globalSearchResponse?.meta?.total ?? globalSearchResults.length} results for “{catalogSearch}”
+                </p>
+              </div>
+            )}
+            <div className="ContentTypeFilters" role="group" aria-label="Filter by content type">
+              {contentTypes.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  className={contentType === option.id ? "active" : ""}
+                  aria-pressed={contentType === option.id}
+                  onClick={() => {
+                    setContentType(option.id);
+                    setPage(1);
+                  }}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
             <div className="CourseGrid">
-              {isLoading && page === 1
+              {isCatalogLoading && (isSearchMode || page === 1)
                 ? Array(8)
                     .fill({})
                     .map((_, i) => <CourseCard key={i} loading={true} />)
-                : coursesList.length > 0
-                  ? coursesList.map((course) => (
-                      <CourseCard
-                        key={course.id}
-                        loading={false}
-                        image={
-                          course?.thumbnail
-                            ? resolveMediaUrl(course.thumbnail)
-                            : "/images/course-placeholder.webp"
-                        }
-                        title={course?.title}
-                        lessons={course?.lessons_count}
-                        duration={`${course?.duration ?? 0} hrs`}
-                        price={course?.discount_price}
-                        oldPrice={course?.price}
-                        rating={course?.average_rating ?? course?.rating ?? 0}
-                        students={course?.enrollments_count}
-                        instructorName={course?.instructor?.name}
-                        wishlistIcon={findWishlistIcon(course?.id, "course")}
-                        lessonsIcon={<FiBookOpen />}
-                        clockIcon={<FiClock />}
-                        userIcon={<FiUsers />}
-                        ratingIcon={<AiFillStar />}
-                        buttonText="View Details"
-                        instructorImg={
-                          course?.instructor?.avatar_url || course?.instructor?.avatar
-                            ? resolveMediaUrl(course.instructor.avatar_url || course.instructor.avatar)
-                            : null
-                        }
-                        type="course"
-                        instructorLabel={course?.instructor?.role}
-                        id={course?.id}
-                        slug={course?.slug}
-                      />
-                    ))
-                  : !isLoading && (
+                : isSearchError ? (
+                    <div className="NoData">Search failed. Please try again.</div>
+                  )
+                : listingItems.length > 0
+                  ? listingItems.map(renderCatalogCard)
+                  : !isCatalogLoading && (
                       <div className="NoData">
-                        No courses found matching your filters.
+                        {isSearchMode
+                          ? `No results found for “${catalogSearch}”.`
+                          : "No content found matching your filters."}
                       </div>
                     )}
               {isFetching &&
@@ -250,7 +443,7 @@ const CourseListContent = () => {
                   .map((_, i) => <CourseCard key={i} loading={true} />)}
             </div>
 
-            {!isLoading && hasMore && (
+            {!isSearchMode && !isLoading && hasMore && (contentType === "all" || contentType === "course") && (
               <div className="LoadMoreWrapper">
                 <button
                   className="LoadMoreBtn"

@@ -63,7 +63,9 @@ const fetchDailyClassDetails = async (id) => {
   const res = await fetch(API_BASE_URL + "home/daily-classes/" + id, {
     method: "GET",
     next: {
-      revalidate: 600,
+      // Date-specific instructor substitutions are resolved server-side and
+      // must appear promptly on public class details.
+      revalidate: 60,
     },
   });
   const data = await res.json();
@@ -77,7 +79,8 @@ const fetchLiveSectionDetail = async (id) => {
   const res = await fetch(API_BASE_URL + "home/live-sections/" + id, {
     method: "GET",
     next: {
-      revalidate: 600,
+      // Session substitutions are date-specific and are resolved server-side.
+      revalidate: 60,
     },
   });
   const data = await res.json();

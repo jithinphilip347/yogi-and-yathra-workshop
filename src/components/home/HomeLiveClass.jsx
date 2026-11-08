@@ -26,10 +26,17 @@ import { FaHeart } from "react-icons/fa";
 import { GoDotFill } from "react-icons/go";
 import { MdDateRange } from "react-icons/md";
 import useWishlist from "@/hooks/useWishlist";
+import { isDailyClassLiveNow } from "@/utils/dailyClassLiveStatus";
 import ElseDesign from "../elseDesign/ElseDesign";
 
 const HomeLiveClass = ({ dailyClasses }) => {
   const { findWishlistIcon } = useWishlist();
+  const [, setClockTick] = useState(0);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => setClockTick((tick) => tick + 1), 15000);
+    return () => window.clearInterval(interval);
+  }, []);
 
   const list = Array.isArray(dailyClasses)
     ? dailyClasses
@@ -82,7 +89,9 @@ const HomeLiveClass = ({ dailyClasses }) => {
               768: { slidesPerView: 2 },
             }}
           >
-            {list.map((course, i) => (
+            {list.map((course, i) => {
+              const isLive = isDailyClassLiveNow(course);
+              return (
               <SwiperSlide key={course.id || i}>
                 <CourseCard
                   loading={false}
@@ -97,7 +106,7 @@ const HomeLiveClass = ({ dailyClasses }) => {
                   timeIcon={<FiClock />}
                   dateFormat={course?.human_start_date}
                   dotsIcon={<GoDotFill />}
-                  liveText="Live"
+                  liveText={isLive ? "Live" : null}
                   buttonText="Join Now"
                   instructorLabel="Instructor"
                   instructorImg={
@@ -112,7 +121,8 @@ const HomeLiveClass = ({ dailyClasses }) => {
                   slug={course.slug || course?.title?.trim().replace(/\s+/g, "-").toLowerCase()}
                 />
               </SwiperSlide>
-            ))}
+              );
+            })}
           </Swiper>
             </>
           )}

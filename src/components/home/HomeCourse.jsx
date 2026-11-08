@@ -57,8 +57,8 @@ const HomeCourse = () => {
                   title={course.title}
                   lessons={course?.lessons_count}
                   duration={(course.duration || 0) + " hrs"}
-                  price={Number(course.price)}
-                  oldPrice={Number(course.discount_price)}
+                  price={course?.effective_price ?? course?.discount_price ?? course?.price}
+                  oldPrice={course?.original_price ?? (course?.discount_price > 0 && course.discount_price < course.price ? course.price : null)}
                   rating={course?.average_rating ?? course?.rating ?? 0}
                   students={course?.enrollments_count}
                   instructorName={course?.instructor?.name}

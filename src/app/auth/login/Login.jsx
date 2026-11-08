@@ -72,8 +72,8 @@ const Login = () => {
         toast.success("Login Successfully!");
         
         setTimeout(() => {
-          // Guest Cart Sync & Checkout Session Restoration
-          // If items exist in checkout/cart, redirect straight to /checkout
+          // The login action has restored only this account's cart. Continue to
+          // checkout when that account already has items.
           const state = window.__REDUX_STORE__?.getState?.() || {};
           const checkoutItems = state.checkout?.items || [];
           const cartItems = state.cart?.items || [];

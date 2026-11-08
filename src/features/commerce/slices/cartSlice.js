@@ -6,6 +6,7 @@
  */
 
 import { createSlice } from '@reduxjs/toolkit';
+import { setLogin, logout } from '../../auth/authSlice';
 import {
   getCartKey,
   getItemDomain,
@@ -26,6 +27,9 @@ const createValidationState = () => ({
 
 const initialState = {
   items: [],
+  activeOwnerId: null,
+  cartsByUser: {},
+  guestCart: { items: [], appliedCoupon: null },
   isDrawerOpen: false,
   appliedCoupon: null,
   isProcessing: false,
@@ -200,6 +204,63 @@ const cartSlice = createSlice({
       state.items = validItems;
     },
   },
+  extraReducers: (builder) => {
+    builder
+      .addCase(setLogin, (state, action) => {
+        const userId = action.payload?.user?.id;
+        if (userId === undefined || userId === null || userId === '') return;
+
+        const nextOwnerId = String(userId);
+        if (state.activeOwnerId === nextOwnerId) {
+          state.validation = createValidationState();
+          return;
+        }
+
+        if (state.activeOwnerId) {
+          state.cartsByUser[state.activeOwnerId] = {
+            items: state.items,
+            appliedCoupon: state.appliedCoupon,
+          };
+        } else {
+          // Keep anonymous items separate. They never get silently merged into
+          // an account's cart, and can be restored if the account logs out.
+          state.guestCart = {
+            items: state.items,
+            appliedCoupon: state.appliedCoupon,
+          };
+        }
+
+        const accountCart = state.cartsByUser[nextOwnerId] || { items: [], appliedCoupon: null };
+        state.activeOwnerId = nextOwnerId;
+        state.items = Array.isArray(accountCart.items) ? accountCart.items : [];
+        state.appliedCoupon = accountCart.appliedCoupon || null;
+        state.isDrawerOpen = false;
+        state.isProcessing = false;
+        state.error = null;
+        state.validation = createValidationState();
+      })
+      .addCase(logout, (state) => {
+        if (state.activeOwnerId) {
+          state.cartsByUser[state.activeOwnerId] = {
+            items: state.items,
+            appliedCoupon: state.appliedCoupon,
+          };
+        } else {
+          state.guestCart = {
+            items: state.items,
+            appliedCoupon: state.appliedCoupon,
+          };
+        }
+
+        state.activeOwnerId = null;
+        state.items = Array.isArray(state.guestCart?.items) ? state.guestCart.items : [];
+        state.appliedCoupon = state.guestCart?.appliedCoupon || null;
+        state.isDrawerOpen = false;
+        state.isProcessing = false;
+        state.error = null;
+        state.validation = createValidationState();
+      });
+  },
 });
 
 export const {
@@ -241,13 +302,20 @@ export function ensureCartShape(state) {
   const itemsMissing = !Array.isArray(state.items);
   const validationMissing =
     !state.validation || typeof state.validation !== 'object';
+  const identityMissing =
+    !Object.prototype.hasOwnProperty.call(state, 'activeOwnerId') ||
+    !state.cartsByUser || typeof state.cartsByUser !== 'object' ||
+    !state.guestCart || typeof state.guestCart !== 'object';
 
-  if (!itemsMissing && !validationMissing) return state;
+  if (!itemsMissing && !validationMissing && !identityMissing) return state;
 
   return {
     ...initialState,
     ...state,
     items: itemsMissing ? initialState.items : state.items,
+    activeOwnerId: state.activeOwnerId ?? null,
+    cartsByUser: state.cartsByUser && typeof state.cartsByUser === 'object' ? state.cartsByUser : {},
+    guestCart: state.guestCart && typeof state.guestCart === 'object' ? state.guestCart : initialState.guestCart,
     validation: validationMissing
       ? createValidationState()
       : { ...createValidationState(), ...state.validation },

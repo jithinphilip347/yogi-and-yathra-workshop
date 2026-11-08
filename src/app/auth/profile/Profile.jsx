@@ -31,6 +31,7 @@ import LiveYoga from "@/components/profile/LiveYoga";
 import StudentBilling from "@/components/profile/StudentBilling";
 import MyCertificates from "@/components/profile/MyCertificates";
 import MyOrders from "@/components/profile/MyOrders";
+import InstructorReviewPrompt from "@/components/profile/InstructorReviewPrompt";
 
 // const courses = [
 //   {
@@ -260,6 +261,7 @@ const Profile = () => {
           />
 
           <div className="ProfileMainRight">
+            <InstructorReviewPrompt />
             <button className="MobileBackBtn" onClick={() => setMobileView("menu")}>
                &larr; Back to Profile Menu
             </button>

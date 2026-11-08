@@ -3,6 +3,7 @@
  */
 
 import { createSlice } from '@reduxjs/toolkit';
+import { setLogin, logout } from '../../auth/authSlice';
 
 const initialState = {
   status: 'idle', // 'idle' | 'initiating' | 'verifying' | 'completed' | 'failed'
@@ -41,6 +42,12 @@ const paymentSlice = createSlice({
       state.paymentError = null;
       state.receipt = null;
     },
+  },
+  extraReducers: (builder) => {
+    // A previous account's payment result must not be visible in a new session.
+    builder
+      .addCase(setLogin, () => initialState)
+      .addCase(logout, () => initialState);
   },
 });
 

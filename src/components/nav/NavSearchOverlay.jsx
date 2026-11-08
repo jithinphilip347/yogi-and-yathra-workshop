@@ -17,7 +17,7 @@ import { getSearchResultRoute, getSearchResultTypeLabel } from "@/utils/searchNa
  */
 const FALLBACK_IMAGE = courseImg1;
 
-const NavSearchOverlay = ({ isOpen, onClose, searchQuery, setSearchQuery }) => {
+const NavSearchOverlay = ({ isOpen, onClose, searchQuery, setSearchQuery, onSearchSubmit }) => {
   const [localQuery, setLocalQuery] = useState(searchQuery || "");
   const debouncedQuery = useDebounce(localQuery, 350);
 
@@ -60,6 +60,12 @@ const NavSearchOverlay = ({ isOpen, onClose, searchQuery, setSearchQuery }) => {
             autoFocus
             value={localQuery}
             onChange={(e) => setLocalQuery(e.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault();
+                onSearchSubmit?.(localQuery);
+              }
+            }}
             aria-label="Search"
           />
         </div>
@@ -98,7 +104,7 @@ const NavSearchOverlay = ({ isOpen, onClose, searchQuery, setSearchQuery }) => {
               {results.map((result, index) => (
                 <Link
                   key={`${result.type}-${result.id}`}
-                  href={getResultRoute(result)}
+                  href={getSearchResultRoute(result)}
                   className="SearchCourseBox"
                   onClick={handleResultClick}
                   style={{ textDecoration: "none", color: "inherit" }}
