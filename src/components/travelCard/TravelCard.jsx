@@ -30,10 +30,10 @@ const TravelCard = ({ travel }) => {
     price = "24,999",
     originalPrice = "29,999",
     videoUrl = "",
-    link = "/traveldetails",
+    link = "/travel/travel-details",
   } = travel;
 
-  const targetLink = link || "/traveldetails";
+  const targetLink = link || "/travel/travel-details";
 
   const handleCardClick = (e) => {
     // Prevent routing if clicking inside play button or video modal

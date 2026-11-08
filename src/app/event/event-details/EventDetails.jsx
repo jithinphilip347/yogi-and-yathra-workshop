@@ -7,8 +7,8 @@ import EventImg1 from "@/assets/images/courseImg-1.webp";
 import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiArrowRight, FiShield } from "react-icons/fi";
 import "@/assets/css/EventDetails.scss";
 
-export default function EventDetailsPage() {
-  const event = {
+const EventDetails = ({ eventData }) => {
+  const defaultEvent = {
     title: "Sunset Beach Yoga & Meditation Workshop",
     category: "Offline Workshop",
     status: "Booking Open",
@@ -31,13 +31,15 @@ export default function EventDetailsPage() {
     ],
   };
 
+  const event = eventData || defaultEvent;
+
   return (
     <div className="EventDetailsPage">
       <div className="container">
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
-            { label: "Offline Events", href: "/#HomeOfflineEvent" },
+            { label: "Offline Events", path: "/event" },
             { label: event.title },
           ]}
         />
@@ -159,5 +161,7 @@ export default function EventDetailsPage() {
       </div>
     </div>
   );
-}
+};
+
+export default EventDetails;
 

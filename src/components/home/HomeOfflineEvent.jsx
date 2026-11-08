@@ -31,7 +31,7 @@ export const DEFAULT_OFFLINE_EVENTS = [
     seats: "8 Seats Left",
     tags: ["In-Person", "Mats Provided", "Sunset View"],
     slug: "sunset-beach-yoga",
-    link: "/eventdetails",
+    link: "/event/event-details",
     videoUrl: "https://www.youtube.com/embed/inpok4MKVLM",
   },
   {
@@ -49,7 +49,7 @@ export const DEFAULT_OFFLINE_EVENTS = [
     seats: "3 Seats Left",
     tags: ["Sound Bath", "Herbal Tea", "Certificate"],
     slug: "chakra-healing-sound-therapy",
-    link: "/eventdetails",
+    link: "/event/event-details",
     videoUrl: "https://www.youtube.com/embed/sTANio_2E0Q",
   },
   {
@@ -67,7 +67,7 @@ export const DEFAULT_OFFLINE_EVENTS = [
     seats: "12 Seats Left",
     tags: ["In-Person", "Certificate", "Alignment"],
     slug: "pranayama-advanced-asana",
-    link: "/eventdetails",
+    link: "/event/event-details",
     videoUrl: "https://www.youtube.com/embed/4pKly2JojMw",
   },
   {
@@ -85,7 +85,7 @@ export const DEFAULT_OFFLINE_EVENTS = [
     seats: "Early Bird",
     tags: ["Forest Trek", "Organic Food", "Campfire"],
     slug: "mindfulness-forest-meditation",
-    link: "/eventdetails",
+    link: "/event/event-details",
     videoUrl: "https://www.youtube.com/embed/g_tea8ZNk5A",
   },
   {
@@ -103,8 +103,44 @@ export const DEFAULT_OFFLINE_EVENTS = [
     seats: "Limited Group",
     tags: ["Physio-Led", "Spine Care", "1-on-1 Help"],
     slug: "therapeutic-yoga-backpain",
-    link: "/eventdetails",
-    videoUrl: "",
+    link: "/event/event-details",
+    videoUrl: "https://www.youtube.com/embed/inpok4MKVLM",
+  },
+  {
+    id: 6,
+    title: "Sunrise Beach Vinyasa & Ocean Meditation",
+    description: "Energizing morning flows with gentle sea breeze, dynamic sun salutations, and mindfulness practice.",
+    image: EventImg1,
+    category: "Offline Workshop",
+    status: "Booking Open",
+    date: "18 - 21 Jan 2027",
+    duration: "4 Days",
+    venue: "Marari Beach",
+    location: "Alappuzha, Kerala",
+    price: "1,699",
+    seats: "6 Seats Left",
+    tags: ["In-Person", "Morning Chai", "Beach Mat"],
+    slug: "sunrise-beach-vinyasa",
+    link: "/event/event-details",
+    videoUrl: "https://www.youtube.com/embed/sTANio_2E0Q",
+  },
+  {
+    id: 7,
+    title: "Tibetan Singing Bowl Sound Bath & Yoga Nidra",
+    description: "Restorative deep relaxation using authentic handcrafted singing bowls, gong bath, and conscious sleep practice.",
+    image: EventImg2,
+    category: "Wellness Retreat",
+    status: "Almost Full",
+    date: "25 - 28 Jan 2027",
+    duration: "4 Days",
+    venue: "Cultural Center",
+    location: "Kochi, Kerala",
+    price: "2,199",
+    seats: "2 Seats Left",
+    tags: ["Sound Therapy", "Aromatherapy", "Guided Nidra"],
+    slug: "sound-bath-yoga-nidra",
+    link: "/event/event-details",
+    videoUrl: "https://www.youtube.com/embed/4pKly2JojMw",
   },
 ];
 
@@ -142,7 +178,7 @@ const HomeOfflineEvent = ({ events }) => {
               </div>
             )}
             {items && items.length > 0 && (
-              <Link href="/events" className="viewAllBtn">
+              <Link href="/event" className="viewAllBtn">
                 View All
               </Link>
             )}

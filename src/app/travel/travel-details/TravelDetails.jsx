@@ -7,8 +7,8 @@ import TravelImg1 from "@/assets/images/courseImg-6.webp";
 import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiArrowRight, FiShield } from "react-icons/fi";
 import "@/assets/css/TravelDetails.scss";
 
-export default function TravelDetailsPage() {
-  const retreat = {
+const TravelDetails = ({ retreatData }) => {
+  const defaultRetreat = {
     title: "Rishikesh Himalayan Yoga & Spiritual Retreat",
     category: "Spiritual Journey",
     status: "Booking Open",
@@ -34,6 +34,7 @@ export default function TravelDetailsPage() {
     ],
   };
 
+  const retreat = retreatData || defaultRetreat;
   const availableSlots = retreat.totalSlots - retreat.bookedSlots;
   const progressPercent = Math.round((retreat.bookedSlots / retreat.totalSlots) * 100);
 
@@ -43,7 +44,7 @@ export default function TravelDetailsPage() {
         {/* Breadcrumbs */}
         <Breadcrumbs
           items={[
-            { label: "Travel & Retreats", href: "/#HomeTravel" },
+            { label: "Travel & Retreats", path: "/travel" },
             { label: retreat.title },
           ]}
         />
@@ -178,5 +179,7 @@ export default function TravelDetailsPage() {
       </div>
     </div>
   );
-}
+};
+
+export default TravelDetails;
 

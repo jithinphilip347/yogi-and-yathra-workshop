@@ -29,10 +29,10 @@ const EventCard = ({ event }) => {
     seats = "",
     tags = [],
     videoUrl,
-    link = "/eventdetails",
+    link = "/event/event-details",
   } = event;
 
-  const targetLink = link || "/eventdetails";
+  const targetLink = link || "/event/event-details";
 
   const handleCardClick = (e) => {
     // If clicked inside play button or video modal, don't navigate
