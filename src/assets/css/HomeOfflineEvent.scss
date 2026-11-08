@@ -18,7 +18,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 22px;
 
     h2 {
       font-size: 28px;
@@ -31,29 +31,72 @@
       }
 
       @media (max-width: 768px) {
-        font-size: 26px;
+        font-size: 24px;
       }
       @media (max-width: 480px) {
         font-size: 20px;
       }
     }
 
-    .viewAllBtn {
-      background: transparent;
-      border: none;
-      color: var(--primaryColor, #874429);
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: 0.3s;
-      font-family: myFont1;
-      text-decoration: none;
+    .headRightActions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
 
-      @media (max-width: 480px) {
-        font-size: 14px;
+      .offlineNavArrows {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .navArrowBtn {
+          width: 38px;
+          height: 38px;
+          background: #ffffff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid #e2e8f0;
+          color: var(--primaryColor, #874429);
+          cursor: pointer;
+          transition: all 0.25s ease;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+          svg {
+            font-size: 13px;
+          }
+
+          &:hover {
+            background: var(--primaryColor, #874429);
+            border-color: var(--primaryColor, #874429);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(135, 68, 41, 0.25);
+          }
+
+          @media (max-width: 480px) {
+            width: 32px;
+            height: 32px;
+          }
+        }
       }
-      &:hover {
-        text-decoration: underline;
+
+      .viewAllBtn {
+        background: transparent;
+        border: none;
+        color: var(--primaryColor, #874429);
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.3s;
+        font-family: myFont1;
+        text-decoration: none;
+
+        @media (max-width: 480px) {
+          font-size: 14px;
+        }
+        &:hover {
+          text-decoration: underline;
+        }
       }
     }
   }
@@ -62,53 +105,29 @@
     width: 100%;
     position: relative;
 
-    .swiper-btn {
-      width: 45px;
-      height: 45px;
-      background: #fff;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      top: 45%;
-      z-index: 10;
-      cursor: pointer;
-      box-shadow: 0px 3px 15px rgba(0, 0, 0, 0.15);
-      transition: 0.3s ease;
+    /* Spacious 2-card grid when not sliding */
+    .offlineEventsGrid {
+      width: 100%;
+      display: grid;
+      gap: 24px;
 
-      @media (max-width: 768px) {
-        width: 35px;
-        height: 35px;
+      &.count-1 {
+        grid-template-columns: minmax(0, 620px);
+        justify-content: center;
       }
 
-      svg {
-        font-size: 18px;
-        color: var(--primaryColor, #874429);
-      }
+      &.count-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
 
-      &:hover {
-        background: var(--primaryColor, #874429);
-
-        svg {
-          color: #fff;
+        @media (max-width: 900px) {
+          grid-template-columns: 1fr;
         }
       }
-    }
 
-    .prev-btn {
-      left: -20px;
-      @media (max-width: 480px) {
-        left: -12px;
-      }
-    }
-
-    .next-btn {
-      right: -20px;
-      @media (max-width: 480px) {
-        right: -12px;
+      .offlineGridItem {
+        width: 100%;
+        display: flex;
       }
     }
   }
 }
-

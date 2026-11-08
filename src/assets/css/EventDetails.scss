@@ -1,0 +1,306 @@
+.EventDetailsPage {
+  width: 100%;
+  min-height: 80vh;
+  padding: 30px 0 60px 0;
+  background: #ffffff;
+  font-family: myFont1, sans-serif;
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .eventDetailsGrid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 40px;
+    margin-top: 25px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr 340px;
+      gap: 30px;
+    }
+
+    @media (max-width: 868px) {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+  }
+
+  /* Left Main Column */
+  .eventMainCol {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .eventBannerBox {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    background: #e2e8f0;
+    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .bannerBadge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: rgba(15, 23, 42, 0.75);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 14px;
+      border-radius: 50px;
+      text-transform: capitalize;
+    }
+  }
+
+  .eventHeaderBox {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .eventStatusPill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      color: #059669;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 50px;
+      width: fit-content;
+      border: 1px solid #a7f3d0;
+
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #059669;
+      }
+    }
+
+    h1 {
+      font-size: 32px;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.3;
+      margin: 0;
+
+      @media (max-width: 768px) {
+        font-size: 24px;
+      }
+    }
+  }
+
+  .eventScheduleCard {
+    background: #fdf8f5;
+    border: 1px solid #f8dfd4;
+    border-radius: 14px;
+    padding: 18px 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .scheduleBlock {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+
+      svg {
+        font-size: 18px;
+        color: var(--primaryColor, #874429);
+        flex-shrink: 0;
+        margin-top: 3px;
+      }
+
+      .info {
+        display: flex;
+        flex-direction: column;
+
+        span.label {
+          font-size: 11px;
+          color: #94a3b8;
+          text-transform: uppercase;
+          font-weight: 600;
+          letter-spacing: 0.5px;
+        }
+
+        strong.val {
+          font-size: 14px;
+          color: #1e293b;
+          font-weight: 600;
+          margin-top: 2px;
+        }
+      }
+    }
+  }
+
+  .eventSection {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+
+    h3 {
+      font-size: 19px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 14px 0;
+    }
+
+    p {
+      font-size: 14.5px;
+      color: #475569;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    .perksGrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 14px;
+
+      @media (max-width: 640px) {
+        grid-template-columns: 1fr;
+      }
+
+      .perkItem {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13.5px;
+        color: #334155;
+        font-weight: 500;
+        background: #f8fafc;
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid #f1f5f9;
+
+        svg {
+          color: var(--primaryColor, #874429);
+          font-size: 16px;
+        }
+      }
+    }
+  }
+
+  /* Right Sticky Booking Card */
+  .eventSidebarCol {
+    .bookingCard {
+      position: sticky;
+      top: 100px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+
+      .priceHeader {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid #f1f5f9;
+        padding-bottom: 14px;
+
+        span.label {
+          font-size: 12px;
+          color: #94a3b8;
+          font-weight: 500;
+          text-transform: uppercase;
+        }
+
+        .priceRow {
+          display: flex;
+          align-items: baseline;
+          gap: 4px;
+          margin-top: 4px;
+
+          .cur {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primaryColor, #874429);
+          }
+          .amt {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primaryColor, #874429);
+          }
+          .unit {
+            font-size: 13px;
+            color: #64748b;
+          }
+        }
+      }
+
+      .bookingDetailsList {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .detailItem {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          font-size: 13.5px;
+          color: #64748b;
+
+          strong {
+            color: #1e293b;
+            font-weight: 600;
+          }
+        }
+      }
+
+      .bookBtn {
+        width: 100%;
+        padding: 13px 24px;
+        background: var(--primaryColor, #874429);
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 50px;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+
+        &:hover {
+          background: #6e331c;
+          box-shadow: 0 6px 18px rgba(135, 68, 41, 0.3);
+          transform: translateY(-1px);
+        }
+      }
+
+      .guaranteeNote {
+        font-size: 11.5px;
+        color: #94a3b8;
+        text-align: center;
+        margin: 0;
+      }
+    }
+  }
+}
+
