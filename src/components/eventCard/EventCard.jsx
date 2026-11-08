@@ -100,30 +100,55 @@ const EventCard = ({ event }) => {
       >
         {/* Left: Thumbnail & Badges */}
         <div className="eventImgWrapper">
-          {image && (
-            <Image
-              src={image}
-              alt={title || "Offline Event"}
-              fill
-              className="eventImage"
-              sizes="(max-width: 768px) 100vw, 420px"
-            />
-          )}
+          {isVideoOpen ? (
+            <div className="cardInlineVideoWrapper" onClick={(e) => e.stopPropagation()}>
+              <video
+                src="/offline-event.mp4"
+                controls
+                autoPlay
+                playsInline
+                className="cardInlineVideoPlayer"
+              />
+              <button
+                type="button"
+                className="cardCloseVideoBtn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsVideoOpen(false);
+                }}
+                aria-label="Close video"
+              >
+                <FiX />
+              </button>
+            </div>
+          ) : (
+            <>
+              {image && (
+                <Image
+                  src={image}
+                  alt={title || "Offline Event"}
+                  fill
+                  className="eventImage"
+                  sizes="(max-width: 768px) 100vw, 420px"
+                />
+              )}
 
-          {/* Category Badge on Image */}
-          {category && (
-            <span className="eventCategoryBadge">{category}</span>
-          )}
+              {/* Category Badge on Image */}
+              {category && (
+                <span className="eventCategoryBadge">{category}</span>
+              )}
 
-          {/* Center Play Button Overlay */}
-          <button
-            type="button"
-            className="eventPlayBtn"
-            onClick={handlePlayVideo}
-            aria-label="Play intro video"
-          >
-            <FaPlay />
-          </button>
+              {/* Center Play Button Overlay */}
+              <button
+                type="button"
+                className="eventPlayBtn"
+                onClick={handlePlayVideo}
+                aria-label="Play intro video"
+              >
+                <FaPlay />
+              </button>
+            </>
+          )}
         </div>
 
         {/* Right: Content Area */}
@@ -207,52 +232,6 @@ const EventCard = ({ event }) => {
           </div>
         </div>
       </div>
-
-      {/* Video Modal Popup */}
-      {isVideoOpen && (
-        <div
-          className="EventVideoModalBackdrop"
-          onClick={() => setIsVideoOpen(false)}
-        >
-          <div
-            className="EventVideoModalContent"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              className="CloseModalBtn"
-              onClick={() => setIsVideoOpen(false)}
-              aria-label="Close video"
-            >
-              <FiX />
-            </button>
-
-            {isEmbedVideo ? (
-              <iframe
-                src={finalVideoUrl}
-                title={title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="EventModalIframe"
-              />
-            ) : finalVideoUrl ? (
-              <video
-                src={finalVideoUrl}
-                controls
-                autoPlay
-                className="EventModalVideo"
-              />
-            ) : (
-              <div className="NoVideoPlaceholder">
-                <FaPlay style={{ fontSize: "32px", marginBottom: "12px", opacity: 0.85 }} />
-                <h4>Intro Video Coming Soon</h4>
-                <p>We are preparing the teaser video for {title}.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 };

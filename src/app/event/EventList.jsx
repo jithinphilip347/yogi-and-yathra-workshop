@@ -1,19 +1,37 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import Breadcrumbs from "@/components/breadcrumbs/Breadcrumbs";
 import EventCard from "@/components/eventCard/EventCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
+import CustomFilterDropdown from "@/components/filter/CustomFilterDropdown";
 import { DEFAULT_OFFLINE_EVENTS } from "@/components/home/HomeOfflineEvent";
-import { FiSearch, FiX, FiChevronDown, FiCalendar } from "react-icons/fi";
+import {
+  FiMapPin,
+  FiClock,
+  FiCheckCircle,
+  FiSliders,
+  FiChevronDown,
+  FiRotateCcw,
+  FiCalendar,
+  FiUsers,
+  FiUserCheck,
+  FiShield,
+} from "react-icons/fi";
 import "@/assets/css/EventList.scss";
 
 const EventList = ({ initialEvents }) => {
   const allEvents = initialEvents || DEFAULT_OFFLINE_EVENTS;
 
-  const [activeCategory, setActiveCategory] = useState("All");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [visibleCount, setVisibleCount] = useState(4); // 2 rows of 2 cards initially
+  // Filter States
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedLocation, setSelectedLocation] = useState("All");
+  const [selectedStatus, setSelectedStatus] = useState("All");
+  const [selectedDuration, setSelectedDuration] = useState("All");
+  const [sortBy, setSortBy] = useState("default");
 
+  // Pagination (2 rows of 2 cards = 4)
+  const [visibleCount, setVisibleCount] = useState(4);
+
+  // Categories
   const categories = [
     "All",
     "Offline Workshop",
@@ -23,46 +41,114 @@ const EventList = ({ initialEvents }) => {
     "Therapy Workshop",
   ];
 
-  // Filter events by Category and Search
+  // Locations derived from card data
+  const locationOptions = useMemo(() => {
+    const locSet = new Set();
+    allEvents.forEach((e) => {
+      if (e.location) {
+        const city = e.location.split(",")[0].trim();
+        if (city) locSet.add(city);
+      }
+    });
+    return [
+      { value: "All", label: "All Locations" },
+      ...Array.from(locSet).map((city) => ({ value: city, label: city })),
+    ];
+  }, [allEvents]);
+
+  // Durations derived from card data
+  const durationOptions = useMemo(() => {
+    const durSet = new Set();
+    allEvents.forEach((e) => {
+      if (e.duration) durSet.add(e.duration.trim());
+    });
+    return [
+      { value: "All", label: "All Durations" },
+      ...Array.from(durSet).map((dur) => ({ value: dur, label: dur })),
+    ];
+  }, [allEvents]);
+
+  // Status options
+  const statusOptions = [
+    { value: "All", label: "All Status" },
+    { value: "Booking Open", label: "Booking Open" },
+    { value: "Almost Full", label: "Almost Full" },
+    { value: "Upcoming", label: "Upcoming" },
+  ];
+
+  // Sort options
+  const sortOptions = [
+    { value: "default", label: "Recommended" },
+    { value: "price-asc", label: "Price: Low to High" },
+    { value: "price-desc", label: "Price: High to Low" },
+  ];
+
+  // Filter and Sort Events
   const filteredEvents = useMemo(() => {
-    return allEvents.filter((e) => {
+    let result = allEvents.filter((item) => {
+      // Category match
       const catMatch =
-        activeCategory === "All" ||
-        (e.category &&
-          e.category.toLowerCase().includes(
-            activeCategory.toLowerCase().replace("offline ", "").trim()
+        selectedCategory === "All" ||
+        (item.category &&
+          item.category.toLowerCase().includes(
+            selectedCategory.toLowerCase().replace("offline ", "").trim()
           ));
 
-      const query = searchQuery.trim().toLowerCase();
-      const searchMatch =
-        !query ||
-        (e.title && e.title.toLowerCase().includes(query)) ||
-        (e.location && e.location.toLowerCase().includes(query)) ||
-        (e.venue && e.venue.toLowerCase().includes(query)) ||
-        (e.description && e.description.toLowerCase().includes(query));
+      // Location match
+      const locMatch =
+        selectedLocation === "All" ||
+        (item.location &&
+          item.location.toLowerCase().includes(selectedLocation.toLowerCase())) ||
+        (item.venue &&
+          item.venue.toLowerCase().includes(selectedLocation.toLowerCase()));
 
-      return catMatch && searchMatch;
+      // Status match
+      const statusMatch =
+        selectedStatus === "All" ||
+        (item.status &&
+          item.status.toLowerCase().includes(selectedStatus.toLowerCase()));
+
+      // Duration match
+      const durMatch =
+        selectedDuration === "All" ||
+        (item.duration &&
+          item.duration.toLowerCase() === selectedDuration.toLowerCase());
+
+      return catMatch && locMatch && statusMatch && durMatch;
     });
-  }, [allEvents, activeCategory, searchQuery]);
 
-  const handleCategoryChange = (cat) => {
-    setActiveCategory(cat);
-    setVisibleCount(4); // Reset pagination on category change
-  };
+    // Sorting
+    if (sortBy === "price-asc") {
+      result = [...result].sort(
+        (a, b) =>
+          Number(String(a.price).replace(/[^0-9]/g, "")) -
+          Number(String(b.price).replace(/[^0-9]/g, ""))
+      );
+    } else if (sortBy === "price-desc") {
+      result = [...result].sort(
+        (a, b) =>
+          Number(String(b.price).replace(/[^0-9]/g, "")) -
+          Number(String(a.price).replace(/[^0-9]/g, ""))
+      );
+    }
 
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-    setVisibleCount(4); // Reset pagination on search change
-  };
+    return result;
+  }, [allEvents, selectedCategory, selectedLocation, selectedStatus, selectedDuration, sortBy]);
 
-  const handleClearSearch = () => {
-    setSearchQuery("");
-    setVisibleCount(4);
-  };
+  // Check if any non-default filter is active
+  const hasActiveFilters =
+    selectedCategory !== "All" ||
+    selectedLocation !== "All" ||
+    selectedStatus !== "All" ||
+    selectedDuration !== "All" ||
+    sortBy !== "default";
 
   const handleResetFilters = () => {
-    setActiveCategory("All");
-    setSearchQuery("");
+    setSelectedCategory("All");
+    setSelectedLocation("All");
+    setSelectedStatus("All");
+    setSelectedDuration("All");
+    setSortBy("default");
     setVisibleCount(4);
   };
 
@@ -70,119 +156,267 @@ const EventList = ({ initialEvents }) => {
     setVisibleCount((prev) => prev + 2); // Load next row (2 cards)
   };
 
-  // Slice for current display
   const visibleEvents = filteredEvents.slice(0, visibleCount);
   const hasMore = visibleCount < filteredEvents.length;
 
   return (
     <div id="EventListPage">
-      <div className="container">
-        {/* Breadcrumbs */}
-        <Breadcrumbs items={[{ label: "Offline Events", path: "/event" }]} />
+      {/* ── Full-Width Hero Banner Section (100% Screen Width) ── */}
+      <section className="eventHeroBanner">
+        <div className="container">
+          <div className="eventHeroContent">
+            <div className="heroDotBadge">
+              <span className="dot" />
+              <span>In-Person Experiences</span>
+            </div>
 
-        {/* Page Header */}
-        <div className="eventListHeader">
-          <span className="headerBadge">In-Person Experiences</span>
-          <h1>
-            Upcoming <span>Offline Events</span> & Workshops
-          </h1>
-          <p>
-            Immerse yourself in authentic physical yoga workshops, restorative sound baths, and nature meditation retreats guided by certified yoga masters across Kerala.
-          </p>
-        </div>
+            <h1>
+              Offline <span>Events</span> & Workshops
+            </h1>
 
-        {/* Search & Category Filter Row */}
-        <div className="eventControlRow">
-          {/* Category Filter Pills */}
-          <div className="eventFilterBar">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                className={`filterPill ${activeCategory === cat ? "active" : ""}`}
-                onClick={() => handleCategoryChange(cat)}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
+            <p className="heroSubtitle">
+              Immerse yourself in authentic physical yoga workshops, restorative sound baths, and nature meditation retreats guided by certified yoga masters across Kerala.
+            </p>
 
-          {/* Search Box */}
-          <div className="eventSearchBar">
-            <FiSearch className="searchIcon" />
-            <input
-              type="text"
-              placeholder="Search events, locations..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                className="clearBtn"
-                onClick={handleClearSearch}
-                aria-label="Clear search"
-              >
-                <FiX />
-              </button>
-            )}
+            {/* Feature Highlight Pills with Icons */}
+            <div className="heroFeaturePills">
+              <span className="featurePill">
+                <FiUsers />
+                <span>100% In-Person Physical</span>
+              </span>
+              <span className="featurePill">
+                <FiUserCheck />
+                <span>Certified Master Instructors</span>
+              </span>
+              <span className="featurePill">
+                <FiCheckCircle />
+                <span>Mats & Props Provided</span>
+              </span>
+              <span className="featurePill">
+                <FiShield />
+                <span>Instant Pass Confirmation</span>
+              </span>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Stats Line */}
-        {filteredEvents.length > 0 && (
-          <div className="eventResultStats">
-            Showing <strong>{visibleEvents.length}</strong> of <strong>{filteredEvents.length}</strong> events
-            {activeCategory !== "All" && <span> in "{activeCategory}"</span>}
-            {searchQuery && <span> matching "{searchQuery}"</span>}
-          </div>
-        )}
-
-        {/* Event Cards Grid OR ElseDesign */}
-        {filteredEvents.length > 0 ? (
-          <>
-            <div className="eventListingGrid">
-              {visibleEvents.map((evt, i) => (
-                <EventCard
-                  key={evt.id || i}
-                  event={{
-                    ...evt,
-                    link: "/event/event-details",
+      {/* ── Main Content Container (Filters + Grid) ── */}
+      <section className="eventListingContent">
+        <div className="container">
+          {/* Card-Based Filter Section */}
+          <div className="eventFilterSection">
+            {/* Row 1: Primary Category Pills */}
+            <div className="filterCategoryRow">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  className={`categoryPill ${selectedCategory === cat ? "active" : ""}`}
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setVisibleCount(4);
                   }}
-                />
+                >
+                  {cat}
+                </button>
               ))}
             </div>
 
-            {/* Bottom Center Load More Button */}
-            {hasMore && (
-              <div className="loadMoreContainer">
+            {/* Row 2: Custom Dropdowns (with internal search bar and scrollable ul/li) */}
+            <div className="filterDropdownRow">
+              <div className="dropdownGroup">
+                {/* Custom Location Dropdown */}
+                <CustomFilterDropdown
+                  icon={<FiMapPin />}
+                  value={selectedLocation}
+                  options={locationOptions}
+                  onChange={(val) => {
+                    setSelectedLocation(val);
+                    setVisibleCount(4);
+                  }}
+                  searchPlaceholder="Search locations..."
+                />
+
+                {/* Custom Status Dropdown */}
+                <CustomFilterDropdown
+                  icon={<FiCheckCircle />}
+                  value={selectedStatus}
+                  options={statusOptions}
+                  onChange={(val) => {
+                    setSelectedStatus(val);
+                    setVisibleCount(4);
+                  }}
+                  searchPlaceholder="Search status..."
+                  showSearch={false}
+                />
+
+                {/* Custom Duration Dropdown */}
+                <CustomFilterDropdown
+                  icon={<FiClock />}
+                  value={selectedDuration}
+                  options={durationOptions}
+                  onChange={(val) => {
+                    setSelectedDuration(val);
+                    setVisibleCount(4);
+                  }}
+                  searchPlaceholder="Search duration..."
+                  showSearch={false}
+                />
+
+                {/* Custom Sort Dropdown */}
+                <CustomFilterDropdown
+                  icon={<FiSliders />}
+                  labelPrefix="Sort"
+                  value={sortBy}
+                  options={sortOptions}
+                  onChange={(val) => {
+                    setSortBy(val);
+                    setVisibleCount(4);
+                  }}
+                  searchPlaceholder="Search sort..."
+                  showSearch={false}
+                />
+              </div>
+
+              {/* Reset Filters Button */}
+              {hasActiveFilters && (
                 <button
                   type="button"
-                  onClick={handleLoadMore}
-                  className="loadMoreBtn"
-                  aria-label="Load more events"
+                  className="resetFiltersBtn"
+                  onClick={handleResetFilters}
+                  aria-label="Reset all filters"
                 >
-                  <span>Load More Events</span>
-                  <FiChevronDown />
+                  <FiRotateCcw />
+                  <span>Reset Filters</span>
                 </button>
-                <span className="loadMoreCount">
-                  Showing {visibleEvents.length} of {filteredEvents.length}
-                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Results Stats */}
+          {filteredEvents.length > 0 && (
+            <div className="eventResultStats">
+              <span>
+                Showing <strong>{visibleEvents.length}</strong> of{" "}
+                <strong>{filteredEvents.length}</strong> events
+              </span>
+
+              {/* Active Filter Chips */}
+              {hasActiveFilters && (
+                <div className="activeFilterChips">
+                  {selectedCategory !== "All" && (
+                    <span className="chip">
+                      {selectedCategory}
+                      <span
+                        className="removeChip"
+                        onClick={() => {
+                          setSelectedCategory("All");
+                          setVisibleCount(4);
+                        }}
+                      >
+                        ×
+                      </span>
+                    </span>
+                  )}
+                  {selectedLocation !== "All" && (
+                    <span className="chip">
+                      📍 {selectedLocation}
+                      <span
+                        className="removeChip"
+                        onClick={() => {
+                          setSelectedLocation("All");
+                          setVisibleCount(4);
+                        }}
+                      >
+                        ×
+                      </span>
+                    </span>
+                  )}
+                  {selectedStatus !== "All" && (
+                    <span className="chip">
+                      ● {selectedStatus}
+                      <span
+                        className="removeChip"
+                        onClick={() => {
+                          setSelectedStatus("All");
+                          setVisibleCount(4);
+                        }}
+                      >
+                        ×
+                      </span>
+                    </span>
+                  )}
+                  {selectedDuration !== "All" && (
+                    <span className="chip">
+                      ⏱️ {selectedDuration}
+                      <span
+                        className="removeChip"
+                        onClick={() => {
+                          setSelectedDuration("All");
+                          setVisibleCount(4);
+                        }}
+                      >
+                        ×
+                      </span>
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Event Cards Grid OR ElseDesign */}
+          {filteredEvents.length > 0 ? (
+            <>
+              <div className="eventListingGrid">
+                {visibleEvents.map((evt, i) => (
+                  <EventCard
+                    key={evt.id || i}
+                    event={{
+                      ...evt,
+                      link: "/event/event-details",
+                    }}
+                  />
+                ))}
               </div>
-            )}
-          </>
-        ) : (
-          <ElseDesign
-            icon={<FiCalendar style={{ fontSize: "32px", color: "var(--primaryColor, #874429)" }} />}
-            title="No Offline Events Found"
-            message={`We couldn't find any offline events matching your search${
-              activeCategory !== "All" ? ` in category "${activeCategory}"` : ""
-            }${searchQuery ? ` with query "${searchQuery}"` : ""}. Please try different keywords or reset filters.`}
-            actionText="Reset All Filters"
-            onAction={handleResetFilters}
-          />
-        )}
-      </div>
+
+              {/* Bottom Center Load More Button */}
+              {hasMore && (
+                <div className="loadMoreContainer">
+                  <button
+                    type="button"
+                    onClick={handleLoadMore}
+                    className="loadMoreBtn"
+                    aria-label="Load more events"
+                  >
+                    <span>Load More Events</span>
+                    <FiChevronDown />
+                  </button>
+                  <span className="loadMoreCount">
+                    Showing {visibleEvents.length} of {filteredEvents.length}
+                  </span>
+                </div>
+              )}
+            </>
+          ) : (
+            <ElseDesign
+              icon={
+                <FiCalendar
+                  style={{
+                    fontSize: "32px",
+                    color: "var(--primaryColor, #874429)",
+                  }}
+                />
+              }
+              title="No Events Found"
+              message="No offline events match your selected filters. Please adjust your criteria or reset filters to see all available workshops."
+              actionText="Reset All Filters"
+              onAction={handleResetFilters}
+            />
+          )}
+        </div>
+      </section>
     </div>
   );
 };

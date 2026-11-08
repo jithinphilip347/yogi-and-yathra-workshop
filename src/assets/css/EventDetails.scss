@@ -1,306 +1,824 @@
-.EventDetailsPage {
+#EventDetailsPage {
   width: 100%;
   min-height: 80vh;
-  padding: 30px 0 60px 0;
   background: #ffffff;
+  padding: 95px 0 70px 0; /* 60px fixed SubNav clearance + 35px visible breathing space */
   font-family: myFont1, sans-serif;
 
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+  @media (max-width: 1024px) {
+    padding: 35px 0 60px 0; /* SubNav hidden on <=1024px */
   }
 
+  /* Breadcrumbs */
+  .eventBreadcrumbsWrapper {
+    margin-bottom: 22px;
+  }
+
+  /* ════════ 1. FULL-WIDTH THUMBNAIL & VIDEO PLAY BANNER ════════ */
+  .eventFullWidthMedia {
+    width: 100%;
+    margin-bottom: 36px;
+
+    .eventMediaWrapper {
+      position: relative;
+      width: 100%;
+      height: 440px;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      background: #0f172a;
+
+      @media (max-width: 1024px) {
+        height: 360px;
+      }
+
+      @media (max-width: 768px) {
+        height: 250px;
+        border-radius: 14px;
+      }
+
+      .eventFullImg {
+        object-fit: cover;
+      }
+
+      /* Inline Full-Box Video Player */
+      .eventInlineVideoWrapper {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background: #000000;
+        border-radius: inherit;
+        overflow: hidden;
+        z-index: 10;
+
+        .eventInlineVideoPlayer {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          display: block;
+        }
+
+        .closeInlineVideoBtn {
+          position: absolute;
+          top: 16px;
+          right: 16px;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: rgba(0, 0, 0, 0.7);
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          color: #ffffff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 20;
+          font-size: 18px;
+          transition: background 0.2s ease;
+
+          &:hover {
+            background: rgba(220, 38, 38, 0.9);
+          }
+        }
+      }
+
+      .eventMediaOverlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(15, 23, 42, 0.25) 0%,
+          rgba(15, 23, 42, 0.6) 100%
+        );
+      }
+
+      /* Top Corner Badges */
+      .mediaTopBadges {
+        position: absolute;
+        top: 18px;
+        left: 18px;
+        right: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 2;
+
+        .eventCategoryBadge {
+          background: rgba(15, 23, 42, 0.88);
+          color: #ffffff;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 6px 14px;
+          border-radius: 50px;
+          letter-spacing: 0.3px;
+        }
+
+        .eventStatusBadge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 6px 14px;
+          border-radius: 50px;
+
+          .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+          }
+
+          &.open {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+            .dot {
+              background: #059669;
+            }
+          }
+
+          &.almost {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fde68a;
+            .dot {
+              background: #d97706;
+            }
+          }
+        }
+      }
+
+      /* Intro Video Play Button in Center (Icon Only, Circular) */
+      .eventIntroPlayBtn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 3;
+        transition: background 0.2s ease, border-color 0.2s ease;
+        box-shadow: none !important;
+
+        .playIcon {
+          font-size: 16px;
+          color: var(--primaryColor, #874429);
+          margin-left: 3px;
+          transition: color 0.2s ease;
+        }
+
+        &:hover {
+          background: var(--primaryColor, #874429);
+          border-color: var(--primaryColor, #874429);
+          transform: translate(-50%, -50%) !important;
+
+          .playIcon {
+            color: #ffffff;
+          }
+        }
+
+        @media (max-width: 768px) {
+          width: 46px;
+          height: 46px;
+
+          .playIcon {
+            font-size: 13px;
+            margin-left: 2px;
+          }
+        }
+      }
+    }
+  }
+
+  /* ════════ 2-COLUMN LAYOUT: Content + Sticky Pass Box ════════ */
   .eventDetailsGrid {
     display: grid;
     grid-template-columns: 1fr 380px;
     gap: 40px;
-    margin-top: 25px;
 
     @media (max-width: 1024px) {
       grid-template-columns: 1fr 340px;
-      gap: 30px;
+      gap: 28px;
     }
 
     @media (max-width: 868px) {
       grid-template-columns: 1fr;
-      gap: 30px;
+      gap: 32px;
     }
   }
 
-  /* Left Main Column */
+  /* ════════ LEFT COLUMN: Content Sections Flow ════════ */
   .eventMainCol {
     display: flex;
     flex-direction: column;
-    gap: 24px;
-  }
+    gap: 32px;
 
-  .eventBannerBox {
-    width: 100%;
-    aspect-ratio: 16 / 9;
-    border-radius: 18px;
-    overflow: hidden;
-    position: relative;
-    background: #e2e8f0;
-    box-shadow: 0 6px 25px rgba(0, 0, 0, 0.08);
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .bannerBadge {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      background: rgba(15, 23, 42, 0.75);
-      color: #ffffff;
-      font-size: 12px;
-      font-weight: 500;
-      padding: 5px 14px;
-      border-radius: 50px;
-      text-transform: capitalize;
-    }
-  }
-
-  .eventHeaderBox {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-
-    .eventStatusPill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: #ecfdf5;
-      color: #059669;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 4px 12px;
-      border-radius: 50px;
-      width: fit-content;
-      border: 1px solid #a7f3d0;
-
-      .dot {
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: #059669;
-      }
-    }
-
-    h1 {
-      font-size: 32px;
-      font-weight: 700;
-      color: #0f172a;
-      line-height: 1.3;
-      margin: 0;
-
-      @media (max-width: 768px) {
-        font-size: 24px;
-      }
-    }
-  }
-
-  .eventScheduleCard {
-    background: #fdf8f5;
-    border: 1px solid #f8dfd4;
-    border-radius: 14px;
-    padding: 18px 20px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-
-    @media (max-width: 640px) {
-      grid-template-columns: 1fr;
-      gap: 12px;
-    }
-
-    .scheduleBlock {
+    /* Header: Title & Meta */
+    .eventHeaderSection {
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
-
-      svg {
-        font-size: 18px;
-        color: var(--primaryColor, #874429);
-        flex-shrink: 0;
-        margin-top: 3px;
-      }
-
-      .info {
-        display: flex;
-        flex-direction: column;
-
-        span.label {
-          font-size: 11px;
-          color: #94a3b8;
-          text-transform: uppercase;
-          font-weight: 600;
-          letter-spacing: 0.5px;
-        }
-
-        strong.val {
-          font-size: 14px;
-          color: #1e293b;
-          font-weight: 600;
-          margin-top: 2px;
-        }
-      }
-    }
-  }
-
-  .eventSection {
-    background: #ffffff;
-    border: 1px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 24px;
-
-    h3 {
-      font-size: 19px;
-      font-weight: 700;
-      color: #0f172a;
-      margin: 0 0 14px 0;
-    }
-
-    p {
-      font-size: 14.5px;
-      color: #475569;
-      line-height: 1.65;
-      margin: 0;
-    }
-
-    .perksGrid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      flex-direction: column;
       gap: 12px;
-      margin-top: 14px;
 
-      @media (max-width: 640px) {
-        grid-template-columns: 1fr;
-      }
-
-      .perkItem {
+      .eventHeaderMetaTop {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 13.5px;
-        color: #334155;
-        font-weight: 500;
-        background: #f8fafc;
-        padding: 10px 14px;
-        border-radius: 10px;
-        border: 1px solid #f1f5f9;
+        gap: 14px;
+        flex-wrap: wrap;
 
-        svg {
-          color: var(--primaryColor, #874429);
-          font-size: 16px;
+        .seatsLeftBadge {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: #fef2f2;
+          color: #dc2626;
+          border: 1px solid #fee2e2;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 4px 12px;
+          border-radius: 50px;
+        }
+
+        .deadlineNotice {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          color: #64748b;
+          font-size: 12.5px;
+        }
+      }
+
+      .eventMainTitle {
+        font-size: 32px;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.25;
+        margin: 0;
+
+        @media (max-width: 768px) {
+          font-size: 24px;
+        }
+      }
+
+      .eventShortDescription {
+        font-size: 15px;
+        color: #475569;
+        line-height: 1.65;
+        margin: 0;
+      }
+    }
+
+    /* Section Heading Style */
+    .sectionTitle {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 16px 0;
+      position: relative;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    /* Specs Section */
+    .eventSpecsSection {
+      .specsGrid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+
+        @media (max-width: 600px) {
+          grid-template-columns: 1fr;
+        }
+
+        .specCard {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          background: #faf4ef;
+          border: 1px solid #f0e3d9;
+          border-radius: 12px;
+          padding: 14px 18px;
+
+          &.fullWidthSpec {
+            grid-column: 1 / -1;
+            justify-content: space-between;
+            flex-wrap: wrap;
+          }
+
+          .specIconBox {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid #ecd8cc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primaryColor, #874429);
+            font-size: 18px;
+            flex-shrink: 0;
+          }
+
+          .specInfo {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+
+            .specLabel {
+              font-size: 11.5px;
+              color: #64748b;
+              font-weight: 500;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+
+            .specValue {
+              font-size: 14px;
+              color: #0f172a;
+              font-weight: 600;
+            }
+          }
+
+          .mapLinkBtn {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primaryColor, #874429);
+            text-decoration: underline;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: color 0.2s ease;
+
+            &:hover {
+              color: #5c2c1a;
+            }
+          }
+        }
+      }
+    }
+
+    /* Instructor Profile */
+    .eventInstructorSection {
+      .instructorCard {
+        display: flex;
+        align-items: flex-start;
+        gap: 20px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 20px;
+
+        @media (max-width: 600px) {
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        .instructorAvatarCol {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          flex-shrink: 0;
+
+          .instructorImg {
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ecd8cc;
+          }
+
+          .verifiedPill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--primaryColor, #874429);
+            background: #faf4ef;
+            padding: 2px 8px;
+            border-radius: 50px;
+            border: 1px solid #f0e3d9;
+          }
+        }
+
+        .instructorDetailsCol {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+
+          .instructorName {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+          }
+
+          .instructorRole {
+            font-size: 13px;
+            color: var(--primaryColor, #874429);
+            font-weight: 600;
+            margin: 0;
+          }
+
+          .instructorBio {
+            font-size: 13.5px;
+            color: #475569;
+            line-height: 1.55;
+            margin: 6px 0 10px 0;
+          }
+
+          .instructorTags {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+
+            .iTag {
+              font-size: 11px;
+              color: #475569;
+              background: #f1f5f9;
+              padding: 3px 10px;
+              border-radius: 6px;
+            }
+          }
+        }
+      }
+    }
+
+    /* Highlights Section */
+    .eventHighlightsSection {
+      .highlightsGrid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+
+        @media (max-width: 640px) {
+          grid-template-columns: 1fr;
+        }
+
+        .highlightCard {
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          background: #ffffff;
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 16px;
+
+          .highlightCheck {
+            color: var(--primaryColor, #874429);
+            font-size: 18px;
+            margin-top: 2px;
+            flex-shrink: 0;
+          }
+
+          .highlightText {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+
+            h4 {
+              font-size: 14px;
+              font-weight: 600;
+              color: #0f172a;
+              margin: 0;
+            }
+
+            p {
+              font-size: 12.5px;
+              color: #64748b;
+              line-height: 1.5;
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+
+    /* Schedule Timeline */
+    .eventScheduleSection {
+      .scheduleTimeline {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+
+        .timelineItem {
+          display: flex;
+          align-items: flex-start;
+          gap: 16px;
+
+          .timelineMarker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            width: 32px;
+
+            .markerCircle {
+              width: 30px;
+              height: 30px;
+              border-radius: 50%;
+              background: #faf4ef;
+              border: 1px solid #ebdcd2;
+              color: var(--primaryColor, #874429);
+              font-size: 12.5px;
+              font-weight: 700;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+
+            .markerLine {
+              width: 2px;
+              height: 40px;
+              background: #e2e8f0;
+              margin-top: 4px;
+            }
+          }
+
+          .timelineContent {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            padding-bottom: 10px;
+
+            .timelineTime {
+              font-size: 11.5px;
+              color: var(--primaryColor, #874429);
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+
+            .timelineTitle {
+              font-size: 15px;
+              font-weight: 600;
+              color: #0f172a;
+              margin: 0;
+            }
+
+            .timelineDesc {
+              font-size: 13px;
+              color: #64748b;
+              line-height: 1.5;
+              margin: 0;
+            }
+          }
+        }
+      }
+    }
+
+    /* Facilities */
+    .eventVenueFacilities {
+      .facilitiesBox {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 18px;
+
+        .facilityItem {
+          display: flex;
+          align-items: flex-start;
+          gap: 10px;
+          font-size: 13.5px;
+          color: #334155;
+          line-height: 1.5;
+
+          .fIcon {
+            color: #059669;
+            font-size: 16px;
+            margin-top: 2px;
+            flex-shrink: 0;
+          }
+
+          strong {
+            color: #0f172a;
+          }
         }
       }
     }
   }
 
-  /* Right Sticky Booking Card */
+  /* ════════ RIGHT COLUMN: Sticky Pass Box (Starts beside Title) ════════ */
   .eventSidebarCol {
-    .bookingCard {
+    height: 100%;
+    position: relative;
+
+    .eventPassStickyCard {
       position: sticky;
-      top: 100px;
+      top: 150px; /* Sticks cleanly below fixed Nav (80px) + SubNav (60px) + 10px spacing */
+      z-index: 20;
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 20px;
+      border: 1px solid #ebdcd2;
+      border-radius: 16px;
       padding: 24px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
       display: flex;
       flex-direction: column;
       gap: 18px;
+      box-shadow: none !important;
 
-      .priceHeader {
+      @media (max-width: 1024px) {
+        top: 95px;
+      }
+
+      @media (max-width: 868px) {
+        position: static;
+        top: auto;
+      }
+
+      .passHeader {
         display: flex;
         flex-direction: column;
-        border-bottom: 1px solid #f1f5f9;
+        gap: 4px;
         padding-bottom: 14px;
+        border-bottom: 1px solid #f1f5f9;
 
-        span.label {
-          font-size: 12px;
-          color: #94a3b8;
+        .passLabel {
+          font-size: 11.5px;
           font-weight: 500;
+          color: #64748b;
           text-transform: uppercase;
+          letter-spacing: 0.8px;
         }
 
-        .priceRow {
+        .passPriceWrapper {
           display: flex;
           align-items: baseline;
-          gap: 4px;
-          margin-top: 4px;
+          gap: 2px;
 
-          .cur {
-            font-size: 16px;
+          .currency {
+            font-size: 20px;
             font-weight: 600;
             color: var(--primaryColor, #874429);
           }
-          .amt {
-            font-size: 28px;
-            font-weight: 700;
+
+          .priceAmount {
+            font-size: 32px;
+            font-weight: 600;
             color: var(--primaryColor, #874429);
+            line-height: 1;
           }
-          .unit {
+
+          .priceUnit {
             font-size: 13px;
             color: #64748b;
+            margin-left: 4px;
           }
         }
       }
 
-      .bookingDetailsList {
+      /* Seats Status Progress Bar */
+      .seatsStatusBox {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 6px;
 
-        .detailItem {
+        .seatsTopRow {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          font-size: 13.5px;
-          color: #64748b;
+          font-size: 12.5px;
 
-          strong {
-            color: #1e293b;
-            font-weight: 600;
+          .seatsAvailableText {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #dc2626;
+            font-weight: 500;
           }
+
+          .seatsTotalText {
+            color: #64748b;
+          }
+        }
+
+        .seatsProgressBar {
+          width: 100%;
+          height: 6px;
+          background: #f1f5f9;
+          border-radius: 10px;
+          overflow: hidden;
+
+          .progressBarFill {
+            height: 100%;
+            background: var(--primaryColor, #874429);
+            border-radius: 10px;
+          }
+        }
+
+        .progressSubtext {
+          font-size: 11.5px;
+          color: #94a3b8;
         }
       }
 
-      .bookBtn {
-        width: 100%;
-        padding: 13px 24px;
-        background: var(--primaryColor, #874429);
-        color: #ffffff;
-        font-size: 15px;
-        font-weight: 500;
-        border-radius: 50px;
-        border: none;
+      /* Deadline Alert */
+      .deadlineAlertBox {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        background: #fffbeb;
+        border: 1px solid #fde68a;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 12px;
+        color: #92400e;
+
+        .alertIcon {
+          font-size: 16px;
+          margin-top: 2px;
+          flex-shrink: 0;
+          color: #d97706;
+        }
+
+        p {
+          margin: 0;
+          font-weight: 500;
+        }
+      }
+
+      /* Buttons */
+      .bookSpotPrimaryBtn {
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
+        width: 100%;
+        padding: 14px 20px;
+        border-radius: 50px;
+        background: var(--primaryColor, #874429);
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 500;
         text-decoration: none;
+        transition: background 0.2s ease;
+        box-shadow: none !important;
 
         &:hover {
           background: #6e331c;
-          box-shadow: 0 6px 18px rgba(135, 68, 41, 0.3);
-          transform: translateY(-1px);
+          transform: none !important;
+          box-shadow: none !important;
         }
       }
 
-      .guaranteeNote {
-        font-size: 11.5px;
-        color: #94a3b8;
-        text-align: center;
-        margin: 0;
+      /* Guarantee List */
+      .passGuaranteeList {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-top: 10px;
+        border-top: 1px solid #f1f5f9;
+
+        .guaranteeItem {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12px;
+          color: #475569;
+
+          .gIcon {
+            color: #059669;
+            font-size: 14px;
+            flex-shrink: 0;
+          }
+        }
+      }
+    }
+  }
+
+  /* ════════ RELATED EVENTS SECTION (Title Only, Left-Aligned) ════════ */
+  .relatedEventsSection {
+    margin-top: 60px;
+    padding-top: 45px;
+    border-top: 1px solid #f1f5f9;
+
+    .relatedSectionTitle {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f172a;
+      text-align: left;
+      margin: 0 0 24px 0;
+      letter-spacing: -0.3px;
+    }
+
+    .relatedEventsGrid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+      width: 100%;
+
+      @media (max-width: 900px) {
+        grid-template-columns: 1fr;
       }
     }
   }
 }
-

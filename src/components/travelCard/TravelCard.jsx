@@ -102,46 +102,71 @@ const TravelCard = ({ travel }) => {
       >
         {/* Top Thumbnail Section */}
         <div className="travelImgWrapper">
-          {image && (
-            <Image
-              src={image}
-              alt={title || "Travel Retreat"}
-              fill
-              className="travelImage"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          )}
+          {isVideoOpen ? (
+            <div className="cardInlineVideoWrapper" onClick={(e) => e.stopPropagation()}>
+              <video
+                src="/travel.mp4"
+                controls
+                autoPlay
+                playsInline
+                className="cardInlineVideoPlayer"
+              />
+              <button
+                type="button"
+                className="cardCloseVideoBtn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsVideoOpen(false);
+                }}
+                aria-label="Close video"
+              >
+                <FiX />
+              </button>
+            </div>
+          ) : (
+            <>
+              {image && (
+                <Image
+                  src={image}
+                  alt={title || "Travel Retreat"}
+                  fill
+                  className="travelImage"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              )}
 
-          {/* Top-Left Category Badge */}
-          {category && (
-            <span className="travelCategoryBadge">{category}</span>
-          )}
+              {/* Top-Left Category Badge */}
+              {category && (
+                <span className="travelCategoryBadge">{category}</span>
+              )}
 
-          {/* Top-Right Booking Status */}
-          {status && (
-            <span className={`travelStatusBadge ${getStatusClass(status)}`}>
-              <span className="statusDot" />
-              {status}
-            </span>
-          )}
+              {/* Top-Right Booking Status */}
+              {status && (
+                <span className={`travelStatusBadge ${getStatusClass(status)}`}>
+                  <span className="statusDot" />
+                  {status}
+                </span>
+              )}
 
-          {/* Bottom-Left Duration Pill */}
-          {duration && (
-            <span className="travelDurationPill">
-              <FiClock className="icon" />
-              <span>{duration}</span>
-            </span>
-          )}
+              {/* Bottom-Left Duration Pill */}
+              {duration && (
+                <span className="travelDurationPill">
+                  <FiClock className="icon" />
+                  <span>{duration}</span>
+                </span>
+              )}
 
-          {/* Video Play Button */}
-          <button
-            type="button"
-            className="travelPlayBtn"
-            onClick={handlePlayVideo}
-            aria-label="Play travel intro video"
-          >
-            <FaPlay />
-          </button>
+              {/* Video Play Button */}
+              <button
+                type="button"
+                className="travelPlayBtn"
+                onClick={handlePlayVideo}
+                aria-label="Play travel intro video"
+              >
+                <FaPlay />
+              </button>
+            </>
+          )}
         </div>
 
         {/* Content Body */}
@@ -216,52 +241,6 @@ const TravelCard = ({ travel }) => {
           </div>
         </div>
       </div>
-
-      {/* Video Modal Popup */}
-      {isVideoOpen && (
-        <div
-          className="TravelVideoModalBackdrop"
-          onClick={() => setIsVideoOpen(false)}
-        >
-          <div
-            className="TravelVideoModalContent"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              className="CloseModalBtn"
-              onClick={() => setIsVideoOpen(false)}
-              aria-label="Close video"
-            >
-              <FiX />
-            </button>
-
-            {isEmbedVideo ? (
-              <iframe
-                src={finalVideoUrl}
-                title={title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="TravelModalIframe"
-              />
-            ) : finalVideoUrl ? (
-              <video
-                src={finalVideoUrl}
-                controls
-                autoPlay
-                className="TravelModalVideo"
-              />
-            ) : (
-              <div className="NoVideoPlaceholder">
-                <FaPlay style={{ fontSize: "32px", marginBottom: "12px", opacity: 0.85 }} />
-                <h4>Journey Preview Coming Soon</h4>
-                <p>We are preparing the retreat teaser video for {title}.</p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </>
   );
 };
