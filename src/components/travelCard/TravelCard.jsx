@@ -15,22 +15,21 @@ const TravelCard = ({ travel }) => {
 
   const {
     id,
-    slug = "",
-    title = "Rishikesh Himalayan Yoga & Spiritual Retreat",
-    description = "Immerse in morning Ganga aarti, sacred meditation caves, and masterclasses in the world yoga capital.",
+    title = "",
+    description = "",
     image,
-    category = "Yoga Retreat",
-    status = "Booking Open",
-    destination = "Rishikesh, Himalayas",
-    startDate = "15 Dec 2026",
-    endDate = "20 Dec 2026",
-    duration = "6 Days / 5 Nights",
-    totalSlots = 20,
-    bookedSlots = 14,
-    price = "24,999",
-    originalPrice = "29,999",
+    categoryName = "",
+    statusName = "",
+    destination = "",
+    startDate = "",
+    duration = "",
+    totalSlots = null,
+    bookedSlots = 0,
+    availableSlots: availableFromApi = null,
+    price = "",
+    originalPrice = "",
     videoUrl = "",
-    link = "/travel/travel-details",
+    link = id ? `/travel/travel-details?id=${encodeURIComponent(id)}` : "/travel",
   } = travel;
 
   const targetLink = link || "/travel/travel-details";
@@ -59,13 +58,11 @@ const TravelCard = ({ travel }) => {
     return "status-upcoming";
   };
 
-  const availableSlots = Math.max(0, totalSlots - bookedSlots);
+  const availableSlots = availableFromApi == null ? (totalSlots == null ? null : Math.max(0, totalSlots - bookedSlots)) : availableFromApi;
   const cleanPrice = String(price).replace(/[₹\s]/g, "");
   const cleanOriginalPrice = originalPrice ? String(originalPrice).replace(/[₹\s]/g, "") : null;
 
-  // Sample retreat preview video fallback if not provided
-  const sampleFallbackVideo = "https://www.youtube.com/embed/inpok4MKVLM";
-  const activeVideoUrl = videoUrl && String(videoUrl).trim() !== "" ? String(videoUrl).trim() : sampleFallbackVideo;
+  const activeVideoUrl = videoUrl ? String(videoUrl).trim() : "";
 
   const formatVideoUrl = (url) => {
     if (!url) return "";
@@ -104,13 +101,9 @@ const TravelCard = ({ travel }) => {
         <div className="travelImgWrapper">
           {isVideoOpen ? (
             <div className="cardInlineVideoWrapper" onClick={(e) => e.stopPropagation()}>
-              <video
-                src="/travel.mp4"
-                controls
-                autoPlay
-                playsInline
-                className="cardInlineVideoPlayer"
-              />
+                {finalVideoUrl.includes("youtube.com/embed") || finalVideoUrl.includes("player.vimeo.com")
+                  ? <iframe src={finalVideoUrl} title={`${title} introduction`} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen className="cardInlineVideoPlayer" />
+                  : <video src={finalVideoUrl} controls autoPlay playsInline className="cardInlineVideoPlayer" />}
               <button
                 type="button"
                 className="cardCloseVideoBtn"
@@ -136,15 +129,15 @@ const TravelCard = ({ travel }) => {
               )}
 
               {/* Top-Left Category Badge */}
-              {category && (
-                <span className="travelCategoryBadge">{category}</span>
+              {categoryName && (
+                <span className="travelCategoryBadge">{categoryName}</span>
               )}
 
               {/* Top-Right Booking Status */}
-              {status && (
-                <span className={`travelStatusBadge ${getStatusClass(status)}`}>
+              {statusName && (
+                <span className={`travelStatusBadge ${getStatusClass(statusName)}`}>
                   <span className="statusDot" />
-                  {status}
+                  {statusName}
                 </span>
               )}
 
@@ -157,14 +150,14 @@ const TravelCard = ({ travel }) => {
               )}
 
               {/* Video Play Button */}
-              <button
+              {activeVideoUrl && <button
                 type="button"
                 className="travelPlayBtn"
                 onClick={handlePlayVideo}
                 aria-label="Play travel intro video"
               >
                 <FaPlay />
-              </button>
+              </button>}
             </>
           )}
         </div>
@@ -205,12 +198,12 @@ const TravelCard = ({ travel }) => {
           {/* Slot Availability Info */}
           <div className="travelSlotBox">
             <div className="slotLabels">
-              <span className="slotCount">
+              {totalSlots != null && <span className="slotCount">
                 <FiUsers className="icon" />
                 <span><strong>{bookedSlots}/{totalSlots}</strong> Booked</span>
-              </span>
-              <span className={`slotRemaining ${availableSlots <= 4 ? "urgent" : ""}`}>
-                {availableSlots <= 4 ? `Only ${availableSlots} Slots Left` : `${availableSlots} Slots Left`}
+              </span>}
+              <span className={`slotRemaining ${availableSlots != null && availableSlots <= 4 ? "urgent" : ""}`}>
+                {availableSlots == null ? "Availability not limited" : availableSlots <= 4 ? `Only ${availableSlots} Slots Left` : `${availableSlots} Slots Left`}
               </span>
             </div>
           </div>

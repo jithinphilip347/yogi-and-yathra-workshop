@@ -425,3 +425,12 @@
     }
   }
 }
+#TravelListPage .travelContentState {
+  min-height: 240px;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  padding: 32px;
+  text-align: center;
+  color: #667085;
+}

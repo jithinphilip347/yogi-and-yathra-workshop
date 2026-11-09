@@ -1,10 +1,10 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import TravelCard from "@/components/travelCard/TravelCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
 import CustomFilterDropdown from "@/components/filter/CustomFilterDropdown";
-import { DEFAULT_TRAVEL_RETREATS } from "@/components/home/HomeTravel";
+import { adaptTravelPackage, travelPackageApi } from "@/services/travelPackageApi";
 import HeroBgImg from "@/assets/images/travel.jpg";
 import {
   FiMapPin,
@@ -18,7 +18,18 @@ import {
 import "@/assets/css/TravelList.scss";
 
 const TravelList = ({ initialTravels }) => {
-  const allTravels = initialTravels || DEFAULT_TRAVEL_RETREATS;
+  const [allTravels, setAllTravels] = useState(() => Array.isArray(initialTravels) ? initialTravels.map(adaptTravelPackage) : []);
+  const [isLoading, setIsLoading] = useState(!Array.isArray(initialTravels));
+  const [loadError, setLoadError] = useState("");
+  useEffect(() => {
+    if (Array.isArray(initialTravels)) return undefined;
+    let active = true;
+    travelPackageApi.list({ per_page: 100 })
+      .then((records) => { if (active) setAllTravels(records.map(adaptTravelPackage).filter(Boolean)); })
+      .catch(() => { if (active) setLoadError("We could not load travel packages. Please try again."); })
+      .finally(() => { if (active) setIsLoading(false); });
+    return () => { active = false; };
+  }, [initialTravels]);
 
   // Filter States
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -31,7 +42,7 @@ const TravelList = ({ initialTravels }) => {
   const [visibleCount, setVisibleCount] = useState(3);
 
   // Categories
-  const categories = ["All", "Spiritual Journey", "Wellness Tour", "Yoga Retreat"];
+  const categories = useMemo(() => ["All", ...new Set(allTravels.map((travel) => travel.categoryLabel).filter(Boolean))], [allTravels]);
 
   // Destinations derived from card data
   const destinationOptions = useMemo(() => {
@@ -65,7 +76,9 @@ const TravelList = ({ initialTravels }) => {
     { value: "All", label: "All Status" },
     { value: "Booking Open", label: "Booking Open" },
     { value: "Almost Full", label: "Almost Full" },
+    { value: "Fully Booked", label: "Fully Booked" },
     { value: "Upcoming", label: "Upcoming" },
+    { value: "Registration Closed", label: "Registration Closed" },
   ];
 
   // Sort options
@@ -81,8 +94,7 @@ const TravelList = ({ initialTravels }) => {
       // Category match
       const catMatch =
         selectedCategory === "All" ||
-        (item.category &&
-          item.category.toLowerCase().includes(selectedCategory.toLowerCase().trim()));
+        (item.categoryLabel && item.categoryLabel.toLowerCase() === selectedCategory.toLowerCase().trim());
 
       // Destination match
       const destMatch =
@@ -93,8 +105,7 @@ const TravelList = ({ initialTravels }) => {
       // Status match
       const statusMatch =
         selectedStatus === "All" ||
-        (item.status &&
-          item.status.toLowerCase().includes(selectedStatus.toLowerCase()));
+        (item.statusLabel && item.statusLabel.toLowerCase() === selectedStatus.toLowerCase());
 
       // Duration match
       const durMatch =
@@ -109,14 +120,12 @@ const TravelList = ({ initialTravels }) => {
     if (sortBy === "price-asc") {
       result = [...result].sort(
         (a, b) =>
-          Number(String(a.price).replace(/[^0-9]/g, "")) -
-          Number(String(b.price).replace(/[^0-9]/g, ""))
+          Number(a.effectivePrice || 0) - Number(b.effectivePrice || 0)
       );
     } else if (sortBy === "price-desc") {
       result = [...result].sort(
         (a, b) =>
-          Number(String(b.price).replace(/[^0-9]/g, "")) -
-          Number(String(a.price).replace(/[^0-9]/g, ""))
+          Number(b.effectivePrice || 0) - Number(a.effectivePrice || 0)
       );
     }
 
@@ -343,17 +352,11 @@ const TravelList = ({ initialTravels }) => {
           )}
 
           {/* Retreats Cards Grid OR ElseDesign */}
-          {filteredTravels.length > 0 ? (
+          {isLoading ? <div className="travelContentState" role="status">Loading travel packages…</div> : loadError ? <ElseDesign title="Travel packages unavailable" message={loadError} /> : filteredTravels.length > 0 ? (
             <>
               <div className="travelListingGrid">
                 {visibleTravels.map((travel, i) => (
-                  <TravelCard
-                    key={travel.id || i}
-                    travel={{
-                      ...travel,
-                      link: "/travel/travel-details",
-                    }}
-                  />
+                  <TravelCard key={travel.id || i} travel={travel} />
                 ))}
               </div>
 
