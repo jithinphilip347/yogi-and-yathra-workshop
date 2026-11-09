@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import UserImg from "../../assets/images/user.webp";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useSelector } from "react-redux";
 import { useUnreadNotificationCount } from "@/hooks/useNotifications";
 import { fetchCategories } from "@/libs/course";
@@ -11,7 +12,11 @@ import {
   MdFavoriteBorder,
   MdOutlineInfo,
   MdOutlineContactSupport,
+  MdFlight,
+  MdOutlineShoppingBag,
+  MdSelfImprovement,
 } from "react-icons/md";
+import { FiCalendar } from "react-icons/fi";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoCartOutline } from "react-icons/io5";
 import { HiOutlineHome, HiOutlineBookOpen } from "react-icons/hi";
@@ -19,11 +24,51 @@ import { BiNews } from "react-icons/bi";
 import Image from "next/image";
 
 const Sidnav = ({ isOpen, onClose }) => {
+  const pathname = usePathname();
   const [isCourseOpen, setIsCourseOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [mounted, setMounted] = useState(false);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
+
+  const isTravel = pathname?.startsWith("/travel");
+  const isEvent = pathname?.startsWith("/event");
+  const activeVertical = isTravel
+    ? "travel"
+    : isEvent
+    ? "events"
+    : "workshop";
+
+  const verticalSwitchers = [
+    {
+      id: "workshop",
+      name: "Workshop",
+      path: "/",
+      icon: MdSelfImprovement,
+      isExternal: false,
+    },
+    {
+      id: "travel",
+      name: "Travel",
+      path: "/travel",
+      icon: MdFlight,
+      isExternal: false,
+    },
+    {
+      id: "events",
+      name: "Events",
+      path: "/event",
+      icon: FiCalendar,
+      isExternal: false,
+    },
+    {
+      id: "ecommerce",
+      name: "E-Commerce",
+      path: "https://www.yogiandyathra.com/",
+      icon: MdOutlineShoppingBag,
+      isExternal: true,
+    },
+  ];
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -69,6 +114,44 @@ const Sidnav = ({ isOpen, onClose }) => {
             </div>
           </div>
         </div>
+
+        {/* Mobile Platform Vertical Switcher */}
+        <div className="SideNavSwitcherBox">
+          <span className="sideSwitcherLabel">Platforms</span>
+          <div className="sideSwitcherGrid">
+            {verticalSwitchers.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeVertical === item.id;
+              if (item.isExternal) {
+                return (
+                  <a
+                    key={item.id}
+                    href={item.path}
+                    onClick={onClose}
+                    className={`sideSwitchBtn ${isActive ? "active" : ""}`}
+                    title={`Go to ${item.name}`}
+                  >
+                    <Icon className={`sideIcon icon-${item.id}`} />
+                    <span>{item.name}</span>
+                  </a>
+                );
+              }
+              return (
+                <Link
+                  key={item.id}
+                  href={item.path}
+                  onClick={onClose}
+                  className={`sideSwitchBtn ${isActive ? "active" : ""}`}
+                  title={`Switch to ${item.name}`}
+                >
+                  <Icon className={`sideIcon icon-${item.id}`} />
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="SideNavLinks">
           <ul>
             {/* Home Link */}
