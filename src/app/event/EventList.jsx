@@ -1,10 +1,10 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 import EventCard from "@/components/eventCard/EventCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
 import CustomFilterDropdown from "@/components/filter/CustomFilterDropdown";
-import { DEFAULT_OFFLINE_EVENTS } from "@/components/home/HomeOfflineEvent";
+import { adaptOfflineEvent, offlineEventApi } from "@/services/offlineEventApi";
 import HeroBgImg from "@/assets/images/courseImg-3.webp";
 import {
   FiMapPin,
@@ -17,8 +17,19 @@ import {
 } from "react-icons/fi";
 import "@/assets/css/EventList.scss";
 
-const EventList = ({ initialEvents }) => {
-  const allEvents = initialEvents || DEFAULT_OFFLINE_EVENTS;
+const EventList = () => {
+  const [allEvents, setAllEvents] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    offlineEventApi.list({ per_page: 100 })
+      .then((events) => { if (active) setAllEvents(events.map(adaptOfflineEvent).filter(Boolean)); })
+      .catch(() => { if (active) setLoadError("We could not load events right now. Please try again."); })
+      .finally(() => { if (active) setIsLoading(false); });
+    return () => { active = false; };
+  }, []);
 
   // Filter States
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -31,14 +42,7 @@ const EventList = ({ initialEvents }) => {
   const [visibleCount, setVisibleCount] = useState(4);
 
   // Categories
-  const categories = [
-    "All",
-    "Offline Workshop",
-    "Wellness Retreat",
-    "Masterclass",
-    "Nature Retreat",
-    "Therapy Workshop",
-  ];
+  const categories = useMemo(() => ["All", ...new Set(allEvents.map((event) => event.category).filter(Boolean))], [allEvents]);
 
   // Locations derived from card data
   const locationOptions = useMemo(() => {
@@ -72,7 +76,9 @@ const EventList = ({ initialEvents }) => {
     { value: "All", label: "All Status" },
     { value: "Booking Open", label: "Booking Open" },
     { value: "Almost Full", label: "Almost Full" },
-    { value: "Upcoming", label: "Upcoming" },
+    { value: "Fully Booked", label: "Fully Booked" },
+    { value: "Registration Upcoming", label: "Registration Upcoming" },
+    { value: "Registration Closed", label: "Registration Closed" },
   ];
 
   // Sort options
@@ -120,14 +126,12 @@ const EventList = ({ initialEvents }) => {
     if (sortBy === "price-asc") {
       result = [...result].sort(
         (a, b) =>
-          Number(String(a.price).replace(/[^0-9]/g, "")) -
-          Number(String(b.price).replace(/[^0-9]/g, ""))
+        Number(a.ticket_price || 0) - Number(b.ticket_price || 0)
       );
     } else if (sortBy === "price-desc") {
       result = [...result].sort(
         (a, b) =>
-          Number(String(b.price).replace(/[^0-9]/g, "")) -
-          Number(String(a.price).replace(/[^0-9]/g, ""))
+        Number(b.ticket_price || 0) - Number(a.ticket_price || 0)
       );
     }
 
@@ -354,7 +358,11 @@ const EventList = ({ initialEvents }) => {
           )}
 
           {/* Event Cards Grid OR ElseDesign */}
-          {filteredEvents.length > 0 ? (
+          {isLoading ? (
+            <div className="eventLoadingState" role="status">Loading events…</div>
+          ) : loadError ? (
+            <div className="eventLoadingState" role="alert"><p>{loadError}</p><button type="button" onClick={() => { setIsLoading(true); setLoadError(""); offlineEventApi.list({ per_page: 100 }).then((events) => setAllEvents(events.map(adaptOfflineEvent).filter(Boolean))).catch(() => setLoadError("We could not load events right now. Please try again.")).finally(() => setIsLoading(false)); }}>Retry</button></div>
+          ) : filteredEvents.length > 0 ? (
             <>
               <div className="eventListingGrid">
                 {visibleEvents.map((evt, i) => (

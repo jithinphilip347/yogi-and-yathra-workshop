@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FaPlay } from "react-icons/fa";
-import { FiClock, FiMapPin, FiX, FiArrowRight, FiCalendar, FiUsers } from "react-icons/fi";
+import { FiMapPin, FiX, FiArrowRight, FiCalendar, FiUsers } from "react-icons/fi";
+import { resolveMediaUrl } from "@/utils/mediaUrl";
 import "./EventCard.css";
 
 const EventCard = ({ event }) => {
@@ -15,24 +15,21 @@ const EventCard = ({ event }) => {
 
   const {
     id,
-    slug = "",
-    title = "Sunset Beach Yoga & Meditation Workshop",
-    description = "Experience inner tranquility with traditional Hatha yoga practices during the sunset.",
+    title = "",
     image,
-    category = "Offline Workshop",
-    status = "Booking Open",
-    date = "24 - 27 Nov 2026",
-    duration = "4 Days",
-    venue = "Cherai Beach",
-    location = "Kochi, Kerala",
-    price = "1,499",
+    category = "",
+    status = "",
+    date = "",
+    duration = "",
+    venue = "",
+    location = "",
+    price = "",
     seats = "",
-    tags = [],
-    videoUrl,
-    link = "/event/event-details",
+    videoUrl = "",
+    link,
   } = event;
 
-  const targetLink = link || "/event/event-details";
+  const targetLink = link || (id ? `/event/event-details?id=${encodeURIComponent(id)}` : "/event");
 
   const handleCardClick = (e) => {
     // If clicked inside play button or video modal, don't navigate
@@ -61,9 +58,7 @@ const EventCard = ({ event }) => {
   const fullLocation = venue ? `${venue}, ${location}` : location;
   const cleanPrice = String(price).replace(/[₹\s]/g, "");
 
-  // Sample event preview video fallback if not provided
-  const sampleFallbackVideo = "https://www.youtube.com/embed/inpok4MKVLM";
-  const activeVideoUrl = videoUrl && String(videoUrl).trim() !== "" ? String(videoUrl).trim() : sampleFallbackVideo;
+  const activeVideoUrl = videoUrl ? resolveMediaUrl(videoUrl, "") : "";
 
   const formatVideoUrl = (url) => {
     if (!url) return "";
@@ -102,13 +97,7 @@ const EventCard = ({ event }) => {
         <div className="eventImgWrapper">
           {isVideoOpen ? (
             <div className="cardInlineVideoWrapper" onClick={(e) => e.stopPropagation()}>
-              <video
-                src="/offline-event.mp4"
-                controls
-                autoPlay
-                playsInline
-                className="cardInlineVideoPlayer"
-              />
+              {isEmbedVideo ? <iframe src={finalVideoUrl} title={`${title} introduction`} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen className="cardInlineVideoPlayer" /> : <video src={finalVideoUrl} controls autoPlay playsInline className="cardInlineVideoPlayer" />}
               <button
                 type="button"
                 className="cardCloseVideoBtn"
@@ -124,13 +113,7 @@ const EventCard = ({ event }) => {
           ) : (
             <>
               {image && (
-                <Image
-                  src={image}
-                  alt={title || "Offline Event"}
-                  fill
-                  className="eventImage"
-                  sizes="(max-width: 768px) 100vw, 420px"
-                />
+                <img src={resolveMediaUrl(image, "")} alt={title || "Offline Event"} className="eventImage" />
               )}
 
               {/* Category Badge on Image */}
@@ -139,14 +122,14 @@ const EventCard = ({ event }) => {
               )}
 
               {/* Center Play Button Overlay */}
-              <button
+              {videoUrl && <button
                 type="button"
                 className="eventPlayBtn"
                 onClick={handlePlayVideo}
                 aria-label="Play intro video"
               >
                 <FaPlay />
-              </button>
+              </button>}
             </>
           )}
         </div>
@@ -197,10 +180,6 @@ const EventCard = ({ event }) => {
 
           {/* 4. Event Perks / Tags */}
           <div className="eventTagsRow">
-            <span className="eventTagItem">🌿 In-Person</span>
-            {tags && tags.length > 0 && (
-              <span className="eventTagItem">{tags[1] || tags[0]}</span>
-            )}
             {seats && (
               <span className="eventTagItem seatsHighlight">
                 <FiUsers className="tagIcon" /> {seats}
