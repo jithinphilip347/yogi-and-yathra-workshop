@@ -173,11 +173,11 @@ const TravelCard = ({ travel }) => {
         <div className="travelContent">
           {/* Destination & Date Row */}
           <div className="travelMetaHeader">
-            <span className="destinationPill" title={destination}>
+            <span className="travelDestination destinationPill" title={destination}>
               <FiMapPin className="icon" />
               <span>{destination}</span>
             </span>
-            <span className="datePill">
+            <span className="travelDates datePill">
               <FiCalendar className="icon" />
               <span>{startDate}</span>
             </span>
@@ -197,7 +197,7 @@ const TravelCard = ({ travel }) => {
 
           {/* Description */}
           {description && (
-            <p className="travelDesc" title={description}>
+            <p className="travelDescription travelDesc" title={description}>
               {description}
             </p>
           )}
