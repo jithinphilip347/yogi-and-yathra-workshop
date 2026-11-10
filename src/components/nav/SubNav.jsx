@@ -33,11 +33,11 @@ const SubNav = () => {
       isExternal: false,
     },
     {
-      id: "travel",
-      name: "Travel",
-      path: "/travel",
-      icon: MdFlight,
-      isExternal: false,
+      id: "ecommerce",
+      name: "Spiritual Store",
+      path: "https://www.yogiandyathra.com/",
+      icon: MdOutlineShoppingBag,
+      isExternal: true,
     },
     {
       id: "events",
@@ -47,11 +47,11 @@ const SubNav = () => {
       isExternal: false,
     },
     {
-      id: "ecommerce",
-      name: "E-Commerce",
-      path: "https://www.yogiandyathra.com/",
-      icon: MdOutlineShoppingBag,
-      isExternal: true,
+      id: "travel",
+      name: "Travel",
+      path: "/travel",
+      icon: MdFlight,
+      isExternal: false,
     },
   ];
 

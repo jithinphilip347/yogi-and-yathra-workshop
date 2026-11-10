@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
-import EventCard from "@/components/eventCard/EventCard";
+import EventCard, { EventCardSkeleton } from "@/components/eventCard/EventCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
 import CustomFilterDropdown from "@/components/filter/CustomFilterDropdown";
 import { DEFAULT_OFFLINE_EVENTS } from "@/components/home/HomeOfflineEvent";
@@ -17,7 +17,8 @@ import {
 } from "react-icons/fi";
 import "@/assets/css/EventList.scss";
 
-const EventList = ({ initialEvents }) => {
+const EventList = ({ initialEvents, isLoading = false, loading = false }) => {
+  const isEventsLoading = isLoading || loading;
   const allEvents = initialEvents || DEFAULT_OFFLINE_EVENTS;
 
   // Filter States
@@ -354,7 +355,13 @@ const EventList = ({ initialEvents }) => {
           )}
 
           {/* Event Cards Grid OR ElseDesign */}
-          {filteredEvents.length > 0 ? (
+          {isEventsLoading ? (
+            <div className="eventListingGrid">
+              {Array.from({ length: 4 }).map((_, idx) => (
+                <EventCardSkeleton key={idx} />
+              ))}
+            </div>
+          ) : filteredEvents.length > 0 ? (
             <>
               <div className="eventListingGrid">
                 {visibleEvents.map((evt, i) => (

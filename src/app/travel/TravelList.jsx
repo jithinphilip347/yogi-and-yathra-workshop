@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useMemo } from "react";
 import Image from "next/image";
-import TravelCard from "@/components/travelCard/TravelCard";
+import TravelCard, { TravelCardSkeleton } from "@/components/travelCard/TravelCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
 import CustomFilterDropdown from "@/components/filter/CustomFilterDropdown";
 import { DEFAULT_TRAVEL_RETREATS } from "@/components/home/HomeTravel";
@@ -17,7 +17,8 @@ import {
 } from "react-icons/fi";
 import "@/assets/css/TravelList.scss";
 
-const TravelList = ({ initialTravels }) => {
+const TravelList = ({ initialTravels, isLoading = false, loading = false }) => {
+  const isTravelLoading = isLoading || loading;
   const allTravels = initialTravels || DEFAULT_TRAVEL_RETREATS;
 
   // Filter States
@@ -343,7 +344,13 @@ const TravelList = ({ initialTravels }) => {
           )}
 
           {/* Retreats Cards Grid OR ElseDesign */}
-          {filteredTravels.length > 0 ? (
+          {isTravelLoading ? (
+            <div className="travelListingGrid">
+              {Array.from({ length: 6 }).map((_, idx) => (
+                <TravelCardSkeleton key={idx} />
+              ))}
+            </div>
+          ) : filteredTravels.length > 0 ? (
             <>
               <div className="travelListingGrid">
                 {visibleTravels.map((travel, i) => (

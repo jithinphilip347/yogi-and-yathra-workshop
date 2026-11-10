@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import TravelCard from "../travelCard/TravelCard";
+import TravelCard, { TravelCardSkeleton } from "../travelCard/TravelCard";
 import ElseDesign from "../elseDesign/ElseDesign";
 
 import TravelImg1 from "@/assets/images/courseImg-6.webp";
@@ -131,10 +131,39 @@ export const DEFAULT_TRAVEL_RETREATS = [
   },
 ];
 
-const HomeTravel = ({ travels }) => {
+const HomeTravel = ({ travels, isLoading = false, loading = false }) => {
+  const isCardLoading = isLoading || loading;
   const items = travels !== undefined ? travels : DEFAULT_TRAVEL_RETREATS;
 
+  // Show 3 cards per view on desktop slider
   const isSlider = items && items.length > 3;
+
+  if (isCardLoading) {
+    return (
+      <div id="HomeTravel">
+        <div className="container">
+          <div className="HomeTravelHead">
+            <h2>
+              <span>Travel &amp;</span> Retreats
+            </h2>
+          </div>
+          <div className="HomeTravelMain">
+            <div className="travelGrid count-3">
+              <div className="travelGridItem">
+                <TravelCardSkeleton />
+              </div>
+              <div className="travelGridItem">
+                <TravelCardSkeleton />
+              </div>
+              <div className="travelGridItem">
+                <TravelCardSkeleton />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div id="HomeTravel">

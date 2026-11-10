@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import EventCard from "../eventCard/EventCard";
+import EventCard, { EventCardSkeleton } from "../eventCard/EventCard";
 import ElseDesign from "../elseDesign/ElseDesign";
 
 import EventImg1 from "@/assets/images/courseImg-1.webp";
@@ -144,11 +144,36 @@ export const DEFAULT_OFFLINE_EVENTS = [
   },
 ];
 
-const HomeOfflineEvent = ({ events }) => {
+const HomeOfflineEvent = ({ events, isLoading = false, loading = false }) => {
+  const isCardLoading = isLoading || loading;
   const items = events !== undefined ? events : DEFAULT_OFFLINE_EVENTS;
 
   // Show 2 spacious creative cards per view
   const isSlider = items && items.length > 2;
+
+  if (isCardLoading) {
+    return (
+      <div id="HomeOfflineEvent">
+        <div className="container">
+          <div className="HomeOfflineEventHead">
+            <h2>
+              <span>Offline</span> Events
+            </h2>
+          </div>
+          <div className="HomeOfflineEventMain">
+            <div className="offlineEventsGrid count-2">
+              <div className="offlineGridItem">
+                <EventCardSkeleton />
+              </div>
+              <div className="offlineGridItem">
+                <EventCardSkeleton />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div id="HomeOfflineEvent">

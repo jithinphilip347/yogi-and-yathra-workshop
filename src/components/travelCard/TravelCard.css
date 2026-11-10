@@ -553,3 +553,119 @@
     justify-content: center;
   }
 }
+
+
+/* ═════════════════════════════════════════════════════════════════════════
+   Travel Card React Skeleton Loading Styles
+   ═════════════════════════════════════════════════════════════════════════ */
+.travelCard.travelCardSkeleton {
+  cursor: default !important;
+  pointer-events: none;
+  background: #ffffff !important;
+  border-color: #e8ecf1 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.travelCardSkeleton:hover {
+  background: #ffffff !important;
+  border-color: #e8ecf1 !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.travelCardSkeleton .skeletonImgWrapper {
+  position: relative;
+  overflow: hidden;
+  background: #e2e8f0;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+}
+
+.travelCardSkeleton .skeletonFillContainer {
+  display: block;
+  width: 100%;
+  height: 100%;
+  line-height: 1;
+}
+
+.travelCardSkeleton .skeletonFillItem,
+.travelCardSkeleton .skeletonFillContainer .react-loading-skeleton {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.travelCardSkeleton .skeletonBadgeOverlay,
+.travelCardSkeleton .skeletonStatusOverlay,
+.travelCardSkeleton .skeletonDurationOverlay {
+  background: rgba(255, 255, 255, 0.45) !important;
+  border: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 3px 8px !important;
+}
+
+.travelCardSkeleton .skeletonPlayOverlay {
+  background: rgba(255, 255, 255, 0.9) !important;
+  border: none !important;
+  cursor: default !important;
+  box-shadow: none !important;
+}
+
+.travelCardSkeleton .skeletonPlayOverlay:hover {
+  transform: translate(-50%, -50%) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.travelCardSkeleton .skeletonMetaBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.travelCardSkeleton .skeletonPillWrapper {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.travelCardSkeleton .skeletonTitleBox {
+  margin-bottom: 8px;
+}
+
+.travelCardSkeleton .skeletonDescBox {
+  margin-bottom: 12px;
+}
+
+.travelCardSkeleton .skeletonSlotBox {
+  border: 1px solid #edf2f7 !important;
+  background: #f8fafc !important;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 14px;
+}
+
+.travelCardSkeleton .skeletonSlotBox .slotLabels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.travelCardSkeleton .skeletonBottomBox {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px dashed #f0f2f5;
+}
+
+.travelCardSkeleton .skeletonBtnWrapper {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+}

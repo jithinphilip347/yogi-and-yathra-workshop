@@ -6,10 +6,15 @@ import { useRouter } from "next/navigation";
 import { FaPlay } from "react-icons/fa";
 import { FiClock, FiMapPin, FiX, FiArrowRight, FiCalendar, FiUsers } from "react-icons/fi";
 import "./TravelCard.css";
+import TravelCardSkeleton from "./TravelCardSkeleton";
 
-const TravelCard = ({ travel }) => {
+const TravelCard = ({ travel, isLoading = false }) => {
   const router = useRouter();
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+
+  if (isLoading) {
+    return <TravelCardSkeleton />;
+  }
 
   if (!travel) return null;
 
@@ -245,4 +250,5 @@ const TravelCard = ({ travel }) => {
   );
 };
 
+export { TravelCardSkeleton };
 export default TravelCard;

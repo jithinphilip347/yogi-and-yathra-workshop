@@ -6,10 +6,15 @@ import { useRouter } from "next/navigation";
 import { FaPlay } from "react-icons/fa";
 import { FiClock, FiMapPin, FiX, FiArrowRight, FiCalendar, FiUsers } from "react-icons/fi";
 import "./EventCard.css";
+import EventCardSkeleton from "./EventCardSkeleton";
 
-const EventCard = ({ event }) => {
+const EventCard = ({ event, isLoading = false }) => {
   const router = useRouter();
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+
+  if (isLoading) {
+    return <EventCardSkeleton />;
+  }
 
   if (!event) return null;
 
@@ -236,4 +241,5 @@ const EventCard = ({ event }) => {
   );
 };
 
+export { EventCardSkeleton };
 export default EventCard;
