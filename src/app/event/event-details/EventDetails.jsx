@@ -50,7 +50,7 @@ function EventDetailsContent({ slug }) {
         if (!active) return;
         setEvent(record);
         setRelated(events.filter((item) => String(item.id) !== String(record?.id)).slice(0, 3));
-        setLoadedEventId(eventId);
+        setLoadedEventId(record?.slug || eventId);
         setLoadError("");
         if (record?.slug && window.location.pathname !== `/event/${record.slug}`) {
           router.replace(`/event/${encodeURIComponent(record.slug)}`);
@@ -61,8 +61,7 @@ function EventDetailsContent({ slug }) {
         setEvent(null);
         setLoadedEventId(eventId);
         setLoadError(error?.response?.status === 404 ? "This event is no longer available." : "We could not load this event. Please try again.");
-      })
-      .finally(() => { if (active) setLoadedEventId(eventId); });
+      });
     return () => { active = false; };
   }, [eventId, router]);
 

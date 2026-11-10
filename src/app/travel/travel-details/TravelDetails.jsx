@@ -40,6 +40,7 @@ function TravelDetailsContent({ slug }) {
         setRecord(item);
         setRelated(items.filter((candidate) => String(candidate.id) !== String(item?.id)).slice(0, 3).map(adaptTravelPackage).filter(Boolean));
         setLoadError("");
+        setLoadedId(item?.slug || travelId);
         if (item?.slug && window.location.pathname !== `/travel/${item.slug}`) {
           router.replace(`/travel/${encodeURIComponent(item.slug)}`);
         }
@@ -47,9 +48,9 @@ function TravelDetailsContent({ slug }) {
       .catch((error) => {
         if (!active) return;
         setRecord(null);
+        setLoadedId(travelId);
         setLoadError(error?.response?.status === 404 ? "This travel package is no longer available." : "We could not load this travel package. Please try again.");
-      })
-      .finally(() => { if (active) setLoadedId(travelId); });
+      });
     return () => { active = false; };
   }, [travelId, router]);
 

@@ -5,6 +5,7 @@ describe("travel package public data adapter", () => {
   it("maps saved package fields and uses a discount only when it is lower than the regular price", () => {
     const travel = adaptTravelPackage({
       id: 42,
+      slug: "mountain-retreat",
       title: "Mountain retreat",
       category: "yoga_retreat",
       short_description: "A quiet guided journey.",
@@ -27,7 +28,7 @@ describe("travel package public data adapter", () => {
     expect(travel.effectivePrice).toBe(42000);
     expect(travel.originalPrice).toBe("45,000");
     expect(travel.availableSlots).toBe(11);
-    expect(travel.link).toBe("/travel/travel-details?id=42");
+    expect(travel.link).toBe("/travel/mountain-retreat");
   });
 
   it("does not show an invalid or non-discount price as a discount", () => {

@@ -2,9 +2,10 @@ import { describe, expect, it } from "vitest";
 import { adaptOfflineEvent, formatOfflineEventStatus } from "@/services/offlineEventApi";
 
 describe("offline event public data adapter", () => {
-  it("maps backend event field names to card fields and links by actual id", () => {
+  it("maps backend event fields and links using the public slug", () => {
     const event = adaptOfflineEvent({
       id: 42,
+      slug: "breathwork-workshop",
       title: "Breathwork workshop",
       category: "Workshop",
       thumbnail: "events/breathwork.webp",
@@ -25,7 +26,7 @@ describe("offline event public data adapter", () => {
     expect(event.price).toBe("1,500");
     expect(event.seats).toBe("8 Seats Left");
     expect(event.status).toBe("Almost Full");
-    expect(event.link).toBe("/event/event-details?id=42");
+    expect(event.link).toBe("/event/breathwork-workshop");
     expect(event.image).toContain("events/breathwork.webp");
   });
 
