@@ -113,11 +113,17 @@ function TravelDetailsContent({ slug }) {
     </div>
 
     <aside className="travelSidebarCol"><div className="travelPassStickyCard"><div className="passHeader"><span className="passLabel">Travel Package</span><div className="passPriceWrapper"><span className="currency">₹</span><span className="priceAmount">{new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(selectedPlanPrice ?? current.effectivePrice)}</span><span className="priceUnit">/ person</span></div>{selectedPlan ? (selectedPlanPrice < Number(selectedPlan.price) && <div className="savingsRow"><span className="originalPrice">₹{new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(Number(selectedPlan.price))}</span></div>) : (hasDiscount && <div className="savingsRow"><span className="originalPrice">₹{new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(current.regularPrice)}</span></div>)}</div>
-      <ExperiencePricingPlans plans={record.pricing_plans || []} value={selectedPlanId} onChange={setSelectedPlanId} />
       <div className="slotStatusBox"><div className="slotTopRow"><span className="slotAvailableText"><FiUsers /> <strong>{available == null ? "Unlimited slots" : `${available} Slots Left`}</strong></span>{total != null && <span className="slotTotalText">{total} Total</span>}</div>{total != null && <><div className="slotProgressBar"><div className="progressBarFill" style={{ width: `${progress}%` }} /></div><span className="progressSubtext">{booked} of {total} slots booked · {progress}% filled</span></>}</div>
       {record.registration_deadline && <div className="deadlineAlertBox"><FiClock className="alertIcon" /><div><strong>Booking deadline</strong><p>{formatTravelDate(record.registration_deadline)}</p></div></div>}
       <div className="quickRecapBox"><div className="recapRow"><FiCalendar className="rIcon" /><div><span className="rLabel">Dates</span><span className="rVal">{current.dateLabel}</span></div></div><div className="recapRow"><FiClock className="rIcon" /><div><span className="rLabel">Duration</span><span className="rVal">{current.durationLabel}</span></div></div><div className="recapRow"><FiNavigation className="rIcon" /><div><span className="rLabel">Starting Point</span><span className="rVal">{record.starting_point}</span></div></div></div>
-      {selectedPlan ? <Link href={`/experience-checkout?type=travel&id=${encodeURIComponent(record.slug || record.id)}&pricing_plan_id=${encodeURIComponent(selectedPlan.id)}`} className="exploreJourneyPrimaryBtn"><span>{record.booking_cta_label || "Book This Journey"}</span><FiArrowRight /></Link> : <button type="button" className="exploreJourneyPrimaryBtn" disabled><span>Booking unavailable</span></button>}
+      <ExperiencePricingPlans
+        plans={record.pricing_plans || []}
+        value={selectedPlanId}
+        onChange={setSelectedPlanId}
+        triggerLabel="Explore Journey"
+        checkoutHrefForPlan={(plan) => `/experience-checkout?type=travel&id=${encodeURIComponent(record.slug || record.id)}&pricing_plan_id=${encodeURIComponent(plan.id)}`}
+      />
+      {!(record.pricing_plans || []).length && <button type="button" className="exploreJourneyPrimaryBtn" disabled><span>Booking unavailable</span></button>}
     </div></aside></div>
     {related.length > 0 && <section className="relatedTravelsSection"><h2 className="relatedSectionTitle">Related Yoga Travels &amp; Retreats</h2><div className="relatedTravelsGrid">{related.map((item) => <TravelCard key={item.id} travel={item} />)}</div></section>}
   </div></div>;
