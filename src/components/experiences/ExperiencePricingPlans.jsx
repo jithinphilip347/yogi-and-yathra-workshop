@@ -59,7 +59,18 @@ export default function ExperiencePricingPlans({ plans = [], value, onChange, tr
     </div>
 
     {isOpen && typeof document !== 'undefined' && createPortal(<div className="experiencePlanModalBackdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsOpen(false); }}>
-      <section className="experiencePlanModal" role="dialog" aria-modal="true" aria-labelledby="experiencePlanModalTitle">
+      <section
+        className="experiencePlanModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="experiencePlanModalTitle"
+        onWheel={(event) => {
+          const list = event.currentTarget.querySelector('.experiencePlanModalList');
+          if (!list || list.scrollHeight <= list.clientHeight) return;
+          event.preventDefault();
+          list.scrollTop += event.deltaY;
+        }}
+      >
         <header className="experiencePlanModalHeader">
           <div><h2 id="experiencePlanModalTitle">Choose your plan</h2><p>Compare full plan details and per-person pricing.</p></div>
           <button type="button" className="experiencePlanModalClose" onClick={() => setIsOpen(false)} aria-label="Close pricing plans"><FiX /></button>

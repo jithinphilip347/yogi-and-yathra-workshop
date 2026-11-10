@@ -10,12 +10,12 @@
 .experienceOpenPlans:hover, .experienceOpenPlans:focus-visible { border-color: #824329; outline: 2px solid #82432933; outline-offset: 2px; }
 .experiencePlanModalOpen { overflow: hidden; }
 .experiencePlanModalBackdrop { position: fixed; z-index: 10000; inset: 0; display: grid; place-items: center; overflow: hidden; overscroll-behavior: none; padding: 24px; background: #10182899; }
-.experiencePlanModal { display: block; width: min(760px, 100%); height: min(82dvh, 820px); max-height: calc(100dvh - 48px); overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; border: 1px solid #e4e9f0; border-radius: 20px; background: #fff; box-shadow: 0 24px 80px #10182840; }
+.experiencePlanModal { display: flex; flex-direction: column; width: min(760px, 100%); height: min(82dvh, 820px); max-height: calc(100dvh - 48px); min-height: 0; overflow: hidden; border: 1px solid #e4e9f0; border-radius: 20px; background: #fff; box-shadow: 0 24px 80px #10182840; }
 .experiencePlanModalHeader { position: sticky; top: 0; z-index: 1; display: flex; flex: 0 0 auto; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 24px 26px 18px; border-bottom: 1px solid #e8edf3; background: #fff; }
 .experiencePlanModalHeader h2 { margin: 0; color: #182235; font-size: 24px; }
 .experiencePlanModalHeader p { margin: 6px 0 0; color: #697386; }
 .experiencePlanModalClose { display: grid; flex: 0 0 auto; width: 40px; height: 40px; place-items: center; border: 0; border-radius: 50%; background: #f3f5f8; color: #344054; cursor: pointer; font-size: 20px; }
-.experiencePlanModalList { display: grid; gap: 14px; padding: 20px 26px 26px; }
+.experiencePlanModalList { display: grid; flex: 1 1 0%; gap: 14px; height: 0; min-height: 0; overflow-x: hidden; overflow-y: scroll; overscroll-behavior: contain; touch-action: pan-y; -webkit-overflow-scrolling: touch; padding: 20px 26px 26px; }
 .experiencePlanOption { display: grid; gap: 10px; border: 1px solid #dfe5ee; background: #fff; color: #182235; border-radius: 14px; padding: 18px; }
 .experiencePlanOption.selected { border: 2px solid #8a4729; box-shadow: 0 0 0 3px #8a47291a; }
 .experiencePlanOption.recommended { background: #fffaf7; }

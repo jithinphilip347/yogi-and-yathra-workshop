@@ -10,6 +10,7 @@ import { resolveMediaUrl } from "@/utils/mediaUrl";
 import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiArrowRight, FiX, FiCompass, FiNavigation } from "react-icons/fi";
 import { FaPlay } from "react-icons/fa";
 import ExperiencePricingPlans from "@/components/experiences/ExperiencePricingPlans";
+import { ExperienceDetailsSkeleton } from "@/components/experiences/ExperienceSkeletons";
 import "@/assets/css/EventDetails.scss";
 
 const formatTime = (value) => {
@@ -99,7 +100,7 @@ function EventDetailsContent({ slug }) {
   const isLoading = Boolean(eventId) && loadedEventId !== eventId;
 
   if (!eventId) return <div id="EventDetailsPage"><div className="container"><div className="eventLoadingState" role="alert"><h1>Event not found</h1><Link href="/event">Browse events</Link></div></div></div>;
-  if (isLoading) return <div id="EventDetailsPage"><div className="container"><div className="eventLoadingState" role="status">Loading event details…</div></div></div>;
+  if (isLoading) return <div id="EventDetailsPage"><ExperienceDetailsSkeleton type="event" /></div>;
   if (!event) return <div id="EventDetailsPage"><div className="container"><div className="eventLoadingState" role="alert"><h1>{loadError || "Event not found"}</h1><Link href="/event">Browse events</Link>{loadError && !loadError.includes("no longer") && <button type="button" onClick={() => window.location.reload()}>Retry</button>}</div></div></div>;
 
   return <div id="EventDetailsPage"><div className="container">
@@ -155,5 +156,5 @@ function EventDetailsContent({ slug }) {
 }
 
 export default function EventDetails({ slug }) {
-  return <Suspense fallback={<div className="eventLoadingState" role="status">Loading event details…</div>}><EventDetailsContent slug={slug} /></Suspense>;
+  return <Suspense fallback={<ExperienceDetailsSkeleton type="event" />}><EventDetailsContent slug={slug} /></Suspense>;
 }

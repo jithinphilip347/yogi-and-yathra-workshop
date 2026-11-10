@@ -10,6 +10,7 @@ import { resolveMediaUrl } from "@/utils/mediaUrl";
 import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiArrowRight, FiX, FiAward, FiNavigation, FiHome, FiCoffee, FiTruck } from "react-icons/fi";
 import { FaPlay } from "react-icons/fa";
 import ExperiencePricingPlans from "@/components/experiences/ExperiencePricingPlans";
+import { ExperienceDetailsSkeleton } from "@/components/experiences/ExperienceSkeletons";
 import "@/assets/css/TravelDetails.scss";
 
 const formatVideo = (url) => {
@@ -77,7 +78,7 @@ function TravelDetailsContent({ slug }) {
   const busy = Boolean(travelId) && loadedId !== travelId;
 
   if (!travelId) return <div id="TravelDetailsPage"><div className="container"><div className="travelContentState" role="alert"><h1>Travel package not found</h1><Link href="/travel">Browse travel packages</Link></div></div></div>;
-  if (busy) return <div id="TravelDetailsPage"><div className="container"><div className="travelContentState" role="status">Loading travel package…</div></div></div>;
+  if (busy) return <div id="TravelDetailsPage"><ExperienceDetailsSkeleton type="travel" /></div>;
   if (!record) return <div id="TravelDetailsPage"><div className="container"><div className="travelContentState" role="alert"><h1>{loadError || "Travel package not found"}</h1><Link href="/travel">Browse travel packages</Link>{loadError && !loadError.includes("no longer") && <button type="button" onClick={() => window.location.reload()}>Retry</button>}</div></div></div>;
 
   return <div id="TravelDetailsPage"><div className="container">
@@ -130,5 +131,5 @@ function TravelDetailsContent({ slug }) {
 }
 
 export default function TravelDetails({ slug }) {
-  return <Suspense fallback={<div className="travelContentState" role="status">Loading travel package…</div>}><TravelDetailsContent slug={slug} /></Suspense>;
+  return <Suspense fallback={<ExperienceDetailsSkeleton type="travel" />}><TravelDetailsContent slug={slug} /></Suspense>;
 }

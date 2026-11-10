@@ -6,6 +6,7 @@ import EventCard from "@/components/eventCard/EventCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
 import CustomFilterDropdown from "@/components/filter/CustomFilterDropdown";
 import { adaptOfflineEvent, offlineEventApi } from "@/services/offlineEventApi";
+import { ExperienceListingSkeleton } from "@/components/experiences/ExperienceSkeletons";
 import HeroBgImg from "@/assets/images/courseImg-3.webp";
 import {
   FiMapPin,
@@ -399,7 +400,7 @@ const EventList = () => {
 
           {/* Event Cards Grid OR ElseDesign */}
           {isLoading ? (
-            <div className="eventLoadingState" role="status">Loading events…</div>
+            <ExperienceListingSkeleton type="event" />
           ) : isError && !data?.pages?.length ? (
             <div className="eventLoadingState" role="alert"><p>We could not load events right now. Please try again.</p><button type="button" onClick={() => refetch()}>Retry</button></div>
           ) : filteredEvents.length > 0 ? (

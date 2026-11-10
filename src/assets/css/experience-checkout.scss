@@ -1,16 +1,53 @@
-#ExperienceCheckout { max-width: 1100px; margin: 40px auto 80px; padding: 0 20px; color: #182235; }
-#ExperienceCheckout .experienceCheckoutGrid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(290px,.8fr); gap:28px; align-items:start; }
-#ExperienceCheckout .experienceCheckoutPanel,#ExperienceCheckout .experienceSummary { background:#fff; border:1px solid #e1e6ee; border-radius:18px; padding:28px; box-shadow:0 8px 26px #1822350a; }
-#ExperienceCheckout h1 { margin:0 0 8px; font-size:clamp(28px,4vw,38px); } #ExperienceCheckout h2 { font-size:21px; margin:0 0 18px; }
+#ExperienceCheckout { width:min(1280px,calc(100% - 40px)); max-width:none; margin:36px auto 80px; color:#182235; }
+#ExperienceCheckout .experienceCheckoutStepper { position:sticky; top:112px; z-index:30; display:flex; align-items:center; justify-content:center; gap:18px; margin:0 auto 28px; padding:18px 24px; border:1px solid #e1e6ee; border-radius:16px; background:#fff; box-shadow:0 8px 20px #18223512; }
+#ExperienceCheckout .experienceStep { display:flex; align-items:center; gap:10px; color:#758094; }
+#ExperienceCheckout .experienceStep span { display:grid; place-items:center; width:40px; height:40px; flex:none; border:2px solid #e7d3c8; border-radius:50%; color:#874429; font-weight:700; }
+#ExperienceCheckout .experienceStep strong { font-size:15px; }
+#ExperienceCheckout .experienceStep.is-active { color:#874429; }
+#ExperienceCheckout .experienceStep.is-active span,#ExperienceCheckout .experienceStep.is-complete span { background:#874429; border-color:#874429; color:white; }
+#ExperienceCheckout .experienceStepLine { width:min(18vw,120px); height:2px; background:#e7d3c8; }
+#ExperienceCheckout .experienceCheckoutGrid { display:grid; grid-template-columns:minmax(0,1fr) 360px; gap:28px; align-items:start; }
+#ExperienceCheckout .experienceCheckoutPanel,#ExperienceCheckout .experienceSummary { min-width:0; background:#fff; border:1px solid #e1e6ee; border-radius:18px; padding:28px; box-shadow:0 8px 26px #1822350a; }
+#ExperienceCheckout h1 { margin:0 0 8px; font-size:clamp(26px,3vw,36px); line-height:1.2; }
+#ExperienceCheckout h2 { font-size:20px; margin:0 0 14px; }
 #ExperienceCheckout .experienceCheckoutIntro { color:#697386; margin:0 0 24px; }
 #ExperienceCheckout .experienceCheckoutField { display:grid; gap:8px; margin:18px 0; font-weight:600; }
 #ExperienceCheckout input,#ExperienceCheckout select { width:100%; min-height:48px; border:1px solid #d5dbe5; border-radius:10px; padding:10px 13px; color:#182235; background:#fff; font:inherit; }
-#ExperienceCheckout .participantCard { border:1px solid #e3e8ef; border-radius:14px; padding:18px; margin:16px 0; }
-#ExperienceCheckout .participantCard h3 { margin:0 0 8px; font-size:17px; }
+#ExperienceCheckout input:focus,#ExperienceCheckout select:focus { outline:3px solid #87442926; border-color:#874429; }
+#ExperienceCheckout .experienceBookingPreview { display:grid; grid-template-columns:160px minmax(0,1fr); gap:18px; align-items:center; padding:14px; border:1px solid #e5e9f0; border-radius:14px; background:#f8fafc; }
+#ExperienceCheckout .experienceBookingPreview img { width:160px; height:112px; object-fit:cover; border-radius:10px; }
+#ExperienceCheckout .experienceBookingPreview h2 { margin:9px 0 5px; }
+#ExperienceCheckout .experienceBookingPreview p { margin:4px 0; color:#697386; }
+#ExperienceCheckout .experienceTypeBadge { display:inline-flex; padding:5px 10px; border-radius:999px; background:#f7eee9; color:#874429; font-size:13px; font-weight:700; }
+#ExperienceCheckout .participantCard { border:1px solid #e3e8ef; border-radius:14px; padding:20px; margin:16px 0; }
+#ExperienceCheckout .participantCard h2 { font-size:18px; }
+#ExperienceCheckout .participantCard small { color:#697386; font-weight:400; }
+#ExperienceCheckout .experienceStepHint { margin:0 0 18px; color:#697386; }
+#ExperienceCheckout .participantProgress { display:grid; gap:9px; margin:0 0 18px; color:#697386; font-size:14px; font-weight:600; }
+#ExperienceCheckout .participantProgressTrack { height:7px; overflow:hidden; border-radius:99px; background:#edf0f4; }
+#ExperienceCheckout .participantProgressTrack span { display:block; height:100%; border-radius:inherit; background:#874429; transition:width .2s ease; }
+#ExperienceCheckout .experienceFileUpload { display:flex; align-items:center; gap:14px; min-height:58px; padding:8px 12px; border:1px dashed #c7cfda; border-radius:11px; background:#f8fafc; cursor:pointer; }
+#ExperienceCheckout .experienceFileUpload input { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; clip-path:inset(50%); border:0; }
+#ExperienceCheckout .experienceFileUpload:focus-within { outline:3px solid #87442926; border-color:#874429; }
+#ExperienceCheckout .experienceFileUploadButton { display:inline-flex; min-height:38px; align-items:center; padding:0 13px; border-radius:8px; background:#874429; color:#fff; font-weight:700; white-space:nowrap; }
+#ExperienceCheckout .experienceFileUploadName { min-width:0; overflow:hidden; color:#697386; font-size:14px; font-weight:400; text-overflow:ellipsis; white-space:nowrap; }
 #ExperienceCheckout .experienceSummary { position:sticky; top:24px; }
-#ExperienceCheckout .experienceSummaryRow { display:flex; justify-content:space-between; gap:16px; padding:12px 0; border-bottom:1px solid #edf0f4; }
-#ExperienceCheckout .experienceSummaryTotal { font-size:20px; font-weight:700; border:0; }
-#ExperienceCheckout .experiencePayButton { width:100%; min-height:52px; margin-top:20px; border:0; border-radius:12px; background:#8a4729; color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+#ExperienceCheckout .experienceSummary h2 { margin-bottom:20px; }
+#ExperienceCheckout .experienceSummaryExperience { display:flex; gap:12px; align-items:center; margin-bottom:16px; }
+#ExperienceCheckout .experienceSummaryExperience img { width:72px; height:64px; flex:none; object-fit:cover; border-radius:9px; background:#f0f3f7; }
+#ExperienceCheckout .experienceSummaryExperience div { display:grid; gap:5px; min-width:0; }
+#ExperienceCheckout .experienceSummaryExperience strong { line-height:1.35; }
+#ExperienceCheckout .experienceSummaryExperience span { color:#697386; font-size:14px; }
+#ExperienceCheckout .experienceSummaryRow { display:flex; justify-content:space-between; gap:16px; padding:13px 0; border-bottom:1px solid #edf0f4; }
+#ExperienceCheckout .experienceSummaryTotal { font-size:19px; font-weight:700; border:0; }
+#ExperienceCheckout .experienceSummaryEmpty,#ExperienceCheckout .experienceSecureNote { color:#697386; line-height:1.5; }
+#ExperienceCheckout .experienceSecureNote { margin:18px 0 0; padding-top:16px; border-top:1px solid #edf0f4; font-size:14px; }
+#ExperienceCheckout .experienceCheckoutActions { display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:20px; }
+#ExperienceCheckout .experiencePayButton,#ExperienceCheckout .experienceBackButton { min-height:52px; border:0; border-radius:12px; padding:0 20px; font:inherit; font-weight:700; cursor:pointer; }
+#ExperienceCheckout .experiencePayButton { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; margin-top:22px; background:#8a4729; color:#fff; }
+#ExperienceCheckout .experienceCheckoutActions .experiencePayButton { width:auto; margin-top:0; }
+#ExperienceCheckout .experienceBackButton { border:1px solid #d5dbe5; background:white; color:#344054; }
 #ExperienceCheckout .experiencePayButton:disabled { opacity:.55; cursor:not-allowed; }
 #ExperienceCheckout .experienceCheckoutError { color:#b42336; background:#fff1f2; border:1px solid #fecdd3; border-radius:10px; padding:12px 14px; margin:16px 0; }
-@media(max-width:800px) { #ExperienceCheckout .experienceCheckoutGrid { grid-template-columns:1fr; } #ExperienceCheckout .experienceSummary { position:static; } }
+@media(max-width:900px) { #ExperienceCheckout .experienceCheckoutGrid { grid-template-columns:minmax(0,1fr); } #ExperienceCheckout .experienceSummary { position:static; grid-row:1; } }
+@media(max-width:600px) { #ExperienceCheckout { width:calc(100% - 28px); margin:24px auto 48px; } #ExperienceCheckout .experienceCheckoutPanel,#ExperienceCheckout .experienceSummary { padding:20px; border-radius:14px; } #ExperienceCheckout .experienceCheckoutStepper { top:104px; justify-content:space-around; gap:10px; padding:14px 12px; } #ExperienceCheckout .experienceStep { gap:7px; } #ExperienceCheckout .experienceStep span { width:34px; height:34px; } #ExperienceCheckout .experienceStep strong { font-size:13px; } #ExperienceCheckout .experienceStepLine { width:32px; } #ExperienceCheckout .experienceBookingPreview { grid-template-columns:1fr; } #ExperienceCheckout .experienceBookingPreview img { width:100%; height:180px; } #ExperienceCheckout .experienceCheckoutActions { align-items:stretch; flex-direction:column-reverse; } #ExperienceCheckout .experienceCheckoutActions .experiencePayButton,#ExperienceCheckout .experienceBackButton { width:100%; } #ExperienceCheckout .experienceFileUpload { align-items:flex-start; flex-direction:column; gap:8px; } }

@@ -6,6 +6,7 @@ import TravelCard from "@/components/travelCard/TravelCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
 import CustomFilterDropdown from "@/components/filter/CustomFilterDropdown";
 import { adaptTravelPackage, travelPackageApi } from "@/services/travelPackageApi";
+import { ExperienceListingSkeleton } from "@/components/experiences/ExperienceSkeletons";
 import HeroBgImg from "@/assets/images/travel.jpg";
 import {
   FiMapPin,
@@ -392,7 +393,7 @@ const TravelList = () => {
           )}
 
           {/* Retreats Cards Grid OR ElseDesign */}
-          {isLoading ? <div className="travelContentState" role="status">Loading travel packages…</div> : isError && !data?.pages?.length ? (
+          {isLoading ? <ExperienceListingSkeleton type="travel" /> : isError && !data?.pages?.length ? (
             <div className="travelContentState" role="alert">
               <p>We could not load travel packages. Please try again.</p>
               <button type="button" onClick={() => refetch()}>Retry</button>
