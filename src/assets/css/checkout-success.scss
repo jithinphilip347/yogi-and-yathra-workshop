@@ -18,6 +18,23 @@
  * and neutral. The page must not read as a green page.
  */
 #Checkout {
+  &.SuccessPage {
+    padding-top: calc(var(--experience-subnav-height, 62px) + var(--space-7, 32px));
+    @media (max-width: 1024px) { --experience-subnav-height: 0px; }
+  }
+
+  .SuccessBookingDetails {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-5, 20px);
+    margin: var(--space-6, 24px) 0 0;
+    padding: var(--space-5, 20px);
+    background: var(--surface-muted, #f8fafc);
+    border-radius: var(--radius-md, 10px);
+    dt { color: var(--color-text-muted, #64748b); font-size: var(--text-caption, 14px); margin-bottom: 6px; }
+    dd { margin: 0; font-weight: 600; color: var(--color-heading, #182235); overflow-wrap: anywhere; }
+    @media (max-width: 480px) { grid-template-columns: minmax(0, 1fr); }
+  }
   /* ─── Hero ─────────────────────────────────────────────────────────────── */
   .SuccessHero {
     background: var(--surface);

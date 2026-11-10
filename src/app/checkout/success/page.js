@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect } from 'react';
 import Link from 'next/link';
-import { FaCheckCircle, FaBookOpen, FaBoxOpen, FaArrowRight, FaTruck, FaExclamationTriangle } from 'react-icons/fa';
+import { FaCheckCircle, FaBookOpen, FaBoxOpen, FaArrowRight, FaTruck, FaExclamationTriangle, FaCalendarAlt } from 'react-icons/fa';
+import useExperienceHeaderOffset from '@/components/experiences/useExperienceHeaderOffset';
 import { useSelector } from 'react-redux';
 import { useQueryClient } from '@tanstack/react-query';
 import { courierPartnerLabel } from '@/features/commerce/utils/courierPartners';
@@ -38,6 +39,7 @@ import '@/assets/css/checkout-success.scss';
  * call to action instead of a timer.
  */
 export default function CheckoutSuccessPage() {
+  const headerStyle = useExperienceHeaderOffset();
   const queryClient = useQueryClient();
   const paymentState = useSelector((state) => state.payment || {});
   const activeOrder = useSelector((state) => state.checkout?.activeOrder);
@@ -82,7 +84,7 @@ export default function CheckoutSuccessPage() {
      literal strings "ORD-CONFIRMED" / "TXN-CONFIRMED" and a green tick here. */
   if (state === CONFIRMATION_STATE.NONE) {
     return (
-      <div id="Checkout">
+      <div id="Checkout" className="SuccessPage" style={headerStyle}>
         <div className="SuccessStateCard">
           <span className="SuccessStateIcon neutral" aria-hidden="true">
             <FaExclamationTriangle />
@@ -108,7 +110,7 @@ export default function CheckoutSuccessPage() {
   const isConfirmed = state === CONFIRMATION_STATE.CONFIRMED;
 
   return (
-    <div id="Checkout">
+    <div id="Checkout" className="SuccessPage" style={headerStyle}>
       {/* ── Hero ───────────────────────────────────────────────────────────── */}
       <section className={`SuccessHero ${isConfirmed ? 'confirmed' : 'pending'}`}>
         <span className="SuccessHeroIcon" aria-hidden="true">
@@ -116,18 +118,18 @@ export default function CheckoutSuccessPage() {
         </span>
 
         <h1 className="SuccessHeroTitle">
-          {isConfirmed ? 'Payment Successful' : 'Confirming your payment'}
+          {isConfirmed ? (hasExperience ? 'Your booking is confirmed' : 'Payment Successful') : 'Confirming your payment'}
         </h1>
 
         <p className="SuccessHeroText">
           {isConfirmed
-            ? 'Thank you for your purchase. Your order is confirmed and your access is being activated.'
+            ? (hasExperience ? 'Thank you for booking with us. Your participant details and payment are saved with your booking.' : 'Thank you for your purchase. Your order is confirmed and your access is being activated.')
             : 'We have your order, but the payment confirmation has not reached us yet. Your reference is below — please do not pay again.'}
         </p>
 
         {refs.orderNumber && (
           <div className="SuccessHeroRef">
-            <span className="SuccessHeroRefLabel">Workshop Order</span>
+            <span className="SuccessHeroRefLabel">{hasExperience ? 'Booking order' : 'Workshop Order'}</span>
             <span className="SuccessHeroRefValue">#{refs.orderNumber}</span>
           </div>
         )}
@@ -137,7 +139,7 @@ export default function CheckoutSuccessPage() {
         <div className="SuccessMain">
           {/* ── What this order covers ─────────────────────────────────────── */}
           <section className="SuccessSection">
-            <h2 className="SuccessSectionTitle">Your Order</h2>
+            <h2 className="SuccessSectionTitle">{hasExperience ? 'Your booking' : 'Your Order'}</h2>
 
             <div className="SuccessOrderList">
               {hasLearning && (
@@ -185,18 +187,22 @@ export default function CheckoutSuccessPage() {
 
               {hasExperience && (
                 <article className="SuccessOrderCard">
-                  <span className="SuccessOrderIcon" aria-hidden="true"><FaCheckCircle /></span>
+                  <span className="SuccessOrderIcon" aria-hidden="true"><FaCalendarAlt /></span>
                   <div className="SuccessOrderBody">
                     <h3 className="SuccessOrderName">{activeOrder?.experience?.title || 'Experience booking'}</h3>
                     <p className="SuccessOrderMeta">
                       {activeOrder?.experience?.experience_type === 'travel' ? 'Travel package' : 'Offline event'}
-                      {activeOrder?.experience?.booking_reference ? ` · ${activeOrder.experience.booking_reference}` : ''}
-                      {activeOrder?.experience?.participant_count ? ` · ${activeOrder.experience.participant_count} participant${activeOrder.experience.participant_count === 1 ? '' : 's'}` : ''}
                     </p>
                   </div>
                   <span className={`SuccessBadge ${isConfirmed ? 'success' : 'pending'}`}>{isConfirmed ? 'Confirmed' : 'Payment pending'}</span>
                 </article>
               )}
+
+              {hasExperience && <dl className="SuccessBookingDetails">
+                {activeOrder.experience?.booking_reference && <div><dt>Booking reference</dt><dd>{activeOrder.experience.booking_reference}</dd></div>}
+                {activeOrder.experience?.plan_name && <div><dt>Selected plan</dt><dd>{activeOrder.experience.plan_name}</dd></div>}
+                {activeOrder.experience?.participant_count > 0 && <div><dt>Participants</dt><dd>{activeOrder.experience.participant_count}</dd></div>}
+              </dl>}
 
               {!hasLearning && !hasPhysical && !hasExperience && (
                 <article className="SuccessOrderCard">
@@ -223,7 +229,7 @@ export default function CheckoutSuccessPage() {
                 {nextSteps.map((step) => (
                   <li className="SuccessStep" key={step.key}>
                     <span className="SuccessStepMark" aria-hidden="true">
-                      {step.key === 'learning' ? <FaBookOpen /> : <FaTruck />}
+                      {step.key === 'learning' ? <FaBookOpen /> : step.key === 'experience' ? <FaCalendarAlt /> : <FaTruck />}
                     </span>
                     <div className="SuccessStepBody">
                       <h3 className="SuccessStepTitle">{step.title}</h3>
@@ -254,6 +260,10 @@ export default function CheckoutSuccessPage() {
               <Link className="ProceedBtn SuccessPrimary" href={CONFIRMATION_ROUTES.myCourses}>
                 <FaBookOpen /> Start Learning
               </Link>
+            ) : hasExperience ? (
+              <Link className="ProceedBtn SuccessPrimary" href="/auth/profile?tab=orders">
+                <FaCalendarAlt /> View my bookings
+              </Link>
             ) : (
               <Link className="ProceedBtn SuccessPrimary" href={CONFIRMATION_ROUTES.continueShopping}>
                 <FaArrowRight /> Continue Shopping
@@ -263,6 +273,8 @@ export default function CheckoutSuccessPage() {
             <Link className="SuccessGhost" href={CONFIRMATION_ROUTES.billing}>
               Billing &amp; Invoices
             </Link>
+
+            {hasExperience && <Link className="SuccessLink" href={activeOrder.experience?.experience_type === 'travel' ? '/travel' : '/event'}>Explore more {activeOrder.experience?.experience_type === 'travel' ? 'journeys' : 'events'} <FaArrowRight size={12} /></Link>}
 
             {hasLearning && (
               <Link className="SuccessLink" href={CONFIRMATION_ROUTES.continueShopping}>
@@ -293,7 +305,7 @@ export default function CheckoutSuccessPage() {
             ) : null}
 
             <div className="SuccessSummaryRow total">
-              <span>Total Paid</span>
+              <span>{isConfirmed ? 'Total Paid' : 'Order Total'}</span>
               <span>{formatAmount(summary.total, summary.currency)}</span>
             </div>
           </section>

@@ -117,6 +117,10 @@ export function buildConfirmationSummary(activeOrder) {
 
   const rows = [];
 
+  if (confirmationDomain(activeOrder) === CONFIRMATION_DOMAIN.EXPERIENCE) {
+    return { ...base, rows: [{ key: 'experience', label: 'Booking amount', amount: total, kind: 'charge' }], reconciles: true };
+  }
+
   // Only present the gross list price when something was genuinely payable for
   // the learning leg. A fully-discounted order (subtotal clamped to 0) would
   // otherwise print a list price larger than the single discount that produced
@@ -182,6 +186,10 @@ export function confirmationReferences({ activeOrder, transactionId } = {}) {
 /** The next-step copy and the one primary action, derived from the domain. */
 export function buildNextSteps(domain) {
   const steps = [];
+
+  if (domain === CONFIRMATION_DOMAIN.EXPERIENCE) {
+    steps.push({ key: 'experience', title: 'Keep your booking details handy', body: 'Open My Orders to review your booking, participant details, and payment status. Keep your booking reference for check-in.', action: { label: 'View my bookings', href: '/auth/profile?tab=orders', primary: true } });
+  }
 
   if (domain === CONFIRMATION_DOMAIN.LEARNING || domain === CONFIRMATION_DOMAIN.MIXED) {
     steps.push({

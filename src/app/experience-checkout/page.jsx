@@ -103,11 +103,11 @@ function ExperienceCheckoutContent() {
       });
       const response = await experienceBookingApi.create(form);
       if (response?.is_free || response?.already_confirmed) {
-        dispatch(createOrderSuccess({ domain: 'experience', order: { ...response.order, subtotal: Number(response.order?.amount) || 0, status: 'completed' }, experience: { booking_reference: response.booking_reference, title: record.title, experience_type: type, status: 'confirmed', participant_count: quantity } }));
+        dispatch(createOrderSuccess({ domain: 'experience', order: { ...response.order, subtotal: Number(response.order?.amount) || 0, status: 'completed' }, experience: { booking_reference: response.booking_reference, title: record.title, plan_name: plan.name, experience_type: type, status: 'confirmed', participant_count: quantity } }));
         dispatch(paymentSuccess({ status: 'completed' }));
         router.replace('/checkout/success'); return;
       }
-      dispatch(createOrderSuccess({ domain: 'experience', order: response.order, experience: { booking_reference: response.booking_reference, title: record.title, experience_type: type, status: 'pending_payment', participant_count: quantity } }));
+      dispatch(createOrderSuccess({ domain: 'experience', order: response.order, experience: { booking_reference: response.booking_reference, title: record.title, plan_name: plan.name, experience_type: type, status: 'pending_payment', participant_count: quantity } }));
       await executeRazorpay(response, user, { successUrl: '/checkout/success', failureUrl: `/experience-checkout?type=${type}&id=${record.slug || record.id}&pricing_plan_id=${plan.id}&booking=${response.booking_id}&payment=retry` });
     } catch (cause) {
       const messages = cause?.response?.data?.errors;
