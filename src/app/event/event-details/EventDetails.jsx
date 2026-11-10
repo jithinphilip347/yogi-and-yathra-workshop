@@ -38,6 +38,7 @@ function EventDetailsContent() {
   const [loadedEventId, setLoadedEventId] = useState(null);
   const [loadError, setLoadError] = useState("");
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [instructorAvatarFailed, setInstructorAvatarFailed] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -59,6 +60,8 @@ function EventDetailsContent() {
       .finally(() => { if (active) setLoadedEventId(eventId); });
     return () => { active = false; };
   }, [eventId]);
+
+  useEffect(() => setInstructorAvatarFailed(false), [event?.id, event?.instructor?.avatar]);
 
   const highlights = useMemo(() => (Array.isArray(event?.highlights) ? event.highlights : []).map((item) => typeof item === "string" ? { heading: item, description: "" } : item).filter((item) => item?.heading), [event]);
   const schedule = Array.isArray(event?.workshop_schedule) ? event.workshop_schedule : [];
@@ -109,9 +112,16 @@ function EventDetailsContent() {
           {(event.address || event.google_maps_url) && <div className="specCard fullWidthSpec"><div className="specIconBox"><FiNavigation /></div><div className="specInfo"><span className="specLabel">Location / Address</span><span className="specValue">{event.address}</span></div>{event.google_maps_url && <a href={event.google_maps_url} target="_blank" rel="noreferrer" className="mapLinkBtn">View on Map</a>}</div>}
         </div></div>
 
-        {instructor?.name && <div className="eventInstructorSection"><h2 className="sectionTitle">Instructor</h2><div className="instructorCard">
-          {instructor.avatar && <div className="instructorAvatarCol"><img src={resolveMediaUrl(instructor.avatar, "")} alt={instructor.name} width={90} height={90} className="instructorImg" /></div>}
-          <div className="instructorDetailsCol"><h3 className="instructorName">{instructor.name}</h3>{instructor.professional_title && <p className="instructorRole">{instructor.professional_title}</p>}{(instructor.short_bio || instructor.full_biography) && <p className="instructorBio">{instructor.short_bio || instructor.full_biography}</p>}{instructor.years_of_experience != null && <p className="instructorRole">{instructor.years_of_experience} years of experience</p>}</div>
+        {instructor?.name && <div className="eventInstructorSection"><h2 className="sectionTitle">Meet your instructor</h2><div className="instructorCard">
+          <div className="instructorAvatarCol">{instructor.avatar && !instructorAvatarFailed
+            ? <img src={resolveMediaUrl(instructor.avatar, "")} alt={instructor.name} width={90} height={90} className="instructorImg" onError={() => setInstructorAvatarFailed(true)} />
+            : <div className="instructorImg instructorAvatarFallback" aria-label={`${instructor.name} profile image unavailable`}>{instructor.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase()}</div>}
+          </div>
+          <div className="instructorDetailsCol"><h3 className="instructorName">{instructor.name}</h3><p className="instructorRole">{instructor.professional_title || "Event Instructor"}</p>
+            {(instructor.short_bio || instructor.bio_graphy || instructor.full_biography) && <p className="instructorBio">{instructor.short_bio || instructor.bio_graphy || instructor.full_biography}</p>}
+            {instructor.years_of_experience != null && <p className="instructorRole">{instructor.years_of_experience} years of experience</p>}
+            {Array.isArray(instructor.expertise) && instructor.expertise.length > 0 && <div className="instructorTags" aria-label="Instructor expertise">{instructor.expertise.map((area) => <span className="iTag" key={area}>{area}</span>)}</div>}
+          </div>
         </div></div>}
 
         {highlights.length > 0 && <div className="eventHighlightsSection"><h2 className="sectionTitle">Event Highlights &amp; Inclusions</h2><div className="highlightsGrid">{highlights.map((item, index) => <div key={`${item.heading}-${index}`} className="highlightCard"><div className="highlightCheck"><FiCheckCircle /></div><div className="highlightText"><h4>{item.heading}</h4>{item.description && <p>{item.description}</p>}</div></div>)}</div></div>}

@@ -350,6 +350,17 @@
             border: 2px solid #ecd8cc;
           }
 
+          .instructorAvatarFallback {
+            display: grid;
+            place-items: center;
+            width: 90px;
+            height: 90px;
+            color: var(--primaryColor, #874429);
+            background: #faf4ef;
+            font-size: 25px;
+            font-weight: 700;
+          }
+
           .verifiedPill {
             display: inline-flex;
             align-items: center;
