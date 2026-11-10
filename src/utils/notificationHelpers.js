@@ -110,6 +110,12 @@ export const getNotificationCategoryMeta = (category = "", type = "") => {
   if (cat === "course" || t.includes("course") || t.includes("enrollment")) {
     return { label: "Course", variant: "course" };
   }
+  if (cat === "offline_event" || t.startsWith("event.")) {
+    return { label: "Event", variant: "event" };
+  }
+  if (cat === "travel" || t.startsWith("travel.")) {
+    return { label: "Travel", variant: "travel" };
+  }
   if (cat === "payment" || t.includes("payment") || t.includes("order")) {
     return { label: "Payment", variant: "payment" };
   }

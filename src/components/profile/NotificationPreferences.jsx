@@ -6,7 +6,7 @@ import {
   useUpdateNotificationPreferences,
 } from "@/hooks/useNotificationPreferences";
 import { usePushNotifications } from "@/hooks/usePushNotifications";
-import { FiBell, FiMail, FiCheck, FiAlertCircle } from "react-icons/fi";
+import { FiBell, FiMail, FiCheck, FiAlertCircle, FiMessageCircle } from "react-icons/fi";
 
 const CATEGORIES = [
   {
@@ -29,6 +29,8 @@ const CATEGORIES = [
     label: "Payments",
     description: "Invoices, payment receipts, and billing notifications",
   },
+  { key: "offline_event", label: "Offline Events", description: "Booking confirmations, schedule changes, and event reminders" },
+  { key: "travel", label: "Travel Packages", description: "Booking confirmations, itinerary changes, and travel reminders" },
 ];
 
 const NotificationPreferences = () => {
@@ -185,6 +187,7 @@ const NotificationPreferences = () => {
           const catPrefs = preferences[cat.key] || {};
           const isPushOn = catPrefs.push !== false;
           const isEmailOn = catPrefs.email !== false;
+          const isWhatsappOn = catPrefs.whatsapp === true;
 
           return (
             <div
@@ -320,6 +323,16 @@ const NotificationPreferences = () => {
                         boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
                       }}
                     />
+                  </button>
+                </div>
+
+                {/* WhatsApp is opt-in and defaults off */}
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: "4px", fontSize: "13px", fontWeight: "500", color: isWhatsappOn ? "#0f172a" : "#94a3b8" }}>
+                    <FiMessageCircle style={{ fontSize: "14px" }} /> WhatsApp
+                  </span>
+                  <button type="button" role="switch" aria-checked={isWhatsappOn} aria-label={`Toggle WhatsApp notifications for ${cat.label}`} onClick={() => handleToggle(cat.key, "whatsapp", isWhatsappOn)} disabled={updateMutation.isPending} style={{ width: "44px", height: "24px", background: isWhatsappOn ? "#22c55e" : "#cbd5e1", borderRadius: "12px", border: "none", cursor: "pointer", position: "relative", transition: "background 0.2s ease", padding: 0 }}>
+                    <span style={{ position: "absolute", top: "2px", left: isWhatsappOn ? "22px" : "2px", width: "20px", height: "20px", background: "#fff", borderRadius: "50%", transition: "left 0.2s ease", boxShadow: "0 1px 3px rgba(0,0,0,0.2)" }} />
                   </button>
                 </div>
               </div>
