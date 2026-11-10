@@ -53,7 +53,7 @@ export function adaptOfflineEvent(event) {
     price: event.ticket_price == null ? "" : new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(Number(event.ticket_price)),
     seats: available == null ? "Unlimited seats" : `${available} ${available === 1 ? "Seat" : "Seats"} Left`,
     status: displayStatus(event.public_booking_status),
-    link: `/event/event-details?id=${encodeURIComponent(event.id)}`,
+    link: `/event/${encodeURIComponent(event.slug || event.id)}`,
   };
 }
 

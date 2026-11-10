@@ -370,7 +370,7 @@ const EventList = () => {
                     key={evt.id || i}
                     event={{
                       ...evt,
-                      link: "/event/event-details",
+                      link: evt.link || `/event/${encodeURIComponent(evt.slug || evt.id)}`,
                     }}
                   />
                 ))}

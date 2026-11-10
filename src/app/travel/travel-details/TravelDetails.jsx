@@ -1,12 +1,13 @@
 "use client";
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Breadcrumbs from "@/components/breadcrumbs/Breadcrumbs";
 import TravelCard from "@/components/travelCard/TravelCard";
+import InstructorProfileCard from "@/components/instructorProfile/InstructorProfileCard";
 import { adaptTravelPackage, formatTravelDate, travelPackageApi } from "@/services/travelPackageApi";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
-import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiArrowRight, FiShield, FiX, FiAward, FiNavigation, FiHome, FiCoffee, FiTruck } from "react-icons/fi";
+import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiArrowRight, FiX, FiAward, FiNavigation, FiHome, FiCoffee, FiTruck } from "react-icons/fi";
 import { FaPlay } from "react-icons/fa";
 import "@/assets/css/TravelDetails.scss";
 
@@ -19,9 +20,11 @@ const formatVideo = (url) => {
 const priceLabel = (value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(Number(value) || 0);
 const bookingLabels = { open: "Booking Open", almost_full: "Almost Full", full: "Fully Booked", upcoming: "Upcoming", closed: "Registration Closed", unavailable: "Unavailable" };
 
-function TravelDetailsContent() {
+function TravelDetailsContent({ slug }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const travelId = searchParams?.get("id");
+  const legacyId = searchParams?.get("id");
+  const travelId = slug === "travel-details" && legacyId ? legacyId : slug || legacyId;
   const [record, setRecord] = useState(null);
   const [related, setRelated] = useState([]);
   const [loadedId, setLoadedId] = useState(null);
@@ -37,6 +40,9 @@ function TravelDetailsContent() {
         setRecord(item);
         setRelated(items.filter((candidate) => String(candidate.id) !== String(item?.id)).slice(0, 3).map(adaptTravelPackage).filter(Boolean));
         setLoadError("");
+        if (item?.slug && window.location.pathname !== `/travel/${item.slug}`) {
+          router.replace(`/travel/${encodeURIComponent(item.slug)}`);
+        }
       })
       .catch((error) => {
         if (!active) return;
@@ -45,7 +51,7 @@ function TravelDetailsContent() {
       })
       .finally(() => { if (active) setLoadedId(travelId); });
     return () => { active = false; };
-  }, [travelId]);
+  }, [travelId, router]);
 
   const current = useMemo(() => adaptTravelPackage(record), [record]);
   const highlights = Array.isArray(record?.highlights) ? record.highlights.map((item) => typeof item === "string" ? { heading: item, description: "" } : item).filter((item) => item?.heading) : [];
@@ -97,7 +103,7 @@ function TravelDetailsContent() {
       {transport.length > 0 && <div className="travelSectionBlock"><h2 className="sectionTitle"><FiTruck className="titleIcon" /> Transportation Details</h2><div className="contentCard"><div className="featureListGrid">{transport.map((item, index) => <div className="featureItem" key={`${item.point || item}-${index}`}><FiCheckCircle className="featIcon" /><div>{typeof item === "string" ? item : item.point}</div></div>)}</div></div></div>}
       {highlights.length > 0 && <div className="travelSectionBlock"><h2 className="sectionTitle"><FiCheckCircle className="titleIcon" /> Travel Highlights</h2><div className="highlightsGrid">{highlights.map((item, index) => <div key={`${item.heading}-${index}`} className="highlightCard"><div className="highlightCheck"><FiCheckCircle /></div><div className="highlightText"><h4>{item.heading}</h4>{item.description && <p>{item.description}</p>}</div></div>)}</div></div>}
       {itinerary.length > 0 && <div className="travelSectionBlock"><h2 className="sectionTitle"><FiCalendar className="titleIcon" /> Detailed Day-wise Journey</h2><div className="itineraryTimeline">{itinerary.map((item, index) => <div key={`${item.day}-${index}`} className="timelineItem"><div className="timelineMarker"><span className="markerCircle">{item.day}</span>{index !== itinerary.length - 1 && <span className="markerLine" />}</div><div className="timelineContent"><h4 className="timelineTitle">{item.heading}</h4><p className="timelineDesc">{item.description}</p></div></div>)}</div></div>}
-      {(coordinator?.name || coordinator?.short_bio || coordinator?.full_biography) && <div className="travelSectionBlock"><h2 className="sectionTitle"><FiShield className="titleIcon" /> Travel Coordinator</h2><div className="coordinatorCard"><div className="coordinatorAvatarCol">{coordinator.avatar && <img src={resolveMediaUrl(coordinator.avatar, "")} alt={coordinator.name || "Travel coordinator"} width="90" height="90" className="coordinatorImg" />}</div><div className="coordinatorDetailsCol"><h3 className="coordinatorName">{coordinator.name}</h3>{coordinator.professional_title && <p className="coordinatorRole">{coordinator.professional_title}</p>}{(coordinator.short_bio || coordinator.full_biography) && <p className="coordinatorBio">{coordinator.short_bio || coordinator.full_biography}</p>}{coordinator.years_of_experience != null && <p className="coordinatorRole">{coordinator.years_of_experience} years of experience</p>}</div></div></div>}
+      <InstructorProfileCard person={coordinator} sectionTitle="Meet your travel instructor" fallbackRole="Travel Instructor" />
     </div>
 
     <aside className="travelSidebarCol"><div className="travelPassStickyCard"><div className="passHeader"><span className="passLabel">Travel Package</span><div className="passPriceWrapper"><span className="currency">₹</span><span className="priceAmount">{new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(current.effectivePrice)}</span><span className="priceUnit">/ person</span></div>{hasDiscount && <div className="savingsRow"><span className="originalPrice">₹{new Intl.NumberFormat("en-IN", { maximumFractionDigits: 2 }).format(current.regularPrice)}</span></div>}</div>
@@ -110,6 +116,6 @@ function TravelDetailsContent() {
   </div></div>;
 }
 
-export default function TravelDetails() {
-  return <Suspense fallback={<div className="travelContentState" role="status">Loading travel package…</div>}><TravelDetailsContent /></Suspense>;
+export default function TravelDetails({ slug }) {
+  return <Suspense fallback={<div className="travelContentState" role="status">Loading travel package…</div>}><TravelDetailsContent slug={slug} /></Suspense>;
 }

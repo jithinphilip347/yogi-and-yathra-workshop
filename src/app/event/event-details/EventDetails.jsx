@@ -1,9 +1,10 @@
 "use client";
 import React, { useEffect, useMemo, useState, Suspense } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Breadcrumbs from "@/components/breadcrumbs/Breadcrumbs";
 import EventCard from "@/components/eventCard/EventCard";
+import InstructorProfileCard from "@/components/instructorProfile/InstructorProfileCard";
 import { offlineEventApi, adaptOfflineEvent, formatOfflineEventDate, formatOfflineEventStatus } from "@/services/offlineEventApi";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiArrowRight, FiX, FiCompass, FiNavigation } from "react-icons/fi";
@@ -30,15 +31,16 @@ const formatVideo = (url) => {
   return match ? `https://www.youtube.com/embed/${match[1]}?autoplay=1&rel=0` : resolveMediaUrl(value, "");
 };
 
-function EventDetailsContent() {
+function EventDetailsContent({ slug }) {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const eventId = searchParams?.get("id");
+  const legacyId = searchParams?.get("id");
+  const eventId = slug === "event-details" && legacyId ? legacyId : slug || legacyId;
   const [event, setEvent] = useState(null);
   const [related, setRelated] = useState([]);
   const [loadedEventId, setLoadedEventId] = useState(null);
   const [loadError, setLoadError] = useState("");
   const [isVideoOpen, setIsVideoOpen] = useState(false);
-  const [failedInstructorAvatar, setFailedInstructorAvatar] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -50,6 +52,9 @@ function EventDetailsContent() {
         setRelated(events.filter((item) => String(item.id) !== String(record?.id)).slice(0, 3));
         setLoadedEventId(eventId);
         setLoadError("");
+        if (record?.slug && window.location.pathname !== `/event/${record.slug}`) {
+          router.replace(`/event/${encodeURIComponent(record.slug)}`);
+        }
       })
       .catch((error) => {
         if (!active) return;
@@ -59,13 +64,11 @@ function EventDetailsContent() {
       })
       .finally(() => { if (active) setLoadedEventId(eventId); });
     return () => { active = false; };
-  }, [eventId]);
+  }, [eventId, router]);
 
   const highlights = useMemo(() => (Array.isArray(event?.highlights) ? event.highlights : []).map((item) => typeof item === "string" ? { heading: item, description: "" } : item).filter((item) => item?.heading), [event]);
   const schedule = Array.isArray(event?.workshop_schedule) ? event.workshop_schedule : [];
   const instructor = event?.instructor;
-  const instructorAvatar = instructor?.avatar || instructor?.avatar_url || "";
-  const instructorAvatarFailed = instructorAvatar && failedInstructorAvatar === instructorAvatar;
   const status = formatOfflineEventStatus(event?.public_booking_status);
   const registrationCloses = event?.registration_closes_at || (event?.registration_deadline ? `${event.registration_deadline}T23:59:00` : null);
   const currency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(Number(event?.ticket_price) || 0);
@@ -112,17 +115,7 @@ function EventDetailsContent() {
           {(event.address || event.google_maps_url) && <div className="specCard fullWidthSpec"><div className="specIconBox"><FiNavigation /></div><div className="specInfo"><span className="specLabel">Location / Address</span><span className="specValue">{event.address}</span></div>{event.google_maps_url && <a href={event.google_maps_url} target="_blank" rel="noreferrer" className="mapLinkBtn">View on Map</a>}</div>}
         </div></div>
 
-        {instructor?.name && <div className="eventInstructorSection"><h2 className="sectionTitle">Meet your instructor</h2><div className="instructorCard">
-          <div className="instructorAvatarCol">{instructorAvatar && !instructorAvatarFailed
-            ? <img src={resolveMediaUrl(instructorAvatar, "")} alt={instructor.name} width={90} height={90} className="instructorImg" onError={() => setFailedInstructorAvatar(instructorAvatar)} />
-            : <div className="instructorImg instructorAvatarFallback" aria-label={`${instructor.name} profile image unavailable`}>{instructor.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase()}</div>}
-          </div>
-          <div className="instructorDetailsCol"><h3 className="instructorName">{instructor.name}</h3><p className="instructorRole">{instructor.professional_title || "Event Instructor"}</p>
-            {(instructor.short_bio || instructor.bio_graphy || instructor.full_biography) && <p className="instructorBio">{instructor.short_bio || instructor.bio_graphy || instructor.full_biography}</p>}
-            {instructor.years_of_experience != null && <p className="instructorRole">{instructor.years_of_experience} years of experience</p>}
-            {Array.isArray(instructor.expertise) && instructor.expertise.length > 0 && <div className="instructorTags" aria-label="Instructor expertise">{instructor.expertise.map((area) => <span className="iTag" key={area}>{area}</span>)}</div>}
-          </div>
-        </div></div>}
+        <InstructorProfileCard person={instructor} sectionTitle="Meet your instructor" fallbackRole="Instructor" />
 
         {highlights.length > 0 && <div className="eventHighlightsSection"><h2 className="sectionTitle">Event Highlights &amp; Inclusions</h2><div className="highlightsGrid">{highlights.map((item, index) => <div key={`${item.heading}-${index}`} className="highlightCard"><div className="highlightCheck"><FiCheckCircle /></div><div className="highlightText"><h4>{item.heading}</h4>{item.description && <p>{item.description}</p>}</div></div>)}</div></div>}
 
@@ -142,6 +135,6 @@ function EventDetailsContent() {
   </div></div>;
 }
 
-export default function EventDetails() {
-  return <Suspense fallback={<div className="eventLoadingState" role="status">Loading event details…</div>}><EventDetailsContent /></Suspense>;
+export default function EventDetails({ slug }) {
+  return <Suspense fallback={<div className="eventLoadingState" role="status">Loading event details…</div>}><EventDetailsContent slug={slug} /></Suspense>;
 }

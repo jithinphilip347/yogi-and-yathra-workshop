@@ -15,6 +15,7 @@ const TravelCard = ({ travel }) => {
 
   const {
     id,
+    slug,
     title = "",
     description = "",
     image,
@@ -29,7 +30,7 @@ const TravelCard = ({ travel }) => {
     price = "",
     originalPrice = "",
     videoUrl = "",
-    link = id ? `/travel/travel-details?id=${encodeURIComponent(id)}` : "/travel",
+    link = slug || id ? `/travel/${encodeURIComponent(slug || id)}` : "/travel",
   } = travel;
 
   const targetLink = link || "/travel/travel-details";

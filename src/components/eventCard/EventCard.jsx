@@ -15,6 +15,7 @@ const EventCard = ({ event }) => {
 
   const {
     id,
+    slug,
     title = "",
     image,
     category = "",
@@ -29,7 +30,7 @@ const EventCard = ({ event }) => {
     link,
   } = event;
 
-  const targetLink = link || (id ? `/event/event-details?id=${encodeURIComponent(id)}` : "/event");
+  const targetLink = link || (slug || id ? `/event/${encodeURIComponent(slug || id)}` : "/event");
 
   const handleCardClick = (e) => {
     // If clicked inside play button or video modal, don't navigate

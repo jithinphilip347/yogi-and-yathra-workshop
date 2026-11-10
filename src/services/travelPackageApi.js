@@ -65,7 +65,7 @@ export function adaptTravelPackage(record) {
     totalSlots,
     bookedSlots,
     availableSlots,
-    link: `/travel/travel-details?id=${encodeURIComponent(record.id)}`,
+    link: `/travel/${encodeURIComponent(record.slug || record.id)}`,
     coordinator: record.coordinator || null,
     title: record.title || "",
     description: record.short_description || "",
