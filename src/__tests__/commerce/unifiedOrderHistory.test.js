@@ -127,7 +127,38 @@ describe('Sprint 9 — Unified order history (frontend)', () => {
       expect(orderTypeLabel(ORDER_TYPE.LEARNING)).toBe('Learning');
       expect(orderTypeLabel(ORDER_TYPE.PHYSICAL)).toBe('Physical');
       expect(orderTypeLabel(ORDER_TYPE.MIXED)).toBe('Mixed');
+      expect(orderTypeLabel(ORDER_TYPE.EXPERIENCE)).toBe('Event / travel booking');
       expect(orderTypeLabel(undefined)).toBe('Order');
+    });
+
+    it('normalizes experience booking details for customer order history', () => {
+      const view = normalizeOrder({
+        ...mixedOrder(),
+        type: 'experience',
+        learning: null,
+        ecommerce: null,
+        experience: {
+          booking_reference: 'EVT-42',
+          experience_type: 'travel',
+          title: 'Kerala Yoga Retreat',
+          plan_name: 'Shared Cottage',
+          status: 'confirmed',
+          participant_count: 2,
+          unit_price: 12000,
+          participants: [{ full_name: 'A User', email: 'a@example.test', phone: '9999999999' }],
+        },
+      });
+
+      expect(view.experience).toMatchObject({
+        bookingReference: 'EVT-42',
+        type: 'travel',
+        title: 'Kerala Yoga Retreat',
+        planName: 'Shared Cottage',
+        status: 'confirmed',
+        participantCount: 2,
+        unitPrice: 12000,
+      });
+      expect(view.experience.participants).toHaveLength(1);
     });
 
     it('classifies physical and learning presence', () => {

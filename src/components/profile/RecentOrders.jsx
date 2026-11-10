@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
   FiPackage,
   FiBookOpen,
+  FiCalendar,
   FiLayers,
   FiAlertCircle,
   FiArrowRight,
@@ -15,12 +16,14 @@ import "@/assets/css/recent-orders.scss";
 
 const TYPE_ICONS = {
   learning: <FiBookOpen />,
+  experience: <FiCalendar />,
   physical: <FiPackage />,
   mixed: <FiLayers />,
 };
 
 const TYPE_ICON_CLASS = {
   learning: "is-learning",
+  experience: "is-learning",
   physical: "is-physical",
   mixed: "is-mixed",
 };
@@ -138,13 +141,15 @@ const RecentOrders = ({ onViewAll = null }) => {
 
           <div className="OrderContent">
             <span className="OrderTitle">
-              {latest.learning?.title ||
+              {latest.learning?.title || latest.experience?.title ||
                 (latest.ecommerce
                   ? `Order #${latest.ecommerce.orderId}`
                   : latest.typeLabel)}
             </span>
             <div className="OrderMeta">
               <span>{latest.statusLabel}</span>
+              {latest.experience?.planName && <><span className="OrderMetaDot" /><span>{latest.experience.planName}</span></>}
+              {latest.experience?.participantCount > 0 && <><span className="OrderMetaDot" /><span>{latest.experience.participantCount} {latest.experience.participantCount === 1 ? "participant" : "participants"}</span></>}
               {latest.fulfillment?.available && latest.fulfillment.label && (
                 <>
                   <span className="OrderMetaDot" />

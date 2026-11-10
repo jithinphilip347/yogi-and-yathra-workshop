@@ -11,6 +11,7 @@ import {
   FiBookOpen,
   FiExternalLink,
   FiAlertCircle,
+  FiCalendar,
 } from "react-icons/fi";
 import ReceiptActions from "@/components/commerce/ReceiptActions";
 import {
@@ -137,6 +138,35 @@ const OrderDetail = ({ order, onBack, degradedMessage = null }) => {
                 <Row label="Progress" value={`${order.learning.access.progress.percentage}%`} />
               )}
             </div>
+          </Section>
+        )}
+
+        {order.experience && (
+          <Section title={order.experience.type === "travel" ? "Travel booking" : "Event booking"} icon={<FiCalendar aria-hidden="true" />}>
+            <p className="OrderSectionLead">
+              <FiCalendar aria-hidden="true" />
+              {order.experience.title || "Experience booking"}
+            </p>
+            <div className="OrderRows">
+              {order.experience.bookingReference && <Row label="Booking reference" value={order.experience.bookingReference} />}
+              {order.experience.planName && <Row label="Price plan" value={order.experience.planName} />}
+              <Row label="Participants" value={order.experience.participantCount} />
+              <Row label="Booking status" value={String(order.experience.status || "pending").replace(/_/g, " ")} />
+              {order.experience.unitPrice >= 0 && <Row label="Price per participant" value={formatAmount(order.experience.unitPrice, order.currency)} />}
+            </div>
+            {order.experience.participants.length > 0 && (
+              <ul className="OrderItems">
+                {order.experience.participants.map((participant, index) => (
+                  <li className="OrderItem" key={`${participant.email || participant.phone || "participant"}-${index}`}>
+                    <span className="OrderItemThumb"><FiCalendar aria-hidden="true" /></span>
+                    <span className="OrderItemBody">
+                      <span className="OrderItemName">{participant.full_name || `Participant ${index + 1}`}</span>
+                      <span className="OrderItemMeta">{[participant.email, participant.phone].filter(Boolean).join(" · ")}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </Section>
         )}
 

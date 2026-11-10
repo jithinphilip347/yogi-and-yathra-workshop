@@ -19,6 +19,7 @@ export const ORDER_TYPE = {
   LEARNING: 'learning',
   PHYSICAL: 'physical',
   MIXED: 'mixed',
+  EXPERIENCE: 'experience',
 };
 
 export const ECOMMERCE_STATE = {
@@ -32,6 +33,7 @@ const TYPE_LABELS = {
   [ORDER_TYPE.LEARNING]: 'Learning',
   [ORDER_TYPE.PHYSICAL]: 'Physical',
   [ORDER_TYPE.MIXED]: 'Mixed',
+  [ORDER_TYPE.EXPERIENCE]: 'Event / travel booking',
 };
 
 const PAYMENT_META = {
@@ -291,6 +293,20 @@ export function normalizeOrder(order) {
           slug: order.learning.slug || null,
           thumbnail: order.learning.thumbnail || null,
           access: order.learning.access || null,
+        }
+      : null,
+    experience: order.experience
+      ? {
+          bookingReference: order.experience.booking_reference || null,
+          type: order.experience.experience_type || null,
+          title: order.experience.title || null,
+          planName: order.experience.plan_name || null,
+          status: order.experience.status || null,
+          participantCount: Number(order.experience.participant_count || 0),
+          unitPrice: Number(order.experience.unit_price || 0),
+          participants: Array.isArray(order.experience.participants)
+            ? order.experience.participants
+            : [],
         }
       : null,
     ecommerce: order.ecommerce

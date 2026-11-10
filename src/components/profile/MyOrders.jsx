@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { FiPackage, FiBookOpen, FiLayers, FiChevronRight, FiAlertCircle, FiInbox } from "react-icons/fi";
+import { FiPackage, FiBookOpen, FiLayers, FiChevronRight, FiAlertCircle, FiInbox, FiCalendar } from "react-icons/fi";
 import orderApi from "@/libs/orderApi";
 import {
   normalizeOrderList,
@@ -29,6 +29,7 @@ const TYPE_ICONS = {
   learning: <FiBookOpen aria-hidden="true" />,
   physical: <FiPackage aria-hidden="true" />,
   mixed: <FiLayers aria-hidden="true" />,
+  experience: <FiCalendar aria-hidden="true" />,
 };
 
 const formatPlaced = (value) =>
@@ -179,6 +180,7 @@ const MyOrders = () => {
           {state.orders.map((order) => {
             const title =
               order.learning?.title ||
+              order.experience?.title ||
               (order.ecommerce ? `Physical order #${order.ecommerce.orderId}` : "Order");
 
             const contextLine = [order.statusLabel, formatPlaced(order.createdAt)]
@@ -195,6 +197,11 @@ const MyOrders = () => {
               : null;
 
             const learningLine = order.learning ? accessLabel(order) : null;
+            const experienceLine = order.experience
+              ? [order.experience.planName, `${order.experience.participantCount} ${order.experience.participantCount === 1 ? "participant" : "participants"}`, order.experience.status?.replace(/_/g, " ")]
+                  .filter(Boolean)
+                  .join(" · ")
+              : null;
             const syncIncomplete =
               order.synchronization && order.synchronization.status === "partially_synchronized";
 
@@ -216,6 +223,7 @@ const MyOrders = () => {
                     <span className="OrderCardName">{title}</span>
                     {contextLine && <span className="OrderCardMeta">{contextLine}</span>}
                     {learningLine && <span className="OrderCardMeta">{learningLine}</span>}
+                    {experienceLine && <span className="OrderCardMeta">{experienceLine}</span>}
                     {fulfillmentLine && <span className="OrderCardMeta">{fulfillmentLine}</span>}
                   </span>
 
