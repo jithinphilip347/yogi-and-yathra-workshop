@@ -38,7 +38,7 @@ function EventDetailsContent() {
   const [loadedEventId, setLoadedEventId] = useState(null);
   const [loadError, setLoadError] = useState("");
   const [isVideoOpen, setIsVideoOpen] = useState(false);
-  const [instructorAvatarFailed, setInstructorAvatarFailed] = useState(false);
+  const [failedInstructorAvatar, setFailedInstructorAvatar] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -61,11 +61,11 @@ function EventDetailsContent() {
     return () => { active = false; };
   }, [eventId]);
 
-  useEffect(() => setInstructorAvatarFailed(false), [event?.id, event?.instructor?.avatar]);
-
   const highlights = useMemo(() => (Array.isArray(event?.highlights) ? event.highlights : []).map((item) => typeof item === "string" ? { heading: item, description: "" } : item).filter((item) => item?.heading), [event]);
   const schedule = Array.isArray(event?.workshop_schedule) ? event.workshop_schedule : [];
   const instructor = event?.instructor;
+  const instructorAvatar = instructor?.avatar || instructor?.avatar_url || "";
+  const instructorAvatarFailed = instructorAvatar && failedInstructorAvatar === instructorAvatar;
   const status = formatOfflineEventStatus(event?.public_booking_status);
   const registrationCloses = event?.registration_closes_at || (event?.registration_deadline ? `${event.registration_deadline}T23:59:00` : null);
   const currency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(Number(event?.ticket_price) || 0);
@@ -113,8 +113,8 @@ function EventDetailsContent() {
         </div></div>
 
         {instructor?.name && <div className="eventInstructorSection"><h2 className="sectionTitle">Meet your instructor</h2><div className="instructorCard">
-          <div className="instructorAvatarCol">{instructor.avatar && !instructorAvatarFailed
-            ? <img src={resolveMediaUrl(instructor.avatar, "")} alt={instructor.name} width={90} height={90} className="instructorImg" onError={() => setInstructorAvatarFailed(true)} />
+          <div className="instructorAvatarCol">{instructorAvatar && !instructorAvatarFailed
+            ? <img src={resolveMediaUrl(instructorAvatar, "")} alt={instructor.name} width={90} height={90} className="instructorImg" onError={() => setFailedInstructorAvatar(instructorAvatar)} />
             : <div className="instructorImg instructorAvatarFallback" aria-label={`${instructor.name} profile image unavailable`}>{instructor.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase()}</div>}
           </div>
           <div className="instructorDetailsCol"><h3 className="instructorName">{instructor.name}</h3><p className="instructorRole">{instructor.professional_title || "Event Instructor"}</p>
