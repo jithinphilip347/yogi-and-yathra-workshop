@@ -1,3 +1,5 @@
+'use client';
+import useExperienceHeaderOffset from './useExperienceHeaderOffset';
 import '@/assets/css/experience-skeletons.scss';
 
 const Pulse = ({ className = '' }) => <span className={`experienceSkeletonPulse ${className}`} aria-hidden="true" />;
@@ -36,7 +38,8 @@ export function ExperienceDetailsSkeleton({ type = 'event' }) {
 }
 
 export function ExperienceCheckoutSkeleton() {
-  return <main id="ExperienceCheckout" className="experienceCheckoutSkeleton" role="status" aria-label="Loading booking checkout">
+  const headerStyle = useExperienceHeaderOffset();
+  return <main id="ExperienceCheckout" style={headerStyle} className="experienceCheckoutSkeleton" role="status" aria-label="Loading booking checkout">
     <div className="experienceCheckoutSkeletonStepper"><Pulse className="h-12 w-12 circle" /><Pulse className="h-4 w-28" /><Pulse className="h-1 w-24" /><Pulse className="h-12 w-12 circle" /><Pulse className="h-4 w-28" /></div>
     <div className="experienceCheckoutSkeletonGrid">
       <section className="experienceCheckoutSkeletonPanel"><Pulse className="h-8 w-60" /><Pulse className="h-4 w-80" />{Array.from({ length: 4 }, (_, i) => <div className="experienceCheckoutSkeletonField" key={i}><Pulse className="h-4 w-32" /><Pulse className="h-12 w-100" /></div>)}<Pulse className="h-12 w-44" /></section>

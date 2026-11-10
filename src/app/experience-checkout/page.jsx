@@ -11,6 +11,7 @@ import { travelPackageApi } from '@/services/travelPackageApi';
 import { experienceBookingApi } from '@/services/experienceBookingApi';
 import { ExperienceCheckoutSkeleton } from '@/components/experiences/ExperienceSkeletons';
 import { resolveMediaUrl } from '@/utils/mediaUrl';
+import useExperienceHeaderOffset from '@/components/experiences/useExperienceHeaderOffset';
 import '@/assets/css/experience-checkout.scss';
 
 const formatMoney = (value) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 2 }).format(Number(value) || 0);
@@ -18,6 +19,7 @@ const effectivePrice = (plan) => Number(plan?.discount_price) >= 0 && Number(pla
 const participantFrom = (user) => ({ full_name: user?.name || '', email: user?.email || '', phone: user?.phone || '', id_proof: null });
 
 function ExperienceCheckoutContent() {
+  const headerStyle = useExperienceHeaderOffset();
   const params = useSearchParams();
   const router = useRouter();
   const dispatch = useDispatch();
@@ -119,7 +121,7 @@ function ExperienceCheckoutContent() {
   const experienceDate = type === 'travel'
     ? [record.travel_start_date, record.travel_end_date].filter(Boolean).join(' – ')
     : [record.event_start_date, record.event_end_date].filter(Boolean).join(' – ');
-  return <main id="ExperienceCheckout">
+  return <main id="ExperienceCheckout" style={headerStyle}>
     <nav className="experienceCheckoutStepper" aria-label="Booking progress">
       {[['1', 'Booking details'], ['2', 'Participants']].map(([number, label], index) => <React.Fragment key={number}>
         <div className={`experienceStep ${activeStep === index + 1 ? 'is-active' : ''} ${activeStep > index + 1 ? 'is-complete' : ''}`} aria-current={activeStep === index + 1 ? 'step' : undefined}><span>{number}</span><strong>{label}</strong></div>
