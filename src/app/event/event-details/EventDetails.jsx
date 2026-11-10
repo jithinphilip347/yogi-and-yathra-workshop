@@ -45,16 +45,30 @@ function EventDetailsContent({ slug }) {
   useEffect(() => {
     let active = true;
     if (!eventId) return () => { active = false; };
-    Promise.all([offlineEventApi.get(eventId), offlineEventApi.list({ per_page: 100 })])
-      .then(([record, events]) => {
+    offlineEventApi.get(eventId)
+      .then((record) => {
         if (!active) return;
+        if (!record) {
+          setEvent(null);
+          setLoadedEventId(eventId);
+          setLoadError("This event is no longer available.");
+          return;
+        }
         setEvent(record);
-        setRelated(events.filter((item) => String(item.id) !== String(record?.id)).slice(0, 3));
         setLoadedEventId(record?.slug || eventId);
         setLoadError("");
         if (record?.slug && window.location.pathname !== `/event/${record.slug}`) {
           router.replace(`/event/${encodeURIComponent(record.slug)}`);
         }
+        // Related events are supplementary. A failed list request must never
+        // turn a successfully loaded event detail into a page-level error.
+        offlineEventApi.list({ per_page: 100 })
+          .then((events) => {
+            if (active) setRelated(events.filter((item) => String(item.id) !== String(record.id)).slice(0, 3));
+          })
+          .catch(() => {
+            if (active) setRelated([]);
+          });
       })
       .catch((error) => {
         if (!active) return;
@@ -114,7 +128,7 @@ function EventDetailsContent({ slug }) {
           {(event.address || event.google_maps_url) && <div className="specCard fullWidthSpec"><div className="specIconBox"><FiNavigation /></div><div className="specInfo"><span className="specLabel">Location / Address</span><span className="specValue">{event.address}</span></div>{event.google_maps_url && <a href={event.google_maps_url} target="_blank" rel="noreferrer" className="mapLinkBtn">View on Map</a>}</div>}
         </div></div>
 
-        <InstructorProfileCard person={instructor} sectionTitle="Meet your instructor" fallbackRole="Instructor" />
+        <InstructorProfileCard person={instructor} sectionTitle="Instructor Profile" fallbackRole="Instructor" />
 
         {highlights.length > 0 && <div className="eventHighlightsSection"><h2 className="sectionTitle">Event Highlights &amp; Inclusions</h2><div className="highlightsGrid">{highlights.map((item, index) => <div key={`${item.heading}-${index}`} className="highlightCard"><div className="highlightCheck"><FiCheckCircle /></div><div className="highlightText"><h4>{item.heading}</h4>{item.description && <p>{item.description}</p>}</div></div>)}</div></div>}
 

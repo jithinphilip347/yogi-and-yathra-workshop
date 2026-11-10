@@ -5,15 +5,29 @@ import { FiShield } from "react-icons/fi";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import "./InstructorProfileCard.scss";
 
+const normalizeExpertise = (value) => {
+  if (Array.isArray(value)) return value;
+  if (typeof value !== "string") return [];
+
+  try {
+    const parsed = JSON.parse(value);
+    if (Array.isArray(parsed)) return parsed;
+  } catch {
+    // Older profiles may store expertise as a comma-separated string.
+  }
+
+  return value.split(",");
+};
+
 export default function InstructorProfileCard({ person, sectionTitle = "Meet your instructor", fallbackRole = "Instructor" }) {
   const [failedAvatar, setFailedAvatar] = useState("");
   if (!person?.name) return null;
 
-  const avatar = person.avatar || person.avatar_url || "";
-  const biography = person.short_bio || person.bio_graphy || person.full_biography || "";
-  const expertise = Array.isArray(person.expertise)
-    ? person.expertise.filter((item) => typeof item === "string" && item.trim())
-    : [];
+  const avatar = person.avatar_url || person.avatar || "";
+  const biography = person.short_bio || person.full_biography || person.bio_graphy || "";
+  const expertiseTags = normalizeExpertise(person.expertise)
+    .filter((item) => typeof item === "string" && item.trim())
+    .map((item) => item.trim());
   const initials = person.name.trim().split(/\s+/).slice(0, 2).map((part) => part[0]).join("").toUpperCase();
 
   return (
@@ -30,8 +44,8 @@ export default function InstructorProfileCard({ person, sectionTitle = "Meet you
           <h3 className="experienceInstructorName">{person.name}</h3>
           <p className="experienceInstructorTitle">{person.professional_title || fallbackRole}</p>
           {biography && <p className="experienceInstructorBio">{biography}</p>}
-          {(expertise.length > 0 || person.years_of_experience != null) && <div className="experienceInstructorTags">
-            {expertise.map((area, index) => <span key={`${area}-${index}`}>{area}</span>)}
+          {(expertiseTags.length > 0 || person.years_of_experience != null) && <div className="experienceInstructorTags">
+            {expertiseTags.map((area, index) => <span key={`${area}-${index}`}>{area}</span>)}
             {person.years_of_experience != null && <span>{person.years_of_experience}+ years experience</span>}
           </div>}
         </div>
