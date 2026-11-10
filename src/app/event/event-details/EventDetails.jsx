@@ -9,6 +9,7 @@ import { offlineEventApi, adaptOfflineEvent, formatOfflineEventDate, formatOffli
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiArrowRight, FiX, FiCompass, FiNavigation } from "react-icons/fi";
 import { FaPlay } from "react-icons/fa";
+import ExperiencePricingPlans from "@/components/experiences/ExperiencePricingPlans";
 import "@/assets/css/EventDetails.scss";
 
 const formatTime = (value) => {
@@ -41,6 +42,7 @@ function EventDetailsContent({ slug }) {
   const [loadedEventId, setLoadedEventId] = useState(null);
   const [loadError, setLoadError] = useState("");
   const [isVideoOpen, setIsVideoOpen] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -55,6 +57,7 @@ function EventDetailsContent({ slug }) {
           return;
         }
         setEvent(record);
+        setSelectedPlanId((current) => current || String(record?.pricing_plans?.find((plan) => plan.is_featured)?.id || record?.pricing_plans?.[0]?.id || ""));
         setLoadedEventId(record?.slug || eventId);
         setLoadError("");
         if (record?.slug && window.location.pathname !== `/event/${record.slug}`) {
@@ -84,7 +87,9 @@ function EventDetailsContent({ slug }) {
   const instructor = event?.instructor;
   const status = formatOfflineEventStatus(event?.public_booking_status);
   const registrationCloses = event?.registration_closes_at || (event?.registration_deadline ? `${event.registration_deadline}T23:59:00` : null);
-  const currency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(Number(event?.ticket_price) || 0);
+  const selectedPlan = event?.pricing_plans?.find((plan) => String(plan.id) === String(selectedPlanId));
+  const planPrice = selectedPlan ? (Number(selectedPlan.discount_price) >= 0 && Number(selectedPlan.discount_price) < Number(selectedPlan.price) ? Number(selectedPlan.discount_price) : Number(selectedPlan.price)) : null;
+  const currency = new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 2 }).format(planPrice ?? (Number(event?.ticket_price) || 0));
   const introVideoUrl = formatVideo(event?.intro_video);
   const videoIsEmbed = /youtube\.com\/embed|player\.vimeo\.com/.test(introVideoUrl);
   const bookedSeats = Number(event?.booked_seats) || 0;
@@ -138,9 +143,10 @@ function EventDetailsContent({ slug }) {
       </div>
 
       <aside className="eventSidebarCol"><div className="eventPassStickyCard"><div className="passHeader"><span className="passLabel">Event Pass</span><div className="passPriceWrapper"><span className="priceAmount">{currency}</span><span className="priceUnit">/ spot</span></div></div>
+        <ExperiencePricingPlans plans={event.pricing_plans || []} value={selectedPlanId} onChange={setSelectedPlanId} />
         <div className="seatsStatusBox"><div className="seatsTopRow"><span className="seatsAvailableText"><FiUsers />{availableSeats == null ? <strong>Unlimited capacity</strong> : <><strong>{availableSeats} seats left</strong></>}</span>{totalSeats != null && <span className="seatsTotalText">{totalSeats} total</span>}</div>{totalSeats != null && <><div className="seatsProgressBar"><div className="progressBarFill" style={{ width: `${filled}%` }} /></div><span className="progressSubtext">{bookedSeats} booked · {filled}% filled</span></>}</div>
         {registrationCloses && <div className="deadlineAlertBox"><FiClock className="alertIcon" /><div><strong>Registration closes</strong><p>{formatDateTime(registrationCloses)}</p></div></div>}
-        <Link href={`/checkout?type=event&id=${encodeURIComponent(event.id)}`} className="bookSpotPrimaryBtn"><span>{event.booking_cta_label || "Book Your Spot"}</span><FiArrowRight /></Link>
+        {selectedPlan ? <Link href={`/experience-checkout?type=event&id=${encodeURIComponent(event.slug || event.id)}&pricing_plan_id=${encodeURIComponent(selectedPlan.id)}`} className="bookSpotPrimaryBtn"><span>{event.booking_cta_label || "Book Your Spot"}</span><FiArrowRight /></Link> : <button type="button" className="bookSpotPrimaryBtn" disabled><span>Booking unavailable</span></button>}
       </div></aside>
     </div>
 

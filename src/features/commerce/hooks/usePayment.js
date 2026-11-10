@@ -76,7 +76,7 @@ export function usePayment() {
    *                            { order, payment, razorpay, key_id }
    * @param {object} userProfile The logged-in user profile for prefill.
    */
-  const executeRazorpay = async (orderData, userProfile) => {
+  const executeRazorpay = async (orderData, userProfile, navigation = {}) => {
     dispatch(startPayment());
 
     // Backend is the single source of truth for the Razorpay payload.
@@ -172,7 +172,7 @@ export function usePayment() {
             // payment is captured and Workshop access is fulfilled. The physical
             // order sync is retried server-side (idempotently) via the webhook
             // reconciliation path, so the user still lands on success.
-            router.replace('/checkout/success');
+            router.replace(navigation.successUrl || '/checkout/success');
           } else {
             throw new Error(verifyRes.message || 'Payment signature verification failed.');
           }
@@ -181,7 +181,7 @@ export function usePayment() {
           verificationGuard.current = false;
           const msg = err.response?.data?.message || err.message || 'Verification Error';
           dispatch(paymentFailure(msg));
-          router.push('/checkout/failure');
+          router.push(navigation.failureUrl || '/checkout/failure');
         }
       },
       modal: {

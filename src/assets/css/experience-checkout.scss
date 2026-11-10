@@ -1,0 +1,16 @@
+#ExperienceCheckout { max-width: 1100px; margin: 40px auto 80px; padding: 0 20px; color: #182235; }
+#ExperienceCheckout .experienceCheckoutGrid { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(290px,.8fr); gap:28px; align-items:start; }
+#ExperienceCheckout .experienceCheckoutPanel,#ExperienceCheckout .experienceSummary { background:#fff; border:1px solid #e1e6ee; border-radius:18px; padding:28px; box-shadow:0 8px 26px #1822350a; }
+#ExperienceCheckout h1 { margin:0 0 8px; font-size:clamp(28px,4vw,38px); } #ExperienceCheckout h2 { font-size:21px; margin:0 0 18px; }
+#ExperienceCheckout .experienceCheckoutIntro { color:#697386; margin:0 0 24px; }
+#ExperienceCheckout .experienceCheckoutField { display:grid; gap:8px; margin:18px 0; font-weight:600; }
+#ExperienceCheckout input,#ExperienceCheckout select { width:100%; min-height:48px; border:1px solid #d5dbe5; border-radius:10px; padding:10px 13px; color:#182235; background:#fff; font:inherit; }
+#ExperienceCheckout .participantCard { border:1px solid #e3e8ef; border-radius:14px; padding:18px; margin:16px 0; }
+#ExperienceCheckout .participantCard h3 { margin:0 0 8px; font-size:17px; }
+#ExperienceCheckout .experienceSummary { position:sticky; top:24px; }
+#ExperienceCheckout .experienceSummaryRow { display:flex; justify-content:space-between; gap:16px; padding:12px 0; border-bottom:1px solid #edf0f4; }
+#ExperienceCheckout .experienceSummaryTotal { font-size:20px; font-weight:700; border:0; }
+#ExperienceCheckout .experiencePayButton { width:100%; min-height:52px; margin-top:20px; border:0; border-radius:12px; background:#8a4729; color:#fff; font:inherit; font-weight:700; cursor:pointer; }
+#ExperienceCheckout .experiencePayButton:disabled { opacity:.55; cursor:not-allowed; }
+#ExperienceCheckout .experienceCheckoutError { color:#b42336; background:#fff1f2; border:1px solid #fecdd3; border-radius:10px; padding:12px 14px; margin:16px 0; }
+@media(max-width:800px) { #ExperienceCheckout .experienceCheckoutGrid { grid-template-columns:1fr; } #ExperienceCheckout .experienceSummary { position:static; } }

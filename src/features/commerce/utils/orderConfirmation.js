@@ -44,6 +44,7 @@ export const CONFIRMATION_DOMAIN = {
   LEARNING: 'learning',
   PHYSICAL: 'physical',
   MIXED: 'mixed',
+  EXPERIENCE: 'experience',
 };
 
 /**
@@ -72,6 +73,7 @@ export function confirmationDomain(activeOrder) {
     labelled === CONFIRMATION_DOMAIN.LEARNING ||
     labelled === CONFIRMATION_DOMAIN.PHYSICAL ||
     labelled === CONFIRMATION_DOMAIN.MIXED
+    || labelled === CONFIRMATION_DOMAIN.EXPERIENCE
   ) {
     return labelled;
   }

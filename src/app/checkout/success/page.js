@@ -74,6 +74,7 @@ export default function CheckoutSuccessPage() {
 
   const hasLearning = domain === CONFIRMATION_DOMAIN.LEARNING || domain === CONFIRMATION_DOMAIN.MIXED;
   const hasPhysical = domain === CONFIRMATION_DOMAIN.PHYSICAL || domain === CONFIRMATION_DOMAIN.MIXED;
+  const hasExperience = domain === CONFIRMATION_DOMAIN.EXPERIENCE;
 
   /* ── No order to confirm ───────────────────────────────────────────────────
      Reached by opening this URL directly, or after a cleared browser storage.
@@ -182,7 +183,22 @@ export default function CheckoutSuccessPage() {
                 </article>
               )}
 
-              {!hasLearning && !hasPhysical && (
+              {hasExperience && (
+                <article className="SuccessOrderCard">
+                  <span className="SuccessOrderIcon" aria-hidden="true"><FaCheckCircle /></span>
+                  <div className="SuccessOrderBody">
+                    <h3 className="SuccessOrderName">{activeOrder?.experience?.title || 'Experience booking'}</h3>
+                    <p className="SuccessOrderMeta">
+                      {activeOrder?.experience?.experience_type === 'travel' ? 'Travel package' : 'Offline event'}
+                      {activeOrder?.experience?.booking_reference ? ` · ${activeOrder.experience.booking_reference}` : ''}
+                      {activeOrder?.experience?.participant_count ? ` · ${activeOrder.experience.participant_count} participant${activeOrder.experience.participant_count === 1 ? '' : 's'}` : ''}
+                    </p>
+                  </div>
+                  <span className={`SuccessBadge ${isConfirmed ? 'success' : 'pending'}`}>{isConfirmed ? 'Confirmed' : 'Payment pending'}</span>
+                </article>
+              )}
+
+              {!hasLearning && !hasPhysical && !hasExperience && (
                 <article className="SuccessOrderCard">
                   <span className="SuccessOrderIcon" aria-hidden="true">
                     <FaCheckCircle />
