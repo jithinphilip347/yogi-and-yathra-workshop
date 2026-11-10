@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import EventCard from "@/components/eventCard/EventCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
@@ -18,28 +19,63 @@ import {
 import "@/assets/css/EventList.scss";
 
 const EventList = () => {
-  const [allEvents, setAllEvents] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState("");
-
-  useEffect(() => {
-    let active = true;
-    offlineEventApi.list({ per_page: 100 })
-      .then((events) => { if (active) setAllEvents(events.map(adaptOfflineEvent).filter(Boolean)); })
-      .catch(() => { if (active) setLoadError("We could not load events right now. Please try again."); })
-      .finally(() => { if (active) setIsLoading(false); });
-    return () => { active = false; };
-  }, []);
-
-  // Filter States
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedDuration, setSelectedDuration] = useState("All");
   const [sortBy, setSortBy] = useState("default");
+  const pageSize = 12;
+  const loadMoreRef = useRef(null);
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    isFetchNextPageError,
+  } = useInfiniteQuery({
+    queryKey: ["public-offline-events-catalog", sortBy],
+    queryFn: ({ pageParam, signal }) => offlineEventApi.listPage(
+      {
+        page: pageParam,
+        per_page: pageSize,
+        ...(sortBy !== "default" ? { sort: sortBy.replace("-", "_") } : {}),
+      },
+      { signal }
+    ),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _pages, lastPageParam) => {
+      const currentPage = Number(lastPage.meta?.current_page);
+      const lastPageNumber = Number(lastPage.meta?.last_page);
+      if (Number.isFinite(currentPage) && Number.isFinite(lastPageNumber)) {
+        return currentPage < lastPageNumber ? currentPage + 1 : undefined;
+      }
+      return lastPage.data.length === pageSize ? lastPageParam + 1 : undefined;
+    },
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: true,
+  });
+  const allEvents = useMemo(
+    () => (data?.pages || []).flatMap((page) => page.data).map(adaptOfflineEvent).filter(Boolean),
+    [data]
+  );
 
-  // Pagination (2 rows of 2 cards = 4)
-  const [visibleCount, setVisibleCount] = useState(4);
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (typeof IntersectionObserver === "undefined" || !sentinel || !hasNextPage || isFetching || isFetchNextPageError) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) fetchNextPage();
+      },
+      { rootMargin: "500px 0px", threshold: 0 }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchNextPageError, isFetching]);
 
   // Categories
   const categories = useMemo(() => ["All", ...new Set(allEvents.map((event) => event.category).filter(Boolean))], [allEvents]);
@@ -152,15 +188,28 @@ const EventList = () => {
     setSelectedStatus("All");
     setSelectedDuration("All");
     setSortBy("default");
-    setVisibleCount(4);
   };
+  const visibleEvents = filteredEvents;
+  const hasMore = Boolean(hasNextPage);
 
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 2); // Load next row (2 cards)
-  };
-
-  const visibleEvents = filteredEvents.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredEvents.length;
+  const loadMoreContent = hasMore ? (
+    <div className="loadMoreContainer">
+      <div ref={loadMoreRef} className="infiniteScrollSentinel" aria-hidden="true" />
+      <button
+        type="button"
+        onClick={() => fetchNextPage()}
+        className="loadMoreBtn"
+        aria-label="Load more events"
+        disabled={isFetching}
+      >
+        <span>{isFetchingNextPage ? "Loading events…" : isFetchNextPageError ? "Retry loading events" : "Load More Events"}</span>
+        {!isFetchingNextPage && <FiChevronDown />}
+      </button>
+      <span className="loadMoreCount" role="status">
+        {isFetchNextPageError ? "Could not load the next page. Try again." : `${allEvents.length} events loaded · scroll to see more`}
+      </span>
+    </div>
+  ) : null;
 
   return (
     <div id="EventListPage">
@@ -206,7 +255,6 @@ const EventList = () => {
                   className={`categoryPill ${selectedCategory === cat ? "active" : ""}`}
                   onClick={() => {
                     setSelectedCategory(cat);
-                    setVisibleCount(4);
                   }}
                 >
                   {cat}
@@ -224,7 +272,6 @@ const EventList = () => {
                   options={locationOptions}
                   onChange={(val) => {
                     setSelectedLocation(val);
-                    setVisibleCount(4);
                   }}
                   searchPlaceholder="Search locations..."
                 />
@@ -236,7 +283,6 @@ const EventList = () => {
                   options={statusOptions}
                   onChange={(val) => {
                     setSelectedStatus(val);
-                    setVisibleCount(4);
                   }}
                   searchPlaceholder="Search status..."
                   showSearch={false}
@@ -249,7 +295,6 @@ const EventList = () => {
                   options={durationOptions}
                   onChange={(val) => {
                     setSelectedDuration(val);
-                    setVisibleCount(4);
                   }}
                   searchPlaceholder="Search duration..."
                   showSearch={false}
@@ -263,7 +308,6 @@ const EventList = () => {
                   options={sortOptions}
                   onChange={(val) => {
                     setSortBy(val);
-                    setVisibleCount(4);
                   }}
                   searchPlaceholder="Search sort..."
                   showSearch={false}
@@ -303,7 +347,6 @@ const EventList = () => {
                         className="removeChip"
                         onClick={() => {
                           setSelectedCategory("All");
-                          setVisibleCount(4);
                         }}
                       >
                         ×
@@ -317,7 +360,6 @@ const EventList = () => {
                         className="removeChip"
                         onClick={() => {
                           setSelectedLocation("All");
-                          setVisibleCount(4);
                         }}
                       >
                         ×
@@ -331,7 +373,6 @@ const EventList = () => {
                         className="removeChip"
                         onClick={() => {
                           setSelectedStatus("All");
-                          setVisibleCount(4);
                         }}
                       >
                         ×
@@ -345,7 +386,6 @@ const EventList = () => {
                         className="removeChip"
                         onClick={() => {
                           setSelectedDuration("All");
-                          setVisibleCount(4);
                         }}
                       >
                         ×
@@ -360,8 +400,8 @@ const EventList = () => {
           {/* Event Cards Grid OR ElseDesign */}
           {isLoading ? (
             <div className="eventLoadingState" role="status">Loading events…</div>
-          ) : loadError ? (
-            <div className="eventLoadingState" role="alert"><p>{loadError}</p><button type="button" onClick={() => { setIsLoading(true); setLoadError(""); offlineEventApi.list({ per_page: 100 }).then((events) => setAllEvents(events.map(adaptOfflineEvent).filter(Boolean))).catch(() => setLoadError("We could not load events right now. Please try again.")).finally(() => setIsLoading(false)); }}>Retry</button></div>
+          ) : isError && !data?.pages?.length ? (
+            <div className="eventLoadingState" role="alert"><p>We could not load events right now. Please try again.</p><button type="button" onClick={() => refetch()}>Retry</button></div>
           ) : filteredEvents.length > 0 ? (
             <>
               <div className="eventListingGrid">
@@ -376,23 +416,12 @@ const EventList = () => {
                 ))}
               </div>
 
-              {/* Bottom Center Load More Button */}
-              {hasMore && (
-                <div className="loadMoreContainer">
-                  <button
-                    type="button"
-                    onClick={handleLoadMore}
-                    className="loadMoreBtn"
-                    aria-label="Load more events"
-                  >
-                    <span>Load More Events</span>
-                    <FiChevronDown />
-                  </button>
-                  <span className="loadMoreCount">
-                    Showing {visibleEvents.length} of {filteredEvents.length}
-                  </span>
-                </div>
-              )}
+              {loadMoreContent}
+            </>
+          ) : hasMore ? (
+            <>
+              <div className="eventLoadingState" role="status">No matching events on the loaded pages. Load more to check the remaining events.</div>
+              {loadMoreContent}
             </>
           ) : (
             <ElseDesign

@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import TravelCard from "@/components/travelCard/TravelCard";
 import ElseDesign from "@/components/elseDesign/ElseDesign";
@@ -17,29 +18,64 @@ import {
 } from "react-icons/fi";
 import "@/assets/css/TravelList.scss";
 
-const TravelList = ({ initialTravels }) => {
-  const [allTravels, setAllTravels] = useState(() => Array.isArray(initialTravels) ? initialTravels.map(adaptTravelPackage) : []);
-  const [isLoading, setIsLoading] = useState(!Array.isArray(initialTravels));
-  const [loadError, setLoadError] = useState("");
-  useEffect(() => {
-    if (Array.isArray(initialTravels)) return undefined;
-    let active = true;
-    travelPackageApi.list({ per_page: 100 })
-      .then((records) => { if (active) setAllTravels(records.map(adaptTravelPackage).filter(Boolean)); })
-      .catch(() => { if (active) setLoadError("We could not load travel packages. Please try again."); })
-      .finally(() => { if (active) setIsLoading(false); });
-    return () => { active = false; };
-  }, [initialTravels]);
-
-  // Filter States
+const TravelList = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedDestination, setSelectedDestination] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
   const [selectedDuration, setSelectedDuration] = useState("All");
   const [sortBy, setSortBy] = useState("default");
+  const pageSize = 12;
+  const loadMoreRef = useRef(null);
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetching,
+    isFetchingNextPage,
+    isFetchNextPageError,
+  } = useInfiniteQuery({
+    queryKey: ["public-yoga-travel-packages-catalog", sortBy],
+    queryFn: ({ pageParam, signal }) => travelPackageApi.listPage(
+      {
+        page: pageParam,
+        per_page: pageSize,
+        ...(sortBy !== "default" ? { sort: sortBy.replace("-", "_") } : {}),
+      },
+      { signal }
+    ),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, _pages, lastPageParam) => {
+      const currentPage = Number(lastPage.meta?.current_page);
+      const lastPageNumber = Number(lastPage.meta?.last_page);
+      if (Number.isFinite(currentPage) && Number.isFinite(lastPageNumber)) {
+        return currentPage < lastPageNumber ? currentPage + 1 : undefined;
+      }
+      return lastPage.data.length === pageSize ? lastPageParam + 1 : undefined;
+    },
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: true,
+  });
+  const allTravels = useMemo(
+    () => (data?.pages || []).flatMap((page) => page.data).map(adaptTravelPackage).filter(Boolean),
+    [data]
+  );
 
-  // Pagination (1 row of 3 cards = 3)
-  const [visibleCount, setVisibleCount] = useState(3);
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (typeof IntersectionObserver === "undefined" || !sentinel || !hasNextPage || isFetching || isFetchNextPageError) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) fetchNextPage();
+      },
+      { rootMargin: "500px 0px", threshold: 0 }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [fetchNextPage, hasNextPage, isFetchNextPageError, isFetching]);
 
   // Categories
   const categories = useMemo(() => ["All", ...new Set(allTravels.map((travel) => travel.categoryLabel).filter(Boolean))], [allTravels]);
@@ -146,15 +182,28 @@ const TravelList = ({ initialTravels }) => {
     setSelectedStatus("All");
     setSelectedDuration("All");
     setSortBy("default");
-    setVisibleCount(3);
   };
+  const visibleTravels = filteredTravels;
+  const hasMore = Boolean(hasNextPage);
 
-  const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 3); // Load next row (3 cards)
-  };
-
-  const visibleTravels = filteredTravels.slice(0, visibleCount);
-  const hasMore = visibleCount < filteredTravels.length;
+  const loadMoreContent = hasMore ? (
+    <div className="loadMoreContainer">
+      <div ref={loadMoreRef} className="infiniteScrollSentinel" aria-hidden="true" />
+      <button
+        type="button"
+        onClick={() => fetchNextPage()}
+        className="loadMoreBtn"
+        aria-label="Load more travel packages"
+        disabled={isFetching}
+      >
+        <span>{isFetchingNextPage ? "Loading retreats…" : isFetchNextPageError ? "Retry loading retreats" : "Load More Retreats"}</span>
+        {!isFetchingNextPage && <FiChevronDown />}
+      </button>
+      <span className="loadMoreCount" role="status">
+        {isFetchNextPageError ? "Could not load the next page. Try again." : `${allTravels.length} retreats loaded · scroll to see more`}
+      </span>
+    </div>
+  ) : null;
 
   return (
     <div id="TravelListPage">
@@ -200,7 +249,6 @@ const TravelList = ({ initialTravels }) => {
                   className={`categoryPill ${selectedCategory === cat ? "active" : ""}`}
                   onClick={() => {
                     setSelectedCategory(cat);
-                    setVisibleCount(3);
                   }}
                 >
                   {cat}
@@ -218,7 +266,6 @@ const TravelList = ({ initialTravels }) => {
                   options={destinationOptions}
                   onChange={(val) => {
                     setSelectedDestination(val);
-                    setVisibleCount(3);
                   }}
                   searchPlaceholder="Search destinations..."
                 />
@@ -230,7 +277,6 @@ const TravelList = ({ initialTravels }) => {
                   options={statusOptions}
                   onChange={(val) => {
                     setSelectedStatus(val);
-                    setVisibleCount(3);
                   }}
                   searchPlaceholder="Search status..."
                   showSearch={false}
@@ -243,7 +289,6 @@ const TravelList = ({ initialTravels }) => {
                   options={durationOptions}
                   onChange={(val) => {
                     setSelectedDuration(val);
-                    setVisibleCount(3);
                   }}
                   searchPlaceholder="Search duration..."
                   showSearch={false}
@@ -257,7 +302,6 @@ const TravelList = ({ initialTravels }) => {
                   options={sortOptions}
                   onChange={(val) => {
                     setSortBy(val);
-                    setVisibleCount(3);
                   }}
                   searchPlaceholder="Search sort..."
                   showSearch={false}
@@ -297,7 +341,6 @@ const TravelList = ({ initialTravels }) => {
                         className="removeChip"
                         onClick={() => {
                           setSelectedCategory("All");
-                          setVisibleCount(3);
                         }}
                       >
                         ×
@@ -311,7 +354,6 @@ const TravelList = ({ initialTravels }) => {
                         className="removeChip"
                         onClick={() => {
                           setSelectedDestination("All");
-                          setVisibleCount(3);
                         }}
                       >
                         ×
@@ -325,7 +367,6 @@ const TravelList = ({ initialTravels }) => {
                         className="removeChip"
                         onClick={() => {
                           setSelectedStatus("All");
-                          setVisibleCount(3);
                         }}
                       >
                         ×
@@ -339,7 +380,6 @@ const TravelList = ({ initialTravels }) => {
                         className="removeChip"
                         onClick={() => {
                           setSelectedDuration("All");
-                          setVisibleCount(3);
                         }}
                       >
                         ×
@@ -352,31 +392,24 @@ const TravelList = ({ initialTravels }) => {
           )}
 
           {/* Retreats Cards Grid OR ElseDesign */}
-          {isLoading ? <div className="travelContentState" role="status">Loading travel packages…</div> : loadError ? <ElseDesign title="Travel packages unavailable" message={loadError} /> : filteredTravels.length > 0 ? (
+          {isLoading ? <div className="travelContentState" role="status">Loading travel packages…</div> : isError && !data?.pages?.length ? (
+            <div className="travelContentState" role="alert">
+              <p>We could not load travel packages. Please try again.</p>
+              <button type="button" onClick={() => refetch()}>Retry</button>
+            </div>
+          ) : filteredTravels.length > 0 ? (
             <>
               <div className="travelListingGrid">
                 {visibleTravels.map((travel, i) => (
                   <TravelCard key={travel.id || i} travel={travel} />
                 ))}
               </div>
-
-              {/* Bottom Center Load More Button */}
-              {hasMore && (
-                <div className="loadMoreContainer">
-                  <button
-                    type="button"
-                    onClick={handleLoadMore}
-                    className="loadMoreBtn"
-                    aria-label="Load more retreats"
-                  >
-                    <span>Load More Retreats</span>
-                    <FiChevronDown />
-                  </button>
-                  <span className="loadMoreCount">
-                    Showing {visibleTravels.length} of {filteredTravels.length}
-                  </span>
-                </div>
-              )}
+              {loadMoreContent}
+            </>
+          ) : hasMore ? (
+            <>
+              <div className="travelContentState" role="status">No matching retreats on the loaded pages. Load more to check the remaining retreats.</div>
+              {loadMoreContent}
             </>
           ) : (
             <ElseDesign

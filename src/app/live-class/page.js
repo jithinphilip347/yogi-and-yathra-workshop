@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
 import CourseCard from "../../components/coursebox/CourseCard";
 import { FiClock } from "react-icons/fi";
@@ -12,35 +13,55 @@ import { fetchDailyClasses } from "@/libs/course";
 
 
 const Page = () => {
-  const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const loadMoreRef = useRef(null);
+  const loadMoreLockRef = useRef(false);
   const { findWishlistIcon } = useWishlist();
+  const { data: dailyClasses = [], isLoading, refetch } = useQuery({
+    queryKey: ["public-daily-classes-catalog"],
+    queryFn: fetchDailyClasses,
+    staleTime: 60_000,
+    gcTime: 5 * 60_000,
+    refetchOnWindowFocus: true,
+  });
+  const hasMore = visibleCount < dailyClasses.length;
+  const loadMore = useCallback(() => {
+    if (!hasMore || loadMoreLockRef.current) return;
+    loadMoreLockRef.current = true;
+    setVisibleCount((count) => Math.min(count + 6, dailyClasses.length));
+  }, [dailyClasses.length, hasMore]);
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 2000);
-  }, []);
-  const [dailyClasses, setDailyClasses] = useState([]);
+    loadMoreLockRef.current = false;
+  }, [visibleCount]);
 
   useEffect(() => {
-    fetchDailyClasses().then((data) => {
-      console.log(data);
-      setDailyClasses(data);
-    });
-  }, []);
+    const sentinel = loadMoreRef.current;
+    if (typeof IntersectionObserver === "undefined" || !sentinel || !hasMore) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) loadMore();
+      },
+      { rootMargin: "500px 0px", threshold: 0 }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore, loadMore]);
  
 
   return (
     <div id="DailyLiveClass">
       <div className="container">
         <div className="DailyLiveClassMain">
-          {loading ? (
+          {isLoading ? (
             Array(6).fill({}).map((_, i) => (
               <CourseCard key={i} loading={true} />
             ))
           ) : dailyClasses?.length > 0 ? ( // Optional chaining added
-            dailyClasses.map((course, i) => (
+            dailyClasses.slice(0, visibleCount).map((course, i) => (
               <CourseCard
                 key={course?.id ?? i}
-                loading={loading}
+                loading={false}
                 image={course?.thumbnail ? resolveMediaUrl(course.thumbnail) : null}
                 title={course?.title}
                 wishlistIcon={findWishlistIcon(course?.id, "daily_class")}
@@ -68,12 +89,26 @@ const Page = () => {
           )}
         </div>
 
-        {/* Optional chaining added here too */}
-        {/* {!loading && dailyClasses?.length > 0 && (
-          <div className="LoadMoreContainer">
-            <button className="LoadMoreBtn">Load More</button>
+        {hasMore && (
+          <div className="LoadMoreWrapper">
+            <div ref={loadMoreRef} className="LoadMoreSentinel" aria-hidden="true" />
+            <button
+              type="button"
+              className="LoadMoreBtn"
+              onClick={loadMore}
+            >
+              Load More Classes
+            </button>
+            <span role="status" aria-live="polite">
+              Showing {Math.min(visibleCount, dailyClasses.length)} of {dailyClasses.length} classes
+            </span>
           </div>
-        )} */}
+        )}
+        {!isLoading && !dailyClasses?.length && (
+          <button type="button" className="LoadMoreBtn" onClick={() => refetch()}>
+            Retry
+          </button>
+        )}
       </div>
     </div>
   );

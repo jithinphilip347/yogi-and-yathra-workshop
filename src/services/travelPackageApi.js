@@ -14,6 +14,20 @@ export const travelPackageApi = {
     const data = unwrap(response);
     return Array.isArray(data) ? data : [];
   },
+  async listPage(params = {}, options = {}) {
+    const response = await apiClient.get("public/yoga-travel-packages", { ...options, params });
+    const payload = response?.data;
+    const records = Array.isArray(payload?.data)
+      ? payload.data
+      : Array.isArray(payload)
+        ? payload
+        : [];
+    return {
+      data: records,
+      meta: payload?.meta || null,
+      links: payload?.links || null,
+    };
+  },
   async get(id) {
     const response = await apiClient.get(`public/yoga-travel-packages/${encodeURIComponent(id)}`);
     return unwrap(response);

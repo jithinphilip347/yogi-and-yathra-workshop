@@ -9,6 +9,20 @@ export const offlineEventApi = {
     const payload = unwrap(response);
     return Array.isArray(payload) ? payload : [];
   },
+  async listPage(params = {}, options = {}) {
+    const response = await apiClient.get("public/offline-events", { ...options, params });
+    const payload = response?.data;
+    const records = Array.isArray(payload?.data)
+      ? payload.data
+      : Array.isArray(payload)
+        ? payload
+        : [];
+    return {
+      data: records,
+      meta: payload?.meta || null,
+      links: payload?.links || null,
+    };
+  },
   async get(id) {
     const response = await apiClient.get(`public/offline-events/${encodeURIComponent(id)}`);
     return unwrap(response);

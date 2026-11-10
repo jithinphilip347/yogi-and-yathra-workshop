@@ -12,6 +12,8 @@ const useCourse = ({ queries }) => {
     queryKey: ['course', queries],
     queryFn: () => courseApi.all(queries),
     refetchOnWindowFocus: false,
+    staleTime: 30_000,
+    gcTime: 5 * 60_000,
     enabled: !!queries,
     onError: (err) => {
         console.log(err)

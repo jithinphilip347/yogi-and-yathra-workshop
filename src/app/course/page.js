@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, Suspense, useMemo } from "react";
+import React, { useState, useEffect, useRef, Suspense, useMemo, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import CourseCard from "../../components/coursebox/CourseCard";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
@@ -158,6 +158,8 @@ const CourseListContent = () => {
   const categoryRef = useRef(null);
   const sortRef = useRef(null);
   const drawerRef = useRef(null);
+  const loadMoreRef = useRef(null);
+  const loadMoreLockRef = useRef(false);
 
   const breadcrumbItems = [{ label: "Courses" }];
 
@@ -213,6 +215,32 @@ const CourseListContent = () => {
   const { findWishlistIcon } = useWishlist();
 
   const hasMore = Boolean(data?.data?.next_page_url);
+  const canLoadMore = !isSearchMode && hasMore && (contentType === "all" || contentType === "course");
+  const loadNextPage = useCallback(() => {
+    if (!canLoadMore || isFetching || loadMoreLockRef.current) return;
+    loadMoreLockRef.current = true;
+    setPage((currentPage) => currentPage + 1);
+  }, [canLoadMore, isFetching]);
+
+  useEffect(() => {
+    const currentPage = Number(data?.data?.current_page);
+    if (!isFetching && (currentPage >= page || courseQuery.isError)) {
+      loadMoreLockRef.current = false;
+    }
+  }, [courseQuery.isError, data, isFetching, page]);
+
+  useEffect(() => {
+    const sentinel = loadMoreRef.current;
+    if (typeof IntersectionObserver === "undefined" || !sentinel || !canLoadMore || isFetching) return undefined;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) loadNextPage();
+      },
+      { rootMargin: "500px 0px", threshold: 0 }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [canLoadMore, isFetching, loadNextPage]);
 
   const listingItems = useMemo(() => {
     const items = isSearchMode
@@ -445,9 +473,10 @@ const CourseListContent = () => {
 
             {!isSearchMode && !isLoading && hasMore && (contentType === "all" || contentType === "course") && (
               <div className="LoadMoreWrapper">
+                <div ref={loadMoreRef} className="LoadMoreSentinel" aria-hidden="true" />
                 <button
                   className="LoadMoreBtn"
-                  onClick={() => setPage((prev) => prev + 1)}
+                  onClick={loadNextPage}
                   disabled={isFetching}
                 >
                   {isFetching ? "Loading..." : "Load More Courses"}

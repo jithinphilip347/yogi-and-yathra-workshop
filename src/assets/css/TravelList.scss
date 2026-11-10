@@ -228,6 +228,11 @@
       margin-top: 45px;
       gap: 10px;
 
+      .infiniteScrollSentinel {
+        width: 100%;
+        height: 1px;
+      }
+
       .loadMoreBtn {
         display: inline-flex;
         align-items: center;

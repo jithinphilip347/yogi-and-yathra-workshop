@@ -7523,9 +7523,19 @@
   }
 
   .LoadMoreWrapper {
+    position: relative;
     display: flex;
     justify-content: center;
     margin-top: 50px;
+    .LoadMoreSentinel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
     .LoadMoreBtn {
       padding: 12px 30px;
       border: 1px solid var(--primaryColor);
