@@ -196,11 +196,14 @@ const MyOrders = () => {
                 }`
               : null;
 
-            const learningLine = order.learning ? accessLabel(order) : null;
+            const learningAccessLine = order.learning ? accessLabel(order) : null;
             const experienceLine = order.experience
-              ? [order.experience.planName, `${order.experience.participantCount} ${order.experience.participantCount === 1 ? "participant" : "participants"}`, order.experience.status?.replace(/_/g, " ")]
+              ? [order.experience.planName, `${order.experience.participantCount} ${order.experience.participantCount === 1 ? "participant" : "participants"}`, `${formatAmount(order.experience.unitPrice, order.currency)} each`, order.experience.status?.replace(/_/g, " ")]
                   .filter(Boolean)
                   .join(" · ")
+              : null;
+            const learningPurchaseLine = order.learning
+              ? `${order.learning.quantity} ${order.learning.quantity === 1 ? "item" : "items"} · ${formatAmount(order.learning.lineTotal, order.currency)}`
               : null;
             const syncIncomplete =
               order.synchronization && order.synchronization.status === "partially_synchronized";
@@ -222,7 +225,8 @@ const MyOrders = () => {
                     </span>
                     <span className="OrderCardName">{title}</span>
                     {contextLine && <span className="OrderCardMeta">{contextLine}</span>}
-                    {learningLine && <span className="OrderCardMeta">{learningLine}</span>}
+                    {learningPurchaseLine && <span className="OrderCardMeta">{learningPurchaseLine}</span>}
+                    {learningAccessLine && <span className="OrderCardMeta">{learningAccessLine}</span>}
                     {experienceLine && <span className="OrderCardMeta">{experienceLine}</span>}
                     {fulfillmentLine && <span className="OrderCardMeta">{fulfillmentLine}</span>}
                   </span>

@@ -11,6 +11,7 @@ const effectivePrice = (plan) => plan.discount_price != null && Number(plan.disc
 export default function ExperiencePricingPlans({ plans = [], value, onChange, triggerLabel = 'View plan details', checkoutHrefForPlan = null }) {
   const [isOpen, setIsOpen] = useState(false);
   const selectedPlan = plans.find((plan) => String(plan.id) === String(value)) || plans.find((plan) => plan.is_featured) || plans[0];
+  const isPrimaryTrigger = triggerLabel === 'Explore Journey' || Boolean(checkoutHrefForPlan);
 
   useEffect(() => {
     if (!isOpen) return undefined;
@@ -53,8 +54,8 @@ export default function ExperiencePricingPlans({ plans = [], value, onChange, tr
       <div className="experienceCurrentPlanCopy">
         <span className="experienceCurrentPlanName">{selectedPlan?.name || 'Selected plan'}</span>
       </div>
-      <button type="button" className={`experienceOpenPlans${triggerLabel === 'Explore Journey' ? ' is-primary' : ''}`} onClick={() => setIsOpen(true)}>
-        {triggerLabel === 'Explore Journey' ? null : <FiBookmark aria-hidden="true" />} {triggerLabel} {triggerLabel === 'Explore Journey' && <FiArrowRight aria-hidden="true" />}
+      <button type="button" className={`experienceOpenPlans${isPrimaryTrigger ? ' is-primary' : ''}`} onClick={() => setIsOpen(true)}>
+        {isPrimaryTrigger ? null : <FiBookmark aria-hidden="true" />} {triggerLabel} {isPrimaryTrigger && <FiArrowRight aria-hidden="true" />}
       </button>
     </div>
 

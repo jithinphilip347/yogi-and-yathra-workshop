@@ -130,6 +130,8 @@ const OrderDetail = ({ order, onBack, degradedMessage = null }) => {
             </p>
 
             <div className="OrderRows">
+              <Row label="Quantity" value={`${order.learning.quantity} ${order.learning.quantity === 1 ? "item" : "items"}`} />
+              <Row label="Item price" value={formatAmount(order.learning.lineTotal, order.currency)} />
               {accessLabel(order) && <Row label="Access" value={accessLabel(order)} />}
               {order.learning.access?.expires_at && (
                 <Row label="Expires" value={formatDate(order.learning.access.expires_at)} />
@@ -151,6 +153,7 @@ const OrderDetail = ({ order, onBack, degradedMessage = null }) => {
               {order.experience.bookingReference && <Row label="Booking reference" value={order.experience.bookingReference} />}
               {order.experience.planName && <Row label="Price plan" value={order.experience.planName} />}
               <Row label="Participants" value={order.experience.participantCount} />
+              <Row label="Booking total" value={formatAmount(order.experience.lineTotal, order.currency)} />
               <Row label="Booking status" value={String(order.experience.status || "pending").replace(/_/g, " ")} />
               {order.experience.unitPrice >= 0 && <Row label="Price per participant" value={formatAmount(order.experience.unitPrice, order.currency)} />}
             </div>

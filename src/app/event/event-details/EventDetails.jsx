@@ -7,7 +7,7 @@ import EventCard from "@/components/eventCard/EventCard";
 import InstructorProfileCard from "@/components/instructorProfile/InstructorProfileCard";
 import { offlineEventApi, adaptOfflineEvent, formatOfflineEventDate, formatOfflineEventStatus } from "@/services/offlineEventApi";
 import { resolveMediaUrl } from "@/utils/mediaUrl";
-import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiArrowRight, FiX, FiCompass, FiNavigation } from "react-icons/fi";
+import { FiCalendar, FiClock, FiMapPin, FiUsers, FiCheckCircle, FiX, FiCompass, FiNavigation } from "react-icons/fi";
 import { FaPlay } from "react-icons/fa";
 import ExperiencePricingPlans from "@/components/experiences/ExperiencePricingPlans";
 import { ExperienceDetailsSkeleton } from "@/components/experiences/ExperienceSkeletons";
@@ -144,10 +144,15 @@ function EventDetailsContent({ slug }) {
       </div>
 
       <aside className="eventSidebarCol"><div className="eventPassStickyCard"><div className="passHeader"><span className="passLabel">Event Pass</span><div className="passPriceWrapper"><span className="priceAmount">{currency}</span><span className="priceUnit">/ spot</span></div></div>
-        <ExperiencePricingPlans plans={event.pricing_plans || []} value={selectedPlanId} onChange={setSelectedPlanId} />
         <div className="seatsStatusBox"><div className="seatsTopRow"><span className="seatsAvailableText"><FiUsers />{availableSeats == null ? <strong>Unlimited capacity</strong> : <><strong>{availableSeats} seats left</strong></>}</span>{totalSeats != null && <span className="seatsTotalText">{totalSeats} total</span>}</div>{totalSeats != null && <><div className="seatsProgressBar"><div className="progressBarFill" style={{ width: `${filled}%` }} /></div><span className="progressSubtext">{bookedSeats} booked · {filled}% filled</span></>}</div>
         {registrationCloses && <div className="deadlineAlertBox"><FiClock className="alertIcon" /><div><strong>Registration closes</strong><p>{formatDateTime(registrationCloses)}</p></div></div>}
-        {selectedPlan ? <Link href={`/experience-checkout?type=event&id=${encodeURIComponent(event.slug || event.id)}&pricing_plan_id=${encodeURIComponent(selectedPlan.id)}`} className="bookSpotPrimaryBtn"><span>{event.booking_cta_label || "Book Your Spot"}</span><FiArrowRight /></Link> : <button type="button" className="bookSpotPrimaryBtn" disabled><span>Booking unavailable</span></button>}
+        <ExperiencePricingPlans
+          plans={event.pricing_plans || []}
+          value={selectedPlanId}
+          onChange={setSelectedPlanId}
+          triggerLabel={event.booking_cta_label || "Book Your Spot"}
+          checkoutHrefForPlan={(plan) => `/experience-checkout?type=event&id=${encodeURIComponent(event.slug || event.id)}&pricing_plan_id=${encodeURIComponent(plan.id)}`}
+        />
       </div></aside>
     </div>
 

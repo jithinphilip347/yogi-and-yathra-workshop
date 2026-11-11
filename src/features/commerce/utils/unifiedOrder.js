@@ -292,6 +292,9 @@ export function normalizeOrder(order) {
           productType: order.learning.product_type,
           slug: order.learning.slug || null,
           thumbnail: order.learning.thumbnail || null,
+          quantity: Number(order.learning.quantity || 1),
+          unitPrice: Number(order.learning.unit_price || 0),
+          lineTotal: Number(order.learning.line_total || 0),
           access: order.learning.access || null,
         }
       : null,
@@ -304,6 +307,7 @@ export function normalizeOrder(order) {
           status: order.experience.status || null,
           participantCount: Number(order.experience.participant_count || 0),
           unitPrice: Number(order.experience.unit_price || 0),
+          lineTotal: Number(order.experience.line_total || 0),
           participants: Array.isArray(order.experience.participants)
             ? order.experience.participants
             : [],

@@ -150,6 +150,8 @@ const RecentOrders = ({ onViewAll = null }) => {
               <span>{latest.statusLabel}</span>
               {latest.experience?.planName && <><span className="OrderMetaDot" /><span>{latest.experience.planName}</span></>}
               {latest.experience?.participantCount > 0 && <><span className="OrderMetaDot" /><span>{latest.experience.participantCount} {latest.experience.participantCount === 1 ? "participant" : "participants"}</span></>}
+              {latest.experience && <><span className="OrderMetaDot" /><span>{formatAmount(latest.experience.unitPrice, latest.currency)} per participant</span></>}
+              {latest.learning && <><span className="OrderMetaDot" /><span>{latest.learning.quantity} {latest.learning.quantity === 1 ? "item" : "items"}</span></>}
               {latest.fulfillment?.available && latest.fulfillment.label && (
                 <>
                   <span className="OrderMetaDot" />
