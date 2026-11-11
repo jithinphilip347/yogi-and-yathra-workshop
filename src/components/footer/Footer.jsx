@@ -73,12 +73,12 @@ const Footer = () => {
           <div className="footerColumn">
             <h4>CONTACT US</h4>
             <div className="contactList">
-              <p className="contactRow">
+              <a href="mailto:support@yogiandyathra.com" className="contactRow contactLink">
                 <MdEmail /> support@yogiandyathra.com
-              </p>
-              <p className="contactRow">
+              </a>
+              <a href="tel:+916282847517" className="contactRow contactLink">
                 <FaPhoneAlt /> +91 6282 847 517
-              </p>
+              </a>
               <p className="contactRow">
                 <FaMapMarkerAlt /> Yogify, Elavoor Kavala, Karukutty, Angamaly, Kerala Pin: 683576
               </p>

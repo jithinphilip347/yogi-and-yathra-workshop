@@ -3425,6 +3425,13 @@
         font-size: 15px;
         color: rgba(255, 255, 255, 0.8);
         line-height: 1.5;
+        text-decoration: none;
+        transition: color 0.25s ease;
+
+        &:hover,
+        &.contactLink:hover {
+          color: #ffffff;
+        }
 
         svg {
           color: #fff;
