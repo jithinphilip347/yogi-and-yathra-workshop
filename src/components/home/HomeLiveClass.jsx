@@ -46,6 +46,7 @@ const HomeLiveClass = ({ dailyClasses }) => {
 
   
 
+
   return (
     <div id="HomeLiveClass">
       <div className="container">
